@@ -1,0 +1,117 @@
+  {% extends 'base.html.twig' %}
+
+{% block title %}Activité annuelle en volume et valeur{% endblock %}
+
+{% block body %}
+
+<h2 class="title-page">Activité annuelle en volume et valeur</h2>
+<div class="form-container">
+  {{ form_start(form, {'attr': {'class': 'search-form'}}) }}
+  <div class="input-grp-tab">{{ form_row(form.date) }}</div>
+  <div class="input-grp-tab">{{ form_row(form.num_siret) }}
+    {{ form_row(form.utilisateurs) }}
+    {{ form_row(form.code_uo) }}</div>
+  <div class="input-grp-tab">{{ form_row(form.code_cpv) }}
+    {{ form_row(form.code_formation) }}
+    {{ form_row(form.tax) }}
+    </div>
+    <div class="btn-submit">
+    {{ form_end(form) }}</div>
+</div>
+{% if app.request.method == 'POST' %}
+
+{% if counts1 is not empty %}
+<h3 class="title-page">Activité en volume</h3>
+<table id='tableCheck'>
+  <tbody>
+    <tr>
+      <th>Mois</th>
+      {% set totalmppa = 0 %}
+      {% set totalmabc = 0 %}
+      {% for month, data in purchaseCountByMonth %}
+      <td>{{ month }}</td>
+      {% set totalmppa = totalmppa + data['count1'] %}
+      {% set totalmabc = totalmabc + data['count2'] %}
+      {% endfor %}
+      <td>Total</td>
+    </tr>
+    <tr>
+      <th>MPPA</th>
+      {% for month, data in purchaseCountByMonth %}
+      <td>{{ data['count1'] }}</td>
+      {% endfor %}
+      <td>{{ totalmppa }}</td>
+    </tr>
+    <tr>
+      <th>MABC</th>
+      {% for month, data in purchaseCountByMonth %}
+      <td>{{ data['count2'] }}</td>
+      {% endfor %}
+      <td>{{ totalmabc }}</td>
+    </tr>
+    <tr>
+      <th>TOTAL</th>
+      {% for month, data in purchaseCountByMonth %}
+      <td>{{ data['total'] }}</td>
+      {% endfor %}
+      <td>{{ totalmppa + totalmabc }}</td>
+    </tr>
+  </tbody>
+</table>
+{% endif %}
+<h3 class="title-page">Activité en valeur (HT)</h3>
+<table>
+  <tbody>
+    <tr>
+      <th>Mois</th>
+      {% set MtMppa = 0 %}
+      {% set MtMabc = 0 %}
+      {% set count = 0 %}
+      {% for month, count in counts1 %}
+      <td>{{ month }}</td>
+      {% endfor %}
+      <td>Total</td>
+    </tr>
+    <tr>
+      <th>MPPA</th>
+      {% for month, data in counts1 %}
+      {% set MtMppa = MtMppa + data['totalmontant'] %}
+      <td>{{ data['totalmontant'] }}</td>
+      {% endfor %}
+      <td>{{MtMppa}}</td>
+    </tr>
+    <tr>
+      <th>MABC</th>
+      {% for month, data in counts2 %}
+      {% set MtMabc = MtMabc + data['totalmontant'] %}
+      <td>{{ data['totalmontant'] }}</td>
+      {% endfor %}
+      <td>{{MtMabc}}</td>
+    </tr>
+    <tr>
+      <th>TOTAL</th>
+      {% for month, data in purchaseTotalAmountByMonth %}
+      <td>{{ data['total'] }}</td>
+      {% endfor %}
+      <td>{{ MtMppa + MtMabc }}</td>
+    </tr>
+  </tbody>
+</table>
+
+{% endif  %}
+
+    <script>
+
+
+// Show tooltips always even the stats are zero
+    var tableCheck = document.getElementById('tableCheck');
+var hiddenElements = document.querySelectorAll('.hidden');
+
+  if(tableCheck){
+
+  hiddenElements.forEach(function(element) {
+    element.classList.remove('hidden');
+  });  }
+
+    </script>
+{% endblock %}

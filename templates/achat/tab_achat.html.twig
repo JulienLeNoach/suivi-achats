@@ -1,0 +1,58 @@
+<div class="achat-container">
+
+    <div class="form-container">
+        {{ form_start(form, {'attr': {'class': 'search-form'}}) }}
+        <div class="input-grp-tab">{{ form_row(form.date) }}</div>
+        <div class="input-grp-tab">{{ form_row(form.num_siret) }}
+            {{ form_row(form.utilisateurs) }}
+            {{ form_row(form.code_uo) }}</div>
+        <div class="input-grp-tab">{{ form_row(form.code_cpv) }}
+            {{ form_row(form.code_formation) }}
+            {{ form_end(form) }}</div>
+    </div>
+    <!-- Affichage des résultats de la recherche -->
+    {% if achats is not empty %}
+
+    {% if app.request.method == 'POST' %}
+    {% if achats | length == 0 %}
+    <h4>Aucun résulat pour votre recherche.</h4>
+    {% else %}
+    <div class="table-container">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Date de saisie</th>
+                    <th>Utilisateurs</th>
+                    <th>Formation</th>
+                    <th>Objet</th>
+                    <th>Fournisseur</th>
+                    <th>Montant HT</th>
+                    <th>Etat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for achat in achats %}
+                <tr class="clickable-row" data-id="{{ achat.id }}">
+                    <td>{{achat.dateSaisie|date('d-m-Y')}}</td>
+                    <td>{{ achat.utilisateurs }}</td>
+                    <td>{{ achat.codeFormation }}</td>
+                    <td>{{ achat.objetAchat }}</td>
+                    <td>{{ achat.numSiret }}</td>
+                    <td>{{ achat.montantAchat }}</td>
+                    <td>
+                        {% if achat.etatAchat == 0 %}
+                        En cours
+                        {% elseif achat.etatAchat == 1 %}
+                        Annulé
+                        {% elseif achat.etatAchat == 2 %}
+                        Validé
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% endif %}

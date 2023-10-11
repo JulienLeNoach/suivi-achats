@@ -1,0 +1,125 @@
+.header {
+  display: flex;
+  justify-content: center;
+}
+.h4 {
+  display: flex;
+}
+.h4 h4 {
+  margin-right: 200px;
+}
+.button-header {
+  margin-left: auto;
+}
+.title {
+  margin-left: auto;
+  margin-right: -200px;
+}
+.achat-container {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  border: 2px #6a6af4 solid;
+}
+.search-form-add {
+  display: flex;
+  height: auto;
+  flex-wrap: nowrap !important;
+  border: 2px #6a6af4 solid;
+}
+.search-form-all {
+  display: flex;
+  height: auto;
+  flex-wrap: nowrap !important;
+  width: NONE;
+  border: 2px #6a6af4 solid;
+}
+.input-grp {
+  padding: 5px;
+}
+.input-grp .sub-btn {
+  padding: 40px;
+  text-align: center;
+}
+.input-grp-tab {
+  width: 50%;
+}
+.input-grp-tab:first-child {
+  width: 100%;
+  text-align: center;
+}
+.input-grp-tab:last-child {
+  text-align: center;
+}
+.radio-search {
+  padding: 10px;
+}
+.radio-search input,
+.radio-search label {
+  margin-left: 10px;
+  display: inline-block !important;
+}
+.table-container {
+  height: 400px;
+  width: 100%;
+  /* Hauteur du conteneur */
+  overflow-y: scroll;
+  /* Ajouter une barre de défilement verticale */
+}
+.table-container.search {
+  height: 300px !important;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+thead {
+  background-color: #ccc;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.clickable-row {
+  cursor: pointer;
+}
+.clickable-row.selected {
+  background-color: #bfbfbf;
+}
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+.fr-btn.search {
+  margin-top: 6px;
+}
+.fr-btn a {
+  text-decoration: none;
+  /* Supprimer le soulignement */
+  color: white;
+  /* Changer la couleur du texte du lien */
+}
+.hidden {
+  display: none;
+}
+.visu-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.visu-container label,
+.visu-container input {
+  display: block;
+}
+.title-page {
+  text-align: center;
+}

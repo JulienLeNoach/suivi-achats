@@ -1,0 +1,21 @@
+body {
+    background-color: #ececfe
+    ;
+}
+@font-face {
+    font-family: "Marianne";
+    src: url("./font/Marianne-Bold.otf");
+  }
+
+
+  @font-face {
+    font-family: "Mariannem";
+    src: url("./font/Marianne-Medium.otf");
+  }
+
+h1,h2,h3,h4,.title-header{
+    font-family: "Marianne", sans-serif;
+}
+*{
+    font-family: "Mariannem", sans-serif;
+}

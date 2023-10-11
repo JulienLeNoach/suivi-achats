@@ -1,0 +1,15 @@
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+save_calendar_selection:
+    path: /save-calendar-selection
+    methods: [POST]
+    controller: App\Controller\CalendarController::saveSelection
+easyadmin:
+    resource: '@EasyAdminBundle/Controller/'
+    prefix: /admin
+    type: annotation
+save_roles:
+    path: /save_roles
+    methods: [POST]
+    controller: App\Controller\RoleController::saveRoles

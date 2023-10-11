@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer le calendrier{% endblock %}
+
+{% block body %}
+    <div style="display: flex;">
+        <div style="flex: 1;">
+            <div id="calendrier"></div>
+        </div>
+        <div style="flex: 1;">
+            {% block content %}{% form_theme form _self %}
+        <h1>Modifier un jour</h1>
+        <div class="legende">
+                {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                    <button class="fr-btn">{{ button_label|default('Sauvegarder') }}</button>
+                {{ form_end(form) }}
+    {% endblock %}
+        </div>
+        <h3>Legende</h3>
+        <div id="l1" class="legende-color">Oeuvre</div>
+        <div id="l2" class="legende-color">Week-end</div>
+        <div id="l3" class="legende-color">Férié</div>
+        <div id="l4" class="legende-color">RTT</div>
+        <div id="l5" class="legende-color">Autre</div></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.6/index.global.min.js"></script>
+    <script>
+    var events = {{ events|raw }};
+    </script>
+{% endblock %}

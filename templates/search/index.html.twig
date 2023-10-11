@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Achat{% endblock %}
+
+{% block body %}
+<h2 class="title-page">Achat</h2>
+<div class='h4'>
+    <h4>Saisir un nouvel achat</h4>
+    <button class="fr-btn"> {% if is_granted ('ROLE_OPT_SAISIR_ACHATS') %}
+        <a href="{{path('ajout_achat')}}">Saisir un achat</a>
+        {% endif %}
+    </button>
+</div>
+<div class="achat-container">
+    <!-- Création du formulaire de recherche d'achat -->
+    <!-- Le formulaire de recherche est créé à l'aide de la fonction form_start(), 
+    qui génère le code HTML nécessaire pour le formulaire, 
+    et de la fonction form_row() qui génère le code HTML pour chaque champ du formulaire. -->
+    <div class="form-container">
+        {{ form_start(form, {'attr': {'class': 'search-form-all'}}) }}
+        <div class="input-grp">
+            <label for="achat_search_objet_achat">Objet de l'achat</label>
+            {{ form_row(form.objet_achat) }}
+            <label for="achat_search_date">Année</label>
+            {{ form_row(form.date) }}
+            <label for="achat_search_zipcode">Code postal</label>
+            {{ form_row(form.zipcode) }}
+            <label for="achat_search_montant_achat">Montant de l'achat maximum</label>
+            {{ form_row(form.montant_achat)}}
+            <label for="achat_search_montant_achat">Montant de l'achat minimum</label>
+            {{ form_row(form.montant_achat_min)}}
+        </div>
+        <div class="input-grp">
+            <label for="achat_search_code_uo_autocomplete-ts-control">Unité organique</label>
+            {{ form_row(form.code_uo) }}
+            <label for="achat_search_code_cpv_autocomplete-ts-control">CPV</label>
+            {{ form_row(form.code_cpv) }}
+            <label for="achat_search_code_formation_autocomplete-ts-control">Formation</label>
+            {{ form_row(form.code_formation) }}
+            <label for="achat_search_utilisateurs_autocomplete-ts-control">Utilisateurs</label>
+            {{ form_row(form.utilisateurs) }}
+            <label for="achat_search_num_siret_autocomplete-ts-control">N° SIRET</label>
+            {{ form_row(form.num_siret) }}
+        </div>
+        <div class="input-grp">
+            {{ form_row(form.etat_achat) }}
+            {{ form_row(form.devis)}}
+            {{ form_row(form.type_marche)}}
+            {{ form_end(form) }}
+        </div>
+        <a id="detail">
+            <button class="fr-btn hidden" id="btn" data-link="result_achat">Détail de l'achat</button>
+            <button class="fr-btn hidden" id="btn" data-link="valid_achat">Valider un achat</button>
+            <button class="fr-btn hidden" id="btn" data-link="annul_achat">Annuler un achat</button>
+            <button class="fr-btn hidden" id="btn" data-link="reint_achat">Réintégrer un achat</button>
+            <button class="fr-btn hidden" id="btn" data-link="edit_achat">Modifier un achat</button>
+        </a>
+    </div>
+                 {% for flash_message in app.session.flashbag.get('success') %}
+    <div class="alert alert-success">
+        {{ flash_message }}
+    </div>
+    {% endfor %}
+    <!-- Affichage des résultats de la recherche -->
+    {% if pagination is not empty %}
+
+    {# {% if app.request.method == 'POST' %} #}
+    {% if pagination | length == 0 %}
+    <h4>Aucun résultat pour votre recherche.</h4>
+    {% else %}
+    <div class="table-container search">
+        <div id="achat-list">
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Date de saisie</th>
+                        <th>Utilisateurs</th>
+                        <th>Formation</th>
+                        <th>Objet</th>
+                        <th>Fournisseur</th>
+                        <th>Montant HT</th>
+                        <th>Etat</th>
+                    </tr>
+                </thead>
+                <div id="achat-list-ajax">
+
+                    {{ include('search/partial_results.html.twig') }}
+                </div>
+
+            </table>
+
+        </div>
+
+
+    </div>
+    <div class="pagination">
+        {{ knp_pagination_render(pagination ,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig') }}
+    </div>
+</div>
+
+{% endif %}
+{# {% endif %} #}
+{% endif %}
+
+
+
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un achat{% endblock %}
+
+{% block body %}
+<h2 class="title-page">Modifier un achat</h1>
+<div class="visu-container">
+{{ form_start(form, {'attr': {'class': 'search-form-add'}}) }}
+    <div class="input-grp">
+        {{ form_row(form.code_service) }}
+        {{ form_row(form.num_siret) }}
+        {{ form_row(form.code_cpv) }}
+        {{ form_row(form.code_uo) }}
+        {{ form_row(form.code_formation) }}
+        {{ form_row(form.utilisateurs) }}</div>
+    <div class="input-grp">
+        {{ form_row(form.montant_achat) }}
+        {{ form_row(form.date_sillage) }}
+        {{ form_row(form.date_commande_chorus) }}
+        {{ form_row(form.type_marche) }}
+        {{ form_row(form.place) }}
+        {{ form_row(form.devis) }}
+        {{ form_row(form.tva_ident) }}
+    </div>
+    <div class="input-grp">
+        {{ form_row(form.objet_achat) }}
+        {{ form_row(form.observations) }}
+    
+<div class="sub-btn">
+    <button class="fr-btn">{{ button_label|default('Mettre à jour') }}</button><br>
+    </div>
+            {{ form_row(form.return) }}
+
+        </div>   
+    {{ form_end(form) }}
+
+</div>
+</div>
+{% endblock %}

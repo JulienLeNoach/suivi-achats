@@ -1,0 +1,26 @@
+
+
+    <tbody id="achat-list-tbody">
+            <div data-controller="search-achat">
+    {% for achat in pagination %}
+        <tr class="clickable-row" data-id="{{ achat.id }}" data-action="click->search-achat#attachEventListeners">
+            <td>{{achat.dateSaisie|date('d-m-Y')}}</td>
+            <td>{{ achat.utilisateurs }}</td>
+            <td>{{ achat.codeFormation }}</td>
+            <td>{{ achat.objetAchat }}</td>
+            <td>{{ achat.numSiret }}</td>
+            <td>{{ achat.montantAchat }}</td>
+            <td>
+                {% if achat.etatAchat == 0 %}
+                    En cours
+                {% elseif achat.etatAchat == 1 %}
+                    Annulé
+                {% elseif achat.etatAchat == 2 %}
+                    Validé
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+    </div>

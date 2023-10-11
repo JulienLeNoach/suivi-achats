@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Saisir un achat
+{% endblock %}
+
+{% block body %}
+<h2 class="title-page">Saisir un achat</h2>
+<div class="visu-container">
+{{ form_start(form, {'attr': {'class': 'search-form-add'}}) }}
+<div class="input-grp">
+    <label for="add_achat_objet_achat">Objet de l'achat</label>
+    {{ form_row(form.objet_achat) }}
+    <label for="add_achat_date_sillage">Date enregistrement Sillage</label>
+    {{ form_row(form.date_sillage) }}
+    <label for="add_achat_date_commande_chorus">Date de commande de CF</label>
+    {{ form_row(form.date_commande_chorus) }}
+    <label for="add_achat_observations">Observations</label>
+    {{ form_row(form.observations) }}
+    <label for="add_achat_montant_achat">Montant de l'achat</label>
+    {{ form_row(form.montant_achat)}}
+</div>
+<div class="input-grp">
+    <label for="add_achat_num_siret_autocomplete">N° SIRET</label>
+    {{ form_row(form.num_siret) }}
+    <label for="add_achat_code_uo_autocomplete">Unité organique</label>
+    {{ form_row(form.code_uo) }}
+    <label for="add_achat_code_cpv_autocomplete">CPV</label>
+    {{ form_row(form.code_cpv) }}
+    <label for="add_achat_code_formation_autocomplete">Formation</label>
+    {{ form_row(form.code_formation) }}
+    <label for="achat_search_service_autocomplete">Service</label>
+    {{ form_row(form.code_service)}}
+</div>
+<div class="input-grp">
+    {{ form_row(form.place) }}
+    {{ form_row(form.devis)}}
+    {{ form_row(form.type_marche)}}
+    <label for="add_achat_tva_ident">TVA</label>
+    {{ form_row(form.tva_ident)}}
+    {{ form_end(form) }} </div>
+</div>
+</div>
+{% for flash_message in app.session.flashbag.get('success') %}
+<div class="alert alert-success">
+    {{ flash_message }}
+    {% endfor %}
+    {% endblock %}

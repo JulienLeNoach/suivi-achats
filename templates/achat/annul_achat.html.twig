@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Annuler  un achat{% endblock %}
+
+{% block body %}
+
+    <h2 class="title-page">Annuler un achat</h2>
+
+    {{ include('achat/tab_achat.html.twig') }}
+
+<a id ="detail" >
+   <button class="fr-btn hidden" id="btn">Annuler l'achat</button>
+</a>
+</div>
+             {% for flash_message in app.session.flashbag.get('success') %}
+    <div class="alert alert-success">
+        {{ flash_message }}
+    </div>
+    {% endfor %}
+
+{% endblock %}

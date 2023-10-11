@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<h2 class="title-page">Inscription</h2>
+
+{{ form(form) }}
+
+{% for flash_message in app.session.flashbag.get('success') %}
+    <div class="alert alert-success">
+        {{ flash_message }}
+    </div>
+{% endfor %}
+{% endblock %}

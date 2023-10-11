@@ -1,0 +1,24 @@
+    {% extends 'base.html.twig' %}
+
+    {% block title %}Activité annuelle en volume et valeur{% endblock %}
+
+    {% block body %}
+    <h2 class="title-page">Activité annuelle en volume et valeur</h2>
+
+
+    <div class="graph-container" id="test" data-controller="chart-type">
+        <div   class="graph">
+            {{ render_chart(chartbar, {'class': 'my-chart', 'id' : 'chart', 'data-chart-type-target' : 'test'}) }}
+        </div>
+
+        <div class="graph">
+            {{ render_chart(chartbar2, {'class': 'my-chart' , 'id' : 'chart2','data-chart-type-target' : 'test'}) }}
+        </div>
+
+    <div data-controller="pdf-generator">
+    <button id="pdf" data-action="click->pdf-generator#download" >Impression</button>
+    </div>
+    <button class="fr-btn search"><a   id="go-back" @click="goBack">Retour</a></button>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0-rc/dist/chartjs-plugin-datalabels.min.js"></script>
+
+    {% endblock %}

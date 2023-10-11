@@ -1,0 +1,17 @@
+.graph-container {
+  position: relative;
+  flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  /* alignement horizontal */
+  align-items: center;
+}
+.graph {
+  height: 600px;
+  width: 50%;
+}
+.btn-submit {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+}

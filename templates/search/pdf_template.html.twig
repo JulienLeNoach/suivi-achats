@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Visualiser un achat{% endblock %}
+
+{% block body %}
+<h2 class="title-page">Achat n°{{ result_achat.id }}</h2>
+<div class="visu-container">
+    <table border='1' class="achat-details">
+        <tr>
+            <th>Service</th>
+            <td>{{ result_achat.codeService }}</td>
+            <th>N° SIRET</th>
+            <td>{{ result_achat.numSiret }}</td>
+        </tr>
+        <tr>
+            <th>CPV</th>
+            <td>{{ result_achat.codeCPV }}</td>
+            <th>Unité organique</th>
+            <td>{{ result_achat.codeUO }}</td>
+        </tr>
+        <tr>
+            <th>Formation</th>
+            <td>{{ result_achat.codeFormation }}</td>
+            <th>Montant achat HT</th>
+            <td>{{ result_achat.montantAchat }}</td>
+        </tr>
+        <tr>
+            <th>Date sillage</th>
+            <td>{{ result_achat.dateSillage | join ('') | date("Y/m/d") }}</td>
+            <th>Date commande CHORUS</th>
+            <td>{{ result_achat.dateCommandeChorus | join ('') | date("Y/m/d") }}</td>
+        </tr>
+        <tr>
+            <th>Date de validation de l'achat</th>
+            <td>{{ result_achat.dateValidation | join ('') | date("Y/m/d") }}</td>
+            <th>Type de marché</th>
+            <td>
+                {% if result_achat.typeMarche == 0 %}
+                    MABC
+                {% else %}
+                    MPPA
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Marché avec publicité ?</th>
+            <td>
+                {% if result_achat.place == 0 %}
+                    Non
+                {% else %}
+                    Oui
+                {% endif %}
+            </td>
+            <th>Devis</th>
+            <td>
+                {% if result_achat.devis == 0 %}
+                    Prescripteur
+                {% else %}
+                    GSBdD/PFAF
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>TVA</th>
+            <td>{{ result_achat.tvaIdent }}</td>
+            <th>Objet de l'achat</th>
+            <td>{{ result_achat.objetAchat }}</td>
+        </tr>
+        <tr>
+            <th>Observations</th>
+            <td>{{ result_achat.observations }}</td>
+            <th>Utilisateur</th>
+            <td>{{ result_achat.utilisateurs }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

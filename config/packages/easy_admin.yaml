@@ -1,0 +1,8 @@
+easy_admin:
+    entities:
+        Category:
+            class: App\Entity\Services
+            form:
+                fields:
+                    - { property: 'code_service' }
+                    - { property: 'nom_service'}

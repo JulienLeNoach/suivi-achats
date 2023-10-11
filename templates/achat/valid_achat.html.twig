@@ -1,0 +1,97 @@
+{# {% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+
+    {{ include('achat/tab_achat.html.twig') }}
+
+
+</div>
+{% endblock %} #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Valider ou notifier  un achat{% endblock %}
+
+{% block body %}
+    <h2 class="title-page">Valider ou notifier un achat</h2>
+<div class="visu-container">
+<div class="search-form-add modif">
+    <div class="input-grp">
+    <label for="ser">Service</label>
+    <input type="text" id ="ser" value="{{result_achat.codeService}}" disabled>
+    <label for="sir">N° SIRET</label>
+    <input type="text" id ="sir" value="{{result_achat.numSiret}}" disabled>
+    <label for="cpv">CPV</label>
+    <input type="text" id ="cpv" value="{{result_achat.codeCPV}}" disabled>
+    <label for="uo">Unité organique</label>
+    <input type="text" id ="uo" value="{{result_achat.codeUO}}" disabled>
+    <label for="for">Formation</label>
+    <input type="text" id ="for" value="{{result_achat.codeFormation}}" disabled>
+</div>
+        <div class="input-grp">
+    <label for="mtn">Montant achat HT</label>
+    <input type="text" id ="mtn" value="{{result_achat.montantAchat}}" disabled>
+    <label for="sil">Date sillage</label>
+    <input type="text" id ="sil" value="{{result_achat.dateSillage | join ('') | date("Y/m/d")}}" disabled>
+    <label for="chor">Date commande CHORUS</label>
+    <input type="text" id ="chor" value="{{result_achat.dateCommandeChorus | join ('') | date("Y/m/d")}}" disabled>
+    <label for="val">Date de validation de l'achat</label>
+    <input type="text" id ="val" value="{{result_achat.dateValidation | join ('') | date("Y/m/d")}}" disabled></div>
+    <div class="input-grp">
+    <label for="typ">Type de marché</label>
+    <input type="text" id ="typ" value="{% if result_achat.typeMarche == 0 %}
+            MABC
+            {% else %}
+            MPPA
+        {% endif %}" disabled>
+  
+    <label for="pub">Marché avec publicité ?</label>
+    <input type="text" id ="pub" value="{% if result_achat.place == 0 %}
+            Non
+            {% else %}
+            Oui
+        {% endif %}" disabled>
+    <label for="dev">Devis</label>
+    <input type="text" id ="dev" value="{% if result_achat.devis == 0 %}
+            Prescripteur
+            {% else %}
+            GSBdD/PFAF
+        {% endif %}" disabled>    
+          <label for="tva">TVA</label>
+    <input type="text" id ="tva" value="{{result_achat.tvaIdent}}" disabled></div>
+    <div class="input-grp">
+    <label for="obj">Objet de l'achat</label>
+    <input type="text" id ="obj" value="{{result_achat.objetAchat}}" disabled>
+    <label for="obs">Observations</label>
+    <input type="text" id ="obs" value="{{result_achat.observations}}" disabled>   
+    <label for="uti">Utilisateur</label>
+    <input type="text" id ="uti" value="{{result_achat.utilisateurs}}" disabled> 
+    <div class="input-grp">
+                    <label for="val">Date de validation</label>
+                    <input size="15" type="text" id="valbox" name="val"
+                        value="{{result_achat.dateValidation | join ('') | date("Y/m/d")}}">
+                    <label for="val">Date de notification</label>
+                    <input size="15" type="text" id="notbox" name="not"
+                        value="{{result_achat.dateNotification | join ('') | date("Y/m/d")}}">
+
+                    <label for="val">Numero EJ</label>
+                    <input size="20" type="text" id="ejbox" name="ej" value="{{result_achat.numeroEj | join ('')}}"
+                        required>
+                </div>
+
+
+
+        </div>
+
+</div>
+            {{ form_start(form) }} {# Démarrez le formulaire #}
+{{ form_end(form) }} {# Terminez le formulaire #}
+{% for flash_message in app.session.flashbag.get('success') %}
+<div class="alert alert-success">
+    {{ flash_message }}
+    {% endfor %}
+</div>
+</div>
+
+{% endblock %}
