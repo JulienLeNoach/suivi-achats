@@ -81,26 +81,33 @@ class AddAchatType extends AbstractType
             ->add('code_cpv', LibelleCpv::class,[
                 'label' => "CPV",
                 'label' => false,
+                'required' => false,
+
             ])
 
             ->add('num_siret', FournisseursAutocompleteField::class,[
                 'label' => "Fournisseur",
                 'label' => false,
+                'required' => false,
+
             ])
             ->add('code_service', ServicesAutocompleteField::class,[
                 'label' => "Service",
                 'label' => false,
+                'required' => false,
             ])
 
             ->add('code_formation', FormationsAutocompleteField::class
             ,[
                 'label' => "Formation",
                 'label' => false,
+                'required' => false,
             ])
                 
             ->add('code_uo', UOAutocompleteField::class,[
                 'label' => "Unité organique",
                 'label' => false,
+                'required' => false,
             ])
                             
             ->add('tva_ident', EntityType::class,[
@@ -116,6 +123,13 @@ class AddAchatType extends AbstractType
                 'row_attr' => ['class' => 'sub-btn']
 
             ])
+            ->add('return', SubmitType::class, [
+                'label' => "Retour à la liste d'achats",
+                'attr' => [
+                    'class' => 'fr-btn search',
+                    'onclick' => '', // Appelle la fonction JavaScript goBack() lors du clic
+                ],
+            ]);
         ;
     }
 

@@ -20,8 +20,4 @@ require("./less/visu_achat.less");
 
 require("./bootstrap");
 
-require("./search_achat.js");
-
 require("./calendar.js");
-
-require("./role.js");

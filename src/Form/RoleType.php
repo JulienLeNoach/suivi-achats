@@ -19,7 +19,8 @@ class RoleType extends AbstractType
             'required' => false,
             'label' => "Nom d'utilisateur",
             'autocomplete' => true,
-        ])
+            'attr' => ['data-action' => 'change->role#getRoles']
+                    ])
         ;
     }
 

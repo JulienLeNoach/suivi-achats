@@ -22,9 +22,7 @@ import './less/visu_achat.less';
 // start the Stimulus application
 
 import './bootstrap';
-import './search_achat.js';
 import './calendar.js';
-import './role.js';
 // Registers Stimulus controllers from controllers.json and in the controllers/ directory
 
 

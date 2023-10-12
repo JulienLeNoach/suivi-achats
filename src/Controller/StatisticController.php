@@ -65,9 +65,7 @@ class StatisticController extends AbstractController
             $purchaseTotalAmountByMonth = $this->statisticService->purchaseTotalAmountByMonth($counts1,$counts2);
 
             if ($form->get('recherche')->isClicked()) {
-                // if ($form["tax"]->getData()=='ht') {
-                //     dd('test');
-                // }
+
 
                 return $this->render('statistic/index.html.twig', [
                     'form' => $form->createView(),

@@ -38,11 +38,13 @@ Saisir un achat
     {{ form_row(form.type_marche)}}
     <label for="add_achat_tva_ident">TVA</label>
     {{ form_row(form.tva_ident)}}
-    {{ form_end(form) }} </div>
+                    {{ form_row(form.Valider) }}
+                {{ form_row(form.return) }}
+    {{ form_end(form) }}
+ </div>
 </div>
+
 </div>
-{% for flash_message in app.session.flashbag.get('success') %}
-<div class="alert alert-success">
-    {{ flash_message }}
-    {% endfor %}
+
+
     {% endblock %}

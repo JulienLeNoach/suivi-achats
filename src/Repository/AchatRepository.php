@@ -2,11 +2,17 @@
 
 namespace App\Repository;
 
+use DateTime;
 use App\Entity\Achat;
+use App\Factory\AchatFactory;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
@@ -20,11 +26,16 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 class AchatRepository extends ServiceEntityRepository
 {
     private $security;
+    private $achatFactory;
+    private $entityManager;
 
-    public function __construct(ManagerRegistry $registry,Security $security)
+    public function __construct(ManagerRegistry $registry,Security $security,AchatFactory $achatFactory,EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Achat::class);
         $this->security = $security;
+        $this->achatFactory = $achatFactory;
+        $this->entityManager = $entityManager;
+
 
     }
 
@@ -193,7 +204,66 @@ class AchatRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function valid(Request $request,$id)
+    {
+        
+        $val = $request->request->get('val');
+        $not = $request->request->get('not');
+        $ej = $request->request->get('ej');
+        $queryBuilder = $this->createQueryBuilder('u');
+        $query = $queryBuilder->update(Achat::class, 'u')
+            ->set('u.etat_achat', ':etat_achat')
+            ->set('u.date_validation', ':date_validation')
+            ->set('u.date_notification', ':date_notification')
+            ->set('u.numero_ej', ':numero_ej')
+            ->where('u.id = :id')
+            ->setParameter('etat_achat', 2)
+            ->setParameter('date_validation', $val)
+            ->setParameter('date_notification', $not)
+            ->setParameter('numero_ej', $ej)
+            ->setParameter('id', $id)
+            ->getQuery();
+        $result = $query->execute();
+    }
 
+    public function add($achat)
+    {
+        $user = $this->security->getUser();    
+            $date = new DateTime('now', new \DateTimeZone('Europe/Paris'));
+            $achat->setUtilisateurs($user);
+            $achat->setDateSaisie($date);
+            $achat->setEtatAchat(0);
+            $this->entityManager->persist($achat);
+            $this->entityManager->flush();
+
+        
+    }
+    public function cancel($id)
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $query = $queryBuilder->update(Achat::class, 'u')
+            ->set('u.etat_achat', ':etat_achat')
+            ->where('u.id = :id')
+            ->setParameter('etat_achat', 1)
+            ->setParameter('id', $id)
+            ->getQuery();
+        $result = $query->execute();
+
+        
+    }
+    public function reint($id)
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $query = $queryBuilder->update(Achat::class, 'u')
+            ->set('u.etat_achat', ':etat_achat')
+            ->where('u.id = :id')
+            ->setParameter('etat_achat', 0)
+            ->setParameter('id', $id)
+            ->getQuery();
+        $result = $query->execute();
+
+        
+    }
     // Find/search articles by title/content
     public function findArticlesByName(string $query)
     {

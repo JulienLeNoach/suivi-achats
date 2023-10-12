@@ -4,7 +4,9 @@
 
     {% block body %}
     <h2 class="title-page">Gestion des droits d'accès</h2>
+
     {{ form_start(form)}}
+        <div data-controller="role">
     {{ form_row(form.nom_connexion) }}
     {{ form_end(form) }}
     <div class="table-container">
@@ -115,7 +117,7 @@
         </tbody>
     </table>
     </div>
-    <button id="submitChangesBtn">Sauvegarder les changements</button>
+    <button id="submitChangesBtn" data-action="click->role#saveRoles">Sauvegarder les changements</button>
     <div id="role"></div>
-        
+        </div>
     {% endblock %}

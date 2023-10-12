@@ -35,14 +35,22 @@ class RoleController extends AbstractController
     {
         $form = $this->createForm(RoleType::class);
         $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $utilisateur = $form->getData();
-            $this->entityManager->persist($utilisateur);
-            $this->entityManager->flush();
-
-            return new Response('Utilisateur enregistré avec succès.', Response::HTTP_OK);
-        }
+        // if ($form->isSubmitted() && $form->isValid()) {
+        //     $formData = $form->getData();
+        //     dd($formData);
+        //     $userId = $formData->getId(); // Remplacez cela par la manière dont vous obtenez l'ID de l'utilisateur
+    
+        //     // Chargez l'utilisateur existant depuis la base de données
+        //     $utilisateur = $this->entityManager->getRepository(Utilisateurs::class)->find($userId);
+    
+        //     // Mettez à jour les propriétés de l'utilisateur existant avec les données du formulaire
+        //     $utilisateur->setNomConnexion($formData->getNomConnexion());
+        //     // Copiez d'autres propriétés de formulaire dans l'utilisateur existant
+    
+        //     $this->entityManager->flush();
+    
+        //     return new Response('Utilisateur mis à jour avec succès.', Response::HTTP_OK);
+        // }
         return $this->render('role/index.html.twig', [
             'form' => $form->createView(),
         ]);

@@ -5,6 +5,7 @@ export default class extends Controller {
     connect() {
         this.attachEventListeners();
     }
+    
     attachEventListeners() {
         var rows = document.querySelectorAll('.clickable-row');
         var btnElements = document.querySelectorAll('#btn');

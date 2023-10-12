@@ -6,7 +6,9 @@ use Dompdf\Dompdf;
 use App\Entity\Achat;
 use App\Form\AchatType;
 use App\Form\ValidType;
+use App\Form\AddAchatType;
 use App\Form\ImprimerType;
+use App\Factory\AchatFactory;
 use App\Form\AchatSearchType;
 use App\Service\StatisticService;
 use App\Repository\AchatRepository;
@@ -28,11 +30,14 @@ class SearchController extends AbstractController
     private $entityManager;
     private $pagination;
     private $statisticService;
+    private $achatFactory;
 
-    public function __construct(EntityManagerInterface $entityManager,StatisticService $statisticService)
+    public function __construct(EntityManagerInterface $entityManager,StatisticService $statisticService,AchatFactory $achatFactory)
     {
         $this->entityManager = $entityManager;
         $this->statisticService = $statisticService;
+        $this->achatFactory = $achatFactory;
+
     }
 
     // Cette fonction gère une requête de recherche avec un formulaire.
@@ -63,17 +68,6 @@ class SearchController extends AbstractController
             $session->set('current_url', $currentUrl);
         }
 
-            // if ($request->isXmlHttpRequest()) {
-
-            //     $partialView = $this->renderView('search/partial_results.html.twig', [
-            //         'pagination' => $pagination,
-            //     ]);
-        
-            //     $responseData = ['html' => $partialView];
-
-            //     return new JsonResponse($responseData);
-            // }
-
 
         return $this->render('search/index.html.twig', [
             'form' => $form->createView(),
@@ -87,9 +81,6 @@ class SearchController extends AbstractController
 public function show(Request $request,$id,SessionInterface $session): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-    if (!$result_achat) {
-        $this->redirectToRoute('app_search');
-    }
 
     $form = $this->createForm(ImprimerType::class, null, []);
 
@@ -107,11 +98,9 @@ public function show(Request $request,$id,SessionInterface $session): Response
         }
         if ($form->get('return')->isClicked()) {
             $currentUrl = $session->get('current_url');
-                // dd($currentUrl);
-            // if ($currentUrl) {
+
                 return $this->redirect($currentUrl);
         
-            // }
     }
 }
     return $this->render('search/result_achat.html.twig', [
@@ -120,14 +109,41 @@ public function show(Request $request,$id,SessionInterface $session): Response
 
     ]);
 }
+#[Route('/ajout_achat', name: 'ajout_achat')]
+public function add(Request $request,SessionInterface $session): Response
+{
+    
+    $achat = $this->achatFactory->create();
+    $form = $this->createForm(AddAchatType::class, $achat);
+    $form->handleRequest($request);
+    $currentUrl = $session->get('current_url');
 
+
+
+    if ($form->isSubmitted() && $form->isValid()) {
+
+        if ($form->get('Valider')->isClicked()) {
+
+        $query = $this->entityManager->getRepository(Achat::class)->add($achat);
+        $this->addFlash('success', 'Nouvel achat n° ' . $achat->getId() . " sauvegardé");
+        return $this->redirect($currentUrl);
+
+
+    }if ($form->get('return')->isClicked()) {
+
+                return $this->redirect($currentUrl);
+        
+    }
+}
+    return $this->render('achat/addAchat.html.twig', [
+        'form' => $form->createView(),
+
+    ]);
+}
 #[Route('/valid_achat/{id}', name: 'valid_achat')]
 public function valid(Request $request,$id,SessionInterface $session): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-    if (!$result_achat) {
-        $this->redirectToRoute('app_search');
-    }
 
     $form = $this->createForm(ValidType::class, null, []);
 
@@ -136,32 +152,16 @@ public function valid(Request $request,$id,SessionInterface $session): Response
     if ($form->isSubmitted() && $form->isValid()) {
 
         if ($form->get('Valider')->isClicked()) {
-        $val = $request->request->get('val');
-        $not = $request->request->get('not');
-        $ej = $request->request->get('ej');
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-        $query = $queryBuilder->update(Achat::class, 'u')
-            ->set('u.etat_achat', ':etat_achat')
-            ->set('u.date_validation', ':date_validation')
-            ->set('u.date_notification', ':date_notification')
-            ->set('u.numero_ej', ':numero_ej')
-            ->where('u.id = :id')
-            ->setParameter('etat_achat', 2)
-            ->setParameter('date_validation', $val)
-            ->setParameter('date_notification', $not)
-            ->setParameter('numero_ej', $ej)
-            ->setParameter('id', $id)
-            ->getQuery();
-        $result = $query->execute();
+
+        $query = $this->entityManager->getRepository(Achat::class)->valid($request, $id);
         $this->addFlash('success', "L'achat n° $id est validé");
+
         return $this->redirectToRoute('valid_achat', ['id' => $id]);
         }if ($form->get('return')->isClicked()) {
             $currentUrl = $session->get('current_url');
-                // dd($currentUrl);
-            // if ($currentUrl) {
+
                 return $this->redirect($currentUrl);
         
-            // }
     }
 }
     return $this->render('achat/valid_achat.html.twig', [
@@ -175,15 +175,8 @@ public function valid(Request $request,$id,SessionInterface $session): Response
 public function cancel($id, Request $request,SessionInterface $session): Response
 {
     $currentUrl = $session->get('current_url');
+    $query = $this->entityManager->getRepository(Achat::class)->cancel($id);
 
-    $queryBuilder = $this->entityManager->createQueryBuilder();
-    $query = $queryBuilder->update(Achat::class, 'u')
-        ->set('u.etat_achat', ':etat_achat')
-        ->where('u.id = :id')
-        ->setParameter('etat_achat', 1)
-        ->setParameter('id', $id)
-        ->getQuery();
-    $result = $query->execute();
     $this->addFlash('success', 'Achat n° ' . $id . "annulé");
 
     return $this->redirect($currentUrl);
@@ -193,15 +186,9 @@ public function cancel($id, Request $request,SessionInterface $session): Respons
 public function reint($id, Request $request,SessionInterface $session): Response
 {
     $currentUrl = $session->get('current_url');
-    $queryBuilder = $this->entityManager->createQueryBuilder();
-            $query = $queryBuilder->update(Achat::class, 'u')
-                ->set('u.etat_achat', ':etat_achat')
-                ->where('u.id = :id')
-                ->setParameter('etat_achat', 0)
-                ->setParameter('id', $id)
-                ->getQuery();
-            $result = $query->execute();
-            $this->addFlash('success', 'Achat n° ' . $id . "réintégré");
+    $query = $this->entityManager->getRepository(Achat::class)->reint($id);
+
+            $this->addFlash('success', 'Achat n° ' . $id . " réintégré");
 
 
     return $this->redirect($currentUrl);
@@ -222,11 +209,10 @@ public function edit(Request $request, $id, Achat $achat,  AchatRepository $acha
 
                 return $this->redirect($currentUrl);
         
-            // }
     }
         $achatRepository->edit($achat, true);
 
-        $this->addFlash('success', 'Achat n° ' . $id . "modifié");
+        $this->addFlash('success', 'Achat n° ' . $id . " modifié");
         return $this->redirect($currentUrl);
     }
     return $this->renderForm('achat/edit_achat_id.html.twig', [
