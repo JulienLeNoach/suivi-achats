@@ -20,19 +20,19 @@ class AddAchatType extends AbstractType
         $builder
 
             ->add('date_sillage',DateType::class, [
-                'required' => false,
+                'required' => true,
                 'widget' => 'single_text',
                 'label' => false,
                         
             ])
             ->add('date_commande_chorus',DateType::class, [
-                'required' => false,
+                'required' => true,
                 'label' => false,
                 'widget' => 'single_text',
 
             ])
             ->add('objet_achat', TextType::class, [
-                'required' => false,
+                'required' => true,
                 'label' => false,
             ])
             ->add('type_marche', ChoiceType::class, [
@@ -40,14 +40,13 @@ class AddAchatType extends AbstractType
                     'MABC' => '0',
                     'MPPA' => '1'
                 ],
-                'required' => false,
                 'placeholder' => 'Tous',
                 'expanded' => true,
                 'label' => "Type de marché",
                 'row_attr' => ['class' => 'radio-search']
             ])
             ->add('montant_achat', TextType::class, [
-                'required' => false,
+                'required' => true,
                 'label' => false,
             ])
             ->add('observations', TextType::class, [
@@ -60,7 +59,6 @@ class AddAchatType extends AbstractType
                     'Non' => '0',
                     'Oui' => '1'
                 ],
-                'required' => false,
                 'placeholder' => 'Tous',
                 'expanded' => true,
                 'label' => "Marché avec publicité ?",
@@ -71,7 +69,6 @@ class AddAchatType extends AbstractType
                     'Prescripteur' => '0',
                     'GSBdD/PFAF' => '1'
                 ],
-                'required' => false,
                 'placeholder' => 'Tous',
                 'expanded' => true,
                 'label' => "Devis",
@@ -81,39 +78,40 @@ class AddAchatType extends AbstractType
             ->add('code_cpv', LibelleCpv::class,[
                 'label' => "CPV",
                 'label' => false,
-                'required' => false,
+                'required' => true,
 
             ])
 
             ->add('num_siret', FournisseursAutocompleteField::class,[
                 'label' => "Fournisseur",
                 'label' => false,
-                'required' => false,
+                'required' => true,
 
             ])
             ->add('code_service', ServicesAutocompleteField::class,[
                 'label' => "Service",
                 'label' => false,
-                'required' => false,
+                'required' => true,
             ])
 
             ->add('code_formation', FormationsAutocompleteField::class
             ,[
                 'label' => "Formation",
                 'label' => false,
-                'required' => false,
+                'required' => true,
             ])
                 
             ->add('code_uo', UOAutocompleteField::class,[
                 'label' => "Unité organique",
                 'label' => false,
-                'required' => false,
+                'required' => true,
             ])
                             
             ->add('tva_ident', EntityType::class,[
                 'class' => TVA::class,
                 'label' => false,
                 'autocomplete' => true,
+                'required' => true,
 
             ])
             ->add('Valider', SubmitType::class, [

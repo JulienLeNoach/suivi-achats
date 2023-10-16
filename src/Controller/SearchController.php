@@ -126,7 +126,7 @@ public function add(Request $request,SessionInterface $session): Response
 
         $query = $this->entityManager->getRepository(Achat::class)->add($achat);
         $this->addFlash('success', 'Nouvel achat n° ' . $achat->getId() . " sauvegardé");
-        return $this->redirect($currentUrl);
+        return $this->redirect("/search");
 
 
     }if ($form->get('return')->isClicked()) {

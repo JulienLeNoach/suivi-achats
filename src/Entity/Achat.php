@@ -8,7 +8,8 @@ use App\Repository\AchatRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-    use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AchatRepository::class)]
 #[ApiResource]
@@ -25,7 +26,10 @@ class Achat
     #[Groups(['achat:list', 'achat:item'])]
     private ?\DateTime $date_saisie = null;
 
-    #[ORM\Column(type: Types::BIGINT)]
+/**
+ * @ORM\Column(type="string", length=6000)
+ */
+    #[ORM\Column(length: 6000)]
     #[Groups(['achat:list', 'achat:item'])]
     private ?string $numero_achat = null;
 
@@ -58,10 +62,27 @@ class Achat
     #[Groups(['achat:list', 'achat:item'])]
     private ?string $date_annulation = null;
 
+
+      /**
+     * @ORM\Column(length=255, nullable=true)
+     * @Groups({"achat:list", "achat:item"})
+     * @Assert\Regex(
+     *     pattern="/^[0-9]+$/",
+     *     message="Le champ doit contenir uniquement des chiffres."
+     * )
+     */
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['achat:list', 'achat:item'])]
     private ?string $numero_ej = null;
 
+    /**
+     * @ORM\Column(length=255, nullable=true)
+     * @Groups({"achat:list", "achat:item"})
+     * @Assert\Regex(
+     *     pattern="/^[A-Za-z0-9\s\-]+$/",
+     *     message="Le titre doit contenir uniquement des caractères alphanumériques, espaces et tirets."
+     * )
+     */
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['achat:list', 'achat:item'])]
     private ?string $objet_achat = null;
@@ -70,10 +91,28 @@ class Achat
     #[Groups(['achat:list', 'achat:item'])]
     private ?string $type_marche = null;
 
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups({"achat:list", "achat:item"})
+     * @Assert\Regex(
+     *     pattern="/^[0-9]+$/",
+     *     message="Le champ doit contenir uniquement des chiffres."
+     * )
+     */
     #[ORM\Column]
     #[Groups(['achat:list', 'achat:item'])]
     private ?float $montant_achat = null;
 
+
+        /**
+     * @ORM\Column(length=255, nullable=true)
+     * @Groups({"achat:list", "achat:item"})
+     * @Assert\Regex(
+     *     pattern="/^[A-Za-z0-9\s\-]+$/",
+     *     message="Le champ doit contenir uniquement des caractères alphanumériques, espaces et tirets."
+     * )
+     */
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['achat:list', 'achat:item'])]
     private ?string $observations = null;
