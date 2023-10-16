@@ -3,6 +3,7 @@
 use Dompdf\Dompdf;
 use App\Repository\AchatRepository;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
@@ -204,6 +205,7 @@ class StatisticService  extends AbstractController
         $sheet->setCellValueByColumnAndRow($col, 2, 'MABC');
         $sheet->setCellValueByColumnAndRow($col, 3, 'MPPA');
         $sheet->setCellValueByColumnAndRow($col, 4, 'TOTAL');
+        $sheet->setCellValueByColumnAndRow(14, 1, 'Total');
 
         $col++;
         foreach ($counts1 as $month => $rowData) {
@@ -235,6 +237,7 @@ class StatisticService  extends AbstractController
         $sheet->setCellValueByColumnAndRow($col2, 7, 'MABC');
         $sheet->setCellValueByColumnAndRow($col2, 8, 'MPPA');
         $sheet->setCellValueByColumnAndRow($col2, 9, 'TOTAL');
+        $sheet->setCellValueByColumnAndRow(14, 6, 'Total');
 
         $col2++;
 
@@ -260,8 +263,15 @@ class StatisticService  extends AbstractController
         $sheet->setCellValueByColumnAndRow($col, 8, $sumFormula);
         $sumFormula = "=SUM(B9:M9)";
         $sheet->setCellValueByColumnAndRow($col, 9, $sumFormula);
+        $writer = new Xlsx($spreadsheet);
 
-        return $spreadsheet; 
+        $fileName = 'activite_annuelle.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $fileName . '"');
+        header('Cache-Control: max-age=0');
+        ob_end_clean();
+        $writer->save('php://output');
+        exit();
     }
 
     public function generatePDF($html): Response

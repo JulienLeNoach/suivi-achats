@@ -21,6 +21,7 @@ use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Achat; // Make sure this use statement is correct
+use App\Service\CalendarService;
 
 //La méthode showStat de la classe, qui est associée à la route '/statistic',
 //est la fonction principale pour afficher les statistiques.
@@ -99,16 +100,8 @@ class StatisticController extends AbstractController
 
              
             } elseif ($form->get('excel')->isClicked()) {
-                $spreadsheet = $this->statisticService->generateExcel($counts1, $counts2);
-                $writer = new Xlsx($spreadsheet);
+                return $this->statisticService->generateExcel($counts1, $counts2);
 
-                $fileName = 'activite_annuelle.xlsx';
-                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                header('Content-Disposition: attachment;filename="' . $fileName . '"');
-                header('Cache-Control: max-age=0');
-                ob_end_clean();
-                $writer->save('php://output');
-                exit();
             }
 
             

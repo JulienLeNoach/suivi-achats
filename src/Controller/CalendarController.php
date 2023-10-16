@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Calendar;
 use App\Form\CalendarType;
 use App\Factory\CalendarFactory;
+use App\Service\CalendarService;
 use App\Repository\CalendarRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +33,7 @@ class CalendarController extends AbstractController
     //  l'événement et redirige l'utilisateur vers la page "/calendar". Enfin, elle
     //  renvoie une vue Twig avec les événements encodés en JSON, le calendrier et le formulaire de création d'événement.
     #[Route('/calendar', name: 'app_calendar')]
-    public function index(EntityManagerInterface $entityManager, CalendarRepository $calendarRepository,Request $request,Security $security): Response
+    public function index(EntityManagerInterface $entityManager, CalendarRepository $calendarRepository,Request $request,Security $security,CalendarService $calendarService): Response
     {
         $user = $security->getUser();
         // Récupération des événements de la table "Calendar"
@@ -40,15 +41,8 @@ class CalendarController extends AbstractController
         $this->entityManager->getRepository(Calendar::class)
             ->findByExampleField($user);
         // Transformation des événements pour les adapter à FullCalendar
-        $events = array_map(function (Calendar $calendarEvent) {
-            return [
-                'id' => $calendarEvent->getId(),
-                'user_id' => $calendarEvent->getUserId(),
-                'start' => $calendarEvent->getStart()->format('Y-m-d\TH:i:s'),
-                'backgroundColor' => $calendarEvent->getBackgroundColor(),
+        $events = $calendarService->formatEventsForFullCalendar($calendarEvents);
 
-            ];
-        }, $calendarEvents);
         $calendar = $this->calendarFactory->create();
         $form = $this->createForm(CalendarType::class, $calendar, [
          ]);

@@ -19,5 +19,3 @@ require("./less/stat.less");
 require("./less/visu_achat.less");
 
 require("./bootstrap");
-
-require("./calendar.js");
