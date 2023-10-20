@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Formations;
 use App\Repository\FormationsRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\Autocomplete\Form\AsEntityAutocompleteField;
 use Symfony\UX\Autocomplete\Form\ParentEntityAutocompleteType;
@@ -12,14 +13,23 @@ use Symfony\UX\Autocomplete\Form\ParentEntityAutocompleteType;
 #[AsEntityAutocompleteField]
 class FormationsAutocompleteField extends AbstractType
 {
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'placeholder' => 'Sélectionnez une formation', 
             'class' => Formations::class,
             //'choice_label' => 'name',
 
             'query_builder' => function(FormationsRepository $formationsRepository) {
-                return $formationsRepository->createQueryBuilder('formations');
+                $user = $this->security->getUser();
+                return $formationsRepository->createQueryBuilder('u')->andWhere('u.code_service = :val')
+                ->setParameter('val', $user->getCodeService()->getId());
             },
             //'security' => 'ROLE_SOMETHING',
         ]);

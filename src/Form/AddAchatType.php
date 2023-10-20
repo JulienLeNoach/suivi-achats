@@ -2,11 +2,19 @@
 
 namespace App\Form;
 
-use App\Entity\Achat;
+use App\Entity\CPV;
 use App\Entity\TVA;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Achat;
+use App\Entity\Services;
+use App\Form\LibelleCpv;
+use App\Entity\Formations;
+use App\Entity\Utilisateurs;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use App\Form\FournisseursAutocompleteField;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -15,6 +23,13 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class AddAchatType extends AbstractType
 {
+
+    private $security;
+
+public function __construct(Security $security)
+{
+    $this->security = $security;
+}
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -76,9 +91,9 @@ class AddAchatType extends AbstractType
             ])
             
             ->add('code_cpv', LibelleCpv::class,[
-                'label' => "CPV",
-                'label' => false,
                 'required' => true,
+                'label' => false,
+   
 
             ])
 
@@ -88,17 +103,29 @@ class AddAchatType extends AbstractType
                 'required' => true,
 
             ])
-            ->add('code_service', ServicesAutocompleteField::class,[
-                'label' => "Service",
-                'label' => false,
-                'required' => true,
-            ])
+            ->add('code_service', EntityType::class, ['label' => "Code service",
+            'label' => false,
+
+            'class' => Services::class,
+            'query_builder' => function (EntityRepository $er){
+                    $user = $this->security->getUser();
+                    return $er->createQueryBuilder('u')
+                    ->andWhere('u.code_service = :val')
+                    ->setParameter('val', $user->getCodeService()->getId());
+                },])
 
             ->add('code_formation', FormationsAutocompleteField::class
             ,[
-                'label' => "Formation",
-                'label' => false,
+                // 'placeholder' => 'Sélectionnez une formation', // Ajoutez cette ligne
                 'required' => true,
+                'label' => false,
+                // 'query_builder' => function (EntityRepository $er){
+                //     $user = $this->security->getUser();
+                //     return $er->createQueryBuilder('u')
+                //     ->andWhere('u.code_service = :val')
+                //     ->setParameter('val', $user->getCodeService()->getId());
+                // },
+
             ])
                 
             ->add('code_uo', UOAutocompleteField::class,[

@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\CPV;
 use App\Repository\CPVRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\Autocomplete\Form\AsEntityAutocompleteField;
 use Symfony\UX\Autocomplete\Form\ParentEntityAutocompleteType;
@@ -12,14 +13,23 @@ use Symfony\UX\Autocomplete\Form\ParentEntityAutocompleteType;
 #[AsEntityAutocompleteField]
 class LibelleCpv extends AbstractType
 {
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'placeholder' => 'Sélectionnez un CPV', 
             'class' => CPV::class,
-            'choice_label' => 'libelle_cpv',
 
             'query_builder' => function(CPVRepository $cPVRepository) {
-                return $cPVRepository->createQueryBuilder('cPV');
+                $user = $this->security->getUser();
+
+                return $cPVRepository->createQueryBuilder('u')->andWhere('u.code_service = :val')
+                ->setParameter('val', $user->getCodeService()->getId());
             },
             //'security' => 'ROLE_SOMETHING',
         ]);

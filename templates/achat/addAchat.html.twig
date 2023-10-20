@@ -21,6 +21,8 @@ Saisir un achat
     {{ form_row(form.montant_achat)}}
 </div>
 <div class="input-grp">
+    <label for="achat_search_service_autocomplete">Service</label>
+    {{ form_row(form.code_service)}}
     <label for="add_achat_num_siret_autocomplete">N° SIRET</label>
     {{ form_row(form.num_siret) }}
     <label for="add_achat_code_uo_autocomplete">Unité organique</label>
@@ -29,8 +31,6 @@ Saisir un achat
     {{ form_row(form.code_cpv) }}
     <label for="add_achat_code_formation_autocomplete">Formation</label>
     {{ form_row(form.code_formation) }}
-    <label for="achat_search_service_autocomplete">Service</label>
-    {{ form_row(form.code_service)}}
 </div>
 <div class="input-grp">
     {{ form_row(form.place) }}
