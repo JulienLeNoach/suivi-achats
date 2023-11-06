@@ -4,6 +4,7 @@ namespace App\Controller\Statistic;
 
 use App\Form\StatisticType;
 use App\Repository\AchatRepository;
+use App\Service\StatisticDelayService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,11 +14,13 @@ class StatisticDelayController extends AbstractController
 {
 
     private $achatRepository;
+    private $statisticDelayService;
 
-    public function __construct(AchatRepository $achatRepository)
+    public function __construct(AchatRepository $achatRepository, StatisticDelayService $statisticDelayService)
     {
 
         $this->achatRepository = $achatRepository;
+        $this->statisticDelayService = $statisticDelayService;
 
     }
 
@@ -31,7 +34,8 @@ class StatisticDelayController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
         if ($form->get('recherche')->isClicked()) {
         // Récupérez les données achats
-        $achats = $this->achatRepository->yearDelayAchat($form);
+        $achats_delay = $this->achatRepository->yearDelayAchat($form);
+        $achats = $this->statisticDelayService->totalDelayPerMonth($achats_delay);
         return $this->render('statistic_delay/index.html.twig', [
             'form' => $form->createView(),
             'achats' => $achats,

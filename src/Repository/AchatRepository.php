@@ -212,7 +212,6 @@ class AchatRepository extends ServiceEntityRepository
             $formationId = $formation->getId();
         }
         $conn = $this->getEntityManager()->getConnection();
-        // dd($cpv);
         $sql = "
         SELECT
         source,
@@ -327,42 +326,7 @@ class AchatRepository extends ServiceEntityRepository
   
             $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
             $achats=$resultSet->fetchAllAssociative();
-            $transmission = [];
-            $notification = [];
-        
-            for ($month = 1; $month <= 12; $month++) {
-                $sumTransmission = 0;
-                $sumNotification = 0;
-        
-                foreach ($achats as $achat) {
-                    if ($achat['source'] === 'ANT GSBDD' || $achat['source'] === 'BUDGET') {
-                        $sumTransmission += $achat['Mois_' . $month];
-                    } elseif ($achat['source'] === 'APPRO' || $achat['source'] === 'FIN') {
-                        $sumNotification += $achat['Mois_' . $month];
-                    }
-                }
-        
-                $transmission['Mois_' . $month] = $sumTransmission;
-                $notification['Mois_' . $month] = $sumNotification;
-            }
-        
-            $transmission['source'] = 'Transmission';
-            $notification['source'] = 'Notification';
-        
-            // Insérez "Transmission" en 3ème position et "Notification" en 6ème position
-            array_splice($achats, 2, 0, [$transmission]);
-            array_splice($achats, 5, 0, [$notification]);
-        
-            // Calcul de la ligne "Délai TOTAL"
-            $delaiTotal = [];
-            $delaiTotal['source'] = 'Délai TOTAL';
-        
-            for ($month = 1; $month <= 12; $month++) {
-                $delaiTotal['Mois_' . $month] = $transmission['Mois_' . $month] + $notification['Mois_' . $month];
-            }
-        
-            // Insérez "Délai TOTAL" en 14ème position
-            array_splice($achats, 13, 0, [$delaiTotal]);
+           
 
             return $achats;
         }
@@ -445,54 +409,7 @@ class AchatRepository extends ServiceEntityRepository
 
         
     }
-    // Find/search articles by title/content
-    public function findArticlesByName(string $query)
-    {
-        $qb = $this->createQueryBuilder('p');
-        $qb
-            ->where(
-                $qb->expr()->andX(
-                    $qb->expr()->orX(
-                        $qb->expr()->like('p.objet_achat', ':query'),
-                    ),
-                    /*                     $qb->expr()->isNotNull('p.dateSaisie')
- */
-                )
-            )
-            ->setParameter('query', '%' . $query . '%');
-        return $qb
-            ->getQuery()
-            ->getResult();
-    }
 
-    public function findArticlesByTri(string $query2)
-    {
-        $qb = $this->createQueryBuilder('p');
-        $qb
-            ->where(
-                $qb->expr()->andX(
-                    $qb->expr()->orX(
-                        $qb->expr()->like('p.montant_achat', ':query'),
-                    ),
-                    /*                     $qb->expr()->isNotNull('p.dateSaisie')
- */
-                )
-            )
-            ->setParameter('query', '%' . $query2 . '%');
-        return $qb
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findAllPublishedOrderedByRecentlyActive(string $query3)
-    {
-        return $this->createQueryBuilder('a')
-            ->leftJoin('a.code_formation', 't')
-            ->andWhere('t.libelle_formation = :query3')
-            ->setParameter('query3', $query3)
-            ->getQuery()
-            ->getResult();
-    }
 
 
 

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class StatisticService  extends AbstractController
+class StatisticVolValService  extends AbstractController
 {
     private $achatRepository;
     private $projectDir;

@@ -11,7 +11,7 @@ use App\Form\AddAchatType;
 use App\Form\ImprimerType;
 use App\Factory\AchatFactory;
 use App\Form\AchatSearchType;
-use App\Service\StatisticService;
+use App\Service\StatisticVolValService;
 use App\Repository\AchatRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -33,7 +33,7 @@ class SearchController extends AbstractController
     private $statisticService;
     private $achatFactory;
 
-    public function __construct(EntityManagerInterface $entityManager,StatisticService $statisticService,AchatFactory $achatFactory)
+    public function __construct(EntityManagerInterface $entityManager,StatisticVolValService $statisticService,AchatFactory $achatFactory)
     {
         $this->entityManager = $entityManager;
         $this->statisticService = $statisticService;

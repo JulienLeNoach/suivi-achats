@@ -8,7 +8,7 @@ use App\Form\StatisticType;
 use Dompdf\Dompdf;
 use App\Form\ValidAchatType;
 use App\Repository\AchatRepository;
-use App\Service\StatisticService;
+use App\Service\StatisticVolValService;
 use Symfony\UX\Chartjs\Model\Chart;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -39,7 +39,7 @@ class StatisticVolController extends AbstractController
     private $achatRepository;
     private $projectDir;
     private $statisticService;
-    public function __construct(EntityManagerInterface $entityManager, AchatRepository $achatRepository, KernelInterface $kernel, StatisticService $statisticService)
+    public function __construct(EntityManagerInterface $entityManager, AchatRepository $achatRepository, KernelInterface $kernel, StatisticVolValService $statisticService)
     {
         $this->entityManager = $entityManager;
         $this->statisticService = $statisticService;
