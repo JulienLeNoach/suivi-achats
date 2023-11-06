@@ -21,6 +21,15 @@ class CPVRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, CPV::class);
     }
+    // public function find(int $id)
+    // {
+    //     return $this->createQueryBuilder('a')
+    //         ->leftJoin('a.code_formation', 't')
+    //         ->andWhere('t.libelle_formation = :query3')
+    //         ->setParameter('query3', $query3)
+    //         ->getQuery()
+    //         ->getResult();
+    // }
 
 
 }

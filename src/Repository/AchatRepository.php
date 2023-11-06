@@ -178,14 +178,194 @@ class AchatRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
-            
-             
-
-
         return $result;
     }
    
+    public function yearDelayAchat($form)
+    {
+        $userId = null;
+        $numSiretId = null;
+        $cpvId = null;
+        $uOId = null;
+        $formationId = null;
 
+        $date = $form["date"]->getData();
+        $user = $form["utilisateurs"]->getData();
+        $numSiret = $form["num_siret"]->getData();
+        $cpv = $form["code_cpv"]->getData();
+        $uO = $form["code_uo"]->getData();
+        $formation = $form["code_formation"]->getData();
+        if ($user) {
+            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
+            $userId = $user->getId();
+        }
+        if ($numSiret) {
+            $numSiretId = $numSiret->getId();
+        }
+        if ($cpv) {
+            $cpvId = $cpv->getId();
+        }
+        if ($uO) {
+            $uOId = $uO->getId();
+        }
+        if ($formation) {
+            $formationId = $formation->getId();
+        }
+        $conn = $this->getEntityManager()->getConnection();
+        // dd($cpv);
+        $sql = "
+        SELECT
+        source,
+        AVG(CASE WHEN MONTH(date_saisie) = 1 THEN difference END) AS Mois_1,
+        AVG(CASE WHEN MONTH(date_saisie) = 2 THEN difference END) AS Mois_2,
+        AVG(CASE WHEN MONTH(date_saisie) = 3 THEN difference END) AS Mois_3,
+        AVG(CASE WHEN MONTH(date_saisie) = 4 THEN difference END) AS Mois_4,
+        AVG(CASE WHEN MONTH(date_saisie) = 5 THEN difference END) AS Mois_5,
+        AVG(CASE WHEN MONTH(date_saisie) = 6 THEN difference END) AS Mois_6,
+        AVG(CASE WHEN MONTH(date_saisie) = 7 THEN difference END) AS Mois_7,
+        AVG(CASE WHEN MONTH(date_saisie) = 8 THEN difference END) AS Mois_8,
+        AVG(CASE WHEN MONTH(date_saisie) = 9 THEN difference END) AS Mois_9,
+        AVG(CASE WHEN MONTH(date_saisie) = 10 THEN difference END) AS Mois_10,
+        AVG(CASE WHEN MONTH(date_saisie) = 11 THEN difference END) AS Mois_11,
+        AVG(CASE WHEN MONTH(date_saisie) = 12 THEN difference END) AS Mois_12
+      FROM (
+        SELECT
+          'ANT GSBDD' AS source,
+          DATEDIFF(date_commande_chorus, date_sillage) AS difference,
+          date_saisie
+        FROM achat
+        WHERE YEAR(date_saisie) = :year
+        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+
+        UNION ALL
+      
+        SELECT
+          'BUDGET' AS source,
+          DATEDIFF(date_valid_inter, date_commande_chorus) AS difference,
+          date_saisie
+        FROM achat
+        WHERE YEAR(date_saisie) = :year
+        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+
+        UNION ALL
+      
+        SELECT
+          'APPRO' AS source,
+          DATEDIFF(date_validation, date_valid_inter) AS difference,
+          date_saisie
+        FROM achat
+        WHERE YEAR(date_saisie) = :year
+        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+
+        UNION ALL
+      
+        SELECT
+          'FIN' AS source,
+          DATEDIFF(date_notification, date_validation) AS difference,
+          date_saisie
+        FROM achat
+        WHERE YEAR(date_saisie) = :year
+        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+
+        UNION ALL
+      
+        SELECT
+          'PFAF' AS source,
+          DATEDIFF(date_notification, date_commande_chorus) AS difference,
+          date_saisie
+        FROM achat
+        WHERE YEAR(date_saisie) = :year
+        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+
+        UNION ALL
+      
+        SELECT
+          'Chorus formul.' AS source,
+          DATEDIFF(date_notification, date_sillage) AS difference,
+          date_saisie
+        FROM achat
+        WHERE YEAR(date_saisie) = :year
+        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+
+      ) AS combined_data
+      GROUP BY source
+      -- Organisez les sources dans l'ordre d'apparition
+      ORDER BY
+        source = 'ANT GSBDD' DESC,
+        source = 'BUDGET' DESC,
+        source = 'APPRO' DESC,
+        source = 'FIN' DESC,
+        source = 'PFAF' DESC,
+        source = 'Chorus formul.' DESC
+      LIMIT 0,100
+            ";
+            $stmt = $conn->prepare($sql);
+  
+            $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+            $achats=$resultSet->fetchAllAssociative();
+            $transmission = [];
+            $notification = [];
+        
+            for ($month = 1; $month <= 12; $month++) {
+                $sumTransmission = 0;
+                $sumNotification = 0;
+        
+                foreach ($achats as $achat) {
+                    if ($achat['source'] === 'ANT GSBDD' || $achat['source'] === 'BUDGET') {
+                        $sumTransmission += $achat['Mois_' . $month];
+                    } elseif ($achat['source'] === 'APPRO' || $achat['source'] === 'FIN') {
+                        $sumNotification += $achat['Mois_' . $month];
+                    }
+                }
+        
+                $transmission['Mois_' . $month] = $sumTransmission;
+                $notification['Mois_' . $month] = $sumNotification;
+            }
+        
+            $transmission['source'] = 'Transmission';
+            $notification['source'] = 'Notification';
+        
+            // Insérez "Transmission" en 3ème position et "Notification" en 6ème position
+            array_splice($achats, 2, 0, [$transmission]);
+            array_splice($achats, 5, 0, [$notification]);
+        
+            // Calcul de la ligne "Délai TOTAL"
+            $delaiTotal = [];
+            $delaiTotal['source'] = 'Délai TOTAL';
+        
+            for ($month = 1; $month <= 12; $month++) {
+                $delaiTotal['Mois_' . $month] = $transmission['Mois_' . $month] + $notification['Mois_' . $month];
+            }
+        
+            // Insérez "Délai TOTAL" en 14ème position
+            array_splice($achats, 13, 0, [$delaiTotal]);
+
+            return $achats;
+        }
 
     public function edit(Achat $achat, bool $flush = false): void
     {
@@ -204,10 +384,11 @@ class AchatRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-    public function valid(Request $request,$id)
+    public function valid( Request $request,$id)
     {
-        
+        // $val2 = $form["val"]->getData();
         $val = $request->request->get('val');
+        // dd($val);
         $not = $request->request->get('not');
         $ej = $request->request->get('ej');
         $queryBuilder = $this->createQueryBuilder('u');

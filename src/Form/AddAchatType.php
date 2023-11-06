@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\CPV;
 use App\Entity\TVA;
 use App\Entity\Achat;
+use App\Form\CPVIdType;
 use App\Entity\Services;
 use App\Form\LibelleCpv;
 use App\Entity\Formations;
@@ -46,7 +47,16 @@ public function __construct(Security $security)
                 'widget' => 'single_text',
 
             ])
+            ->add('date_valid_inter',DateType::class, [
+                'required' => true,
+                'label' => false,
+                'widget' => 'single_text',
+            ])
             ->add('objet_achat', TextType::class, [
+                'required' => true,
+                'label' => false,
+            ])
+            ->add('id_demande_achat', TextType::class, [
                 'required' => true,
                 'label' => false,
             ])
@@ -93,8 +103,7 @@ public function __construct(Security $security)
             ->add('code_cpv', LibelleCpv::class,[
                 'required' => true,
                 'label' => false,
-   
-
+                
             ])
 
             ->add('num_siret', FournisseursAutocompleteField::class,[

@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Délai activité annuelle{% endblock %}
+
+{% block body %}
+
+<h2 class="title-page">Délai activité annuelle</h2>
+
+<div class="form-container">
+  {{ form_start(form, {'attr': {'class': 'search-form'}}) }}
+  <div class="input-grp-tab">{{ form_row(form.date) }}</div>
+  <div class="input-grp-tab">{{ form_row(form.num_siret) }}
+    {{ form_row(form.utilisateurs) }}
+    {{ form_row(form.code_uo) }}</div>
+  <div class="input-grp-tab">{{ form_row(form.code_cpv) }}
+    {{ form_row(form.code_formation) }}
+    {{ form_row(form.tax) }}
+    </div>
+    <div class="btn-submit">
+    {{ form_end(form) }}</div>
+</div>
+{% if app.request.method == 'POST' %}
+
+<table border=1>
+    <thead>
+        <th>Délai</th>
+        <th>Janvier</th>
+        <th>Février</th>
+        <th>Mars</th>
+        <th>Avril</th>
+        <th>Mai</th>
+        <th>Juin</th>
+        <th>Juillet</th>
+        <th>Aout</th>
+        <th>Septembre</th>
+        <th>Octobre</th>
+        <th>Novembre</th>
+        <th>Decembre</th>
+        <th>Total</th>
+
+        {% for achat in achats %}
+        <tr>
+            <th>{{ achat.source }}</th>
+            <td>{{ achat.Mois_1 }}</td>
+            <td>{{ achat.Mois_2 }}</td>
+            <td>{{ achat.Mois_3 }}</td>
+            <td>{{ achat.Mois_4 }}</td>
+            <td>{{ achat.Mois_5 }}</td>
+            <td>{{ achat.Mois_6 }}</td>
+            <td>{{ achat.Mois_7 }}</td>
+            <td>{{ achat.Mois_8 }}</td>
+            <td>{{ achat.Mois_9 }}</td>
+            <td>{{ achat.Mois_10 }}</td>
+            <td>{{ achat.Mois_11 }}</td>
+            <td>{{ achat.Mois_12 }}</td>
+            <td>{{ (achat.Mois_1 + achat.Mois_2 + achat.Mois_3 + achat.Mois_4 + achat.Mois_5 + achat.Mois_6 + achat.Mois_7 + achat.Mois_8 + achat.Mois_9 + achat.Mois_10 + achat.Mois_11 + achat.Mois_12) / 12 }}
+            </td>
+        </tr>
+        {% endfor %}
+
+
+
+    </thead>
+    <tbody>
+
+
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

@@ -136,7 +136,7 @@ class CPV
 
     public function __toString()
     {
-        return $this->libelle_cpv.' '. $this->mt_cpv.'€' ;
+        return $this->code_cpv.'-'. $this->libelle_cpv ;
     } 
 
 

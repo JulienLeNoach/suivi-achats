@@ -4,6 +4,7 @@
             <div data-controller="search-achat">
     {% for achat in pagination %}
         <tr class="clickable-row" data-id="{{ achat.id }}" data-action="click->search-achat#attachEventListeners">
+            <td>{{achat.numeroAchat}}</td>
             <td>{{achat.dateSaisie|date('d-m-Y')}}</td>
             <td>{{ achat.utilisateurs }}</td>
             <td>{{ achat.codeFormation }}</td>

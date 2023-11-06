@@ -26,7 +26,9 @@ class StatisticType extends AbstractType
         ->add('date', TextType::class, [
             'required' => false,
             'label' => "Année",
-            'mapped' => false
+            'mapped' => false,
+            'empty_data'  => date('Y'),
+
 
         ])
         ->add('num_siret', FournisseursAutocompleteField::class, [  

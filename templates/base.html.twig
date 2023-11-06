@@ -110,10 +110,10 @@
                     <button class="dropbtn">Statistiques</button>
                     <div class="dropdown-content">
                         {% if is_granted ('ROLE_OPT_ACTIV_ANNUEL') %}
-                        <a href="{{path('app_statistic')}}">Activité annuelle en volume et valeur</a>
+                        <a href="{{path('app_statistic_vol')}}">Activité annuelle en volume et valeur</a>
                         {% endif %}
                         {% if is_granted ('ROLE_OPT_DELAI_ANNUEL') %}
-                        <a href="#">Délai activité annuelle</a>
+                        <a href="{{path('app_statistic_delay')}}">Délai activité annuelle</a>
                         {% endif %}
                         {% if is_granted ('ROLE_OPT_STAT_MPPA_MABC') %}
                         <a href="#">Statistiques MPPA/MABC</a>

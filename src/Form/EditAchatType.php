@@ -18,7 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
-class AchatType extends AbstractType
+class EditAchatType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

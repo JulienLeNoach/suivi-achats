@@ -11,10 +11,14 @@ Saisir un achat
 <div class="input-grp">
     <label for="add_achat_objet_achat">Objet de l'achat</label>
     {{ form_row(form.objet_achat) }}
+        <label for="add_achat_id_demande_achat">Identifiant de la demande d'achat</label>
+    {{ form_row(form.id_demande_achat) }}
     <label for="add_achat_date_sillage">Date enregistrement Sillage</label>
     {{ form_row(form.date_sillage) }}
     <label for="add_achat_date_commande_chorus">Date de commande de CF</label>
     {{ form_row(form.date_commande_chorus) }}
+    <label for="add_achat_date_valid_inter">Date de validation par le RUO</label>
+    {{ form_row(form.date_valid_inter) }}
     <label for="add_achat_observations">Observations</label>
     {{ form_row(form.observations) }}
     <label for="add_achat_montant_achat">Montant de l'achat</label>
@@ -29,6 +33,8 @@ Saisir un achat
     {{ form_row(form.code_uo) }}
     <label for="add_achat_code_cpv_autocomplete">CPV</label>
     {{ form_row(form.code_cpv) }}
+        {# <label for="add_achat_code_cpv_autocomplete">CPV</label>
+    {{ form_row(form.code_cpv_id) }} #}
     <label for="add_achat_code_formation_autocomplete">Formation</label>
     {{ form_row(form.code_formation) }}
 </div>

@@ -48,7 +48,7 @@ class Achat
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['achat:list', 'achat:item'])]
-    private ?string $date_valid_inter = null;
+    private ?\DateTime $date_valid_inter = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['achat:list', 'achat:item'])]
@@ -153,6 +153,12 @@ class Achat
 
     
 
+    public function setNumeroAchat()
+    {
+        // Générez le numéro d'achat basé sur l'année en cours et l'ID
+        $anneeEnCours = date('Y');
+        $this->numero_achat = $anneeEnCours . '-' . $this->id;
+    }
 
     public function getId(): ?int
     {
@@ -176,12 +182,6 @@ class Achat
         return $this->numero_achat;
     }
 
-    public function setNumeroAchat(string $numero_achat): self
-    {
-        $this->numero_achat = $numero_achat;
-
-        return $this;
-    }
 
     public function getIdDemandeAchat(): ?float
     {
@@ -219,12 +219,12 @@ class Achat
         return $this;
     }
 
-    public function getDateValidInter(): ?string
+    public function getDateValidInter(): ?\DateTime
     {
         return $this->date_valid_inter;
     }
 
-    public function setDateValidInter(string $date_valid_inter): self
+    public function setDateValidInter(\DateTime $date_valid_inter): self
     {
         $this->date_valid_inter = $date_valid_inter;
 

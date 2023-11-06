@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use Dompdf\Dompdf;
+use App\Entity\CPV;
 use App\Entity\Achat;
-use App\Form\AchatType;
+use App\Form\EditAchatType;
 use App\Form\ValidType;
 use App\Form\AddAchatType;
 use App\Form\ImprimerType;
@@ -144,7 +145,6 @@ public function add(Request $request,SessionInterface $session): Response
 public function valid(Request $request,$id,SessionInterface $session): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-
     $form = $this->createForm(ValidType::class, null, []);
 
     $form->handleRequest($request);
@@ -154,6 +154,11 @@ public function valid(Request $request,$id,SessionInterface $session): Response
         if ($form->get('Valider')->isClicked()) {
 
         $query = $this->entityManager->getRepository(Achat::class)->valid($request, $id);
+        $cpvSold = $this->entityManager->getRepository(CPV::class)->find($id);
+        $cpvSold->setMtCpv($cpvSold->getMtCpv() - $result_achat->getMontantAchat());
+        $result_achat->getCodeCpv()->setMtCpv($cpvSold->getMtCpv() - $result_achat->getMontantAchat());
+        $this->entityManager->flush();
+        $this->entityManager->persist($cpvSold);
         $this->addFlash('success', "L'achat n° $id est validé");
 
         return $this->redirectToRoute('valid_achat', ['id' => $id]);
@@ -199,7 +204,7 @@ public function edit(Request $request, $id, Achat $achat,  AchatRepository $acha
 {
     $currentUrl = $session->get('current_url');
 
-    $form = $this->createForm(AchatType::class, $achat);
+    $form = $this->createForm(EditAchatType::class, $achat);
 
     $form->handleRequest($request);
 
@@ -215,9 +220,11 @@ public function edit(Request $request, $id, Achat $achat,  AchatRepository $acha
         $this->addFlash('success', 'Achat n° ' . $id . " modifié");
         return $this->redirect($currentUrl);
     }
-    return $this->renderForm('achat/edit_achat_id.html.twig', [
+    return $this->render('achat/edit_achat_id.html.twig', [
         'achat' => $achat,
-        'form' => $form,
+        'form' => $form->createView(),
     ]);
+
+
 }
 }

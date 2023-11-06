@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Statistic;
 
 // ...
 
@@ -25,7 +25,7 @@ use App\Service\CalendarService;
 
 //La méthode showStat de la classe, qui est associée à la route '/statistic',
 //est la fonction principale pour afficher les statistiques.
-//D'abord, elle crée un formulaire à l'aide de la classe ValidAchatType
+//D'abord, elle crée un formulaire à l'aide de la classe ValidEditAchatTyê
 // et gère la requête HTTP entrante. Si le formulaire est soumis et validé,
 // elle récupère la somme des achats pour deux types spécifiques
 // (mpttaEtat et mabcEtat) via la méthode getCountsByDateAndType du dépôt AchatRepository.
@@ -33,7 +33,7 @@ use App\Service\CalendarService;
 
 
 
-class StatisticController extends AbstractController
+class StatisticVolController extends AbstractController
 {
     private $entityManager;
     private $achatRepository;
@@ -47,7 +47,7 @@ class StatisticController extends AbstractController
         $this->projectDir = $kernel->getProjectDir();
     }
 
-    #[Route('/statistic', name: 'app_statistic')]
+    #[Route('/statistic/vol', name: 'app_statistic_vol')]
     public function showStat(Request $request, EntityManagerInterface $entityManager, ChartBuilderInterface $chartBuilder): Response
     {
 

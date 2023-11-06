@@ -6,6 +6,8 @@ use App\Entity\CPV;
 use App\Repository\CPVRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\Autocomplete\Form\AsEntityAutocompleteField;
 use Symfony\UX\Autocomplete\Form\ParentEntityAutocompleteType;
@@ -19,6 +21,7 @@ class LibelleCpv extends AbstractType
     {
         $this->security = $security;
     }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
