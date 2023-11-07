@@ -7,21 +7,29 @@
 import { startStimulusApp } from '@symfony/stimulus-bridge';
 
 // any CSS you import will output into a single css file (app.css in this case)
+
+import '../node_modules/@gouvfr/dsfr/dist/dsfr.min.css'
 import './styles/app.css';
-import './styles/header.less';
+// import './less/header.less';
 import './less/search.less';
-import './styles/calendar.css';
-import './less/calendar.less';
-import './less/role.less';
-import './less/stat.less';
-import './less/visu_achat.less';
-// import '../node_modules/@gouvfr/dsfr/dist/dsfr.min.css'
+// import './less/calendar.less';
+// import './less/role.less';
+// import './less/stat.less';
 
 
 
 // start the Stimulus application
 
+
+// import './calendar.js'
+// import './search_achat.js'
+
+
 import './bootstrap';
+import '@symfony/ux-chartjs';
+
+import '../node_modules/@gouvfr/dsfr/dist/dsfr.module.js'
+import '../node_modules/@gouvfr/dsfr/dist/dsfr.nomodule.js'
 // Registers Stimulus controllers from controllers.json and in the controllers/ directory
 
 

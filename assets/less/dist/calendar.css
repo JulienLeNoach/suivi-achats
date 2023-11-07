@@ -1,0 +1,69 @@
+.legende-color {
+  border: solid 3px black;
+  margin-bottom: 2px;
+}
+.legende-color#l1 {
+  background-color: white;
+}
+.legende-color#l2 {
+  background-color: red;
+  color: white;
+}
+.legende-color#l3 {
+  background-color: yellow;
+}
+.legende-color#l4 {
+  background-color: blue;
+  color: white;
+}
+.legende-color#l5 {
+  background-color: green;
+  color: white;
+}
+.fc-day-fri,
+.fc-day-thu,
+.fc-day-wed,
+.fc-day-mon,
+.fc-day-tue {
+  background-color: white;
+}
+.fc-day-today {
+  border: 5px solid black!important;
+}
+#calendrier {
+  height: 600px;
+  width: 1200px;
+}
+.fc-day-sun,
+.fc-day-sat {
+  background-color: #eca5a5;
+}
+.selected {
+  background-color: grey;
+}
+select option {
+  margin: 40px;
+  /* background: rgba(0, 0, 0, 0.3); */
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+select option[value="lightgray"] {
+  background: lightgray;
+  color: black;
+}
+select option[value="red"] {
+  background: red;
+}
+select option[value="yellow"] {
+  background: yellow;
+  color: black;
+}
+select option[value="blue"] {
+  background: blue;
+}
+select option[value="green"] {
+  background: green;
+}
+.mark {
+  background-color: #cf4b32;
+}

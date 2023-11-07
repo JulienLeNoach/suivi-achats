@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-fr-scheme="system">
+<html lang="fr" data-fr-scheme="light">
 
 <head>
     <meta charset="utf-8">
@@ -10,8 +10,6 @@
     <link rel="icon" href="favicon/favicon.svg" type="image/svg+xml">
     <link rel="shortcut icon" href="favicon/favicon.ico" type="image/x-icon"><!-- 32×32 -->
     <link rel="manifest" href="favicon/manifest.webmanifest" crossorigin="use-credentials">
-        <link rel="stylesheet" href="dsfr/dsfr.min.css">
-         <link rel="stylesheet" href="utility/utility.min.css">
     <!-- Modifier les chemins relatifs des favicons en fonction de la structure du projet -->
     <!-- Dans le fichier manifest.webmanifest aussi, modifier les chemins vers les images -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -28,123 +26,147 @@
     {% block header %}
     {{ encore_entry_link_tags('app') }}
     {{ encore_entry_script_tags('app') }}
-    
-    <header>
-        <div class="headerm">
-            <a href="{{path('app_account')}}" title="Accueil - Suivi Achats">
-                <p class="title-header">
-                    SUIVI ACHATS
-                </p>
-            </a>
+
+    <header role="banner" class="fr-header">
+        <div class="fr-header__body">
+            <div class="fr-container">
+                <div class="fr-header__body-row">
+                    <div class="fr-header__brand fr-enlarge-link">
+                        <div class="fr-header__brand-top">
+                            <div class="fr-header__logo">
+                                <p class="fr-logo"> </p>
+                            </div>
+                            <div class="fr-header__navbar"> <button class="fr-btn--menu fr-btn" data-fr-opened="false"
+                                    aria-controls="modal-499" aria-haspopup="menu" id="button-500" title="Menu"> Menu
+                                </button> </div>
+                        </div>
+                        <div class="fr-header__service"> <a href="{{path('app_account')}}" title="Accueil - ">
+                                <p class="fr-header__service-title"> Suivi des achats </p>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Menu déroulant sur les 2 premiers éléments -->
+                    <nav class="fr-nav" id="navigation-773" role="navigation" aria-label="Menu principal">
+                        <ul class="fr-nav__list">
+                            <li class="fr-nav__item"> <button class="fr-nav__btn" aria-expanded="false"
+                                    aria-controls="menu-77"><a class="fr-nav__link" href="{{path('app_search')}}"
+                                        target="_self">Achat</a></button>
+                            <li class="fr-nav__item"> <button class="fr-nav__btn" aria-expanded="false"
+                                    aria-controls="menu-776">Environnement</button>
+                                <div class="fr-collapse fr-menu" id="menu-776">
+                                    <ul class="fr-menu__list">
+                                        <li>{% if is_granted ('ROLE_OPT_FOURNISSEURS') %}
+                                            <a class="fr-nav__link" href="{{ path('fournisseurs') }}"
+                                                target="_self">Gérer les fournisseurs</a>{% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_UO') %}
+                                            <a class="fr-nav__link" href="{{path('UO')}}" target="_self">Gérer les
+                                                unités organiques</a>{% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_FORMATIONS') %}
+                                            <a class="fr-nav__link" href="{{path('formations') }}" target="_self">Gérer
+                                                les formations</a>{% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_CPV') %}
+                                            <a class="fr-nav__link" href="{{path('cpv')}}" target="_self"
+                                                >Gérer les CPV</a>{% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_FOURNISSEURS') %}
+                                            <a class="fr-nav__link" href="{{path('app_calendar')}}" target="_self">Gérer
+                                                le calendrier</a>{% endif %}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="fr-nav__item"> <button class="fr-nav__btn" aria-expanded="false"
+                                    aria-controls="menu-774">Statistiques</button>
+                                <div class="fr-collapse fr-menu" id="menu-774">
+                                    <ul class="fr-menu__list">
+                                        <li>{% if is_granted ('ROLE_OPT_ACTIV_ANNUEL') %}
+                                            <a class="fr-nav__link" href="{{path('app_statistic_vol')}}"
+                                                target="_self">Activité annuelle en volume
+                                                et en valeur</a>{% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_DELAI_ANNUEL') %}
+                                            <a class="fr-nav__link" href="{{path('app_statistic_delay')}}"
+                                                target="_self">Délai activité annuelle</a>
+                                            {% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_STAT_MPPA_MABC') %}
+                                            <a class="fr-nav__link" href="#" target="_self">Statistiques MPPA/MABC</a>
+                                            {% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_STAT_PME') %}
+                                            <a class="fr-nav__link" href="#" target="_self">Statistique PME</a>
+                                            {% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_CR_ANNUEL') %}
+                                            <a class="fr-nav__link" href="#" target="_self">Compte rendu annuel</a>
+                                            {% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_EXCTRACT_DONNEES') %}
+                                            <a class="fr-nav__link" href="#" target="_self">Extraction des données vers
+                                                EXCEL</a>{% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_CUMUL_CPV') %}
+                                            <a class="fr-nav__link" href="#" target="_self">Cumul annuel par CPV</a>
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="fr-nav__item"> <button class="fr-nav__btn" aria-expanded="false"
+                                    aria-controls="menu-778">Administration</button>
+                                <div class="fr-collapse fr-menu" id="menu-778">
+                                    <ul class="fr-menu__list">
+                                        <li>{% if is_granted ('ROLE_OPT_SERVICES') %}
+                                            <a class="fr-nav__link" href="{{ path('service') }}" target="_self">Gérer
+                                                les services</a>
+                                            {% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_UTILISATEURS') %}
+                                            <a class="fr-nav__link" href="{{path('utilisateurs')}}" target="_self">Gérer
+                                                les utilisateurs</a>
+                                            {% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_DROITS') %}
+                                            <a class="fr-nav__link" href="{{ path('app_role') }}" target="_self">Gérer
+                                                les droits d'accès</a>
+                                            {% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_PARAMETRES') %}
+                                            <a class="fr-nav__link" href="#" target="_self">Modifier les paramètres</a>
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="fr-header__tools">
+                        <div class="fr-header__tools-links">
+                            <ul class="fr-btns-group">
+
+                                <li> <a class="fr-btn fr-icon-lock-line" href="[url - à modifier]"> Mon Compte (
+                                        {{ app.user.userIdentifier }}) </a>
+                                </li>
+        <li>
+            <button class="fr-btn fr-icon-theme-fill" aria-controls="fr-theme-modal" data-fr-opened="false">Paramètres d'affichage</button>
+        </li>
+        
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <ul class="nav justify-content-center">
-            {% if app.user %}
-            <li class="nav__item">
-                <div class="dropdown">
-                    <button class="dropbtn">Administration</button>
-                    <div class="dropdown-content">
-                        {% if is_granted ('ROLE_OPT_SERVICES') %}
-                        <a href="{{ path('service') }}">Gérer les services</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_UTILISATEURS') %}
-                        <a href="{{path('utilisateurs')}}">Gérer les utilisateurs</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_DROITS') %}
-                        <a href="{{ path('app_role') }}">Gérer les droits d'accès</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_PARAMETRES') %}
-                        <a href="#">Modifier les paramètres</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </li>
-            <li class="nav__item">
-                <div class="dropdown">
-                    <button class="dropbtn">Environnement</button>
-                    <div class="dropdown-content">
-                        {% if is_granted ('ROLE_OPT_FOURNISSEURS') %}
-                        <a href="{{ path('fournisseurs') }}">Gérer les fournisseurs</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_UO') %}
-                        <a href="{{path('UO')}}">Gérer les unités organiques</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_FORMATIONS') %}
-                        <a href="{{path('formations') }}">Gérer les formations</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_CPV') %}
-                        <a href="{{path('cpv')}}">Gérer les CPV</a>
-                        {% endif %}
-                        <a href="{{path('app_calendar')}}">Gérer le calendrier</a>
-                    </div>
-                </div>
-            </li>
-            <li class="nav__item">
-                <div class="dropdown">
-                    <button class="dropbtn">                        {% if is_granted ('ROLE_OPT_RECHERCHE_ACHATS') %}
-                        <a href="{{path('app_search')}}">Achat</a>
-                        {% endif %}</button>
-                    <div class="dropdown-content">
-                        {# {% if is_granted ('ROLE_OPT_SAISIR_ACHATS') %}
-                        <a href="{{path('ajout_achat')}}">Ajouter un achat</a>
-                        {% endif %} #}
-                        {# {% if is_granted ('ROLE_OPT_VALIDER_ACHATS') %}
-                        <a href="{{path('valid_achat')}}">Valider un achat</a>
-                        {% endif %} #}
-                        {# {% if is_granted ('ROLE_OPT_ANNULER_ACHATS') %}
-                        <a href="{{path('annul_achat')}}">Annuler un achat</a>
-                        {% endif %} #}
-                        {# {% if is_granted ('ROLE_OPT_REINT_ACHATS') %}
-                        <a href="{{path('reint_achat')}}">Réintégrer un achat</a>
-                        {% endif %} #}
-                        {# {% if is_granted ('ROLE_OPT_MODIFIER_ACHATS') %}
-                        <a href="{{path('edit_achat')}}">Modifier un achat</a>
-                        {% endif %} #}
-                        {# {% if is_granted ('ROLE_OPT_RECHERCHE_ACHATS') %}
-                        <a href="{{path('app_search')}}">Rechercher un achat</a>
-                        {% endif %} #}
-                    </div>
-                </div>
-            </li>
-            <li class="nav__item">
-                <div class="dropdown">
-                    <button class="dropbtn">Statistiques</button>
-                    <div class="dropdown-content">
-                        {% if is_granted ('ROLE_OPT_ACTIV_ANNUEL') %}
-                        <a href="{{path('app_statistic_vol')}}">Activité annuelle en volume et valeur</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_DELAI_ANNUEL') %}
-                        <a href="{{path('app_statistic_delay')}}">Délai activité annuelle</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_STAT_MPPA_MABC') %}
-                        <a href="#">Statistiques MPPA/MABC</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_STAT_PME') %}
-                        <a href="#">Statistique PME</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_CR_ANNUEL') %}
-                        <a href="#">Compte rendu annuel</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_EXCTRACT_DONNEES') %}
-                        <a href="#">Extraction des données vers EXCEL</a>
-                        {% endif %}
-                        {% if is_granted ('ROLE_OPT_CUMUL_CPV') %}
-                        <a href="#">Cumul annuel par CPV</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </li>
-            <li class="nav__item">
-                <div class="navbtn">
-                    <a href="{{path('app_account')}}">Mon compte ( {{ app.user.userIdentifier }} ) </a>
-                </div>
-            </li>
-            <li class="nav__item">
-                <div class="navbtn">
-                    <a href="{{path('app_logout')}}"> Deconnexion </a>
-                </div>
-            </li>
-            {% endif %}
-        </ul>
+        <div class="fr-header__menu fr-modal" id="modal-499" aria-labelledby="button-500">
+            <div class="fr-container"> <button class="fr-btn--close fr-btn" aria-controls="modal-499" title="Fermer">
+                    Fermer </button>
+                <div class="fr-header__menu-links"> </div>
+            </div>
+        </div>
+
     </header>
     </div>
     {% endblock %}
@@ -153,9 +175,12 @@
 </head>
 
 <body>
-<script type="module" src="dsfr/dsfr.module.min.js"></script>
-    <script type="text/javascript" nomodule src="dsfr/dsfr.nomodule.min.js"></script>
-    {% block body %}{% endblock %}
+
+    {% block body %}
+    {% endblock %}
 </body>
+<script type="text/javascript" nomodule src="../node_modules/@gouvfr/dsfr/dist/dsfr.nomodule.js"></script>
+
+{# <script type="module" src="/suiviachats/node_modules/@gouvfr/dsfr/dist/dsfr.module.js"></script> #}
 
 </html>

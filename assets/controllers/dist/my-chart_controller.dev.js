@@ -39,34 +39,47 @@ function (_Controller) {
   _createClass(_default, [{
     key: "connect",
     value: function connect() {
-      this.attachEventListeners();
+      this.element.addEventListener('chartjs:pre-connect', this._onPreConnect);
+      this.element.addEventListener('chartjs:connect', this._onConnect);
     }
   }, {
-    key: "attachEventListeners",
-    value: function attachEventListeners() {
-      var rows = document.querySelectorAll('.clickable-row');
-      var btnElements = document.querySelectorAll('#btn'); // Parcours de toutes les lignes et ajout d'un événement "click"
+    key: "disconnect",
+    value: function disconnect() {
+      // You should always remove listeners when the controller is disconnected to avoid side effects
+      this.element.removeEventListener('chartjs:pre-connect', this._onPreConnect);
+      this.element.removeEventListener('chartjs:connect', this._onConnect);
+    }
+  }, {
+    key: "_onPreConnect",
+    value: function _onPreConnect(event) {
+      // The chart is not yet created
+      // You can access the config that will be passed to "new Chart()"
+      console.log(event.detail.config); // For instance you can format Y axis
 
-      rows.forEach(function (row) {
-        row.addEventListener('click', function () {
-          console.log(rows); // Suppression de la classe "selected" de toutes les autres lignes
+      event.detail.config.options.scales = {
+        y: {
+          ticks: {
+            callback: function callback(value, index, values) {
+              /* ... */
+            }
+          }
+        }
+      };
+    }
+  }, {
+    key: "_onConnect",
+    value: function _onConnect(event) {
+      // The chart was just created
+      console.log(event.detail.chart); // You can access the chart instance using the event details
+      // For instance you can listen to additional events
 
-          rows.forEach(function (otherRow) {
-            otherRow.classList.remove('selected');
-          }); // Ajout de la classe "selected" à la ligne sélectionnée
+      event.detail.chart.options.onHover = function (mouseEvent) {
+        /* ... */
+      };
 
-          row.classList.add('selected');
-          btnElements.forEach(function (btn) {
-            btn.classList.remove('hidden');
-            btn.addEventListener('click', function () {
-              var link = btn.getAttribute('data-link');
-              var detailLink = document.getElementById('detail');
-              var id = row.getAttribute('data-id');
-              detailLink.setAttribute('href', '/' + link + '/' + id);
-            });
-          });
-        });
-      });
+      event.detail.chart.options.onClick = function (mouseEvent) {
+        /* ... */
+      };
     }
   }]);
 

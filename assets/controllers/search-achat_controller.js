@@ -9,12 +9,12 @@ export default class extends Controller {
     attachEventListeners() {
         var rows = document.querySelectorAll('.clickable-row');
         var btnElements = document.querySelectorAll('#btn');
-        console.log(rows);
-    
+        
         // Parcours de toutes les lignes et ajout d'un événement "click"
         rows.forEach(function (row) {
             row.addEventListener('click', function () {
-    
+                console.log(rows);
+
                 // Suppression de la classe "selected" de toutes les autres lignes
                 rows.forEach(function (otherRow) {
                     otherRow.classList.remove('selected');

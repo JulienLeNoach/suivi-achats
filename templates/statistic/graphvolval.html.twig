@@ -8,17 +8,16 @@
 
     <div class="graph-container" id="test" data-controller="chart-type">
         <div   class="graph">
-            {{ render_chart(chartbar, {'class': 'my-chart', 'id' : 'chart', 'data-chart-type-target' : 'test'}) }}
+            {{ render_chart(chartbar, {'class': 'my-chart', 'id' : 'chart', 'data-controller': 'my_chart'}) }}
         </div>
 
         <div class="graph">
-            {{ render_chart(chartbar2, {'class': 'my-chart' , 'id' : 'chart2','data-chart-type-target' : 'test'}) }}
+            {{ render_chart(chartbar2, {'class': 'my-chart' , 'id' : 'chart2','data-controller': 'my_chart'}) }}
         </div>
 
     <div data-controller="pdf-generator">
     <button id="pdf" data-action="click->pdf-generator#download" >Impression</button>
     </div>
     <button class="fr-btn search"><a   id="go-back" @click="goBack">Retour</a></button>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0-rc/dist/chartjs-plugin-datalabels.min.js"></script>
 
     {% endblock %}
