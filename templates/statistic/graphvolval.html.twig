@@ -3,21 +3,34 @@
     {% block title %}Activité annuelle en volume et valeur{% endblock %}
 
     {% block body %}
-    <h2 class="title-page">Activité annuelle en volume et valeur</h2>
+    <h2 class="title-page mt-5">Activité annuelle en volume et valeur</h2>
 
 
-    <div class="graph-container" id="test" data-controller="chart-type">
-        <div   class="graph">
+        {# <div   class="graph">
             {{ render_chart(chartbar, {'class': 'my-chart', 'id' : 'chart', }) }}
         </div>
 
         <div class="graph">
             {{ render_chart(chartbar2, {'class': 'my-chart' , 'id' : 'chart2',}) }}
-        </div>
+        </div> #}
+{# <div> #}
+  {# <canvas id="myChart" width="1200" height="800"></canvas> #}
+{# </div>
+<div>     #}
+<div class="d-flex w-50 flex-row" data-controller="chartvol">
 
+  <canvas id="myChart2" data-chartvol-target="myChart2" ></canvas>
+
+<canvas id="myChart" data-chartvol-target="myChart" ></canvas>
+</div>
     <div data-controller="pdf-generator">
     <button id="pdf" data-action="click->pdf-generator#download" >Impression</button>
     </div>
     <button class="fr-btn search"><a   id="go-back" @click="goBack">Retour</a></button>
-
+<script>
+    var datasets1 = {{ datasets1|json_encode|raw }};
+    var datasets2 = {{ datasets2|json_encode|raw }};
+    var datasets3 = {{ datasets3|json_encode|raw }};
+    var datasets4 = {{ datasets4|json_encode|raw }};
+</script>
     {% endblock %}

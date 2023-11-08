@@ -3,8 +3,8 @@ import jsPDF from 'jspdf'; // Importez jsPDF
 
 export default class extends Controller {
   download() {
-    const canvas = document.getElementById('chart');
-    const canvas2 = document.getElementById('chart2');
+    const canvas = document.getElementById('myChart');
+    const canvas2 = document.getElementById('myChart2');
     canvas.fillStyle = "white";
     const canvasImage = canvas.toDataURL('image/png', 1.0);
     const canvasImage2 = canvas2.toDataURL('image/png', 1.0);

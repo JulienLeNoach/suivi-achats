@@ -79,14 +79,19 @@ class StatisticVolController extends AbstractController
                 if ($form->get('graph')->isClicked() ) {
 
 
-                $chartbar = $this->statisticService->createChart(Chart::TYPE_BAR, 'Activité en volume', ['MABC', 'MPPA'], $counts1, $counts2, 'count');
-                $chartbar2 = $this->statisticService->createChart(Chart::TYPE_BAR, 'Activité en valeur (montant HT)', ['MABC', 'MPPA'], $counts1, $counts2, 'totalmontant');
-                
+                $chartData = $this->statisticService->createChart(Chart::TYPE_BAR, 'Activité en volume', ['MABC', 'MPPA'], $counts1, $counts2, 'count');
+                $chartData2 = $this->statisticService->createChart(Chart::TYPE_BAR, 'Activité en valeur (montant HT)', ['MABC', 'MPPA'], $counts1, $counts2, 'totalmontant');
+                $datasets1 = $chartData['datasets'];
+                $datasets2 = $chartData['datasets2'];
+                $datasets3 = $chartData2['datasets'];
+                $datasets4 = $chartData2['datasets2'];
 
                 return $this->render('statistic/graphvolval.html.twig', [
-                    'chartbar' => $chartbar,
-                    'chartbar2' => $chartbar2,
- 
+                    'datasets1' => $datasets1,
+                    'datasets2' => $datasets2,
+                    'datasets3' => $datasets3,
+                    'datasets4' => $datasets4,
+
                 ]);
             } elseif ($form->get('print')->isClicked()) {
                 $html = $this->render('statistic/pdfgenerator.html.twig', [

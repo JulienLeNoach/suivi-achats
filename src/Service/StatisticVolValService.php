@@ -94,7 +94,6 @@ class StatisticVolValService  extends AbstractController
     }
     public function createChart($type, $title, $labels, $counts1, $counts2, $dataKey)
     {
-        $chart = $this->chartBuilder->createChart($type);
         foreach ($counts1 as $count1) {
             $datasets[] = $count1[$dataKey];
         }
@@ -114,86 +113,11 @@ class StatisticVolValService  extends AbstractController
         $datasets2 = array_map(function($value) {
             return round($value, 2);
         }, $datasets2);
-        $chart->setData([
-            'title' => 'test',
-            'labels' => ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre','Novembre', 'Décembre'],
-            'datasets' => [
-                [
-                    'label' => $labels[0],
-                    'backgroundColor' => 'rgb(255, 99, 132)',
-                    'borderColor' => 'rgb(255, 99, 132)',
-                    'data' => $datasets,    
-                ],
-                [
-                    'label' => $labels[1],
-                    'backgroundColor' => 'rgb(106, 106, 244)',
-                    'borderColor' => 'rgb(255, 99, 132)',
-                    'data' => $datasets2,
-                ],
-            ]
-
-        ]);
-
-        $chart->setOptions([
-                    
-            'plugins' => [
-                'datalabels' => [
-                    'display' => true, // Affiche les étiquettes de données
-                    'offset' =>true, // Alignement des étiquettes par rapport aux barres (vous pouvez ajuster cette valeur selon vos besoins)
-                    'anchor' => 'start',
-                    'align'=>'top',
-
-                    'color' => 'black',
-                    'font' => [
-                        'size' => 15, // Taille de police des étiquettes
-                    ],
-                ],
-               
-                'legend' => [
-                    'labels' => [
-                        'font' => [
-                            'size' => 40,
-                        ],
-                    ],
-                ],
-                'title' => [
-                    'display' => true, 
-                    'text' => $title, 
-                    'font' => [
-                        'size' => 40,
-                    ],
-                ], 'tooltip' => [
-                    'titleFont' => [
-                        'size' => 30,
-                    ],
-                    'bodyFont' => [
-                        'size' => 30,
-                    ],
-                    'intersect' => false
-                ],
-            ]
-            ,
-
-            'scales' => [
-                'x' => [
-                    'ticks' => [
-                        'font' => [
-                            'size' => 30 
-                        ]
-                    ]
-                ],
-                'y' => [
-                    'ticks' => [
-                        'font' => [
-                            'size' => 30 
-                        ]
-                    ]
-                ],
-            ],
-
-        ]);
-        return $chart;
+        
+        return ['datasets' => $datasets, 'datasets2' => $datasets2];
     }
+
+
     public function generateExcel(array $counts1, array $counts2)
     {
         $spreadsheet = new Spreadsheet();

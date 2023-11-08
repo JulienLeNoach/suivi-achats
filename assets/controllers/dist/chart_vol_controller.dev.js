@@ -7,7 +7,7 @@ exports["default"] = void 0;
 
 var _stimulus = require("@hotwired/stimulus");
 
-var _jspdf = _interopRequireDefault(require("jspdf"));
+var _stimulusChartjs = _interopRequireDefault(require("stimulus-chartjs"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -29,7 +29,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-// Importez jsPDF
+var ctx = document.getElementById('myChart');
+var ctx2 = document.getElementById('myChart2');
+var labels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
 var _default =
 /*#__PURE__*/
 function (_Controller) {
@@ -42,19 +45,23 @@ function (_Controller) {
   }
 
   _createClass(_default, [{
-    key: "download",
-    value: function download() {
-      var canvas = document.getElementById('myChart');
-      var canvas2 = document.getElementById('myChart2');
-      canvas.fillStyle = "white";
-      var canvasImage = canvas.toDataURL('image/png', 1.0);
-      var canvasImage2 = canvas2.toDataURL('image/png', 1.0);
-      var pdf = new _jspdf["default"]('p', 'mm', [360, 350]);
-      pdf.setFontSize(20);
-      pdf.addImage(canvasImage, 'png', 15, 15, 280, 150);
-      pdf.addImage(canvasImage2, 'png', 15, 200, 280, 150);
-      pdf.setFillColor(106, 106, 244, 1);
-      pdf.save('Graphique.pdf');
+    key: "createBarChart",
+    value: function createBarChart(ctx, labels, datasets) {
+      new _stimulusChartjs["default"](ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: datasets
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
     }
   }]);
 
