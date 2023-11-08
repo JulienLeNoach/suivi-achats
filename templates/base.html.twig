@@ -45,6 +45,7 @@
                             </a>
                         </div>
                     </div>
+                                {% if app.user %}
                     <!-- Menu déroulant sur les 2 premiers éléments -->
                     <nav class="fr-nav" id="navigation-773" role="navigation" aria-label="Menu principal">
                         <ul class="fr-nav__list">
@@ -147,13 +148,11 @@
                         <div class="fr-header__tools-links">
                             <ul class="fr-btns-group">
 
-                                <li> <a class="fr-btn fr-icon-lock-line" href="[url - à modifier]"> Mon Compte (
+                                <li> <a class="fr-btn fr-icon-lock-line" href="{{path('app_account')}}"> Mon Compte (
                                         {{ app.user.userIdentifier }}) </a>
                                 </li>
-        <li>
-            <button class="fr-btn fr-icon-theme-fill" aria-controls="fr-theme-modal" data-fr-opened="false">Paramètres d'affichage</button>
-        </li>
-        
+                                <li> <a class="fr-btn fr-icon-lock-line" href="{{path('app_logout')}}">Déconnexion</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -166,6 +165,7 @@
                 <div class="fr-header__menu-links"> </div>
             </div>
         </div>
+            {% endif %}
 
     </header>
     </div>

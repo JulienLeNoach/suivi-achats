@@ -8,11 +8,11 @@
 
     <div class="graph-container" id="test" data-controller="chart-type">
         <div   class="graph">
-            {{ render_chart(chartbar, {'class': 'my-chart', 'id' : 'chart', 'data-controller': 'my_chart'}) }}
+            {{ render_chart(chartbar, {'class': 'my-chart', 'id' : 'chart', }) }}
         </div>
 
         <div class="graph">
-            {{ render_chart(chartbar2, {'class': 'my-chart' , 'id' : 'chart2','data-controller': 'my_chart'}) }}
+            {{ render_chart(chartbar2, {'class': 'my-chart' , 'id' : 'chart2',}) }}
         </div>
 
     <div data-controller="pdf-generator">
