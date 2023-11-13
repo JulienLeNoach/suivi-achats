@@ -227,13 +227,14 @@ class AchatRepository extends ServiceEntityRepository
         AVG(CASE WHEN MONTH(date_saisie) = 10 THEN difference END) AS Mois_10,
         AVG(CASE WHEN MONTH(date_saisie) = 11 THEN difference END) AS Mois_11,
         AVG(CASE WHEN MONTH(date_saisie) = 12 THEN difference END) AS Mois_12
+
       FROM (
         SELECT
           'ANT GSBDD' AS source,
           DATEDIFF(date_commande_chorus, date_sillage) AS difference,
           date_saisie
         FROM achat
-        WHERE YEAR(date_saisie) = :year
+        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
         " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
         " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
@@ -247,7 +248,7 @@ class AchatRepository extends ServiceEntityRepository
           DATEDIFF(date_valid_inter, date_commande_chorus) AS difference,
           date_saisie
         FROM achat
-        WHERE YEAR(date_saisie) = :year
+        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
         " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
         " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
@@ -261,7 +262,7 @@ class AchatRepository extends ServiceEntityRepository
           DATEDIFF(date_validation, date_valid_inter) AS difference,
           date_saisie
         FROM achat
-        WHERE YEAR(date_saisie) = :year
+        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
         " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
         " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
@@ -275,7 +276,7 @@ class AchatRepository extends ServiceEntityRepository
           DATEDIFF(date_notification, date_validation) AS difference,
           date_saisie
         FROM achat
-        WHERE YEAR(date_saisie) = :year
+        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
         " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
         " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
@@ -289,7 +290,7 @@ class AchatRepository extends ServiceEntityRepository
           DATEDIFF(date_notification, date_commande_chorus) AS difference,
           date_saisie
         FROM achat
-        WHERE YEAR(date_saisie) = :year
+        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
         " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
         " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
@@ -303,7 +304,7 @@ class AchatRepository extends ServiceEntityRepository
           DATEDIFF(date_notification, date_sillage) AS difference,
           date_saisie
         FROM achat
-        WHERE YEAR(date_saisie) = :year
+        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
         " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
         " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
@@ -327,10 +328,208 @@ class AchatRepository extends ServiceEntityRepository
             $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
             $achats=$resultSet->fetchAllAssociative();
            
-
+            // dd($achats);
             return $achats;
         }
+        public function yearDelayAchat2($form)
+        {
+            $userId = null;
+            $numSiretId = null;
+            $cpvId = null;
+            $uOId = null;
+            $formationId = null;
+    
+            $date = $form["date"]->getData();
+            $user = $form["utilisateurs"]->getData();
+            $numSiret = $form["num_siret"]->getData();
+            $cpv = $form["code_cpv"]->getData();
+            $uO = $form["code_uo"]->getData();
+            $formation = $form["code_formation"]->getData();
+            if ($user) {
+                // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
+                $userId = $user->getId();
+            }
+            if ($numSiret) {
+                $numSiretId = $numSiret->getId();
+            }
+            if ($cpv) {
+                $cpvId = $cpv->getId();
+            }
+            if ($uO) {
+                $uOId = $uO->getId();
+            }
+            if ($formation) {
+                $formationId = $formation->getId();
+            }
+            $conn = $this->getEntityManager()->getConnection();
+            $sql = "
+            SELECT
+            source,
+            COUNT(CASE
+            WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1
+            ELSE NULL
+        END) AS CountAntInf3,
+        COUNT(CASE
+            WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1
+            ELSE NULL
+        END) AS CountAntSup3,
+        COUNT(CASE
+            WHEN source = 'BUDGET' AND difference <= 3 THEN 1
+            ELSE NULL
+        END) AS CountBudgetInf3,
+        COUNT(CASE
+            WHEN source = 'BUDGET' AND difference > 3 THEN 1
+            ELSE NULL
+        END) AS CountBudgetSup3,
+        COUNT(CASE
+            WHEN source = 'APPRO' AND difference <= 7 THEN 1
+            ELSE NULL
+        END) AS CountApproInf7,
+        COUNT(CASE
+            WHEN source = 'APPRO' AND difference > 7 THEN 1
+            ELSE NULL
+        END) AS CountApproSup7,
+        COUNT(CASE
+            WHEN source = 'FIN' AND difference <= 7 THEN 1
+            ELSE NULL
+        END) AS CountFinInf7,
+        COUNT(CASE
+            WHEN source = 'FIN' AND difference > 7 THEN 1
+            ELSE NULL
+        END) AS CountFinSup7,
+        COUNT(CASE
+        WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1
+        ELSE NULL
+    END) AS CountChorusFormInf10,
+    COUNT(CASE
+        WHEN source = 'Chorus formul.' AND difference > 10 THEN 1
+        ELSE NULL
+    END) AS CountChorusFormSup10,
+        COUNT(CASE
+            WHEN source = 'PFAF' AND difference <= 14 THEN 1
+            ELSE NULL
+        END) AS CountPfafInf14,
+        COUNT(CASE
+            WHEN source = 'PFAF' AND difference > 14 THEN 1
+            ELSE NULL
+        END) AS CountPfafSup14,
+            (SUM(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_3_Jours_Ant,
+            (SUM(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_3_Jours_Ant,
+            (SUM(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_3_Jours_Budget,
+            (SUM(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_3_Jours_Budget,
+            (SUM(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_7_Jours_Appro,
+            (SUM(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_7_Jours_Appro,
+            (SUM(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_7_Jours_Fin,
+            (SUM(CASE WHEN source = 'FIN' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_7_Jours_Fin,
+            (SUM(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_10_Jours_Chorus,
+        (SUM(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_10_Jours_Chorus,
+            (SUM(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_14_Jours_Pfaf,
+            (SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_14_Jours_Pfaf
+          FROM (
+            SELECT
+              'ANT GSBDD' AS source,
+              DATEDIFF(date_commande_chorus, date_sillage) AS difference,
+              date_saisie
+            FROM achat
+            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
+            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+    
+            UNION ALL
+          
+            SELECT
+              'BUDGET' AS source,
+              DATEDIFF(date_valid_inter, date_commande_chorus) AS difference,
+              date_saisie
+            FROM achat
+            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
+            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+    
+            UNION ALL
+          
+            SELECT
+              'APPRO' AS source,
+              DATEDIFF(date_validation, date_valid_inter) AS difference,
+              date_saisie
+            FROM achat
+            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
+            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+    
+            UNION ALL
+          
+            SELECT
+              'FIN' AS source,
+              DATEDIFF(date_notification, date_validation) AS difference,
+              date_saisie
+            FROM achat
+            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
+            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+    
+            UNION ALL
+          
+            SELECT
+              'PFAF' AS source,
+              DATEDIFF(date_notification, date_commande_chorus) AS difference,
+              date_saisie
+            FROM achat
+            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
+            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+    
+            UNION ALL
+          
+            SELECT
+              'Chorus formul.' AS source,
+              DATEDIFF(date_notification, date_sillage) AS difference,
+              date_saisie
+            FROM achat
+            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
+            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+    
+          ) AS combined_data
+          WHERE source IN ('ANT GSBDD', 'BUDGET', 'APPRO', 'FIN','Chorus formul.', 'PFAF')
 
+          GROUP BY source
+          -- Organisez les sources dans l'ordre d'apparition
+          ORDER BY
+            source = 'ANT GSBDD' DESC,
+            source = 'BUDGET' DESC,
+            source = 'APPRO' DESC,
+            source = 'FIN' DESC,
+            source = 'Chorus formul.' DESC,
+            source = 'PFAF' DESC
+          LIMIT 0,100
+                ";
+                $stmt = $conn->prepare($sql);
+      
+                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+                $achats=$resultSet->fetchAllAssociative();
+               
+                // dd($achats);
+                return $achats;
+            }
     public function edit(Achat $achat, bool $flush = false): void
     {
         $this->getEntityManager()->persist($achat);

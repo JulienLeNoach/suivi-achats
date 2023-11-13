@@ -79,8 +79,8 @@ class StatisticVolController extends AbstractController
                 if ($form->get('graph')->isClicked() ) {
 
 
-                $chartData = $this->statisticService->createChart(Chart::TYPE_BAR, 'Activité en volume', ['MABC', 'MPPA'], $counts1, $counts2, 'count');
-                $chartData2 = $this->statisticService->createChart(Chart::TYPE_BAR, 'Activité en valeur (montant HT)', ['MABC', 'MPPA'], $counts1, $counts2, 'totalmontant');
+                $chartData = $this->statisticService->createChart( $counts1, $counts2, 'count');
+                $chartData2 = $this->statisticService->createChart($counts1, $counts2, 'totalmontant');
                 $datasets1 = $chartData['datasets'];
                 $datasets2 = $chartData['datasets2'];
                 $datasets3 = $chartData2['datasets'];

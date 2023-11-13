@@ -6,12 +6,9 @@ const ctx2 = document.getElementById('myChart2')
 const labels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
 export default class extends Controller {
-  static targets = ['myChart'];
 
-  // canvasContext() {
-  //     return this.myChartTarget.getContext('2d');
-  // }
     connect(){
+
       ctx.width = 1200; // Définit la largeur du premier canvas
       ctx.height = 800; // Définit la hauteur du premier canvas
   

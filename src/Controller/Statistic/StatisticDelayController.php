@@ -30,22 +30,33 @@ class StatisticDelayController extends AbstractController
 
         $form = $this->createForm(StatisticType::class, null, []);
         $form->handleRequest($request);        
-        
-        if ($form->isSubmitted() && $form->isValid()) {
-        if ($form->get('recherche')->isClicked()) {
-        // Récupérez les données achats
         $achats_delay = $this->achatRepository->yearDelayAchat($form);
         $achats = $this->statisticDelayService->totalDelayPerMonth($achats_delay);
+        $achats_delay_all = $this->achatRepository->yearDelayAchat2($form);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+           
+        if ($form->get('recherche')->isClicked()) {
+        // Récupérez les données achats
+        // dd($achats);
+        $transStat = array_filter(array_values($achats[2]), 'is_numeric');
+        $notStat = array_filter(array_values($achats[5]), 'is_numeric');
+        // dd($achats[5]);
         return $this->render('statistic_delay/index.html.twig', [
             'form' => $form->createView(),
             'achats' => $achats,
+            'transStat' => $transStat,
+            'notStat' => $notStat,
+            'achats_delay_all' => $achats_delay_all,
+
         ]);
         }
-    }
 
-    
+}
         return $this->render('statistic_delay/index.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+
+
 }

@@ -29,9 +29,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var ctx = document.getElementById('myChart');
-var ctx2 = document.getElementById('myChart2');
 var labels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+var ctx = document.getElementById('delayChart');
 
 var _default =
 /*#__PURE__*/
@@ -47,24 +46,20 @@ function (_Controller) {
   _createClass(_default, [{
     key: "connect",
     value: function connect() {
-      ctx.width = 1200; // Définit la largeur du premier canvas
-
-      ctx.height = 800; // Définit la hauteur du premier canvas
-
-      ctx2.width = 1200; // Définit la largeur du deuxième canvas
-
-      ctx2.height = 800;
+      // ctx.width = 1200; // Définit la largeur du premier canvas
+      // ctx.height = 800; // Définit la hauteur du premier canvas
+      console.log(ctx);
       new _auto["default"](ctx, {
         type: 'bar',
         data: {
           labels: labels,
           datasets: [{
-            label: 'MPPA',
-            data: datasets1,
+            label: 'Transmission',
+            data: transStat,
             borderWidth: 1
           }, {
-            label: 'MABC',
-            data: datasets2,
+            label: 'Notification',
+            data: notStat,
             borderWidth: 1
           }],
           options: {
@@ -76,30 +71,30 @@ function (_Controller) {
             }
           }
         }
-      });
-      new _auto["default"](ctx2, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'MPPA',
-            data: datasets3,
-            borderWidth: 1
-          }, {
-            label: 'MABC',
-            data: datasets4,
-            borderWidth: 1
-          }],
-          options: {
-            responsive: false,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        }
-      });
+      }); //   new Chart(ctx2, {
+      //     type: 'bar',
+      //     data: {
+      //       labels: labels,
+      //       datasets: [{
+      //           label: 'MPPA',
+      //           data: datasets3,
+      //           borderWidth: 1
+      //       },
+      //     {
+      //       label: 'MABC',
+      //       data: datasets4,
+      //       borderWidth: 1
+      //     }],
+      //     options: {
+      //         responsive: false,
+      //       scales: {
+      //         y: {
+      //           beginAtZero: true
+      //         }
+      //       }
+      //     }
+      //   }
+      //   });
     }
   }]);
 

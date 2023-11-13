@@ -92,7 +92,7 @@ class StatisticVolValService  extends AbstractController
         }
                 return $purchaseTotalAmountByMonth;
     }
-    public function createChart($type, $title, $labels, $counts1, $counts2, $dataKey)
+    public function createChart($counts1, $counts2, $dataKey)
     {
         foreach ($counts1 as $count1) {
             $datasets[] = $count1[$dataKey];

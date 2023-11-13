@@ -15,56 +15,65 @@
   <div class="input-grp-tab">{{ form_row(form.code_cpv) }}
     {{ form_row(form.code_formation) }}
     {{ form_row(form.tax) }}
-    </div>
-    <div class="btn-submit">
-    {{ form_end(form) }}</div>
+  </div>
+  <div class="btn-submit">
+    {{ form_end(form) }}</div>  
 </div>
 {% if app.request.method == 'POST' %}
-
+{{dump(achats_delay_all[0]["CountAntInf3"])}}
+{{dump(achats_delay_all[0]["Pourcentage_Delai_Inf_3_Jours_Ant"])}}
+{{dump(achats_delay_all[0]["CountAntSup3"])}}
+{{dump(achats_delay_all[0]["Pourcentage_Delai_Sup_3_Jours_Ant"])}}
 <table border=1>
-    <thead>
-        <th>Délai</th>
-        <th>Janvier</th>
-        <th>Février</th>
-        <th>Mars</th>
-        <th>Avril</th>
-        <th>Mai</th>
-        <th>Juin</th>
-        <th>Juillet</th>
-        <th>Aout</th>
-        <th>Septembre</th>
-        <th>Octobre</th>
-        <th>Novembre</th>
-        <th>Decembre</th>
-        <th>Total</th>
+  <thead>
+    <th>Délai</th>
+    <th>Janvier</th>
+    <th>Février</th>
+    <th>Mars</th>
+    <th>Avril</th>
+    <th>Mai</th>
+    <th>Juin</th>
+    <th>Juillet</th>
+    <th>Aout</th>
+    <th>Septembre</th>
+    <th>Octobre</th>
+    <th>Novembre</th>
+    <th>Decembre</th>
+    <th>Total</th>
 
-        {% for achat in achats %}
-        <tr>
-            <th>{{ achat.source }}</th>
-            <td>{{ achat.Mois_1 }}</td>
-            <td>{{ achat.Mois_2 }}</td>
-            <td>{{ achat.Mois_3 }}</td>
-            <td>{{ achat.Mois_4 }}</td>
-            <td>{{ achat.Mois_5 }}</td>
-            <td>{{ achat.Mois_6 }}</td>
-            <td>{{ achat.Mois_7 }}</td>
-            <td>{{ achat.Mois_8 }}</td>
-            <td>{{ achat.Mois_9 }}</td>
-            <td>{{ achat.Mois_10 }}</td>
-            <td>{{ achat.Mois_11 }}</td>
-            <td>{{ achat.Mois_12 }}</td>
-            <td>{{ (achat.Mois_1 + achat.Mois_2 + achat.Mois_3 + achat.Mois_4 + achat.Mois_5 + achat.Mois_6 + achat.Mois_7 + achat.Mois_8 + achat.Mois_9 + achat.Mois_10 + achat.Mois_11 + achat.Mois_12) / 12 }}
-            </td>
-        </tr>
-        {% endfor %}
-
-
-
-    </thead>
-    <tbody>
-
-
-    </tbody>
+    {% for achat in achats %}
+    <tr>
+      <th>{{ achat.source }}</th>
+      <td>{{ achat.Janvier }}</td>
+      <td>{{ achat.Février }}</td>
+      <td>{{ achat.Mars }}</td>
+      <td>{{ achat.Avril }}</td>
+      <td>{{ achat.Mai }}</td>
+      <td>{{ achat.Juin }}</td>
+      <td>{{ achat.Juillet }}</td>
+      <td>{{ achat.Aout }}</td>
+      <td>{{ achat.Septembre }}</td>
+      <td>{{ achat.Octobre }}</td>
+      <td>{{ achat.Novembre }}</td>
+      <td>{{ achat.Decembre }}</td>
+      <td>
+        {{ (achat.Janvier + achat.Février + achat.Mars + achat.Avril + achat.Mai + achat.Juin + achat.Juillet + achat.Aout + achat.Septembre + achat.Octobre + achat.Novembre + achat.Decembre) / 12 }}
+      </td>
+    </tr>
+    {% endfor %}
+  </thead>
+  <tbody>
+  </tbody>
 </table>
+<div class="d-flex w-50 flex-row" data-controller="chartdelay">
+
+<canvas id="delayChart" data-chartdelay-target="delayChart" > </canvas>
+
+</div>
+
+<script>
+    var transStat = {{ transStat|json_encode|raw }};
+    var notStat = {{notStat|json_encode|raw }};
+</script>
 {% endif %}
 {% endblock %}
