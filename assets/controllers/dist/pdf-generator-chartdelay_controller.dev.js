@@ -43,46 +43,67 @@ function (_Controller) {
   }
 
   _createClass(_default, [{
-    key: "download",
-    value: function download() {
-      var canvas = document.getElementById('myChart');
-      var canvas2 = document.getElementById('myChart2');
+    key: "downloadgraphBar",
+    value: function downloadgraphBar() {
+      var canvas = document.getElementById('delayChart');
       canvas.fillStyle = "white";
       var canvasImage = canvas.toDataURL('image/png', 1.0);
-      var canvasImage2 = canvas2.toDataURL('image/png', 1.0);
       var pdf = new _jspdf["default"]('p', 'mm', [360, 350]);
       pdf.setFontSize(20);
       pdf.addImage(canvasImage, 'png', 15, 15, 280, 150);
-      pdf.addImage(canvasImage2, 'png', 15, 200, 280, 150);
       pdf.setFillColor(106, 106, 244, 1);
       pdf.save('Graphique.pdf');
     }
   }, {
+    key: "downloadgraphPie",
+    value: function downloadgraphPie() {
+      var ctxAntenne = document.getElementById('ctxAntenne');
+      var ctxBudget = document.getElementById('ctxBudget');
+      var ctxAppro = document.getElementById('ctxAppro');
+      var ctxFin = document.getElementById('ctxFin');
+      var ctxPFAF = document.getElementById('ctxPFAF');
+      var ctxChorus = document.getElementById('ctxChorus');
+      var ctxTotalDelay = document.getElementById('ctxTotalDelay');
+      ctxAntenne.fillStyle = "white";
+      ctxBudget.fillStyle = "white";
+      ctxAppro.fillStyle = "white";
+      ctxFin.fillStyle = "white";
+      ctxPFAF.fillStyle = "white";
+      ctxChorus.fillStyle = "white";
+      ctxTotalDelay.fillStyle = "white";
+      var ctxAntenneImage = ctxAntenne.toDataURL('image/png', 1.0);
+      var ctxBudgetImage = ctxBudget.toDataURL('image/png', 1.0);
+      var ctxApproImage = ctxAppro.toDataURL('image/png', 1.0);
+      var ctxFinImage = ctxFin.toDataURL('image/png', 1.0);
+      var ctxPFAFImage = ctxPFAF.toDataURL('image/png', 1.0);
+      var ctxChorusImage = ctxChorus.toDataURL('image/png', 1.0);
+      var ctxTotalDelayImage = ctxTotalDelay.toDataURL('image/png', 1.0);
+      var pdf = new _jspdf["default"]('p', 'mm', [360, 350]);
+      pdf.setFontSize(20);
+      pdf.addImage(ctxAntenneImage, 'png', 15, 15, 70, 70);
+      pdf.addImage(ctxBudgetImage, 'png', 85, 15, 70, 70);
+      pdf.addImage(ctxApproImage, 'png', 170, 15, 70, 70);
+      pdf.addImage(ctxFinImage, 'png', 255, 15, 70, 70);
+      pdf.addImage(ctxPFAFImage, 'png', 15, 85, 70, 70);
+      pdf.addImage(ctxChorusImage, 'png', 85, 85, 70, 70);
+      pdf.addImage(ctxTotalDelayImage, 'png', 170, 85, 70, 70);
+      pdf.setFillColor(106, 106, 244, 1);
+      pdf.save('GraphPieDelay.pdf');
+    }
+  }, {
     key: "generatePDFTable",
     value: function generatePDFTable() {
-      // Create a jsPDF instance with landscape orientation
-      var pdf = new _jspdf["default"]('l'); // Select the first table HTML element
+      // Créez un objet jsPDF
+      var pdf = new _jspdf["default"]('l'); // Select the table HTML element
 
-      var table1 = document.getElementById('volValTable'); // Add a title for the first table
+      var table = document.getElementById('delayTable'); // Use html2canvas to render the table as an image
 
-      pdf.text('Activité en volume', 20, 10); // Use html2canvas to render the first table as an image
+      (0, _html2canvas["default"])(table).then(function (canvas) {
+        var imgData = canvas.toDataURL('image/png'); // Add the image to the PDF
 
-      (0, _html2canvas["default"])(table1).then(function (canvas1) {
-        var imgData1 = canvas1.toDataURL('image/png'); // Add the first table image to the PDF
+        pdf.addImage(imgData, 'PNG', 5, 30); // Save the PDF file
 
-        pdf.addImage(imgData1, 'PNG', 5, 30); // Add a title for the second table
-
-        pdf.text('Activité en valeur (HT)', 20, 80); // Select the second table HTML element
-
-        var table2 = document.getElementById('tableCheck'); // Use html2canvas to render the second table as an image
-
-        (0, _html2canvas["default"])(table2).then(function (canvas2) {
-          var imgData2 = canvas2.toDataURL('image/png'); // Add the second table image to the same page
-
-          pdf.addImage(imgData2, 'PNG', 5, 100); // Save the PDF file
-
-          pdf.save('Activité Volume et valeur.pdf');
-        });
+        pdf.save('table.pdf');
       });
     }
   }]);

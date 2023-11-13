@@ -79,8 +79,8 @@ class StatisticVolController extends AbstractController
                 if ($form->get('graph')->isClicked() ) {
 
 
-                $chartData = $this->statisticService->createChart( $counts1, $counts2, 'count');
-                $chartData2 = $this->statisticService->createChart($counts1, $counts2, 'totalmontant');
+                $chartData = $this->statisticService->arrayMapChart( $counts1, $counts2, 'count');
+                $chartData2 = $this->statisticService->arrayMapChart($counts1, $counts2, 'totalmontant');
                 $datasets1 = $chartData['datasets'];
                 $datasets2 = $chartData['datasets2'];
                 $datasets3 = $chartData2['datasets'];
@@ -93,22 +93,10 @@ class StatisticVolController extends AbstractController
                     'datasets4' => $datasets4,
 
                 ]);
-            } elseif ($form->get('print')->isClicked()) {
-                $html = $this->render('statistic/pdfgenerator.html.twig', [
-                    'counts1' => $counts1,
-                    'counts2' => $counts2,
-                    'purchaseCountByMonth' => $purchaseCountByMonth,
-                    'purchaseTotalAmountByMonth' => $purchaseTotalAmountByMonth,
-                ]);
-                return $this->statisticService->generatePDF($html);
-
-             
             } elseif ($form->get('excel')->isClicked()) {
                 return $this->statisticService->generateExcel($counts1, $counts2);
 
             }
-
-            
         }
         return $this->render('statistic/index.html.twig', [
             'form' => $form->createView(),

@@ -424,7 +424,17 @@ class AchatRepository extends ServiceEntityRepository
             (SUM(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_10_Jours_Chorus,
         (SUM(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_10_Jours_Chorus,
             (SUM(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_14_Jours_Pfaf,
-            (SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_14_Jours_Pfaf
+            (SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_14_Jours_Pfaf,
+            COUNT(CASE
+            WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference <= 15) THEN 1
+            ELSE NULL
+        END) AS CountDelaiTotalInf15,
+        COUNT(CASE
+            WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference > 15) THEN 1
+            ELSE NULL
+        END) AS CountDelaiTotalSup15,
+        (SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_15_Jours,
+        (SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_15_Jours
           FROM (
             SELECT
               'ANT GSBDD' AS source,

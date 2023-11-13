@@ -21,6 +21,12 @@
 {% if app.request.method == 'POST' %}
 
 {% if counts1 is not empty %}
+<div class=" font-weight-bold d-flex flex-row justify-content-between" >
+<h3 class=" p-3 w-50 text-left ">Délai d'activié annuelle tableau</h3>
+  <div class="" data-controller="pdf-generator">
+    <button id="pdf" data-action="click->pdf-generator#generatePDFTable" >Impression</button>
+  </div>
+</div>
 <h3 class="title-page">Activité en volume</h3>
 <table id='tableCheck'>
   <tbody>
@@ -60,7 +66,7 @@
 </table>
 {% endif %}
 <h3 class="title-page">Activité en valeur (HT)</h3>
-<table>
+<table id="volValTable">
   <tbody>
     <tr>
       <th>Mois</th>

@@ -92,7 +92,7 @@ class StatisticVolValService  extends AbstractController
         }
                 return $purchaseTotalAmountByMonth;
     }
-    public function createChart($counts1, $counts2, $dataKey)
+    public function arrayMapChart($counts1, $counts2, $dataKey)
     {
         foreach ($counts1 as $count1) {
             $datasets[] = $count1[$dataKey];
@@ -198,51 +198,5 @@ class StatisticVolValService  extends AbstractController
         exit();
     }
 
-    public function generatePDF($html): Response
-    {
 
-    
-        $dompdf = new Dompdf();
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'landscape');
-        $dompdf->render();
-    
-        // Save the PDF content to a file instead of displaying it in the browser
-        $downloadDirectory = $this->getParameter('kernel.project_dir') . '/public/downloads';
-        file_put_contents($downloadDirectory, $dompdf->output());
-    
-        $response = new BinaryFileResponse($downloadDirectory);
-        $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            'generated_pdf_' . date('Y-m-d_H-i-s') . '.pdf'
-        
-        );
-        return $response;
-    }
-    public function generatePDF2(array $counts1, array $counts2, array $combinedCounts, array $combinedCountsMontant): Response
-    {
-        $html = $this->render('statistic/pdfgenerator.html.twig', [
-            'counts1' => $counts1,
-            'counts2' => $counts2,
-            'combinedCounts' => $combinedCounts,
-            'combinedCountsMontant' => $combinedCountsMontant,
-        ]);
-    
-        $dompdf = new Dompdf();
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'landscape');
-        $dompdf->render();
-    
-        // Save the PDF content to a file instead of displaying it in the browser
-        $downloadDirectory = $this->getParameter('kernel.project_dir') . '/public/downloads';
-        file_put_contents($downloadDirectory, $dompdf->output());
-    
-        $response = new BinaryFileResponse($downloadDirectory);
-        $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            'generated_pdf_' . date('Y-m-d_H-i-s') . '.pdf'
-        
-        );
-        return $response;
-    }
 }

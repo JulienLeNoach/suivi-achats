@@ -179,6 +179,7 @@
     "has-symbols": "^1.0.3",
     "hpack.js": "^2.1.6",
     "html-entities": "^2.3.3",
+    "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.1",
     "htmlparser2": "^6.1.0",
     "http-deceiver": "^1.2.7",

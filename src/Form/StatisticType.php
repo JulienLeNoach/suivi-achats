@@ -69,12 +69,6 @@ class StatisticType extends AbstractType
                 'class' => 'fr-btn search hidden test'
             ]
         ])
-        ->add('print', SubmitType::class, [
-            'label' => 'Imprimer',
-            'attr' => [
-                'class' => 'fr-btn search hidden'   
-            ]
-        ])
         ->add('excel', SubmitType::class, [
             'label' => 'Exporter vers Excel',
             'attr' => [
