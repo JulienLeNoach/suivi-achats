@@ -69,12 +69,6 @@ class StatisticType extends AbstractType
                 'class' => 'fr-btn search hidden test'
             ]
         ])
-        ->add('excel', SubmitType::class, [
-            'label' => 'Exporter vers Excel',
-            'attr' => [
-                'class' => 'fr-btn search hidden'
-            ]
-        ])
         // Récupération du formulaire
         ->getForm();
     }

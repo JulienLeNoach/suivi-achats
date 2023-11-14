@@ -17,18 +17,20 @@
     {{ form_row(form.tax) }}
   </div>
   <div class="btn-submit">
-    {{ form_end(form) }}</div>  
+    {{ form_end(form) }}</div>
 </div>
 {% if app.request.method == 'POST' %}
-<div class=" p-3 font-weight-bold d-flex flex-row justify-content-between" >
-<h3 class="  w-50 text-left ">Délai d'activié annuelle tableau</h3>
+<div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
+  <h3 class="  w-50 text-left ">Délai d'activié annuelle tableau</h3>
   <div class="" data-controller="pdf-generator-chartdelay">
-    <button id="pdf" data-action="click->pdf-generator-chartdelay#generatePDFTable" >Impression</button>
+    <button id="pdf" data-action="click->pdf-generator-chartdelay#generatePDFTable">Impression</button>
+    <button id="ex" data-action="click->pdf-generator-chartdelay#exportTableToExcel">Export to Excel</button>
   </div>
 </div>
 
-  <table border=1 id="delayTable" >
-    <thead >
+<div class="table-container">
+  <table border=1 id="delayTable">
+    <thead>
       <th>Délai</th>
       <th>Janvier</th>
       <th>Février</th>
@@ -68,60 +70,66 @@
     <tbody>
     </tbody>
   </table>
+</div>
+
+
 <div class="align-items-center justify-content-center w-100 mw-75" data-controller="chartdelay">
 
 
-<div class=" p-3font-weight-bold d-flex flex-row justify-content-between" >
-<h3 class=" w-50 text-left">Délai d'activié annuelle graphe</h3>
-  <div class="" data-controller="pdf-generator-chartdelay">
-    <button id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphBar" >Impression</button>
+  <div class=" p-3font-weight-bold d-flex flex-row justify-content-between">
+    <h3 class=" w-50 text-left">Délai d'activié annuelle graphe</h3>
+    <div class="" data-controller="pdf-generator-chartdelay">
+      <button id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphBar">Impression</button>
+    </div>
   </div>
-</div>
 
-<canvas id="delayChart" data-chartdelay-target="delayChart"  > </canvas>
-<div data-controller="pdf-generator-chartdelay" id="chartPie">
-    <div  class=" p-3 font-weight-bold d-flex flex-row justify-content-between" >
-    <h3 class=" w-50 text-left">Délai d'activié anuelle détaillé par traitement</h3>
-      <div class="" >
-        <button id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphPie" >Impression</button>
+  <canvas id="delayChart" data-chartdelay-target="delayChart"> </canvas>
+  <div data-controller="pdf-generator-chartdelay" id="chartPie">
+    <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
+      <h3 class=" w-50 text-left">Délai d'activié anuelle détaillé par traitement</h3>
+      <div class="">
+        <button id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphPie">Impression</button>
       </div>
-    </div> 
+    </div>
     <div class="d-flex flex-wrap w-100 align-items-center justify-content-center">
-    <div class="w-25 ">
-    <p class="text-center">{{achats_delay_all[0]["source"]}}</p>
-    <canvas id="ctxAntenne" data-chartdelay-target="ctxAntenne" > </canvas>
+      <div class="w-25 ">
+        <p class="text-center">{{achats_delay_all[0]["source"]}}</p>
+        <canvas id="ctxAntenne" data-chartdelay-target="ctxAntenne"> </canvas>
+      </div>
+      <div class="w-25 ">
+        <p class="text-center">{{achats_delay_all[1]["source"]}}</p>
+        <canvas id="ctxBudget" data-chartdelay-target="ctxBudget"> </canvas>
+      </div>
+      <div class="w-25 ">
+        <p class="text-center">{{achats_delay_all[2]["source"]}}</p>
+        <canvas id="ctxAppro" data-chartdelay-target="ctxAppro"> </canvas>
+      </div>
+      <div class="w-25 ">
+        <p class="text-center">{{achats_delay_all[3]["source"]}}</p>
+        <canvas id="ctxFin" data-chartdelay-target="ctxFin"> </canvas>
+      </div>
+      <div class="w-25 ">
+        <p class="text-center">{{achats_delay_all[5]["source"]}}</p>
+        <canvas id="ctxPFAF" data-chartdelay-target="ctxPFAF"> </canvas>
+      </div>
+      <div class="w-25 ">
+        <p class="text-center">{{achats_delay_all[4]["source"]}}</p>
+        <canvas id="ctxChorus" data-chartdelay-target="ctxChorus"> </canvas>
+      </div>
+      <div class="w-25 ">
+        <p class="text-center">Délai Total</p>
+        <canvas id="ctxTotalDelay" data-chartdelay-target="ctxTotalDelay"> </canvas>
+      </div>
     </div>
-    <div class="w-25 ">
-    <p class="text-center">{{achats_delay_all[1]["source"]}}</p>
-    <canvas id="ctxBudget" data-chartdelay-target="ctxBudget" > </canvas>
-    </div>
-    <div class="w-25 ">
-    <p class="text-center">{{achats_delay_all[2]["source"]}}</p>
-    <canvas id="ctxAppro" data-chartdelay-target="ctxAppro" > </canvas>
-    </div>
-    <div class="w-25 ">
-    <p class="text-center">{{achats_delay_all[3]["source"]}}</p>
-    <canvas id="ctxFin" data-chartdelay-target="ctxFin" > </canvas>
-    </div>
-    <div class="w-25 ">
-    <p class="text-center">{{achats_delay_all[5]["source"]}}</p>
-    <canvas id="ctxPFAF" data-chartdelay-target="ctxPFAF" > </canvas>
-    </div>
-    <div class="w-25 ">
-    <p class="text-center">{{achats_delay_all[4]["source"]}}</p>
-    <canvas id="ctxChorus" data-chartdelay-target="ctxChorus" > </canvas>
-    </div>
-    <div class="w-25 ">
-    <p class="text-center">Délai Total</p>
-    <canvas id="ctxTotalDelay" data-chartdelay-target="ctxTotalDelay" > </canvas>
-    </div>
-    </div>
-    </div>
-</div>
+  </div>
+
 <script>
-    var transStat = {{ transStat|json_encode|raw }};
-    var notStat = {{notStat|json_encode|raw }};
-    var achats_delay_all = {{achats_delay_all|json_encode|raw }};
+
+  var transStat = {{transStat | json_encode | raw}}
+  var notStat = {{notStat | json_encode | raw}}
+  
+  var achats_delay_all = {{achats_delay_all | json_encode | raw}}
+
 </script>
 {% endif %}
 {% endblock %}

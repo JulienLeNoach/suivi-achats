@@ -93,9 +93,6 @@ class StatisticVolController extends AbstractController
                     'datasets4' => $datasets4,
 
                 ]);
-            } elseif ($form->get('excel')->isClicked()) {
-                return $this->statisticService->generateExcel($counts1, $counts2);
-
             }
         }
         return $this->render('statistic/index.html.twig', [

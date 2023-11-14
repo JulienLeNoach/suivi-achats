@@ -106,6 +106,28 @@ function (_Controller) {
         pdf.save('table.pdf');
       });
     }
+  }, {
+    key: "exportTableToExcel",
+    value: function exportTableToExcel() {
+      var table = document.getElementById("delayTable"); // Extract the HTML content of the table
+
+      var html = table.outerHTML; // Create a Blob containing the HTML data with Excel MIME type
+
+      var blob = new Blob([html], {
+        type: 'application/vnd.ms-excel'
+      }); // Create a URL for the Blob
+
+      var url = URL.createObjectURL(blob); // Create a temporary anchor element for downloading
+
+      var a = document.createElement('a');
+      a.href = url; // Set the desired filename for the downloaded file
+
+      a.download = 'delai_activite_tableau.xls'; // Simulate a click on the anchor to trigger download
+
+      a.click(); // Release the URL object to free up resources
+
+      URL.revokeObjectURL(url);
+    }
   }]);
 
   return _default;

@@ -85,6 +85,33 @@ function (_Controller) {
         });
       });
     }
+  }, {
+    key: "exportTableToExcel",
+    value: function exportTableToExcel() {
+      // const table = document.getElementById("volValTable");
+      var table1 = document.getElementById("tableCheck");
+      var table2 = document.getElementById("volValTable"); // Extraire le contenu HTML des deux tables
+
+      var html1 = table1.outerHTML;
+      var html2 = table2.outerHTML; // Concaténer le HTML des deux tables
+
+      var combinedHtml = html1 + html2; // Créer un Blob contenant les données HTML avec le type MIME Excel
+
+      var blob = new Blob([combinedHtml], {
+        type: 'application/vnd.ms-excel'
+      }); // Créer une URL pour le Blob
+
+      var url = URL.createObjectURL(blob); // Créer un élément d'ancre temporaire pour le téléchargement
+
+      var a = document.createElement('a');
+      a.href = url; // Définir le nom de fichier souhaité pour le fichier téléchargé
+
+      a.download = 'delai_activite_tableau.xls'; // Simuler un clic sur l'ancre pour déclencher le téléchargement
+
+      a.click(); // Libérer l'objet URL pour libérer des ressources
+
+      URL.revokeObjectURL(url);
+    }
   }]);
 
   return _default;

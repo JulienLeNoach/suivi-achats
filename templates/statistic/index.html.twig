@@ -15,7 +15,7 @@
     {{ form_row(form.code_formation) }}
     {{ form_row(form.tax) }}
     </div>
-    <div class="btn-submit">
+    <div class="  mr-5 btn-submit d-flex">
     {{ form_end(form) }}</div>
 </div>
 {% if app.request.method == 'POST' %}
@@ -24,6 +24,7 @@
 <div class=" font-weight-bold d-flex flex-row justify-content-between" >
 <h3 class=" p-3 w-50 text-left ">Délai d'activié annuelle tableau</h3>
   <div class="" data-controller="pdf-generator">
+    <button id="ex" data-action="click->pdf-generator#exportTableToExcel" >Export Excel</button>
     <button id="pdf" data-action="click->pdf-generator#generatePDFTable" >Impression</button>
   </div>
 </div>
