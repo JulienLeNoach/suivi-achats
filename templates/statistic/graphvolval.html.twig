@@ -18,10 +18,10 @@
     </div>
     <button class="fr-btn search"><a   id="go-back" @click="goBack">Retour</a></button>
 <script>
-    var datasets1 = {{ datasets1|json_encode|raw }};
-    var datasets2 = {{ datasets2|json_encode|raw }};
-    var datasets3 = {{ datasets3|json_encode|raw }};
-    var datasets4 = {{ datasets4|json_encode|raw }};
+    let datasets1 = {{ datasets1|json_encode|raw }};
+    let datasets2 = {{ datasets2|json_encode|raw }};
+    let datasets3 = {{ datasets3|json_encode|raw }};
+    let datasets4 = {{ datasets4|json_encode|raw }};
     
 </script>
     {% endblock %}

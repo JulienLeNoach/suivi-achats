@@ -94,7 +94,7 @@
                                             {% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_STAT_MPPA_MABC') %}
-                                            <a class="fr-nav__link" href="#" target="_self">Statistiques MPPA/MABC</a>
+                                            <a class="fr-nav__link" href="{{path('app_statistic_typemarche')}}" target="_self">Statistiques MPPA/MABC</a>
                                             {% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_STAT_PME') %}

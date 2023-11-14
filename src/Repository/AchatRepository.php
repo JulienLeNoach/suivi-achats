@@ -38,7 +38,155 @@ class AchatRepository extends ServiceEntityRepository
 
 
     }
+    public function searchAchatToStat($form)
+    {
+        $userId = null;
+        $numSiretId = null;
+        $cpvId = null;
+        $uOId = null;
+        $formationId = null;
 
+        $date = $form["date"]->getData();
+        $user = $form["utilisateurs"]->getData();
+        $numSiret = $form["num_siret"]->getData();
+        $cpv = $form["code_cpv"]->getData();
+        $uO = $form["code_uo"]->getData();
+        $formation = $form["code_formation"]->getData();
+        if ($user) {
+            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
+            $userId = $user->getId();
+        }
+        if ($numSiret) {
+            $numSiretId = $numSiret->getId();
+        }
+        if ($cpv) {
+            $cpvId = $cpv->getId();
+        }
+        if ($uO) {
+            $uOId = $uO->getId();
+        }
+        if ($formation) {
+            $formationId = $formation->getId();
+        }
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "
+        SELECT
+            type_marche,
+            COUNT(*) AS nombre_achats,
+            COUNT(CASE WHEN type_marche = 0 THEN 1 END) AS nombre_achats_type_0,
+            COUNT(CASE WHEN type_marche = 1 THEN 1 END) AS nombre_achats_type_1,
+            (COUNT(CASE WHEN type_marche = 0 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100 AS pourcentage_type_0,
+            (COUNT(CASE WHEN type_marche = 1 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100 AS pourcentage_type_1,
+            SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END) AS somme_montant_type_0,
+            AVG(CASE WHEN type_marche = 0 THEN montant_achat ELSE NULL END) AS moyenne_montant_type_0,
+            SUM(CASE WHEN type_marche = 1 THEN montant_achat ELSE 0 END) AS somme_montant_type_1,
+            AVG(CASE WHEN type_marche = 1 THEN montant_achat ELSE NULL END) AS moyenne_montant_type_1,
+            (SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100 AS pourcentage_type_0_total,
+            (SUM(CASE WHEN type_marche = 1 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100 AS pourcentage_type_1_total,
+            (SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . " ) AS nombre_total_achats
+        FROM
+            achat
+        WHERE
+            type_marche IN (0, 1) AND YEAR(date_saisie) = :year AND etat_achat = 2 
+            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+        GROUP BY
+            type_marche
+        LIMIT 0, 100;";
+    
+    
+
+$stmt = $conn->prepare($sql);
+      
+                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+                $achats=$resultSet->fetchAllAssociative();
+               
+                return $achats;
+    }
+    public function searchAchatToStatMount($form)
+    {
+        $userId = null;
+        $numSiretId = null;
+        $cpvId = null;
+        $uOId = null;
+        $formationId = null;
+
+        $date = $form["date"]->getData();
+        $user = $form["utilisateurs"]->getData();
+        $numSiret = $form["num_siret"]->getData();
+        $cpv = $form["code_cpv"]->getData();
+        $uO = $form["code_uo"]->getData();
+        $formation = $form["code_formation"]->getData();
+        if ($user) {
+            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
+            $userId = $user->getId();
+        }
+        if ($numSiret) {
+            $numSiretId = $numSiret->getId();
+        }
+        if ($cpv) {
+            $cpvId = $cpv->getId();
+        }
+        if ($uO) {
+            $uOId = $uO->getId();
+        }
+        if ($formation) {
+            $formationId = $formation->getId();
+        }
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "
+        SELECT
+        type_marche,
+        COUNT(CASE WHEN montant_achat <= p.four2 THEN 1 END) AS nombre_achats_inf_four1,
+        COUNT(CASE WHEN montant_achat > p.four2 AND montant_achat <= p.four3 THEN 1 END) AS nombre_achats_four1_four2,
+        COUNT(CASE WHEN montant_achat > p.four3 AND montant_achat <= p.four4 THEN 1 END) AS nombre_achats_four2_four3,
+        COUNT(CASE WHEN montant_achat > p.four4 THEN 1 END) AS nombre_achats_sup_four3,
+        COUNT(*) AS nombre_total_achats
+    FROM
+        achat a
+    JOIN
+        parametres p ON a.code_service_id = p.code_service_id 
+WHERE
+    type_marche IN (0, 1) AND YEAR(date_saisie) = :year AND etat_achat = 2 
+    " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+    GROUP BY
+    type_marche;";
+    
+    
+
+$stmt = $conn->prepare($sql);
+      
+                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+                $achats=$resultSet->fetchAllAssociative();
+                return $achats;
+    }
     //getCountsByDateAndType est une méthode qui récupère et compte les données
     //dans une base de données selon le mois de la date de saisie,
     //tout en regroupant les résultats par mois. Elle prend en compte plusieurs
