@@ -418,6 +418,7 @@
     "wildcard": "^2.0.0",
     "wrappy": "^1.0.2",
     "ws": "^8.13.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz",
     "yallist": "^3.1.1",
     "yaml": "^1.10.2",
     "yargs-parser": "^21.1.1"

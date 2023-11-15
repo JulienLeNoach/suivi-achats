@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Statistic;
 
 use App\Form\StatisticType;
 use App\Repository\AchatRepository;

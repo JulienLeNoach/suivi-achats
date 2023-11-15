@@ -45,62 +45,51 @@ function (_Controller) {
   _createClass(_default, [{
     key: "downloadgraphBar",
     value: function downloadgraphBar() {
-      var canvas1, canvasImage1, canvas2, canvasImage2, canvas3, canvasImage3, tableTotaux, mppaTable, mabcTable, tableTotauxCanvas, mpppaTableCanvas, mabcTableCanvas, tableTotauxImage, mppaTableImage, mabcTableImage, pdf;
+      var canvas1, canvasImage1, canvas2, canvasImage2, canvas3, canvasImage3, volvalTable, actApproTable, volvalTableCanvas, actApproTableCanvas, volvalTableImage, actApproImage, pdf;
       return regeneratorRuntime.async(function downloadgraphBar$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              canvas1 = document.getElementById('mppaMountChart');
+              canvas1 = document.getElementById('topVal');
               canvas1.style.backgroundColor = "white"; // Assurez-vous que le fond est blanc
 
               canvasImage1 = canvas1.toDataURL('image/png', 1.0);
-              canvas2 = document.getElementById('mabcMountChart');
+              canvas2 = document.getElementById('topVol');
               canvas2.style.backgroundColor = "white"; // Assurez-vous que le fond est blanc
 
               canvasImage2 = canvas2.toDataURL('image/png', 1.0);
-              canvas3 = document.getElementById('allMountChart');
+              canvas3 = document.getElementById('actAppro');
               canvas3.style.backgroundColor = "white"; // Assurez-vous que le fond est blanc
 
               canvasImage3 = canvas3.toDataURL('image/png', 1.0);
-              tableTotaux = document.getElementById('tableTotaux');
-              mppaTable = document.getElementById('mppaTable');
-              mabcTable = document.getElementById('mabcTable');
-              tableTotaux.style.backgroundColor = "white";
-              mppaTable.style.backgroundColor = "white";
-              mabcTable.style.backgroundColor = "white";
-              _context.next = 17;
-              return regeneratorRuntime.awrap((0, _html2canvas["default"])(tableTotaux));
+              volvalTable = document.getElementById('volvalTable');
+              actApproTable = document.getElementById('actApproTable');
+              volvalTable.style.backgroundColor = "white";
+              actApproTable.style.backgroundColor = "white";
+              _context.next = 15;
+              return regeneratorRuntime.awrap((0, _html2canvas["default"])(volvalTable));
 
-            case 17:
-              tableTotauxCanvas = _context.sent;
-              _context.next = 20;
-              return regeneratorRuntime.awrap((0, _html2canvas["default"])(mppaTable));
+            case 15:
+              volvalTableCanvas = _context.sent;
+              _context.next = 18;
+              return regeneratorRuntime.awrap((0, _html2canvas["default"])(actApproTable));
 
-            case 20:
-              mpppaTableCanvas = _context.sent;
-              _context.next = 23;
-              return regeneratorRuntime.awrap((0, _html2canvas["default"])(mabcTable));
-
-            case 23:
-              mabcTableCanvas = _context.sent;
-              tableTotauxImage = tableTotauxCanvas.toDataURL('image/png', 1.0);
-              mppaTableImage = mpppaTableCanvas.toDataURL('image/png', 1.0);
-              mabcTableImage = mabcTableCanvas.toDataURL('image/png', 1.0);
-              pdf = new _jspdf["default"]('p', 'mm', [300, 200]);
+            case 18:
+              actApproTableCanvas = _context.sent;
+              volvalTableImage = volvalTableCanvas.toDataURL('image/png', 1.0);
+              actApproImage = actApproTableCanvas.toDataURL('image/png', 1.0);
+              pdf = new _jspdf["default"]('l', 'mm', [300, 200]);
               pdf.setFontSize(15);
-              pdf.addImage(canvasImage1, 'png', 15, 15, 70, 70);
+              pdf.addImage(canvasImage1, 'png', 190, 15, 70, 70);
               pdf.addImage(canvasImage2, 'png', 115, 15, 70, 70);
-              pdf.addImage(canvasImage3, 'png', 65, 120, 70, 70);
-              pdf.text("Montant total", 85, 195);
-              pdf.addImage(tableTotauxImage, 'png', 15, 200, 150, 60);
-              pdf.text("Montant des MPPA", 25, 90);
-              pdf.addImage(mppaTableImage, 'png', 15, 95, 80, 15);
-              pdf.text("Montant des MABC", 120, 90);
-              pdf.addImage(mabcTableImage, 'png', 100, 95, 80, 15);
+              pdf.addImage(canvasImage3, 'png', 15, 120, 270, 70);
+              pdf.addImage(volvalTableImage, 'png', 20, 25, 90, 40);
+              pdf.text("Activité appro PME", 120, 120);
+              pdf.addImage(actApproImage, 'png', 15, 95, 270, 15);
               pdf.setFillColor(106, 106, 244, 1);
               pdf.save('Graphique.pdf');
 
-            case 40:
+            case 31:
             case "end":
               return _context.stop();
           }
@@ -110,17 +99,13 @@ function (_Controller) {
   }, {
     key: "exportTableToExcel",
     value: function exportTableToExcel() {
-      var tableTotaux = document.getElementById("tableTotaux");
-      var mppaTable = document.getElementById("mppaTable");
-      var mabcTable = document.getElementById("mabcTable");
-      var allMountTable = document.getElementById("allMountTable"); // Extract the HTML content of the tables with captions
+      var volvalTable = document.getElementById("volvalTable");
+      var actApproTable = document.getElementById("actApproTable"); // Extract the HTML content of the tables with captions
 
-      var html = '<table border=1>' + tableTotaux.innerHTML + '</table>';
-      var html2 = '<table border=1><caption>Montant des MPPA</caption>' + mppaTable.innerHTML + '</table>';
-      var html3 = '<table border=1><caption>Montant des MABC</caption>' + mabcTable.innerHTML + '</table>';
-      var html4 = '<table border=1><caption>Montant des MPPA + MABC</caption>' + allMountTable.innerHTML + '</table>'; // Combine tables with page breaks
+      var html = '<table border=1>' + volvalTable.innerHTML + '</table>';
+      var html2 = '<table border=1><caption>Activité appro PME</caption>' + actApproTable.innerHTML + '</table>'; // Combine tables with page breaks
 
-      var combinedHtml = html + '<br clear="all" style="page-break-before:always;" />' + html2 + '<br clear="all" style="page-break-before:always;" />' + html3 + '<br clear="all" style="page-break-before:always;" />' + html4; // Create a Blob containing the HTML data with Excel MIME type
+      var combinedHtml = html + '<br clear="all" style="page-break-before:always;" />' + html2 + '<br clear="all" style="page-break-before:always;" />'; // Create a Blob containing the HTML data with Excel MIME type
 
       var blob = new Blob([combinedHtml], {
         type: 'application/vnd.ms-excel'

@@ -29,9 +29,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var ctxMppa = document.getElementById('mppaMountChart');
-var ctxMabc = document.getElementById('mabcMountChart');
-var ctxallMount = document.getElementById('allMountChart');
+var ctxactAppro = document.getElementById('actAppro');
+var ctxtopVal = document.getElementById('topVal');
+var ctxtopVol = document.getElementById('topVol');
+var labels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
 var _default =
 /*#__PURE__*/
@@ -47,15 +48,56 @@ function (_Controller) {
   _createClass(_default, [{
     key: "connect",
     value: function connect() {
-      console.log(parameter1);
-      new _auto["default"](ctxMppa, {
-        type: 'pie',
+      var dataValues = [];
+      var dataValues2 = [];
+      var dataValues3 = [];
+      result_achatsSum.forEach(function (achats) {
+        dataValues.push(achats["nombre_achats"]);
+      });
+      result_achatsSumVol.forEach(function (achats) {
+        dataValues2.push(achats["nombre_achats"]);
+      });
+      result_achatsSumVal.forEach(function (achats) {
+        dataValues3.push({
+          key: achats["nombre_achats"],
+          value: achats["somme_montant_achat"]
+        });
+      });
+      new _auto["default"](ctxactAppro, {
+        type: 'bar',
         data: {
-          labels: ['X <=' + parameter1, parameter1 + ' < X <=' + parameter2, parameter2 + '< X <=' + parameter3, parameter3 + ' < X'],
+          labels: labels,
           datasets: [{
-            label: 'Montant des MPPA',
-            data: [result_achats_mounts[0]["nombre_achats_inf_four1"], result_achats_mounts[0]["nombre_achats_four1_four2"], result_achats_mounts[0]["nombre_achats_four2_four3"], result_achats_mounts[0]["nombre_achats_sup_four3"]],
-            backgroundColor: ['rgb(0,99,203)', 'rgb(188,205,255)', 'rgb(184,254,201)', 'rgb(206,97,74)'],
+            label: 'NB PME',
+            data: dataValues,
+            backgroundColor: ['rgb(206,5,0)'],
+            hoverOffset: 4
+          }],
+          options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        }
+      });
+      var labelsVal = [];
+      var dataVal = [];
+      dataValues3.forEach(function (item) {
+        labelsVal.push(item.key);
+        dataVal.push(item.value);
+      });
+      new _auto["default"](ctxtopVal, {
+        type: 'bar',
+        data: {
+          labels: labelsVal,
+          datasets: [{
+            label: 'NB PME',
+            data: dataVal,
+            backgroundColor: ['rgb(251,231,105)'],
             hoverOffset: 4
           }],
           options: {
@@ -68,42 +110,28 @@ function (_Controller) {
           }
         }
       });
-      new _auto["default"](ctxMabc, {
-        type: 'pie',
-        data: {
-          labels: ['X <=' + parameter1, parameter1 + ' < X <=' + parameter2, parameter2 + '< X <=' + parameter3, parameter3 + ' < X'],
-          datasets: [{
-            label: 'Montant des MABC',
-            data: [result_achats_mounts[1]["nombre_achats_inf_four1"], result_achats_mounts[1]["nombre_achats_four1_four2"], result_achats_mounts[1]["nombre_achats_four2_four3"], result_achats_mounts[1]["nombre_achats_sup_four3"]],
-            backgroundColor: ['rgb(0,99,203)', 'rgb(188,205,255)', 'rgb(184,254,201)', 'rgb(206,97,74)'],
-            hoverOffset: 4
-          }],
-          options: {
-            responsive: false,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        }
+      var labelsVol = [];
+      var dataVol = [];
+      dataValues3.forEach(function (item) {
+        labelsVol.push(item.key);
+        dataVol.push(item.value);
       });
-      new _auto["default"](ctxallMount, {
-        type: 'pie',
+      new _auto["default"](ctxtopVol, {
+        type: 'bar',
         data: {
-          labels: ['X <=' + parameter1, parameter1 + ' < X <=' + parameter2, parameter2 + '< X <=' + parameter3, parameter3 + ' < X'],
+          labels: labelsVol,
           datasets: [{
-            label: 'Montant des MPPA + MABC',
-            data: [result_achats_mounts[1]["nombre_achats_inf_four1"] + result_achats_mounts[0]["nombre_achats_inf_four1"], result_achats_mounts[1]["nombre_achats_four1_four2"] + result_achats_mounts[0]["nombre_achats_four1_four2"], result_achats_mounts[1]["nombre_achats_four2_four3"] + result_achats_mounts[0]["nombre_achats_four2_four3"], result_achats_mounts[1]["nombre_achats_sup_four3"] + result_achats_mounts[1]["nombre_achats_sup_four3"]],
-            backgroundColor: ['rgb(0,99,203)', 'rgb(188,205,255)', 'rgb(184,254,201)', 'rgb(206,97,74)'],
+            label: 'NB PME',
+            data: dataVol,
+            backgroundColor: ['rgb(169,251,104)'],
             hoverOffset: 4
-          }],
-          options: {
-            responsive: false,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              beginAtZero: true
             }
           }
         }

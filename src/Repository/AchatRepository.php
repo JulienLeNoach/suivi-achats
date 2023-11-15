@@ -187,6 +187,269 @@ $stmt = $conn->prepare($sql);
                 $achats=$resultSet->fetchAllAssociative();
                 return $achats;
     }
+    public function statisticPMESum($form)
+    {
+        $userId = null;
+        $numSiretId = null;
+        $cpvId = null;
+        $uOId = null;
+        $formationId = null;
+
+        $date = $form["date"]->getData();
+        $user = $form["utilisateurs"]->getData();
+        $numSiret = $form["num_siret"]->getData();
+        $cpv = $form["code_cpv"]->getData();
+        $uO = $form["code_uo"]->getData();
+        $formation = $form["code_formation"]->getData();
+        if ($user) {
+            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
+            $userId = $user->getId();
+        }
+        if ($numSiret) {
+            $numSiretId = $numSiret->getId();
+        }
+        if ($cpv) {
+            $cpvId = $cpv->getId();
+        }
+        if ($uO) {
+            $uOId = $uO->getId();
+        }
+        if ($formation) {
+            $formationId = $formation->getId();
+        }
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "
+        SELECT
+            ROUND(COUNT(achat.id), 2) AS VolumePME,
+            ROUND(SUM(achat.montant_achat), 2) AS ValeurPME,
+            ROUND((COUNT(achat.id) / (
+                SELECT COUNT(id)
+                FROM achat
+                WHERE type_marche = 1  AND fournisseurs.pme = 1 AND YEAR(date_saisie) = :year
+                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+            )) * 100, 2) AS VolumePercentPME,
+            ROUND((SUM(achat.montant_achat) / (
+                SELECT SUM(montant_achat)
+                FROM achat
+                WHERE type_marche = 1  AND fournisseurs.pme = 1 AND YEAR(date_saisie) = :year
+                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+            )) * 100, 2) AS  ValeurPercentPME
+        FROM    
+            achat
+        JOIN
+            fournisseurs ON achat.num_siret_id = fournisseurs.id
+        WHERE
+            achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(date_saisie) = :year
+            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+        LIMIT 0, 100;";
+        
+    
+    
+
+$stmt = $conn->prepare($sql);
+      
+                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+                $achats=$resultSet->fetchAllAssociative();
+                return $achats;
+    }
+    public function statisticPMEMonth($form)
+    {
+        $userId = null;
+        $numSiretId = null;
+        $cpvId = null;
+        $uOId = null;
+        $formationId = null;
+
+        $date = $form["date"]->getData();
+        $user = $form["utilisateurs"]->getData();
+        $numSiret = $form["num_siret"]->getData();
+        $cpv = $form["code_cpv"]->getData();
+        $uO = $form["code_uo"]->getData();
+        $formation = $form["code_formation"]->getData();
+        if ($user) {
+            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
+            $userId = $user->getId();
+        }
+        if ($numSiret) {
+            $numSiretId = $numSiret->getId();
+        }
+        if ($cpv) {
+            $cpvId = $cpv->getId();
+        }
+        if ($uO) {
+            $uOId = $uO->getId();
+        }
+        if ($formation) {
+            $formationId = $formation->getId();
+        }
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "
+        SELECT
+        MONTH(achat.date_saisie) AS mois,
+        SUM(CASE WHEN fournisseurs.pme = 1 THEN 1 ELSE 0 END) AS nombre_achats,
+        (SUM(CASE WHEN fournisseurs.pme = 1 THEN 1 ELSE 0 END) / COUNT(achat.id)) * 100 AS pourcentage_achats_pme
+    FROM
+        achat
+    JOIN
+        fournisseurs ON achat.num_siret_id = fournisseurs.id
+    WHERE
+        achat.type_marche = 1 AND YEAR(achat.date_saisie) = :year
+        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+    GROUP BY
+        mois
+    ORDER BY
+        FIELD(mois, '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12')
+    LIMIT 0, 100";
+
+$stmt = $conn->prepare($sql);
+                
+                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+                $achats=$resultSet->fetchAllAssociative();
+                return $achats;
+    }
+    public function statisticPMETopVol($form)
+    {
+        $userId = null;
+        $numSiretId = null;
+        $cpvId = null;
+        $uOId = null;
+        $formationId = null;
+
+        $date = $form["date"]->getData();
+        $user = $form["utilisateurs"]->getData();
+        $numSiret = $form["num_siret"]->getData();
+        $cpv = $form["code_cpv"]->getData();
+        $uO = $form["code_uo"]->getData();
+        $formation = $form["code_formation"]->getData();
+        if ($user) {
+            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
+            $userId = $user->getId();
+        }
+        if ($numSiret) {
+            $numSiretId = $numSiret->getId();
+        }
+        if ($cpv) {
+            $cpvId = $cpv->getId();
+        }
+        if ($uO) {
+            $uOId = $uO->getId();
+        }
+        if ($formation) {
+            $formationId = $formation->getId();
+        }
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "
+        SELECT
+    fournisseurs.id AS fournisseur_id,
+    fournisseurs.nom_fournisseur AS nom_fournisseur,
+    COUNT(achat.id) AS nombre_achats,
+    SUM(achat.montant_achat) AS somme_montant_achat
+FROM
+    achat
+JOIN
+    fournisseurs ON achat.num_siret_id = fournisseurs.id
+WHERE
+    achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(achat.date_saisie) = :year
+    " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+GROUP BY
+    fournisseurs.id, fournisseurs.nom_fournisseur
+ORDER BY
+    nombre_achats DESC
+LIMIT 5";
+        
+    
+    
+
+$stmt = $conn->prepare($sql);
+                
+                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+                $achats=$resultSet->fetchAllAssociative();
+                
+                return $achats;
+    }
+    public function statisticPMETopVal($form)
+    {
+        $userId = null;
+        $numSiretId = null;
+        $cpvId = null;
+        $uOId = null;
+        $formationId = null;
+
+        $date = $form["date"]->getData();
+        $user = $form["utilisateurs"]->getData();
+        $numSiret = $form["num_siret"]->getData();
+        $cpv = $form["code_cpv"]->getData();
+        $uO = $form["code_uo"]->getData();
+        $formation = $form["code_formation"]->getData();
+        if ($user) {
+            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
+            $userId = $user->getId();
+        }
+        if ($numSiret) {
+            $numSiretId = $numSiret->getId();
+        }
+        if ($cpv) {
+            $cpvId = $cpv->getId();
+        }
+        if ($uO) {
+            $uOId = $uO->getId();
+        }
+        if ($formation) {
+            $formationId = $formation->getId();
+        }
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "
+        SELECT
+        fournisseurs.id AS fournisseur_id,
+        fournisseurs.nom_fournisseur AS nom_fournisseur,
+        COUNT(achat.id) AS nombre_achats,
+        SUM(achat.montant_achat) AS somme_montant_achat
+    FROM
+        achat
+    JOIN
+        fournisseurs ON achat.num_siret_id = fournisseurs.id
+    WHERE
+        achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(achat.date_saisie) = :year
+        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+    GROUP BY
+        fournisseurs.id, fournisseurs.nom_fournisseur
+    ORDER BY
+    somme_montant_achat DESC
+    LIMIT 5";
+        
+    
+    
+
+$stmt = $conn->prepare($sql);
+                
+                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+                $achats=$resultSet->fetchAllAssociative();
+                return $achats;
+    }
     //getCountsByDateAndType est une méthode qui récupère et compte les données
     //dans une base de données selon le mois de la date de saisie,
     //tout en regroupant les résultats par mois. Elle prend en compte plusieurs

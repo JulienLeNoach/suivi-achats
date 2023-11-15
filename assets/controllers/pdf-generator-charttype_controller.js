@@ -13,9 +13,14 @@ export default class extends Controller {
     canvas2.style.backgroundColor = "white"; // Assurez-vous que le fond est blanc
     const canvasImage2 = canvas2.toDataURL('image/png', 1.0);
 
+    const canvas3 = document.getElementById('allMountChart');
+    canvas3.style.backgroundColor = "white"; // Assurez-vous que le fond est blanc
+    const canvasImage3 = canvas3.toDataURL('image/png', 1.0);
+
     const tableTotaux = document.getElementById('tableTotaux');
     const mppaTable = document.getElementById('mppaTable');
     const mabcTable = document.getElementById('mabcTable');
+    
 
     tableTotaux.style.backgroundColor = "white";
     mppaTable.style.backgroundColor = "white";
@@ -36,16 +41,57 @@ export default class extends Controller {
 
     pdf.addImage(canvasImage2, 'png', 115, 15, 70, 70);
 
-    pdf.text("Montant total", 15, 115);
-    pdf.addImage(tableTotauxImage, 'png', 15, 130, 150, 60);
+    pdf.addImage(canvasImage3, 'png', 65, 120, 70, 70);
 
-    pdf.text("Montant des MPPA", 15, 200);
-    pdf.addImage(mppaTableImage, 'png', 15, 215, 80, 15);
 
-    pdf.text("Montant des MABC", 100, 200);
-    pdf.addImage(mabcTableImage, 'png', 100, 215, 80, 15);
+    pdf.text("Montant total", 85, 195);
+    pdf.addImage(tableTotauxImage, 'png', 15, 200, 150, 60);
+
+    pdf.text("Montant des MPPA", 25, 90);
+    pdf.addImage(mppaTableImage, 'png', 15, 95, 80, 15);
+
+    pdf.text("Montant des MABC", 120, 90);
+    pdf.addImage(mabcTableImage, 'png', 100, 95, 80, 15);
 
     pdf.setFillColor(106, 106, 244, 1);
     pdf.save('Graphique.pdf');
   }
+
+  exportTableToExcel() {
+    const tableTotaux = document.getElementById("tableTotaux");
+    const mppaTable = document.getElementById("mppaTable");
+    const mabcTable = document.getElementById("mabcTable");
+    const allMountTable = document.getElementById("allMountTable");
+
+    // Extract the HTML content of the tables with captions
+    const html = '<table border=1>' + tableTotaux.innerHTML + '</table>';
+    const html2 = '<table border=1><caption>Montant des MPPA</caption>' + mppaTable.innerHTML + '</table>';
+    const html3 = '<table border=1><caption>Montant des MABC</caption>' + mabcTable.innerHTML + '</table>';
+    const html4 = '<table border=1><caption>Montant des MPPA + MABC</caption>' + allMountTable.innerHTML + '</table>';
+
+    // Combine tables with page breaks
+    const combinedHtml = html + '<br clear="all" style="page-break-before:always;" />' + html2 + '<br clear="all" style="page-break-before:always;" />' + html3 + '<br clear="all" style="page-break-before:always;" />' + html4 ;
+
+    // Create a Blob containing the HTML data with Excel MIME type
+    const blob = new Blob([combinedHtml], { type: 'application/vnd.ms-excel' });
+
+    // Create a URL for the Blob
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary anchor element for downloading
+    const a = document.createElement('a');
+    a.href = url;
+
+    // Set the desired filename for the downloaded file
+    a.download = 'delai_activite_tableau.xls';
+
+    // Simulate a click on the anchor to trigger download
+    a.click();
+
+    // Release the URL object to free up resources
+    URL.revokeObjectURL(url);
+}
+
+
+
 }

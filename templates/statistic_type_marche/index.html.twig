@@ -21,12 +21,16 @@
 </div>
 
 {% if app.request.method == 'POST' %}
+<div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
+    <h3 class="  w-50 text-left ">Statistiques MPPA/MABC tableau</h3>
     <div class="" data-controller="pdf-generator-charttype">
-      <button id="pdf" data-action="click->pdf-generator-charttype#downloadgraphBar">Impression</button>
+        <button id="pdf" data-action="click->pdf-generator-charttype#downloadgraphBar">Impression</button>
+        <button id="ex" data-action="click->pdf-generator-charttype#exportTableToExcel">Export to Excel</button>
     </div>
+</div>
 <div class="typeResult d-flex">
     <div class="tableTotaux p-3">
-        <table id="tableTotaux">
+        <table id="tableTotaux" border=1>
             <tr>
                 <th></th>
                 <th>MPPA</th>
@@ -62,28 +66,12 @@
                 <td>{{result_achats[1]["pourcentage_type_0"]}} %</td>
             </tr>
         </table>
-                <div class="allMount  p-3">
-            <h4>Montant des MPPA + MABC</h4>
-            <table>
-                <tr>
-                    <th>X <= {{parameter[0].four2}}</th>
-                    <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
-                    <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
-                    <th>X > {{parameter[0].four4}}</th>
-                </tr>
-                <tr>
-                    <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"] + result_achats_mounts[1]["nombre_achats_inf_four1"]}}</td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_four1_four2"] + result_achats_mounts[1]["nombre_achats_four1_four2"]}}</td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_four2_four3"] + result_achats_mounts[1]["nombre_achats_four2_four3"]}}</td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_sup_four3"] + result_achats_mounts[1]["nombre_achats_sup_four3"]}}</td>
-                </tr>
-            </table>
-        </div>
+
     </div>
     <div class="graphMount d-flex" data-controller="charttype">
-        <div class="mppaMount">
+        <div class="mppaMount p-3">
             <h4>Montant des MPPA</h4>
-            <table id="mppaTable">
+            <table id="mppaTable" border=1>
                 <tr>
                     <th>X <= {{parameter[0].four2}}</th>
                     <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
@@ -101,7 +89,7 @@
         </div>
         <div class="mabcMount  p-3">
             <h4>Montant des MABC</h4>
-            <table id="mabcTable">
+            <table id="mabcTable" border=1>
                 <tr>
                     <th>X <= {{parameter[0].four2}}</th>
                     <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
@@ -117,7 +105,28 @@
             </table>
             <canvas id="mabcMountChart"></canvas>
         </div>
-
+        <div class="allMount  p-3">
+            <h4>Montant des MPPA + MABC</h4>
+            <table id="allMountTable" border=1>
+                <tr>
+                    <th>X <= {{parameter[0].four2}}</th>
+                    <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
+                    <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
+                    <th>X > {{parameter[0].four4}}</th>
+                </tr>
+                <tr>
+                    <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"] + result_achats_mounts[1]["nombre_achats_inf_four1"]}}
+                    </td>
+                    <td>{{result_achats_mounts[0]["nombre_achats_four1_four2"] + result_achats_mounts[1]["nombre_achats_four1_four2"]}}
+                    </td>
+                    <td>{{result_achats_mounts[0]["nombre_achats_four2_four3"] + result_achats_mounts[1]["nombre_achats_four2_four3"]}}
+                    </td>
+                    <td>{{result_achats_mounts[0]["nombre_achats_sup_four3"] + result_achats_mounts[1]["nombre_achats_sup_four3"]}}
+                    </td>
+                </tr>
+            </table>
+            <canvas id="allMountChart" data-charttype-target="allMountChart"></canvas>
+        </div>
     </div>
 </div>
 <script>
