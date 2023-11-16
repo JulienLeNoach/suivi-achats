@@ -45,8 +45,8 @@ class SecurityController extends AbstractController
 
         // Ajouter un message flash pour afficher un message à l'utilisateur
         $this->addFlash('success', 'Vous avez été déconnecté.');
-    
-        return $response;
+        return $this->redirectToRoute($response);
+
 
     }
 }

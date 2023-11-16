@@ -31,6 +31,7 @@ class StatisticDelayController extends AbstractController
         $form = $this->createForm(StatisticType::class, null, []);
         $form->handleRequest($request);        
         $achats_delay = $this->achatRepository->yearDelayAchat($form);
+        // dd($achats_delay);
         $achats = $this->statisticDelayService->totalDelayPerMonth($achats_delay);
         $achats_delay_all = $this->achatRepository->yearDelayAchat2($form);
 

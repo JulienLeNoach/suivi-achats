@@ -27,7 +27,7 @@
     <label for="cpv">Computation</label>
     <input type="text" id ="cpv" value="{{result_achat.codeCPV.mtCpv}}" disabled>
     <label for="cpv">Reliquat</label>
-    <input type="text" id ="cpv" value="{{90000 - result_achat.codeCPV.mtCpv}}" disabled>
+    <input type="text" id ="cpv" value="{{result_achat.codeCPV.mtCpv - result_achat.montantAchat}}" disabled>
 </div>
         <div class="input-grp">
     <label for="mtn">Montant achat HT</label>

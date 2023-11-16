@@ -30,6 +30,8 @@ class AchatSearchType extends AbstractType
             ->add('objet_achat', TextType::class, [
                 'required' => false,
                 'label' => false,
+                'attr' => ['class' => 'fr-input'],
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('etat_achat', ChoiceType::class, [
                 'choices'  => [
@@ -41,7 +43,10 @@ class AchatSearchType extends AbstractType
                 'placeholder' => 'Tous',
                 'expanded' => true,
                 'label' => "Etat de l'achat",
-                'row_attr' => ['class' => 'radio-search']
+                'row_attr' => ['class' => 'radio-search'],
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
+
             ])
             ->add('devis', ChoiceType::class, [
                 'choices'  => [
@@ -52,7 +57,10 @@ class AchatSearchType extends AbstractType
                 'placeholder' => 'Tous',
                 'expanded' => true,
                 'label' => "Devis",
-                'row_attr' => ['class' => 'radio-search']
+                'row_attr' => ['class' => 'radio-search'],
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
+
             ])
             ->add('type_marche', ChoiceType::class, [
                 'choices'  => [
@@ -63,48 +71,74 @@ class AchatSearchType extends AbstractType
                 'placeholder' => 'Tous',
                 'expanded' => true,
                 'label' => "Type de marché",
-                'row_attr' => ['class' => 'radio-search']
+                'row_attr' => ['class' => 'radio-search'],
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
+
             ])
             ->add('date', TextType::class, [
                 'required' => false,
                 'label' => false,
-                'mapped' => false
+                'mapped' => false,
+                'attr' => ['class' => 'fr-input'],  
+                'label_attr' => ['class' => 'fr-label']
+
 
             ])
             ->add('num_siret', FournisseursAutocompleteField::class, [  
                 'required' => false,
                 'label' => false,
+                'attr' => ['class' => 'fr-input'],  
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('zipcode', TextType::class, [
                 'required' => false,
                 'label' => false,
-                'mapped' => false
+                'mapped' => false,
+                'attr' => ['class' => 'fr-input'],  
+                'label_attr' => ['class' => 'fr-label']
+
             ])
             ->add('utilisateurs', UtilisateursAutocompleteField::class, [  
                 'required' => false,
                 'label' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
+
             ])
             ->add('code_uo', UOAutocompleteField::class, [  
                 'required' => false,
-                'label' => false
+                'label' => false,
+                'attr' => ['class' => 'fr-input'],  
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('code_cpv', LibelleCpv::class, [  
                 'required' => false,
-                'label' => false
+                'label' => false,
+                'attr' => ['class' => 'fr-input'],  
+                'label_attr' => ['class' => 'fr-label']
+
             ])
 
             ->add('code_formation', FormationsAutocompleteField::class, [  
                 'required' => false,
-                'label' => false
+                'label' => false,
+                'attr' => ['class' => 'fr-input'],  
+                'label_attr' => ['class' => 'fr-label']
+
             ])
             ->add('montant_achat_min', TextType::class, [
                 'required' => false,
                 'label' => false,
-                'mapped' => false
+                'mapped' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('montant_achat', TextType::class, [
                 'required' => false,
-                'label' => false
+                'label' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('recherche', SubmitType::class, [
                 'attr' => [

@@ -638,93 +638,85 @@ $stmt = $conn->prepare($sql);
         AVG(CASE WHEN MONTH(date_saisie) = 10 THEN difference END) AS Mois_10,
         AVG(CASE WHEN MONTH(date_saisie) = 11 THEN difference END) AS Mois_11,
         AVG(CASE WHEN MONTH(date_saisie) = 12 THEN difference END) AS Mois_12
-
       FROM (
         SELECT
           'ANT GSBDD' AS source,
-          DATEDIFF(date_commande_chorus, date_sillage) AS difference,
+          (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM fermeture WHERE fermedate BETWEEN date_sillage AND date_commande_chorus)) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-
+    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
         UNION ALL
       
         SELECT
           'BUDGET' AS source,
-          DATEDIFF(date_valid_inter, date_commande_chorus) AS difference,
+          (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM fermeture WHERE fermedate BETWEEN date_commande_chorus AND date_valid_inter)) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-
+    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
         UNION ALL
       
         SELECT
           'APPRO' AS source,
-          DATEDIFF(date_validation, date_valid_inter) AS difference,
+          (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM fermeture WHERE fermedate BETWEEN date_valid_inter AND date_validation)) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-
+    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
         UNION ALL
       
         SELECT
           'FIN' AS source,
-          DATEDIFF(date_notification, date_validation) AS difference,
+          (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM fermeture WHERE fermedate BETWEEN date_validation AND date_notification)) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-
+    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
         UNION ALL
       
         SELECT
           'PFAF' AS source,
-          DATEDIFF(date_notification, date_commande_chorus) AS difference,
+          (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM fermeture WHERE fermedate BETWEEN date_commande_chorus AND date_notification)) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-
+    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
         UNION ALL
       
         SELECT
           'Chorus formul.' AS source,
-          DATEDIFF(date_notification, date_sillage) AS difference,
+          (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM fermeture WHERE fermedate BETWEEN date_sillage AND date_notification)) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
         " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-
-      ) AS combined_data
+    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+    ) AS combined_data
       GROUP BY source
-      -- Organisez les sources dans l'ordre d'apparition
       ORDER BY
         source = 'ANT GSBDD' DESC,
         source = 'BUDGET' DESC,
@@ -905,7 +897,7 @@ $stmt = $conn->prepare($sql);
           
             SELECT
               'PFAF' AS source,
-              DATEDIFF(date_notification, date_commande_chorus) AS difference,
+              DATEDIFF(date_notification, date_valid_inter) AS difference,
               date_saisie
             FROM achat
             WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -919,7 +911,7 @@ $stmt = $conn->prepare($sql);
           
             SELECT
               'Chorus formul.' AS source,
-              DATEDIFF(date_notification, date_sillage) AS difference,
+              DATEDIFF(date_notification, date_commande_chorus) AS difference,
               date_saisie
             FROM achat
             WHERE YEAR(date_saisie) = :year AND etat_achat = 2

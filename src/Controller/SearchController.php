@@ -145,6 +145,7 @@ public function add(Request $request,SessionInterface $session): Response
 public function valid(Request $request,$id,SessionInterface $session): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
+    $cpvId = $result_achat->getCodeCpv();
     $form = $this->createForm(ValidType::class, null, []);
 
     $form->handleRequest($request);
@@ -154,14 +155,15 @@ public function valid(Request $request,$id,SessionInterface $session): Response
         if ($form->get('Valider')->isClicked()) {
 
         $query = $this->entityManager->getRepository(Achat::class)->valid($request, $id);
-        $cpvSold = $this->entityManager->getRepository(CPV::class)->find($id);
+        $cpvSold = $this->entityManager->getRepository(CPV::class)->find($cpvId);
+        // dd($cpvSold);
         $cpvSold->setMtCpv($cpvSold->getMtCpv() - $result_achat->getMontantAchat());
-        $result_achat->getCodeCpv()->setMtCpv($cpvSold->getMtCpv() - $result_achat->getMontantAchat());
+        // $result_achat->getCodeCpv()->setMtCpv($cpvSold->getMtCpv() - $result_achat->getMontantAchat());
         $this->entityManager->flush();
         $this->entityManager->persist($cpvSold);
         $this->addFlash('success', "L'achat n° $id est validé");
 
-        return $this->redirectToRoute('valid_achat', ['id' => $id]);
+        return $this->redirect("/search");
         }if ($form->get('return')->isClicked()) {
             $currentUrl = $session->get('current_url');
 

@@ -62,6 +62,9 @@ export default class extends Controller {
     const mppaTable = document.getElementById("mppaTable");
     const mabcTable = document.getElementById("mabcTable");
     const allMountTable = document.getElementById("allMountTable");
+    
+    // Supposons que cette table contient les données pour le graphique en barres
+    const barChartData = document.getElementById("barChartData");
 
     // Extract the HTML content of the tables with captions
     const html = '<table border=1>' + tableTotaux.innerHTML + '</table>';
@@ -69,8 +72,15 @@ export default class extends Controller {
     const html3 = '<table border=1><caption>Montant des MABC</caption>' + mabcTable.innerHTML + '</table>';
     const html4 = '<table border=1><caption>Montant des MPPA + MABC</caption>' + allMountTable.innerHTML + '</table>';
 
+    // Ajout de la table pour les données du graphique
+    const html5 = '<table border=1><caption>Données pour Graphique en Barres</caption>' + barChartData.innerHTML + '</table>';
+
     // Combine tables with page breaks
-    const combinedHtml = html + '<br clear="all" style="page-break-before:always;" />' + html2 + '<br clear="all" style="page-break-before:always;" />' + html3 + '<br clear="all" style="page-break-before:always;" />' + html4 ;
+    const combinedHtml = html + '<br clear="all" style="page-break-before:always;" />' + 
+                          html2 + '<br clear="all" style="page-break-before:always;" />' + 
+                          html3 + '<br clear="all" style="page-break-before:always;" />' + 
+                          html4 + '<br clear="all" style="page-break-before:always;" />' +
+                          html5;
 
     // Create a Blob containing the HTML data with Excel MIME type
     const blob = new Blob([combinedHtml], { type: 'application/vnd.ms-excel' });
@@ -91,6 +101,7 @@ export default class extends Controller {
     // Release the URL object to free up resources
     URL.revokeObjectURL(url);
 }
+
 
 
 

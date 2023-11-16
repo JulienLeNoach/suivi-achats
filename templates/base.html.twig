@@ -1,3 +1,6 @@
+{% set body_class = body_class|default('') %}
+
+
 <!doctype html>
 <html lang="fr" data-fr-scheme="light">
 {% block header %}
@@ -175,7 +178,8 @@
 </head>
 
 
-{% block body %}
+{% block body  %}
+
 {% endblock %}
 
 </html>

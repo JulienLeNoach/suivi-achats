@@ -17,7 +17,7 @@
     qui génère le code HTML nécessaire pour le formulaire, 
     et de la fonction form_row() qui génère le code HTML pour chaque champ du formulaire. -->
     <div class="form-container">
-        {{ form_start(form, {'attr': {'class': 'search-form-all'}}) }}
+        {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around'}}) }}
         <div class="input-grp">
             <label for="achat_search_objet_achat">Objet de l'achat</label>
             {{ form_row(form.objet_achat) }}

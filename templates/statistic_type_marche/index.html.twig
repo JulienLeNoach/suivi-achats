@@ -125,6 +125,24 @@
                     </td>
                 </tr>
             </table>
+            <table id="barChartData" border=1>
+                <tr>
+                    <th>X <= {{parameter[0].four2}}</th>
+                    <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
+                    <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
+                    <th>X > {{parameter[0].four4}}</th>
+                </tr>
+                <tr>
+                    <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"] + result_achats_mounts[1]["nombre_achats_inf_four1"]}}
+                    </td>
+                    <td>{{result_achats_mounts[0]["nombre_achats_four1_four2"] + result_achats_mounts[1]["nombre_achats_four1_four2"]}}
+                    </td>
+                    <td>{{result_achats_mounts[0]["nombre_achats_four2_four3"] + result_achats_mounts[1]["nombre_achats_four2_four3"]}}
+                    </td>
+                    <td>{{result_achats_mounts[0]["nombre_achats_sup_four3"] + result_achats_mounts[1]["nombre_achats_sup_four3"]}}
+                    </td>
+                </tr>
+            </table>
             <canvas id="allMountChart" data-charttype-target="allMountChart"></canvas>
         </div>
     </div>

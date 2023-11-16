@@ -113,14 +113,18 @@ function (_Controller) {
       var tableTotaux = document.getElementById("tableTotaux");
       var mppaTable = document.getElementById("mppaTable");
       var mabcTable = document.getElementById("mabcTable");
-      var allMountTable = document.getElementById("allMountTable"); // Extract the HTML content of the tables with captions
+      var allMountTable = document.getElementById("allMountTable"); // Supposons que cette table contient les données pour le graphique en barres
+
+      var barChartData = document.getElementById("barChartData"); // Extract the HTML content of the tables with captions
 
       var html = '<table border=1>' + tableTotaux.innerHTML + '</table>';
       var html2 = '<table border=1><caption>Montant des MPPA</caption>' + mppaTable.innerHTML + '</table>';
       var html3 = '<table border=1><caption>Montant des MABC</caption>' + mabcTable.innerHTML + '</table>';
-      var html4 = '<table border=1><caption>Montant des MPPA + MABC</caption>' + allMountTable.innerHTML + '</table>'; // Combine tables with page breaks
+      var html4 = '<table border=1><caption>Montant des MPPA + MABC</caption>' + allMountTable.innerHTML + '</table>'; // Ajout de la table pour les données du graphique
 
-      var combinedHtml = html + '<br clear="all" style="page-break-before:always;" />' + html2 + '<br clear="all" style="page-break-before:always;" />' + html3 + '<br clear="all" style="page-break-before:always;" />' + html4; // Create a Blob containing the HTML data with Excel MIME type
+      var html5 = '<table border=1><caption>Données pour Graphique en Barres</caption>' + barChartData.innerHTML + '</table>'; // Combine tables with page breaks
+
+      var combinedHtml = html + '<br clear="all" style="page-break-before:always;" />' + html2 + '<br clear="all" style="page-break-before:always;" />' + html3 + '<br clear="all" style="page-break-before:always;" />' + html4 + '<br clear="all" style="page-break-before:always;" />' + html5; // Create a Blob containing the HTML data with Excel MIME type
 
       var blob = new Blob([combinedHtml], {
         type: 'application/vnd.ms-excel'

@@ -93,7 +93,7 @@ export default class extends Controller {
                 data: [result_achats_mounts[1]["nombre_achats_inf_four1"]+result_achats_mounts[0]["nombre_achats_inf_four1"],
                 result_achats_mounts[1]["nombre_achats_four1_four2"]+result_achats_mounts[0]["nombre_achats_four1_four2"],
                 result_achats_mounts[1]["nombre_achats_four2_four3"]+result_achats_mounts[0]["nombre_achats_four2_four3"],
-                result_achats_mounts[1]["nombre_achats_sup_four3"]+result_achats_mounts[1]["nombre_achats_sup_four3"]],
+                result_achats_mounts[1]["nombre_achats_sup_four3"]+result_achats_mounts[0]["nombre_achats_sup_four3"]],
                 backgroundColor: [
                   'rgb(0,99,203)',
                   'rgb(188,205,255)',
