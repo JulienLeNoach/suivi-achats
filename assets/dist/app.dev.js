@@ -8,6 +8,8 @@ require("./less/search.less");
 
 require("../node_modules/@gouvfr/dsfr/dist/dsfr.min.css");
 
+require("../node_modules/@gouvfr/dsfr/dist/utility/icons/icons.css");
+
 require("./styles/app.css");
 
 require("./bootstrap");

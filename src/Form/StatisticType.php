@@ -28,34 +28,67 @@ class StatisticType extends AbstractType
             'label' => "Année",
             'mapped' => false,
             'empty_data'  => date('Y'),
+            'attr' => ['class' => 'fr-input'],  
+            'label_attr' => ['class' => 'fr-label']
 
+        ])
+        ->add('jourcalendar', ChoiceType::class, [
+            'choices'  => [
+                'Jours ouvrés' => "jO",
+                'Tout les jours' => "tJ",
+            ],
+            'required' => false,
+            'expanded' => true,
+            'label'=>false,
+            'row_attr' => ['class' => 'radio-search'],
+            'attr' => ['class' => 'fr-input'], 
+            'label_attr' => ['class' => 'fr-label'],
+            'placeholder' => false,
+            'mapped'=>false,
 
         ])
         ->add('num_siret', FournisseursAutocompleteField::class, [  
             'required' => false,
+            'label' => "N° SIRET",
+            'attr' => ['class' => 'fr-input'],  
+            'label_attr' => ['class' => 'fr-label']
         ])
 
         ->add('utilisateurs', UtilisateursAutocompleteField::class, [  
             'required' => false,
+            'label' => "Utilisateur",
+            'attr' => ['class' => 'fr-input'],  
+            'label_attr' => ['class' => 'fr-label']
         ])
         ->add('code_uo', UOAutocompleteField::class, [  
             'required' => false,
+            'label' => "Unité organique",
+            'attr' => ['class' => 'fr-input'],  
+            'label_attr' => ['class' => 'fr-label']
         ])
         ->add('code_cpv', LibelleCpv::class, [  
             'required' => false,
+            'label' => "CPV",
+            'attr' => ['class' => 'fr-input'],  
+            'label_attr' => ['class' => 'fr-label']
         ])
 
         ->add('code_formation', FormationsAutocompleteField::class, [  
             'label' => 'Formation',
             'required' => false,
+            'attr' => ['class' => 'fr-input'],  
+            'label_attr' => ['class' => 'fr-label']
         ])
         ->add('tax', ChoiceType::class, [
-            'label' => 'Taxe',
+            'label' => false,
             'choices' => [
                 'HT' => 'ht',
                 'TTC' => 'ttc',
             ],
-            'mapped' => false
+            'mapped' => false,
+            'attr' => ['class' => 'fr-input'],  
+            'label_attr' => ['class' => 'fr-label'],
+            'required'=>false,
         ])
         ->add('recherche', SubmitType::class, [
             'attr' => [

@@ -3,34 +3,62 @@
 {% block title %}Achat{% endblock %}
 
 {% block body %}
-<h2 class="title-page mt-5">Achat</h2>
-<div class='h4'>
-    <h4>Saisir un nouvel achat</h4>
-    <button class="fr-btn"> {% if is_granted ('ROLE_OPT_SAISIR_ACHATS') %}
-        <a href="{{path('ajout_achat')}}">Saisir un achat</a>
-        {% endif %}
-    </button>
-</div>
 <div class="achat-container">
+    <div class="title-page mt-5 w-100 text-center">
+        <h2><span style="border-bottom: 4px solid #000091;">Achats</span></h2>
+    </div>
+    <div class='addAchat mt-5'>
+        <span class="fr-icon-arrow-right-line ms-5" aria-hidden="true"></span>
+
+        <h5 class="mt-4 ms-5 blueF">Saisir un nouvel achat</h5>
+        <button class="fr-btn btn-achat ms-5"> {% if is_granted ('ROLE_OPT_SAISIR_ACHATS') %}
+            <a href="{{path('ajout_achat')}}" class="text-center">Nouvel achat</a>
+            {% endif %}
+        </button>
+    </div>
     <!-- Création du formulaire de recherche d'achat -->
     <!-- Le formulaire de recherche est créé à l'aide de la fonction form_start(), 
     qui génère le code HTML nécessaire pour le formulaire, 
     et de la fonction form_row() qui génère le code HTML pour chaque champ du formulaire. -->
+    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
+        <span class="fr-icon-search-line" aria-hidden="true"></span>
+
+        <h5 class="mt-4 ms-3 blueF">Rechercher un achat</h5>
+        <div class="bande ms-3">
+        </div>
+    </div>
     <div class="form-container">
-        {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around'}}) }}
-        <div class="input-grp">
+        {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around flex-wrap'}}) }}
+        <div class="input-grp" style="flex-basis:33%;">
+            <div class="chrono d-flex">
+                <div class="chronoN  me-3 w-50">
+                    <label for="achat_search_numero_achat">N° Chrono</label>
+                    {{ form_row(form.numero_achat) }}
+                </div>
+                <div class="chronoD w-50">
+                    <label for="achat_search_date">Année</label>
+                    {{ form_row(form.date) }}
+                </div>
+            </div>
+            <label for="achat_search_id_demande_achat">Identifiant de la demande d'achat</label>
+            {{ form_row(form.id_demande_achat)}}
             <label for="achat_search_objet_achat">Objet de l'achat</label>
             {{ form_row(form.objet_achat) }}
-            <label for="achat_search_date">Année</label>
-            {{ form_row(form.date) }}
             <label for="achat_search_zipcode">Code postal</label>
             {{ form_row(form.zipcode) }}
-            <label for="achat_search_montant_achat">Montant de l'achat maximum</label>
-            {{ form_row(form.montant_achat)}}
-            <label for="achat_search_montant_achat">Montant de l'achat minimum</label>
-            {{ form_row(form.montant_achat_min)}}
+            <div class="montant d-flex">
+                <div class="montantMin me-3 w-50">
+                    <label for="achat_search_montant_achat">Montant de l'achat minimum</label>
+                    {{ form_row(form.montant_achat_min)}}
+                </div>
+                <div class="montantMax w-50">
+                    <label for="achat_search_montant_achat">Montant de l'achat maximum</label>
+                    {{ form_row(form.montant_achat)}}
+                </div>
+            </div>
+
         </div>
-        <div class="input-grp">
+        <div class="input-grp" style="flex-basis:33%;">
             <label for="achat_search_code_uo_autocomplete-ts-control">Unité organique</label>
             {{ form_row(form.code_uo) }}
             <label for="achat_search_code_cpv_autocomplete-ts-control">CPV</label>
@@ -41,21 +69,48 @@
             {{ form_row(form.utilisateurs) }}
             <label for="achat_search_num_siret_autocomplete-ts-control">N° SIRET</label>
             {{ form_row(form.num_siret) }}
+            <div class="rec d-flex ">
+                <div class="recdebut me-3 w-50">
+                    <label for="achat_search_debut_rec">Date de début d'enregistrement</label>
+                    {{ form_row(form.debut_rec)}}
+                </div>
+                <div class="recfin w-50">
+                    <label for="achat_search_fin_rec">Date de fin d'enregistrement</label>
+                    {{ form_row(form.fin_rec)}}
+                </div>
+            </div>
         </div>
-        <div class="input-grp">
+        <div class="input-grp" style="flex-basis:33%;">
             {{ form_row(form.etat_achat) }}
             {{ form_row(form.devis)}}
             {{ form_row(form.type_marche)}}
-            {{ form_end(form) }}
+            <label for="achat_search_numero_ej">N° engagement juridique</label>
+            {{ form_row(form.numero_ej)}}
+
         </div>
-        <a id="detail">
-            <button class="fr-btn hidden" id="btn" data-link="result_achat">Détail de l'achat</button>
-            <button class="fr-btn hidden" id="btn" data-link="valid_achat">Valider un achat</button>
-            <button class="fr-btn hidden" id="btn" data-link="annul_achat">Annuler un achat</button>
-            <button class="fr-btn hidden" id="btn" data-link="reint_achat">Réintégrer un achat</button>
-            <button class="fr-btn hidden" id="btn" data-link="edit_achat">Modifier un achat</button>
-        </a>
+        {{ form_row(form.recherche)}}
+        {{ form_end(form) }}
     </div>
+    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
+
+        <h5 class="mt-4 ms-3 blueF">Liste des achats</h5>
+        <div class="bande ms-3">
+        </div>
+    </div>
+        <div class='bandeau-form-btn '>
+        <span class="fr-icon-arrow-right-line ms-5" aria-hidden="true"></span>
+
+        <p class="mt-4 ms-5 blueF">Sélectionner un achat pour appliquer une action</p>
+
+    <div class="form-btn-search ms-auto">
+        <button class="fr-btn" id="btn" data-link="result_achat">Détail de l'achat</button>
+        <button class="fr-btn" id="btn" data-link="valid_achat">Valider un achat</button>
+        <button class="fr-btn" id="btn" data-link="annul_achat">Annuler un achat</button>
+        <button class="fr-btn" id="btn" data-link="reint_achat">Réintégrer un achat</button>
+        <button class="fr-btn" id="btn" data-link="edit_achat">Modifier un achat</button>
+    </div>
+</div>
+
     {% for flash_message in app.session.flashbag.get('success') %}
     <div class="alert alert-success">
         {{ flash_message }}
@@ -68,37 +123,37 @@
     {% if pagination | length == 0 %}
     <h4>Aucun résultat pour votre recherche.</h4>
     {% else %}
-    <div class="table-container search">
-        <div id="achat-list">
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>N°Chrono</th>
-                        <th>Date de saisie</th>
-                        <th>Utilisateurs</th>
-                        <th>Formation</th>
-                        <th>Objet</th>
-                        <th>Fournisseur</th>
-                        <th>Montant HT</th>
-                        <th>Etat</th>
-                    </tr>
-                </thead>
-                <div id="achat-list-ajax">
+    <div class="result-search-container">
+        <div class="table-container search">
+            <div id="achat-list">
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>N°Chrono</th>
+                            <th>Date de saisie</th>
+                            <th>Utilisateurs</th>
+                            <th>Formation</th>
+                            <th>Objet</th>
+                            <th>Fournisseur</th>
+                            <th>Montant HT</th>
+                            <th>Etat</th>
+                        </tr>
+                    </thead>
+                    <div id="achat-list-ajax">
+                        {{ include('search/partial_results.html.twig') }}
+                    </div>
 
-                    {{ include('search/partial_results.html.twig') }}
-                </div>
+                </table>
 
-            </table>
+            </div>
+
 
         </div>
-
-
-    </div>
-    <div class="pagination">
-        {{ knp_pagination_render(pagination ,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig') }}
+        <div class="pagination ">
+            {{ knp_pagination_render(pagination ,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig') }}
+        </div>
     </div>
 </div>
-
 {% endif %}
 {# {% endif %} #}
 {% endif %}

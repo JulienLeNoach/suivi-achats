@@ -4,14 +4,21 @@ namespace App\Form;
 
 
 use App\Entity\Achat;
+use App\Form\LibelleCpv;
+use App\Form\UOAutocompleteField;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use App\Form\FormationsAutocompleteField;
+use App\Form\FournisseursAutocompleteField;
+use App\Form\UtilisateursAutocompleteField;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 
 class AchatSearchType extends AbstractType
 {           
@@ -27,6 +34,18 @@ class AchatSearchType extends AbstractType
 
 
         $builder
+        ->add('numero_achat', IntegerType::class, [
+            'required' => false,
+            'label' => false,
+            'attr' => ['class' => 'fr-input'],
+            'label_attr' => ['class' => 'fr-label']
+        ])
+        ->add('id_demande_achat', IntegerType::class, [
+            'required' => false,
+            'label' => false,
+            'attr' => ['class' => 'fr-input'],
+            'label_attr' => ['class' => 'fr-label']
+        ])
             ->add('objet_achat', TextType::class, [
                 'required' => false,
                 'label' => false,
@@ -35,11 +54,12 @@ class AchatSearchType extends AbstractType
             ])
             ->add('etat_achat', ChoiceType::class, [
                 'choices'  => [
-                    'En cours' => '0',
-                    'Validé' => '2',
-                    'Annulé' => '1'
+                    'En cours' => "EC",
+                    'Validé' => "V",
+                    'Annulé' => "A"
                 ],
                 'required' => false,
+                'data' => "0", // Spécifiez ici la valeur par défaut en tant que chaîne "0"
                 'placeholder' => 'Tous',
                 'expanded' => true,
                 'label' => "Etat de l'achat",
@@ -50,8 +70,8 @@ class AchatSearchType extends AbstractType
             ])
             ->add('devis', ChoiceType::class, [
                 'choices'  => [
-                    'Prescripteur' => '0',
-                    'GSBdD/PFAF' => '1'
+                    'Prescripteur' => 'Pr',
+                    'GSBdD/PFAF' => 'Gs'
                 ],
                 'required' => false,
                 'placeholder' => 'Tous',
@@ -64,8 +84,8 @@ class AchatSearchType extends AbstractType
             ])
             ->add('type_marche', ChoiceType::class, [
                 'choices'  => [
-                    'MABC' => '0',
-                    'MPPA' => '1'
+                    'MABC' => 'MABC',
+                    'MPPA' => 'MPPA'
                 ],
                 'required' => false,
                 'placeholder' => 'Tous',
@@ -76,7 +96,7 @@ class AchatSearchType extends AbstractType
                 'label_attr' => ['class' => 'fr-label']
 
             ])
-            ->add('date', TextType::class, [
+            ->add('date', IntegerType::class, [
                 'required' => false,
                 'label' => false,
                 'mapped' => false,
@@ -91,7 +111,7 @@ class AchatSearchType extends AbstractType
                 'attr' => ['class' => 'fr-input'],  
                 'label_attr' => ['class' => 'fr-label']
             ])
-            ->add('zipcode', TextType::class, [
+            ->add('zipcode', IntegerType::class, [
                 'required' => false,
                 'label' => false,
                 'mapped' => false,
@@ -127,14 +147,37 @@ class AchatSearchType extends AbstractType
                 'label_attr' => ['class' => 'fr-label']
 
             ])
-            ->add('montant_achat_min', TextType::class, [
+            ->add('numero_ej', IntegerType::class, [  
+                'required' => false,
+                'label' => false,
+                'attr' => ['class' => 'fr-input'],  
+                'label_attr' => ['class' => 'fr-label']
+
+            ])
+            ->add('montant_achat_min', IntegerType::class, [
                 'required' => false,
                 'label' => false,
                 'mapped' => false,
                 'attr' => ['class' => 'fr-input'], 
                 'label_attr' => ['class' => 'fr-label']
             ])
-            ->add('montant_achat', TextType::class, [
+            ->add('debut_rec', DateType::class, [
+                'required' => false,
+                'label' => false,
+                'mapped' => false,
+                'widget' => 'single_text',
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
+            ])
+            ->add('fin_rec', DateType::class, [
+                'required' => false,
+                'label' => false,
+                'mapped' => false,
+                'widget' => 'single_text',
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
+            ])            
+            ->add('montant_achat', IntegerType::class, [
                 'required' => false,
                 'label' => false,
                 'attr' => ['class' => 'fr-input'], 
@@ -142,9 +185,11 @@ class AchatSearchType extends AbstractType
             ])
             ->add('recherche', SubmitType::class, [
                 'attr' => [
-                    'class' => 'fr-btn'
+                    'class' => 'fr-btn '
                 ],
-                'row_attr' => ['class' => 'sub-btn']
+                'row_attr' => ['class' => 'sub-btn d-flex mt-3'],
+                'label' => 'Lancer la recherche', 
+
             ])
             ->setMethod('GET')
 

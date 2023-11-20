@@ -462,13 +462,53 @@ $stmt = $conn->prepare($sql);
         $data = $form->getData();
         $queryBuilder = $this->createQueryBuilder('b');
         $achatmin = $form["montant_achat_min"]->getData();
-        $user = $this->security->getUser();    
+        $user = $this->security->getUser();   
+        if ($form['etat_achat']->getData() === "EC") {
+            // Convertir la chaîne "0" en valeur numérique 0
+            $etat = 0;
+        } 
+        switch ($form['etat_achat']->getData()) {
+            case 'EC':
+                $etat = 0;
+                break;
+            case 'V':
+                $etat = 2;
+                break;
+            case 'A':
+                $etat = 1;
+                break;
+            default:
+                // Gérer le cas par défaut ici, si nécessaire
+                break;
+        }
+    
+    switch ($form['type_marche']->getData()) {
+        case 'MABC':
+            $type = 0;
+            break;
+        case 'MPPA':
+            $type = 1;
+            break;
+        default:
+            // Gérer le cas par défaut ici, si nécessaire
+            break;
+    }
+    switch ($form['devis']->getData()) {
+        case 'Pr':
+            $devis = 0;
+            break;
+        case 'Gs':
+            $devis = 1;
+            break;
+        default:
+            // Gérer le cas par défaut ici, si nécessaire
+            break;
+    }
         $queryBuilder
             ->select('b')
             ->Where('b.utilisateurs = :utilisateurs')
-            ->setParameter('utilisateurs', $user)
-            ->andWhere('b.etat_achat IN (:etat_achats)')
-            ->setParameter('etat_achats', [0, 2]);
+            ->setParameter('utilisateurs', $user);
+
             if ($form["objet_achat"]->getData()){
                 $queryBuilder
                     ->andWhere('b.objet_achat LIKE :objet_achat')
@@ -504,17 +544,17 @@ $stmt = $conn->prepare($sql);
             if ($form["etat_achat"]->getData()) {
                 $queryBuilder
                     ->andWhere('b.etat_achat = :etat_achat')
-                    ->setParameter('etat_achat', $data->getEtatAchat());
+                    ->setParameter('etat_achat',$etat);
             }
             if ($form["devis"]->getData()) {
                 $queryBuilder
                     ->andWhere('b.devis = :devis')
-                    ->setParameter('devis', $data->getDevis());
+                    ->setParameter('devis', $devis);
             }
             if ($form["type_marche"]->getData()) {
                 $queryBuilder
                     ->andWhere('b.type_marche = :type_marche')
-                    ->setParameter('type_marche', $data->getTypeMarche());
+                    ->setParameter('type_marche', $type);
             }
             if ($form["montant_achat"]->getData()) {
                 $queryBuilder
@@ -528,8 +568,21 @@ $stmt = $conn->prepare($sql);
                     ->andWhere('b.date_saisie LIKE :date_saisie')
                     ->setParameter('date_saisie', '%' . $form["date"]->getData() . '%');
             }
+            if ($form["numero_ej"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.numero_ej LIKE :numero_ej')
+                    ->setParameter('numero_ej', '%' . $form["numero_ej"]->getData() . '%');
+            }
+            if ($form["debut_rec"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.date_saisie > :debut_rec')
+                    ->andWhere('b.date_saisie < :fin_rec')
+                    ->setParameter('debut_rec',  $form["debut_rec"]->getData()->format('Y-m-d') )
+                    ->setParameter('fin_rec',   $form["fin_rec"]->getData()->format('Y-m-d') );
+            }
         // ... Votre logique de construction de la requête ici ...
-    
+        $queryBuilder->orderBy('b.date_saisie', 'DESC');
+
         $query = $queryBuilder->getQuery();
     
         return $query;

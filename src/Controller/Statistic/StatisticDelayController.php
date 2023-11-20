@@ -36,10 +36,10 @@ class StatisticDelayController extends AbstractController
         $achats_delay_all = $this->achatRepository->yearDelayAchat2($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-           
         if ($form->get('recherche')->isClicked()) {
+            dump($achats);
+
         // Récupérez les données achats
-        // dd($achats);
         $transStat = array_filter(array_values($achats[2]), 'is_numeric');
         $notStat = array_filter(array_values($achats[5]), 'is_numeric');
         // dd($achats[5]);
