@@ -4,154 +4,169 @@
 
 {% block body %}
 
-<h2 class="title-page mt-5">Statistiques MPPA/MABC</h2>
+<div class="stat-delay">
 
-<div class="form-container">
-    {{ form_start(form, {'attr': {'class': 'search-form'}}) }}
-    <div class="input-grp-tab">{{ form_row(form.date) }}</div>
-    <div class="input-grp-tab">{{ form_row(form.num_siret) }}
-        {{ form_row(form.utilisateurs) }}
-        {{ form_row(form.code_uo) }}</div>
-    <div class="input-grp-tab">{{ form_row(form.code_cpv) }}
-        {{ form_row(form.code_formation) }}
-        {{ form_row(form.tax) }}
-    </div>
-    <div class="btn-submit">
-        {{ form_end(form) }}</div>
-</div>
+    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
 
-{% if app.request.method == 'POST' %}
-<div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
-    <h3 class="  w-50 text-left ">Statistiques MPPA/MABC tableau</h3>
-    <div class="" data-controller="pdf-generator-charttype">
-        <button id="pdf" data-action="click->pdf-generator-charttype#downloadgraphBar">Impression</button>
-        <button id="ex" data-action="click->pdf-generator-charttype#exportTableToExcel">Export to Excel</button>
-    </div>
-</div>
-<div class="typeResult d-flex">
-    <div class="tableTotaux p-3">
-        <table id="tableTotaux" border=1>
-            <tr>
-                <th></th>
-                <th>MPPA</th>
-                <th>MABC</th>
-                <th>TOTAUX</th>
-            </tr>
-            <tr>
-                <td>VALEUR</td>
-                <td>{{result_achats[0]["somme_montant_type_1"]}}</td>
-                <td>{{result_achats[1]["somme_montant_type_0"]}}</td>
-                <td>{{result_achats[0]["somme_montant_type_1"] + result_achats[1]["somme_montant_type_0"]}}</td>
-            </tr>
-            <tr>
-                <td>NOMBRE</td>
-                <td>{{result_achats[0]["nombre_achats_type_1"]}}</td>
-                <td>{{result_achats[1]["nombre_achats_type_0"]}}</td>
-                <td>{{result_achats[0]["nombre_achats_type_1"] + result_achats[1]["nombre_achats_type_0"]}}</td>
-            </tr>
-            <tr>
-                <td>MOYENNE</td>
-                <td>{{result_achats[0]["moyenne_montant_type_1"]}}</td>
-                <td>{{result_achats[1]["moyenne_montant_type_0"]}}</td>
-                <td>{{result_achats[0]["moyenne_montant_type_1"] + result_achats[1]["moyenne_montant_type_0"]}}</td>
-            </tr>
-            <tr>
-                <td>% VALEUR</td>
-                <td>{{result_achats[0]["pourcentage_type_1_total"]}} %</td>
-                <td>{{result_achats[1]["pourcentage_type_0_total"]}} %</td>
-            </tr>
-            <tr>
-                <td>% VOLUME</td>
-                <td>{{result_achats[0]["pourcentage_type_1"]}} %</td>
-                <td>{{result_achats[1]["pourcentage_type_0"]}} %</td>
-            </tr>
-        </table>
-
-    </div>
-    <div class="graphMount d-flex" data-controller="charttype">
-        <div class="mppaMount p-3">
-            <h4>Montant des MPPA</h4>
-            <table id="mppaTable" border=1>
-                <tr>
-                    <th>X <= {{parameter[0].four2}}</th>
-                    <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
-                    <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
-                    <th>X > {{parameter[0].four4}}</th>
-                </tr>
-                <tr>
-                    <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"]}}</td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_four1_four2"]}}</td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_four2_four3"]}}</td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_sup_four3"]}}</td>
-                </tr>
-            </table>
-            <canvas id="mppaMountChart" data-charttype-target="mppaMountChart"></canvas>
+        <h5 class="mt-4 ms-3 blueF">Statistiques MPPA/MABC</h5>
+        <div class="bande ms-3">
         </div>
-        <div class="mabcMount  p-3">
-            <h4>Montant des MABC</h4>
-            <table id="mabcTable" border=1>
-                <tr>
-                    <th>X <= {{parameter[0].four2}}</th>
-                    <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
-                    <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
-                    <th>X > {{parameter[0].four4}}</th>
-                </tr>
-                <tr>
-                    <td>{{result_achats_mounts[1]["nombre_achats_inf_four1"]}}</td>
-                    <td>{{result_achats_mounts[1]["nombre_achats_four1_four2"]}}</td>
-                    <td>{{result_achats_mounts[1]["nombre_achats_four2_four3"]}}</td>
-                    <td>{{result_achats_mounts[1]["nombre_achats_sup_four3"]}}</td>
-                </tr>
-            </table>
-            <canvas id="mabcMountChart"></canvas>
+    </div>
+    {{ include('statistic/stat_form.html.twig') }}
+    <div data-controller="search-achat" class='align-items-center d-flex justify-content-end mt-3 bandeau-form-search'>
+        <!-- ... Contenu existant ... -->
+        <button id="toggleFormBtn" class="toggle-button" data-action="click->search-achat#collapse"><span
+                class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
+    </div>
+    {% if app.request.method == 'POST' %}
+    <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
+        <h3 class="  w-50 text-left ">Statistiques MPPA/MABC tableau</h3>
+        <div class="" data-controller="pdf-generator-charttype">
+            <button id="pdf" data-action="click->pdf-generator-charttype#downloadgraphBar">Impression</button>
+            <button id="ex" data-action="click->pdf-generator-charttype#exportTableToExcel">Export to Excel</button>
         </div>
-        <div class="allMount  p-3">
-            <h4>Montant des MPPA + MABC</h4>
-            <table id="allMountTable" border=1>
+    </div>
+    <div class="typeResult d-flex">
+        <div class="tableTotaux p-3">
+            <table id="tableTotaux" border=1>
                 <tr>
-                    <th>X <= {{parameter[0].four2}}</th>
-                    <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
-                    <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
-                    <th>X > {{parameter[0].four4}}</th>
+                    <th></th>
+                    <th>MPPA</th>
+                    <th>MABC</th>
+                    <th>TOTAUX</th>
                 </tr>
                 <tr>
-                    <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"] + result_achats_mounts[1]["nombre_achats_inf_four1"]}}
-                    </td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_four1_four2"] + result_achats_mounts[1]["nombre_achats_four1_four2"]}}
-                    </td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_four2_four3"] + result_achats_mounts[1]["nombre_achats_four2_four3"]}}
-                    </td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_sup_four3"] + result_achats_mounts[1]["nombre_achats_sup_four3"]}}
-                    </td>
+                    <td>VALEUR</td>
+                    <td>{{result_achats[0]["somme_montant_type_1"]}}</td>
+                    <td>{{result_achats[1]["somme_montant_type_0"]}}</td>
+                    <td>{{result_achats[0]["somme_montant_type_1"] + result_achats[1]["somme_montant_type_0"]}}</td>
+                </tr>
+                <tr>
+                    <td>NOMBRE</td>
+                    <td>{{result_achats[0]["nombre_achats_type_1"]}}</td>
+                    <td>{{result_achats[1]["nombre_achats_type_0"]}}</td>
+                    <td>{{result_achats[0]["nombre_achats_type_1"] + result_achats[1]["nombre_achats_type_0"]}}</td>
+                </tr>
+                <tr>
+                    <td>MOYENNE</td>
+                    <td>{{result_achats[0]["moyenne_montant_type_1"]}}</td>
+                    <td>{{result_achats[1]["moyenne_montant_type_0"]}}</td>
+                    <td>{{result_achats[0]["moyenne_montant_type_1"] + result_achats[1]["moyenne_montant_type_0"]}}</td>
+                </tr>
+                <tr>
+                    <td>% VALEUR</td>
+                    <td>{{result_achats[0]["pourcentage_type_1_total"]}} %</td>
+                    <td>{{result_achats[1]["pourcentage_type_0_total"]}} %</td>
+                </tr>
+                <tr>
+                    <td>% VOLUME</td>
+                    <td>{{result_achats[0]["pourcentage_type_1"]}} %</td>
+                    <td>{{result_achats[1]["pourcentage_type_0"]}} %</td>
                 </tr>
             </table>
-            <table id="barChartData" border=1>
-                <tr>
-                    <th>X <= {{parameter[0].four2}}</th>
-                    <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
-                    <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
-                    <th>X > {{parameter[0].four4}}</th>
-                </tr>
-                <tr>
-                    <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"] + result_achats_mounts[1]["nombre_achats_inf_four1"]}}
-                    </td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_four1_four2"] + result_achats_mounts[1]["nombre_achats_four1_four2"]}}
-                    </td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_four2_four3"] + result_achats_mounts[1]["nombre_achats_four2_four3"]}}
-                    </td>
-                    <td>{{result_achats_mounts[0]["nombre_achats_sup_four3"] + result_achats_mounts[1]["nombre_achats_sup_four3"]}}
-                    </td>
-                </tr>
-            </table>
-            <canvas id="allMountChart" data-charttype-target="allMountChart"></canvas>
+
+        </div>
+        <div class="graphMount d-flex" data-controller="charttype">
+            <div class="mppaMount p-3">
+                <h4>Montant des MPPA</h4>
+                <table id="mppaTable" border=1>
+                    <tr>
+                        <th>X <= {{parameter[0].four2}}</th>
+                        <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
+                        <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
+                        <th>X > {{parameter[0].four4}}</th>
+                    </tr>
+                    <tr>
+                        <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"]}}</td>
+                        <td>{{result_achats_mounts[0]["nombre_achats_four1_four2"]}}</td>
+                        <td>{{result_achats_mounts[0]["nombre_achats_four2_four3"]}}</td>
+                        <td>{{result_achats_mounts[0]["nombre_achats_sup_four3"]}}</td>
+                    </tr>
+                </table>
+                <canvas id="mppaMountChart" data-charttype-target="mppaMountChart"></canvas>
+            </div>
+            <div class="mabcMount  p-3">
+                <h4>Montant des MABC</h4>
+                <table id="mabcTable" border=1>
+                    <tr>
+                        <th>X <= {{parameter[0].four2}}</th>
+                        <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
+                        <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
+                        <th>X > {{parameter[0].four4}}</th>
+                    </tr>
+                    <tr>
+                        <td>{{result_achats_mounts[1]["nombre_achats_inf_four1"]}}</td>
+                        <td>{{result_achats_mounts[1]["nombre_achats_four1_four2"]}}</td>
+                        <td>{{result_achats_mounts[1]["nombre_achats_four2_four3"]}}</td>
+                        <td>{{result_achats_mounts[1]["nombre_achats_sup_four3"]}}</td>
+                    </tr>
+                </table>
+                <canvas id="mabcMountChart"></canvas>
+            </div>
+            <div class="allMount  p-3">
+                <h4>Montant des MPPA + MABC</h4>
+                <table id="allMountTable" border=1>
+                    <tr>
+                        <th>X <= {{parameter[0].four2}}</th>
+                        <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
+                        <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
+                        <th>X > {{parameter[0].four4}}</th>
+                    </tr>
+                    <tr>
+                        <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"] + result_achats_mounts[1]["nombre_achats_inf_four1"]}}
+                        </td>
+                        <td>{{result_achats_mounts[0]["nombre_achats_four1_four2"] + result_achats_mounts[1]["nombre_achats_four1_four2"]}}
+                        </td>
+                        <td>{{result_achats_mounts[0]["nombre_achats_four2_four3"] + result_achats_mounts[1]["nombre_achats_four2_four3"]}}
+                        </td>
+                        <td>{{result_achats_mounts[0]["nombre_achats_sup_four3"] + result_achats_mounts[1]["nombre_achats_sup_four3"]}}
+                        </td>
+                    </tr>
+                </table>
+                <table id="barChartData" border=1>
+                    <tr>
+                        <th>X <= {{parameter[0].four2}}</th>
+                        <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
+                        <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
+                        <th>X > {{parameter[0].four4}}</th>
+                    </tr>
+                    <tr>
+                        <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"] + result_achats_mounts[1]["nombre_achats_inf_four1"]}}
+                        </td>
+                        <td>{{result_achats_mounts[0]["nombre_achats_four1_four2"] + result_achats_mounts[1]["nombre_achats_four1_four2"]}}
+                        </td>
+                        <td>{{result_achats_mounts[0]["nombre_achats_four2_four3"] + result_achats_mounts[1]["nombre_achats_four2_four3"]}}
+                        </td>
+                        <td>{{result_achats_mounts[0]["nombre_achats_sup_four3"] + result_achats_mounts[1]["nombre_achats_sup_four3"]}}
+                        </td>
+                    </tr>
+                </table>
+                <canvas id="allMountChart" data-charttype-target="allMountChart"></canvas>
+            </div>
         </div>
     </div>
 </div>
 <script>
-    let result_achats_mounts = {{result_achats_mounts | json_encode | raw}} ;
-    let parameter1 = {{parameter[0].four2 | json_encode | raw}} ;
-    let parameter2 = {{parameter[0].four3 | json_encode | raw}} ;
-    let parameter3 = {{parameter[0].four4 | json_encode | raw}} ;
+    let result_achats_mounts = {
+        {
+            result_achats_mounts | json_encode | raw
+        }
+    };
+    let parameter1 = {
+        {
+            parameter[0].four2 | json_encode | raw
+        }
+    };
+    let parameter2 = {
+        {
+            parameter[0].four3 | json_encode | raw
+        }
+    };
+    let parameter3 = {
+        {
+            parameter[0].four4 | json_encode | raw
+        }
+    };
 </script>
 {% endif %}
 {% endblock %}

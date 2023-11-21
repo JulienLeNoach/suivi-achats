@@ -4,105 +4,84 @@
 
 {% block body %}
 <div class="stat-delay">
-    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
+  <div class='align-items-center d-flex mt-3 bandeau-form-search'>
 
-        <h5 class="mt-4 ms-3 blueF">Délai d'activité annuelle</h5>
-        <div class="bande ms-3">
-        </div>
+    <h5 class="mt-4 ms-3 blueF">Délai d'activité annuelle</h5>
+    <div class="bande ms-3">
     </div>
-  <div class="form-container">
-    {{ form_start(form, {'attr': {'class': 'd-flex justify-content-around flex-wrap p-5'}}) }}
-    <div class="input-grp-tab" style="flex-basis:33%;">
-      <div class="chronoStat d-flex">
-        <div class="chronoY w-50 me-3">
-    {{ form_row(form.date) }}
-
-        </div>
-        <div class="chronoJ w-50 ">
-                          {{ form_row(form.utilisateurs) }}
-        </div>
-      </div>
-            {{ form_row(form.code_cpv) }}
-    </div>
-    <div class="input-grp-tab" style="flex-basis:33%;">
-              {{ form_row(form.code_formation) }}
-          {{ form_row(form.code_uo) }}
-    </div>
-    <div class="input-grp-tab" style="flex-basis:33%;">
-        {{ form_row(form.num_siret) }}
-          {{ form_row(form.jourcalendar) }}
-    </div>
-    <div class="btn-submit">
-    {{ form_row(form.tax, {'attr': {'class': 'hidden'}}) }}
-       {{ form_row(form.recherche) }}
-               {{ form_end(form) }}
+  </div>
+  {{ include('statistic/stat_form.html.twig') }}
+<div data-controller="search-achat" class='align-items-center d-flex justify-content-end mt-3 bandeau-form-search'>
+  <button id="toggleFormBtn" class="toggle-button" data-action="click->search-achat#collapse"><span
+      class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
 </div>
+{% if app.request.method == 'POST' %}
+<div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
+  <h3 class="  w-50 text-left ">Délai d'activié annuelle tableau</h3>
+  <div class="" data-controller="pdf-generator-chartdelay">
+    <button id="pdf" data-action="click->pdf-generator-chartdelay#generatePDFTable">Impression</button>
+    <button id="ex" data-action="click->pdf-generator-chartdelay#exportTableToExcel">Export to Excel</button>
   </div>
-  {% if app.request.method == 'POST' %}
-  <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
-    <h3 class="  w-50 text-left ">Délai d'activié annuelle tableau</h3>
-    <div class="" data-controller="pdf-generator-chartdelay">
-      <button id="pdf" data-action="click->pdf-generator-chartdelay#generatePDFTable">Impression</button>
-      <button id="ex" data-action="click->pdf-generator-chartdelay#exportTableToExcel">Export to Excel</button>
-    </div>
-  </div>
-    <table border=1 id="delayTable">
-      <thead>
-        <th>Délai</th>
-        <th>Janvier</th>
-        <th>Février</th>
-        <th>Mars</th>
-        <th>Avril</th>
-        <th>Mai</th>
-        <th>Juin</th>
-        <th>Juillet</th>
-        <th>Aout</th>
-        <th>Septembre</th>
-        <th>Octobre</th>
-        <th>Novembre</th>
-        <th>Decembre</th>
-        <th>Total</th>
-
-        {% for achat in achats %}
-        <tr>
-          <th>{{ achat.source }}</th>
-          <td>{{ achat.Janvier }}</td>
-          <td>{{ achat.Février }}</td>
-          <td>{{ achat.Mars }}</td>
-          <td>{{ achat.Avril }}</td>
-          <td>{{ achat.Mai }}</td>
-          <td>{{ achat.Juin }}</td>
-          <td>{{ achat.Juillet }}</td>
-          <td>{{ achat.Aout }}</td>
-          <td>{{ achat.Septembre }}</td>
-          <td>{{ achat.Octobre }}</td>
-          <td>{{ achat.Novembre }}</td>
-          <td>{{ achat.Decembre }}</td>
-          <td>
-            {{ (achat.Janvier + achat.Février + achat.Mars + achat.Avril + achat.Mai + achat.Juin + achat.Juillet + achat.Aout + achat.Septembre + achat.Octobre + achat.Novembre + achat.Decembre) / 12 }}
-          </td>
-        </tr>
-        {% endfor %}
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
+</div>
+<table border=1 id="delayTable" class="delayTable">
+  <thead>
+    <th>Délai</th>
+    <th>Janvier</th>
+    <th>Février</th>
+    <th>Mars</th>
+    <th>Avril</th>
+    <th>Mai</th>
+    <th>Juin</th>
+    <th>Juillet</th>
+    <th>Aout</th>
+    <th>Septembre</th>
+    <th>Octobre</th>
+    <th>Novembre</th>
+    <th>Decembre</th>
+    <th>Total</th>
+  </thead>
+  {% for achat in achats %}
+  <tr>
+    <th>{{ achat.source }}</th>
+    <td>{{ achat.Janvier }}</td>
+    <td>{{ achat.Février }}</td>
+    <td>{{ achat.Mars }}</td>
+    <td>{{ achat.Avril }}</td>
+    <td>{{ achat.Mai }}</td>
+    <td>{{ achat.Juin }}</td>
+    <td>{{ achat.Juillet }}</td>
+    <td>{{ achat.Aout }}</td>
+    <td>{{ achat.Septembre }}</td>
+    <td>{{ achat.Octobre }}</td>
+    <td>{{ achat.Novembre }}</td>
+    <td>{{ achat.Decembre }}</td>
+    <td>
+      {{ (achat.Janvier + achat.Février + achat.Mars + achat.Avril + achat.Mai + achat.Juin + achat.Juillet + achat.Aout + achat.Septembre + achat.Octobre + achat.Novembre + achat.Decembre) / 12 }}
+    </td>
+  </tr>
+  {% endfor %}
+  </thead>
+  <tbody>
+  </tbody>
+</table>
 
 
-  <div class="align-items-center justify-content-center w-100 mw-75" data-controller="chartdelay">
+<div class="align-items-center justify-content-center w-100 mw-75 d-flex" data-controller="chartdelay">
 
-
-    <div class=" p-3font-weight-bold d-flex flex-row justify-content-between">
-      <h3 class=" w-50 text-left">Délai d'activié annuelle graphe</h3>
+  <div class="delay-bar w-50">
+    <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
+      <h3 class=" text-left">Délai d'activié annuelle graphe</h3>
       <div class="" data-controller="pdf-generator-chartdelay">
         <button id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphBar">Impression</button>
       </div>
     </div>
-
-    <canvas id="delayChart" data-chartdelay-target="delayChart"> </canvas>
+      <div class="test" style="width:1200px; height:800px;">
+    <canvas id="delayChart" data-chartdelay-target="delayChart"> </canvas></div>
+  </div>
+  <div class="delay-pie w-50">
     <div data-controller="pdf-generator-chartdelay" id="chartPie">
       <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
-        <h3 class=" w-50 text-left">Délai d'activié anuelle détaillé par traitement</h3>
+        <h3 class=" text-left">Délai d'activié anuelle détaillé par traitement</h3>
         <div class="">
           <button id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphPie">Impression</button>
         </div>
@@ -138,14 +117,13 @@
         </div>
       </div>
     </div>
+  </div>
 </div>
 <script>
+  let transStat = {{transStat | json_encode | raw}}
+  let notStat = {{notStat | json_encode | raw}}
 
-  var transStat = {{transStat | json_encode | raw}}
-  var notStat = {{notStat | json_encode | raw}}
-  
-  var achats_delay_all = {{achats_delay_all | json_encode | raw}}
-
+  let achats_delay_all = {{achats_delay_all | json_encode | raw}}
 </script>
 {% endif %}
 {% endblock %}

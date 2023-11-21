@@ -28,8 +28,10 @@ class StatisticType extends AbstractType
             'label' => "Année",
             'mapped' => false,
             'empty_data'  => date('Y'),
-            'attr' => ['class' => 'fr-input'],  
-            'label_attr' => ['class' => 'fr-label']
+            'attr' => ['class' => 'fr-input '],  
+            'label_attr' => ['class' => 'fr-label'],
+            'row_attr' => ['class' => '']
+
 
         ])
         ->add('jourcalendar', ChoiceType::class, [
@@ -41,7 +43,7 @@ class StatisticType extends AbstractType
             'expanded' => true,
             'label'=>false,
             'row_attr' => ['class' => 'radio-search'],
-            'attr' => ['class' => 'fr-input'], 
+            'attr' => ['class' => ''], 
             'label_attr' => ['class' => 'fr-label'],
             'placeholder' => false,
             'mapped'=>false,
@@ -51,57 +53,69 @@ class StatisticType extends AbstractType
             'required' => false,
             'label' => "N° SIRET",
             'attr' => ['class' => 'fr-input'],  
-            'label_attr' => ['class' => 'fr-label']
+            'label_attr' => ['class' => 'fr-label'],
+            'row_attr' => ['class' => 'fr-input-stat']
+
         ])
 
         ->add('utilisateurs', UtilisateursAutocompleteField::class, [  
             'required' => false,
             'label' => "Utilisateur",
             'attr' => ['class' => 'fr-input'],  
-            'label_attr' => ['class' => 'fr-label']
+            'label_attr' => ['class' => 'fr-label'],
+            'row_attr' => ['class' => 'fr-input-stat']
         ])
         ->add('code_uo', UOAutocompleteField::class, [  
             'required' => false,
             'label' => "Unité organique",
             'attr' => ['class' => 'fr-input'],  
-            'label_attr' => ['class' => 'fr-label']
+            'label_attr' => ['class' => 'fr-label'],
+            'row_attr' => ['class' => 'fr-input-stat']
+
         ])
         ->add('code_cpv', LibelleCpv::class, [  
             'required' => false,
             'label' => "CPV",
             'attr' => ['class' => 'fr-input'],  
-            'label_attr' => ['class' => 'fr-label']
+            'label_attr' => ['class' => 'fr-label'],
+            'row_attr' => ['class' => 'fr-input-stat']
         ])
 
         ->add('code_formation', FormationsAutocompleteField::class, [  
             'label' => 'Formation',
             'required' => false,
             'attr' => ['class' => 'fr-input'],  
-            'label_attr' => ['class' => 'fr-label']
+            'label_attr' => ['class' => 'fr-label'],
+            'row_attr' => ['class' => 'fr-input-stat']
+
         ])
         ->add('tax', ChoiceType::class, [
-            'label' => false,
-            'choices' => [
-                'HT' => 'ht',
-                'TTC' => 'ttc',
+            'choices'  => [
+                'HT' => "ht",
+                'TTC' => "ttc",
             ],
-            'mapped' => false,
-            'attr' => ['class' => 'fr-input'],  
+            'required' => false,
+            'expanded' => true,
+            'label'=>false,
+            'row_attr' => ['class' => 'radio-search'],
+            'attr' => ['class' => ''], 
             'label_attr' => ['class' => 'fr-label'],
-            'required'=>false,
+            'placeholder' => false,
+            'mapped'=>false,
+            'data'  => 'ht',
+
         ])
         ->add('recherche', SubmitType::class, [
             'attr' => [
                 'class' => 'fr-btn search'
-            ]
+            ],
+            'row_attr' => ['class' => 'sub-btn d-flex mt-3'],
+            'label' => 'Lancer la recherche', 
+
+
 
         ])
-        ->add('graph', SubmitType::class, [
-            'label' => 'Graph',
-            'attr' => [
-                'class' => 'fr-btn search hidden test'
-            ]
-        ])
+
         // Récupération du formulaire
         ->getForm();
     }

@@ -58,6 +58,8 @@ class StatisticVolController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $mpttaEtat = 1;
             $mabcEtat = 0;
+            $counts1 = [];
+            $counts2 = [];
             $counts1 = $this->achatRepository->getPurchaseCountAndTotalAmount($mpttaEtat,$form);
             $counts1 = $this->statisticService->totalPerMonth($counts1);
             $counts2 = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat,$form);
@@ -65,6 +67,12 @@ class StatisticVolController extends AbstractController
             $purchaseCountByMonth = $this->statisticService->purchaseCountByMonth($counts1,$counts2);
             $purchaseTotalAmountByMonth = $this->statisticService->purchaseTotalAmountByMonth($counts1,$counts2);
 
+            $chartData = $this->statisticService->arrayMapChart( $counts1, $counts2, 'count');
+            $chartData2 = $this->statisticService->arrayMapChart($counts1, $counts2, 'totalmontant');
+            $datasets1 = $chartData['datasets'];
+            $datasets2 = $chartData['datasets2'];
+            $datasets3 = $chartData2['datasets'];
+            $datasets4 = $chartData2['datasets2'];
             if ($form->get('recherche')->isClicked()) {
 
 
@@ -74,6 +82,10 @@ class StatisticVolController extends AbstractController
                     'counts2' => $counts2,
                     'purchaseCountByMonth' => $purchaseCountByMonth,
                     'purchaseTotalAmountByMonth' => $purchaseTotalAmountByMonth,
+                    'datasets1' => $datasets1,
+                    'datasets2' => $datasets2,
+                    'datasets3' => $datasets3,
+                    'datasets4' => $datasets4,
                 ]);
             } 
                 if ($form->get('graph')->isClicked() ) {

@@ -3,36 +3,31 @@
 {% block title %}Statistic sur les PME (marché MPPA){% endblock %}
 
 {% block body %}
-    <h2 class="title-page mt-5">Statistic sur les PME (marché MPPA) </h2>
 
-    <div class="form-container">
-        {{ form_start(form, {'attr': {'class': 'search-form'}}) }}
-        <div class="input-grp-tab">{{ form_row(form.date) }}</div>
-        <div class="input-grp-tab">
-            {{ form_row(form.num_siret) }}
-            {{ form_row(form.utilisateurs) }}
-            {{ form_row(form.code_uo) }}
-        </div>
-        <div class="input-grp-tab">
-            {{ form_row(form.code_cpv) }}
-            {{ form_row(form.code_formation) }}
-            {{ form_row(form.tax) }}
-        </div>
-        <div class="btn-submit">
-            {{ form_end(form) }}
+<div class="stat-delay">
+
+    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
+
+        <h5 class="mt-4 ms-3 blueF">Statistic sur les PME (marché MPPA)</h5>
+        <div class="bande ms-3">
         </div>
     </div>
-
+    {{ include('statistic/stat_form.html.twig') }}
+    <div data-controller="search-achat" class='align-items-center d-flex justify-content-end mt-3 bandeau-form-search'>
+        <!-- ... Contenu existant ... -->
+        <button id="toggleFormBtn" class="toggle-button" data-action="click->search-achat#collapse"><span
+                class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
+    </div>
     {% if app.request.method == 'POST' %}
-<div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
-    <h3 class="  w-50 text-left ">Achats MPPA</h3>
-    <div class="" data-controller="pdf-generator-pme">
-        <button id="pdf" data-action="click->pdf-generator-pme#downloadgraphBar">Impression</button>
-        <button id="ex" data-action="click->pdf-generator-pme#exportTableToExcel">Export to Excel</button>
+    <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
+        <h3 class="  w-50 text-left ">Achats MPPA</h3>
+        <div class="" data-controller="pdf-generator-pme">
+            <button id="pdf" data-action="click->pdf-generator-pme#downloadgraphBar">Impression</button>
+            <button id="ex" data-action="click->pdf-generator-pme#exportTableToExcel">Export to Excel</button>
+        </div>
     </div>
-</div>
 
-<div data-controller="chartpme">
+    <div data-controller="chartpme">
         <div class="achatsMppa w-25 d-flex p-3">
             <table border="1" id="volvalTable">
                 <tr>
@@ -56,42 +51,56 @@
         </div>
         <div class="achatsMppaMonth ">
             <table border="1" id="actApproTable">
-    <tr>
-        <th></th>
-        {% for month in ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] %}
-            <th>{{ month }}</th>
-        {% endfor %}
-        <th>Total</th> {# Ajouter cette colonne pour le total #}
-    </tr>
-    <tr>
-        <td>NB PME</td>
-        {% set totalNombreAchats = 0 %}
-        {% for achats in result_achatsSum %}
-            <td>{{ achats["nombre_achats"] }}</td>
-            {% set totalNombreAchats = totalNombreAchats + achats["nombre_achats"] %}
-        {% endfor %}
-        <td>{{ totalNombreAchats }}</td> {# Afficher le total dans la première case de la colonne #}
-    </tr>
-    <tr>
-        <td>% MPPA</td>
-        {% set totalPourcentage = 0 %}
-        {% for achats in result_achatsSum %}
-            <td>{{ achats["pourcentage_achats_pme"] }}</td>
-            {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_pme"] %}
-        {% endfor %}
-        <td>{{ totalPourcentage / result_achatsSum|length }}</td> {# Calculer et afficher la moyenne dans la case du dessous #}
-    </tr>
-</table>    <div class="chartActContainer" style="position: relative; height:50vh; width:100vw">
-            <canvas id="actAppro" data-chartpme-target="actAppro"></canvas>
+                <tr>
+                    <th></th>
+                    {% for month in ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] %}
+                    <th>{{ month }}</th>
+                    {% endfor %}
+                    <th>Total</th> {# Ajouter cette colonne pour le total #}
+                </tr>
+                <tr>
+                    <td>NB PME</td>
+                    {% set totalNombreAchats = 0 %}
+                    {% for achats in result_achatsSum %}
+                    <td>{{ achats["nombre_achats"] }}</td>
+                    {% set totalNombreAchats = totalNombreAchats + achats["nombre_achats"] %}
+                    {% endfor %}
+                    <td>{{ totalNombreAchats }}</td> {# Afficher le total dans la première case de la colonne #}
+                </tr>
+                <tr>
+                    <td>% MPPA</td>
+                    {% set totalPourcentage = 0 %}
+                    {% for achats in result_achatsSum %}
+                    <td>{{ achats["pourcentage_achats_pme"] }}</td>
+                    {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_pme"] %}
+                    {% endfor %}
+                    <td>{{ totalPourcentage / result_achatsSum|length }}</td>
+                    {# Calculer et afficher la moyenne dans la case du dessous #}
+                </tr>
+            </table>
+            <div class="chartActContainer" style="position: relative; height:50vh; width:100vw">
+                <canvas id="actAppro" data-chartpme-target="actAppro"></canvas>
             </div>
         </div>
+    </div>
 </div>
-        <script>
-        let result_achatsSum = {{result_achatsSum| json_encode | raw}} ; 
-        let result_achatsSumVol = {{result_achatsSumVol| json_encode | raw}} ; 
-        let result_achatsSumVal = {{result_achatsSumVal| json_encode | raw}} ; 
+<script>
+    let result_achatsSum = {
+        {
+            result_achatsSum | json_encode | raw
+        }
+    };
+    let result_achatsSumVol = {
+        {
+            result_achatsSumVol | json_encode | raw
+        }
+    };
+    let result_achatsSumVal = {
+        {
+            result_achatsSumVal | json_encode | raw
+        }
+    };
+</script>
 
-        </script>
-        
-    {% endif %}
+{% endif %}
 {% endblock %}

@@ -3,107 +3,132 @@
 {% block title %}Activité annuelle en volume et valeur{% endblock %}
 
 {% block body %}
+<div class="stat-delay">
 
-<h2 class="title-page mt-5">Activité annuelle en volume et valeur</h2>
-<div class="form-container">
-  {{ form_start(form, {'attr': {'class': 'search-form'}}) }}
-  <div class="input-grp-tab">{{ form_row(form.date) }}</div>
-  <div class="input-grp-tab">{{ form_row(form.num_siret) }}
-    {{ form_row(form.utilisateurs) }}
-    {{ form_row(form.code_uo) }}</div>
-  <div class="input-grp-tab">{{ form_row(form.code_cpv) }}
-    {{ form_row(form.code_formation) }}
-    {{ form_row(form.tax) }}
+    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
+
+      <h5 class="mt-4 ms-3 blueF">Activité annuelle en volume et valeur</h5>
+      <div class="bande ms-3">
+      </div>
     </div>
-    <div class="  mr-5 btn-submit d-flex">
-    {{ form_end(form) }}</div>
-</div>
-{% if app.request.method == 'POST' %}
+    {{ include('statistic/stat_form.html.twig') }}
+  {% if app.request.method == 'POST' %}
 
-{% if counts1 is not empty %}
-<div class=" font-weight-bold d-flex flex-row justify-content-between" >
-<h3 class=" p-3 w-50 text-left ">Délai d'activié annuelle tableau</h3>
-  <div class="" data-controller="pdf-generator">
-    <button id="ex" data-action="click->pdf-generator#exportTableToExcel" >Export Excel</button>
-    <button id="pdf" data-action="click->pdf-generator#generatePDFTable" >Impression</button>
+  {% if counts1 is not empty %}
+<div class="result-search-container "data-controller="chartvol">
+    <div class=" font-weight-bold d-flex flex-row justify-content-between" >
+      <div class="" data-controller="pdf-generator">
+        <button id="ex" data-action="click->pdf-generator#exportTableToExcel" >Export Excel</button>
+        <button id="pdf" data-action="click->pdf-generator#generatePDFTable" >Impression</button>
+      </div>
+    </div>
+    <h3 class="blueF">Activité en volume</h3>
+    <table id='tableCheck'>
+      <tbody>
+        <tr>
+        <thead>
+          <th>Mois</th>
+          {% set totalmppa = 0 %}
+          {% set totalmabc = 0 %}
+          {% for month, data in purchaseCountByMonth %}
+          <td>{{ month }}</td>
+          {% set totalmppa = totalmppa + data['count1'] %}
+          {% set totalmabc = totalmabc + data['count2'] %}
+          {% endfor %}
+          <td>Total</td>
+          </thead>
+        </tr>
+        <tr>
+          <th>MPPA</th>
+          {% for month, data in purchaseCountByMonth %}
+          <td>{{ data['count1'] }}</td>
+          {% endfor %}
+          <td>{{ totalmppa }}</td>
+        </tr>
+        <tr>
+          <th>MABC</th>
+          {% for month, data in purchaseCountByMonth %}
+          <td>{{ data['count2'] }}</td>
+          {% endfor %}
+          <td>{{ totalmabc }}</td>
+        </tr>
+        <tr>
+          <th>TOTAL</th>
+          {% for month, data in purchaseCountByMonth %}
+          <td>{{ data['total'] }}</td>
+          {% endfor %}
+          <td>{{ totalmppa + totalmabc }}</td>
+        </tr>
+      </tbody>
+    </table>
+    {% endif %}
+    <h3 class="blueF">Activité en valeur (HT)</h3>
+    <table id="volValTable">
+      <tbody>
+        <tr>
+          <thead>
+          <th>Mois</th>
+          {% set MtMppa = 0 %}
+          {% set MtMabc = 0 %}
+          {% set count = 0 %}
+          {% for month, count in counts1 %}
+          <td>{{ month }}</td>
+          {% endfor %}
+          <td>Total</td>
+          </thead>
+        </tr>
+        <tr>
+          <th>MPPA</th>
+          {% for month, data in counts1 %}
+          {% set MtMppa = MtMppa + data['totalmontant'] %}
+          <td>{{ data['totalmontant'] }}</td>
+          {% endfor %}
+          <td>{{MtMppa}}</td>
+        </tr>
+        <tr>
+          <th>MABC</th>
+          {% for month, data in counts2 %}
+          {% set MtMabc = MtMabc + data['totalmontant'] %}
+          <td>{{ data['totalmontant'] }}</td>
+          {% endfor %}
+          <td>{{MtMabc}}</td>
+        </tr>
+        <tr>
+          <th>TOTAL</th>
+          {% for month, data in purchaseTotalAmountByMonth %}
+          <td>{{ data['total'] }}</td>
+          {% endfor %}
+          <td>{{ MtMppa + MtMabc }}</td>
+        </tr>
+      </tbody>
+    </table>
+       <div data-controller="pdf-generator">
+      <button id="pdf" data-action="click->pdf-generator#download" >Impression</button>
+      </div>
+      <div class="d-flex w-50" >
+   <div class="chartval" style="width:900px;height:600px;">
+       <h6 class="blueF">Activité en valeur (HT)</h6>
+  <canvas id="myChart2" data-chartvol-target="myChart"  style="width:900px;height:600px;"></canvas>
+</div>
+   <div class="chartval ms-5" style="width:900px;height:600px;">
+    <h6 class="blueF">Activité en volume</h6>
+  <canvas id="myChart" data-chartvol-target="myChart" style="width:900px;height:600px;" ></canvas>
+  </div>
+
+  </div>
   </div>
 </div>
-<h3 class="title-page">Activité en volume</h3>
-<table id='tableCheck'>
-  <tbody>
-    <tr>
-      <th>Mois</th>
-      {% set totalmppa = 0 %}
-      {% set totalmabc = 0 %}
-      {% for month, data in purchaseCountByMonth %}
-      <td>{{ month }}</td>
-      {% set totalmppa = totalmppa + data['count1'] %}
-      {% set totalmabc = totalmabc + data['count2'] %}
-      {% endfor %}
-      <td>Total</td>
-    </tr>
-    <tr>
-      <th>MPPA</th>
-      {% for month, data in purchaseCountByMonth %}
-      <td>{{ data['count1'] }}</td>
-      {% endfor %}
-      <td>{{ totalmppa }}</td>
-    </tr>
-    <tr>
-      <th>MABC</th>
-      {% for month, data in purchaseCountByMonth %}
-      <td>{{ data['count2'] }}</td>
-      {% endfor %}
-      <td>{{ totalmabc }}</td>
-    </tr>
-    <tr>
-      <th>TOTAL</th>
-      {% for month, data in purchaseCountByMonth %}
-      <td>{{ data['total'] }}</td>
-      {% endfor %}
-      <td>{{ totalmppa + totalmabc }}</td>
-    </tr>
-  </tbody>
-</table>
-{% endif %}
-<h3 class="title-page">Activité en valeur (HT)</h3>
-<table id="volValTable">
-  <tbody>
-    <tr>
-      <th>Mois</th>
-      {% set MtMppa = 0 %}
-      {% set MtMabc = 0 %}
-      {% set count = 0 %}
-      {% for month, count in counts1 %}
-      <td>{{ month }}</td>
-      {% endfor %}
-      <td>Total</td>
-    </tr>
-    <tr>
-      <th>MPPA</th>
-      {% for month, data in counts1 %}
-      {% set MtMppa = MtMppa + data['totalmontant'] %}
-      <td>{{ data['totalmontant'] }}</td>
-      {% endfor %}
-      <td>{{MtMppa}}</td>
-    </tr>
-    <tr>
-      <th>MABC</th>
-      {% for month, data in counts2 %}
-      {% set MtMabc = MtMabc + data['totalmontant'] %}
-      <td>{{ data['totalmontant'] }}</td>
-      {% endfor %}
-      <td>{{MtMabc}}</td>
-    </tr>
-    <tr>
-      <th>TOTAL</th>
-      {% for month, data in purchaseTotalAmountByMonth %}
-      <td>{{ data['total'] }}</td>
-      {% endfor %}
-      <td>{{ MtMppa + MtMabc }}</td>
-    </tr>
-  </tbody>
-</table>
+
+
+
+</div>
+<script>
+    let datasets1 = {{ datasets1|json_encode|raw }};
+    let datasets2 = {{ datasets2|json_encode|raw }};
+    let datasets3 = {{ datasets3|json_encode|raw }};
+    let datasets4 = {{ datasets4|json_encode|raw }};
+    
+</script>
 
 {% endif  %}
 

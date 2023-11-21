@@ -47,12 +47,14 @@
   text-align: center;
 }
 .radio-search {
-  padding: 10px;
+  margin-top: 40px;
 }
-.radio-search input,
+.radio-search input {
+  margin-left: 40px;
+  display: inline-block !important;
+}
 .radio-search label {
   margin-left: 10px;
-  display: inline-block !important;
 }
 .table-container {
   height: 400px;
@@ -69,17 +71,16 @@ table {
   width: 100%;
 }
 thead {
-  background-color: #ccc;
-  font-weight: bold;
-  position: sticky;
+  background-color: #000091;
   top: 0;
   z-index: 1;
+  color: white;
 }
 .clickable-row {
   cursor: pointer;
 }
 .clickable-row.selected {
-  background-color: #bfbfbf;
+  background-color: #d3d3ed;
 }
 th,
 td {
@@ -110,6 +111,43 @@ td {
 .fr-btn.btn-achat {
   width: 250px;
 }
+.toggle-button {
+  background-color: #000091;
+  /* Fond blanc */
+  border-radius: 50%;
+  /* Rend le bouton circulaire */
+  padding: 15px;
+  /* Agrandit le bouton */
+  cursor: pointer;
+  /* Change le curseur en main quand on passe dessus */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  /* Ajoute une ombre pour un effet de profondeur */
+}
+.toggle-button:hover,
+.toggle-button:active,
+.toggle-button:focus {
+  background-color: #000091 !important;
+  /* Fond blanc */
+  border-radius: 50%;
+  /* Rend le bouton circulaire */
+  padding: 15px;
+  /* Agrandit le bouton */
+  cursor: pointer;
+  /* Change le curseur en main quand on passe dessus */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  /* Ajoute une ombre pour un effet de profondeur */
+}
+.toggle-button span {
+  color: white;
+  /* Couleur du texte ou de l'icône (ajustez selon vos besoins) */
+  font-size: 24px;
+  /* Ajustez la taille selon vos besoins */
+}
+.fr-btn:disabled {
+  background-color: #d3d3ed;
+  /* Background color */
+  /* Add other properties as needed */
+}
 .arrow {
   color: #007bff;
   /* Couleur bleue pour la flèche */
@@ -134,7 +172,6 @@ td {
   display: block;
 }
 .title-page {
-  width: 119px;
   height: 28px;
   font-family: Marianne;
   font-size: 36px;
@@ -166,6 +203,15 @@ td {
 .form-container {
   border: solid 0 #010202;
   background-color: #f5f5f5;
+  transition: max-height 1s ease-in-out;
+  /* Increased duration and smoother easing */
+  max-height: 1000px;
+  /* Adjust this value based on the maximum height of your content */
+  overflow: hidden;
+}
+.form-container.collapsed {
+  max-height: 0;
+  /* Réduit la div */
 }
 .addAchat {
   display: flex;
@@ -203,7 +249,22 @@ td {
   align-items: center;
   /* Centre verticalement */
 }
-/* -------------------------------------- statistic_delay ------------------------------------*/
+/* -------------------------------------- statistic ------------------------------------*/
 .stat-delay {
   margin: 0 80px 0 80px;
 }
+.fr-input-stat {
+  width: 30%;
+  margin-top: 30px;
+}
+/* -------------------------------------- statistic_delay ------------------------------------*/
+.delayTable tbody tr:nth-child(3) {
+  background-color: #a2e1e4;
+}
+.delayTable tbody tr:nth-child(6) {
+  background-color: #a2b0dc;
+}
+.delayTable tbody tr:nth-child(9) {
+  background-color: #eedeb6;
+}
+/* -------------------------------------- statistic_volval ------------------------------------*/

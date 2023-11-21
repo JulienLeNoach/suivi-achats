@@ -3,6 +3,7 @@
     <tbody id="achat-list-tbody">
             <div data-controller="search-achat">
     {% for achat in pagination %}
+    {# {{ dump(achat.etat_achat)}} #}
         <tr class="clickable-row" data-id="{{ achat.id }}" data-action="click->search-achat#attachEventListeners">
             <td>{{achat.numeroAchat}}</td>
             <td>{{achat.dateSaisie|date('d-m-Y')}}</td>
@@ -11,7 +12,7 @@
             <td>{{ achat.objetAchat }}</td>
             <td>{{ achat.numSiret }}</td>
             <td>{{ achat.montantAchat }}</td>
-            <td>
+            <td class="etat">
                 {% if achat.etatAchat == 0 %}
                     En cours
                 {% elseif achat.etatAchat == 1 %}
@@ -25,3 +26,7 @@
 
     </tbody>
     </div>
+<script>
+  let pagination = {{pagination | json_encode | raw}}
+
+</script>

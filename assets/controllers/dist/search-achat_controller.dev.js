@@ -42,26 +42,59 @@ function (_Controller) {
       this.attachEventListeners();
     }
   }, {
+    key: "collapse",
+    value: function collapse() {
+      var formContainer = document.querySelector('.form-container');
+      var toggleButton = document.getElementById('toggleFormBtn');
+      formContainer.classList.add('collapsed');
+      toggleButton.innerHTML = '<span class="fr-icon-arrow-down-fill" aria-hidden="true"></span>';
+      toggleButton.addEventListener('click', function () {
+        if (formContainer.classList.contains('collapsed')) {
+          formContainer.classList.remove('collapsed');
+          toggleButton.innerHTML = '<span class="fr-icon-arrow-up-fill" aria-hidden="true"></span>';
+        } else {
+          formContainer.classList.add('collapsed');
+          toggleButton.innerHTML = '<span class="fr-icon-arrow-down-fill" aria-hidden="true"></span>';
+        }
+      });
+    }
+  }, {
     key: "attachEventListeners",
     value: function attachEventListeners() {
       var rows = document.querySelectorAll('.clickable-row');
-      var btnElements = document.querySelectorAll('#btn'); // Parcours de toutes les lignes et ajout d'un événement "click"
-
+      var btnElements = document.querySelectorAll('#btn');
       rows.forEach(function (row) {
         row.addEventListener('click', function () {
-          console.log(rows); // Suppression de la classe "selected" de toutes les autres lignes
-
+          btnElements.forEach(function (btn) {
+            btn.removeAttribute('disabled');
+          });
           rows.forEach(function (otherRow) {
             otherRow.classList.remove('selected');
-          }); // Ajout de la classe "selected" à la ligne sélectionnée
+          });
+          var etatCell = row.cells[7];
+          var etatAchatText = etatCell.textContent.replace(/\s+/g, '');
+          var selectedRow = document.querySelector('.selected');
+
+          if (etatAchatText == 'Validé') {
+            document.querySelectorAll('.valid, .reint, .edit').forEach(function (el) {
+              return el.setAttribute('disabled', 'disabled');
+            });
+          } else if (etatAchatText == 'Encours') {
+            document.querySelectorAll('.reint').forEach(function (el) {
+              return el.setAttribute('disabled', 'disabled');
+            });
+          } else if (etatAchatText = 'Annulé') {
+            document.querySelectorAll('.annul, .valid, .edit').forEach(function (el) {
+              return el.setAttribute('disabled', 'disabled');
+            });
+          }
 
           row.classList.add('selected');
           btnElements.forEach(function (btn) {
-            btn.classList.remove('hidden');
             btn.addEventListener('click', function () {
               var link = btn.getAttribute('data-link');
               var detailLink = document.getElementById('detail');
-              var id = row.getAttribute('data-id');
+              var id = document.querySelector('.selected').getAttribute('data-id');
               detailLink.setAttribute('href', '/' + link + '/' + id);
             });
           });

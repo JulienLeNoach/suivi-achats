@@ -47,13 +47,10 @@ function (_Controller) {
   _createClass(_default, [{
     key: "connect",
     value: function connect() {
-      ctx.width = 1200; // Définit la largeur du premier canvas
-
-      ctx.height = 800; // Définit la hauteur du premier canvas
-
-      ctx2.width = 1200; // Définit la largeur du deuxième canvas
-
-      ctx2.height = 800;
+      // ctx.width = 1200; // Définit la largeur du premier canvas
+      // ctx.height = 800; // Définit la hauteur du premier canvas
+      // ctx2.width = 1200; // Définit la largeur du deuxième canvas
+      // ctx2.height = 800;
       new _auto["default"](ctx, {
         type: 'bar',
         data: {
@@ -61,14 +58,20 @@ function (_Controller) {
           datasets: [{
             label: 'MPPA',
             data: datasets1,
-            borderWidth: 1
+            borderWidth: 1,
+            backgroundColor: 'rgb(77 104 188)',
+            borderColor: 'rgb(77 104 188)'
           }, {
             label: 'MABC',
             data: datasets2,
-            borderWidth: 1
+            borderWidth: 1,
+            backgroundColor: 'rgb(162 225 228)',
+            borderColor: 'rgb(162 225 228)'
           }],
           options: {
             responsive: false,
+            maintainAspectRatio: false,
+            // Désactive la mise à l'échelle automatique
             scales: {
               y: {
                 beginAtZero: true
@@ -84,14 +87,20 @@ function (_Controller) {
           datasets: [{
             label: 'MPPA',
             data: datasets3,
-            borderWidth: 1
+            borderWidth: 1,
+            backgroundColor: 'rgb(77 104 188)',
+            borderColor: 'rgb(77 104 188)'
           }, {
             label: 'MABC',
             data: datasets4,
-            borderWidth: 1
+            borderWidth: 1,
+            backgroundColor: 'rgb(162 225 228)',
+            borderColor: 'rgb(162 225 228)'
           }],
           options: {
             responsive: false,
+            maintainAspectRatio: false,
+            // Désactive la mise à l'échelle automatique
             scales: {
               y: {
                 beginAtZero: true

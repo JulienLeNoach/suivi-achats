@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="achat-container">
-    <div class="title-page mt-5 w-100 text-center">
+    <div class="title-page mt-2 w-100 text-center">
         <h2><span style="border-bottom: 4px solid #000091;">Achats</span></h2>
     </div>
     <div class='addAchat mt-5'>
@@ -28,7 +28,7 @@
         </div>
     </div>
     <div class="form-container">
-        {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around flex-wrap'}}) }}
+        {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around flex-wrap p-5'}}) }}
         <div class="input-grp" style="flex-basis:33%;">
             <div class="chrono d-flex">
                 <div class="chronoN  me-3 w-50">
@@ -91,25 +91,12 @@
         {{ form_row(form.recherche)}}
         {{ form_end(form) }}
     </div>
-    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
-
-        <h5 class="mt-4 ms-3 blueF">Liste des achats</h5>
-        <div class="bande ms-3">
-        </div>
+    <div data-controller="search-achat" class='align-items-center d-flex justify-content-end mt-3 bandeau-form-search'>
+        <!-- ... Contenu existant ... -->
+        <button id="toggleFormBtn" class="toggle-button" data-action="click->search-achat#collapse"><span
+                class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
     </div>
-        <div class='bandeau-form-btn '>
-        <span class="fr-icon-arrow-right-line ms-5" aria-hidden="true"></span>
 
-        <p class="mt-4 ms-5 blueF">Sélectionner un achat pour appliquer une action</p>
-
-    <div class="form-btn-search ms-auto">
-        <button class="fr-btn" id="btn" data-link="result_achat">Détail de l'achat</button>
-        <button class="fr-btn" id="btn" data-link="valid_achat">Valider un achat</button>
-        <button class="fr-btn" id="btn" data-link="annul_achat">Annuler un achat</button>
-        <button class="fr-btn" id="btn" data-link="reint_achat">Réintégrer un achat</button>
-        <button class="fr-btn" id="btn" data-link="edit_achat">Modifier un achat</button>
-    </div>
-</div>
 
     {% for flash_message in app.session.flashbag.get('success') %}
     <div class="alert alert-success">
@@ -123,10 +110,29 @@
     {% if pagination | length == 0 %}
     <h4>Aucun résultat pour votre recherche.</h4>
     {% else %}
+    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
+
+        <h5 class="mt-4 ms-3 blueF">Liste des achats</h5>
+        <div class="bande ms-3">
+        </div>
+    </div>
+    <div class='bandeau-form-btn '>
+        <span class="fr-icon-arrow-right-line ms-5" aria-hidden="true"></span>
+
+        <p class="mt-4 ms-5 blueF">Sélectionner un achat pour appliquer une action</p>
+
+        <a id="detail" class="form-btn-search ms-auto">
+            <button class="fr-btn result" id="btn" data-link="result_achat">Détail de l'achat</button>
+            <button class="fr-btn valid" id="btn" data-link="valid_achat">Valider un achat</button>
+            <button class="fr-btn annul" id="btn" data-link="annul_achat">Annuler un achat</button>
+            <button class="fr-btn reint" id="btn" data-link="reint_achat">Réintégrer un achat</button>
+            <button class="fr-btn edit" id="btn" data-link="edit_achat">Modifier un achat</button>
+        </a>
+    </div>
     <div class="result-search-container">
         <div class="table-container search">
             <div id="achat-list">
-                <table border="1">
+                <table border="1" id="tab-result">
                     <thead>
                         <tr>
                             <th>N°Chrono</th>
@@ -154,6 +160,7 @@
         </div>
     </div>
 </div>
+
 {% endif %}
 {# {% endif %} #}
 {% endif %}
