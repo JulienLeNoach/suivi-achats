@@ -18,8 +18,11 @@
 <div class="result-search-container "data-controller="chartvol">
     <div class=" font-weight-bold d-flex flex-row justify-content-between" >
       <div class="" data-controller="pdf-generator">
-        <button id="ex" data-action="click->pdf-generator#exportTableToExcel" >Export Excel</button>
-        <button id="pdf" data-action="click->pdf-generator#generatePDFTable" >Impression</button>
+        <button class="excel" id="ex" data-action="click->pdf-generator#exportTableToExcel" >Export Excel<span class="fr-icon-file-download-line" aria-hidden="true"></span>
+</button>
+        <button class="print"id="pdf" data-action="click->pdf-generator#generatePDFTable" >Imprimer
+        <span class="fr-icon-printer-line" aria-hidden="true"></span>
+        </button>
       </div>
     </div>
     <h3 class="blueF">Activité en volume</h3>
@@ -103,16 +106,17 @@
       </tbody>
     </table>
        <div data-controller="pdf-generator">
-      <button id="pdf" data-action="click->pdf-generator#download" >Impression</button>
+      <button class="print" id="pdf" data-action="click->pdf-generator#download" >Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
+</button>
       </div>
-      <div class="d-flex w-50" >
-   <div class="chartval" style="width:900px;height:600px;">
+<div class="d-flex w-100" >
+   <div class="chartval w-50" >
        <h6 class="blueF">Activité en valeur (HT)</h6>
-  <canvas id="myChart2" data-chartvol-target="myChart"  style="width:900px;height:600px;"></canvas>
-</div>
-   <div class="chartval ms-5" style="width:900px;height:600px;">
+  <canvas id="myChart2" data-chartvol-target="myChart"  ></canvas>
+  </div>
+   <div class="chartval ms-5 w-50" >
     <h6 class="blueF">Activité en volume</h6>
-  <canvas id="myChart" data-chartvol-target="myChart" style="width:900px;height:600px;" ></canvas>
+  <canvas id="myChart" data-chartvol-target="myChart"  ></canvas>
   </div>
 
   </div>

@@ -143,6 +143,11 @@ td {
   font-size: 24px;
   /* Ajustez la taille selon vos besoins */
 }
+.print,
+.excel {
+  border: solid 2px #000091;
+  color: #000091;
+}
 .fr-btn:disabled {
   background-color: #d3d3ed;
   /* Background color */
@@ -268,3 +273,28 @@ td {
   background-color: #eedeb6;
 }
 /* -------------------------------------- statistic_volval ------------------------------------*/
+/* -------------------------------------statistic_type -----------------------------------------*/
+.mppaTable th:nth-child(1),
+.mabcTable th:nth-child(1),
+.allMountTable th:nth-child(1) {
+  background-color: rgb(77 104 188);
+  /* Couleur de fond pour le premier <th> */
+}
+.mppaTable th:nth-child(2),
+.mabcTable th:nth-child(2),
+.allMountTable th:nth-child(2) {
+  background-color: rgb(68 196 201);
+  /* Couleur de fond pour le deuxième <th> */
+}
+.mppaTable th:nth-child(3),
+.mabcTable th:nth-child(3),
+.allMountTable th:nth-child(3) {
+  background-color: #80aebe;
+  /* Couleur de fond pour le troisième <th> */
+}
+.mppaTable th:nth-child(4),
+.mabcTable th:nth-child(4),
+.allMountTable th:nth-child(4) {
+  background-color: rgb(238 222 182);
+  /* Couleur de fond pour le quatrième <th> */
+}

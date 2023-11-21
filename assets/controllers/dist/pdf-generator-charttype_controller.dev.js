@@ -45,7 +45,7 @@ function (_Controller) {
   _createClass(_default, [{
     key: "downloadgraphBar",
     value: function downloadgraphBar() {
-      var canvas1, canvasImage1, canvas2, canvasImage2, canvas3, canvasImage3, tableTotaux, mppaTable, mabcTable, tableTotauxCanvas, mpppaTableCanvas, mabcTableCanvas, tableTotauxImage, mppaTableImage, mabcTableImage, pdf;
+      var canvas1, canvasImage1, canvas2, canvasImage2, canvas3, canvasImage3, tableTotaux, mppaTable, mabcTable, allMountTable, tableTotauxCanvas, mpppaTableCanvas, mabcTableCanvas, allMountTableCanvas, tableTotauxImage, mppaTableImage, mabcTableImage, allMountTableCanvasImage, pdf;
       return regeneratorRuntime.async(function downloadgraphBar$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -65,42 +65,52 @@ function (_Controller) {
               tableTotaux = document.getElementById('tableTotaux');
               mppaTable = document.getElementById('mppaTable');
               mabcTable = document.getElementById('mabcTable');
+              allMountTable = document.getElementById('allMountTable');
               tableTotaux.style.backgroundColor = "white";
               mppaTable.style.backgroundColor = "white";
               mabcTable.style.backgroundColor = "white";
-              _context.next = 17;
+              allMountTable.style.backgroundColor = "white";
+              _context.next = 19;
               return regeneratorRuntime.awrap((0, _html2canvas["default"])(tableTotaux));
 
-            case 17:
+            case 19:
               tableTotauxCanvas = _context.sent;
-              _context.next = 20;
+              _context.next = 22;
               return regeneratorRuntime.awrap((0, _html2canvas["default"])(mppaTable));
 
-            case 20:
+            case 22:
               mpppaTableCanvas = _context.sent;
-              _context.next = 23;
+              _context.next = 25;
               return regeneratorRuntime.awrap((0, _html2canvas["default"])(mabcTable));
 
-            case 23:
+            case 25:
               mabcTableCanvas = _context.sent;
+              _context.next = 28;
+              return regeneratorRuntime.awrap((0, _html2canvas["default"])(allMountTable));
+
+            case 28:
+              allMountTableCanvas = _context.sent;
               tableTotauxImage = tableTotauxCanvas.toDataURL('image/png', 1.0);
               mppaTableImage = mpppaTableCanvas.toDataURL('image/png', 1.0);
               mabcTableImage = mabcTableCanvas.toDataURL('image/png', 1.0);
+              allMountTableCanvasImage = allMountTableCanvas.toDataURL('image/png', 1.0);
               pdf = new _jspdf["default"]('p', 'mm', [300, 200]);
               pdf.setFontSize(15);
               pdf.addImage(canvasImage1, 'png', 15, 15, 70, 70);
               pdf.addImage(canvasImage2, 'png', 115, 15, 70, 70);
               pdf.addImage(canvasImage3, 'png', 65, 120, 70, 70);
-              pdf.text("Montant total", 85, 195);
-              pdf.addImage(tableTotauxImage, 'png', 15, 200, 150, 60);
+              pdf.text("Montant Total ", 75, 235);
+              pdf.addImage(tableTotauxImage, 'png', 25, 240, 150, 60);
               pdf.text("Montant des MPPA", 25, 90);
               pdf.addImage(mppaTableImage, 'png', 15, 95, 80, 15);
               pdf.text("Montant des MABC", 120, 90);
               pdf.addImage(mabcTableImage, 'png', 100, 95, 80, 15);
+              pdf.text("Montant des MABC + MPPA", 65, 195);
+              pdf.addImage(allMountTableCanvasImage, 'png', 55, 200, 80, 15);
               pdf.setFillColor(106, 106, 244, 1);
               pdf.save('Graphique.pdf');
 
-            case 40:
+            case 48:
             case "end":
               return _context.stop();
           }

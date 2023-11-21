@@ -75,30 +75,30 @@ class AchatRepository extends ServiceEntityRepository
             COUNT(*) AS nombre_achats,
             COUNT(CASE WHEN type_marche = 0 THEN 1 END) AS nombre_achats_type_0,
             COUNT(CASE WHEN type_marche = 1 THEN 1 END) AS nombre_achats_type_1,
-            (COUNT(CASE WHEN type_marche = 0 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            ROUND((COUNT(CASE WHEN type_marche = 0 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
             " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
             " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
             " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100 AS pourcentage_type_0,
-            (COUNT(CASE WHEN type_marche = 1 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100, 2) AS pourcentage_type_0,
+            ROUND((COUNT(CASE WHEN type_marche = 1 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
             " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
             " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
             " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100 AS pourcentage_type_1,
-            SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END) AS somme_montant_type_0,
-            AVG(CASE WHEN type_marche = 0 THEN montant_achat ELSE NULL END) AS moyenne_montant_type_0,
-            SUM(CASE WHEN type_marche = 1 THEN montant_achat ELSE 0 END) AS somme_montant_type_1,
-            AVG(CASE WHEN type_marche = 1 THEN montant_achat ELSE NULL END) AS moyenne_montant_type_1,
-            (SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100, 2) AS pourcentage_type_1,
+            ROUND(SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END), 2) AS somme_montant_type_0,
+            ROUND(AVG(CASE WHEN type_marche = 0 THEN montant_achat ELSE NULL END), 2) AS moyenne_montant_type_0,
+            ROUND(SUM(CASE WHEN type_marche = 1 THEN montant_achat ELSE 0 END), 2) AS somme_montant_type_1,
+            ROUND(AVG(CASE WHEN type_marche = 1 THEN montant_achat ELSE NULL END), 2) AS moyenne_montant_type_1,
+            ROUND((SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
             " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
             " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
             " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100 AS pourcentage_type_0_total,
-            (SUM(CASE WHEN type_marche = 1 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100, 2) AS pourcentage_type_0_total,
+            ROUND((SUM(CASE WHEN type_marche = 1 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
             " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
             " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
             " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100 AS pourcentage_type_1_total,
+            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100, 2) AS pourcentage_type_1_total,
             (SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
             " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
             " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "

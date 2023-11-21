@@ -22,14 +22,15 @@
     <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
         <h3 class="  w-50 text-left ">Achats MPPA</h3>
         <div class="" data-controller="pdf-generator-pme">
-            <button id="pdf" data-action="click->pdf-generator-pme#downloadgraphBar">Impression</button>
-            <button id="ex" data-action="click->pdf-generator-pme#exportTableToExcel">Export to Excel</button>
+            <button id="pdf" class="print" data-action="click->pdf-generator-pme#downloadgraphBar">Impression <span class="fr-icon-printer-line" aria-hidden="true"></span></button>
+            <button id="ex" class="excel" data-action="click->pdf-generator-pme#exportTableToExcel">Export to Excel <span class="fr-icon-file-download-line" aria-hidden="true"></span>
+</button>
         </div>
     </div>
 
     <div data-controller="chartpme">
         <div class="achatsMppa w-25 d-flex p-3">
-            <table border="1" id="volvalTable">
+            <table border="1" id="volvalTable" class>
                 <tr>
                     <th></th>
                     <th>PME</th>
@@ -85,21 +86,9 @@
     </div>
 </div>
 <script>
-    let result_achatsSum = {
-        {
-            result_achatsSum | json_encode | raw
-        }
-    };
-    let result_achatsSumVol = {
-        {
-            result_achatsSumVol | json_encode | raw
-        }
-    };
-    let result_achatsSumVal = {
-        {
-            result_achatsSumVal | json_encode | raw
-        }
-    };
+    let result_achatsSum = {{result_achatsSum | json_encode | raw}};
+    let result_achatsSumVol = {{result_achatsSumVol | json_encode | raw}};
+    let result_achatsSumVal = {{result_achatsSumVal | json_encode | raw}};
 </script>
 
 {% endif %}

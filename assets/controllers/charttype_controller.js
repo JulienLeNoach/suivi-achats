@@ -25,15 +25,15 @@ export default class extends Controller {
                 result_achats_mounts[0]["nombre_achats_four2_four3"],
                 result_achats_mounts[0]["nombre_achats_sup_four3"]],
                 backgroundColor: [
-                  'rgb(0,99,203)',
-                  'rgb(188,205,255)',
-                  'rgb(184,254,201)',
-                  'rgb(206,97,74)'
+                  'rgb(77 104 188)',
+                  'rgb(68 196 201)',
+                  'rgb(128, 174, 190)',
+                  'rgb(238 222 182)'
                 ],
                 hoverOffset: 4
               }],
             options: {
-                responsive: false,
+                responsive: true,
         
               scales: {
                 y: {
@@ -60,15 +60,15 @@ export default class extends Controller {
                 result_achats_mounts[1]["nombre_achats_four2_four3"],
                 result_achats_mounts[1]["nombre_achats_sup_four3"]],
                 backgroundColor: [
-                  'rgb(0,99,203)',
-                  'rgb(188,205,255)',
-                  'rgb(184,254,201)',
-                  'rgb(206,97,74)'
+                  'rgb(77 104 188)',
+                  'rgb(68 196 201)',
+                  'rgb(128, 174, 190)',
+                  'rgb(238 222 182)'
                 ],
                 hoverOffset: 4
               }],
             options: {
-                responsive: false,
+                responsive: true,
         
               scales: {
                 y: {
@@ -95,15 +95,15 @@ export default class extends Controller {
                 result_achats_mounts[1]["nombre_achats_four2_four3"]+result_achats_mounts[0]["nombre_achats_four2_four3"],
                 result_achats_mounts[1]["nombre_achats_sup_four3"]+result_achats_mounts[0]["nombre_achats_sup_four3"]],
                 backgroundColor: [
-                  'rgb(0,99,203)',
-                  'rgb(188,205,255)',
-                  'rgb(184,254,201)',
-                  'rgb(206,97,74)'
+                  'rgb(77 104 188)',
+                  'rgb(68 196 201)',
+                  'rgb(128, 174, 190)',
+                  'rgb(238 222 182)'
                 ],
                 hoverOffset: 4
               }],
             options: {
-                responsive: false,
+                responsive: true,
         
               scales: {
                 y: {

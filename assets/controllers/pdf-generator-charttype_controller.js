@@ -20,19 +20,24 @@ export default class extends Controller {
     const tableTotaux = document.getElementById('tableTotaux');
     const mppaTable = document.getElementById('mppaTable');
     const mabcTable = document.getElementById('mabcTable');
+    const allMountTable = document.getElementById('allMountTable');
+
     
 
     tableTotaux.style.backgroundColor = "white";
     mppaTable.style.backgroundColor = "white";
     mabcTable.style.backgroundColor = "white"; 
+    allMountTable.style.backgroundColor = "white"; 
 
     const tableTotauxCanvas = await html2canvas(tableTotaux);
     const mpppaTableCanvas = await html2canvas(mppaTable);
     const mabcTableCanvas = await html2canvas(mabcTable);
+    const allMountTableCanvas = await html2canvas(allMountTable);
 
     const tableTotauxImage = tableTotauxCanvas.toDataURL('image/png', 1.0);
     const mppaTableImage = mpppaTableCanvas.toDataURL('image/png', 1.0);
     const mabcTableImage = mabcTableCanvas.toDataURL('image/png', 1.0);
+    const allMountTableCanvasImage = allMountTableCanvas.toDataURL('image/png', 1.0);
 
     let pdf = new jsPDF('p', 'mm', [300, 200]); 
     pdf.setFontSize(15);
@@ -44,14 +49,17 @@ export default class extends Controller {
     pdf.addImage(canvasImage3, 'png', 65, 120, 70, 70);
 
 
-    pdf.text("Montant total", 85, 195);
-    pdf.addImage(tableTotauxImage, 'png', 15, 200, 150, 60);
+    pdf.text("Montant Total ", 75, 235);
+    pdf.addImage(tableTotauxImage, 'png', 25, 240, 150, 60);
 
     pdf.text("Montant des MPPA", 25, 90);
     pdf.addImage(mppaTableImage, 'png', 15, 95, 80, 15);
 
     pdf.text("Montant des MABC", 120, 90);
     pdf.addImage(mabcTableImage, 'png', 100, 95, 80, 15);
+
+    pdf.text("Montant des MABC + MPPA", 65, 195);
+    pdf.addImage(allMountTableCanvasImage, 'png', 55, 200, 80, 15);
 
     pdf.setFillColor(106, 106, 244, 1);
     pdf.save('Graphique.pdf');

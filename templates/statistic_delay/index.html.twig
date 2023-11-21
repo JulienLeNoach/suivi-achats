@@ -17,10 +17,12 @@
 </div>
 {% if app.request.method == 'POST' %}
 <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
-  <h3 class="  w-50 text-left ">Délai d'activié annuelle tableau</h3>
+  <h6 class="  blueF ">Délai d'activité annuelle tableau</h6>
   <div class="" data-controller="pdf-generator-chartdelay">
-    <button id="pdf" data-action="click->pdf-generator-chartdelay#generatePDFTable">Impression</button>
-    <button id="ex" data-action="click->pdf-generator-chartdelay#exportTableToExcel">Export to Excel</button>
+    <button class="print" id="pdf" data-action="click->pdf-generator-chartdelay#generatePDFTable">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
+</button>
+    <button class="excel" id="ex" data-action="click->pdf-generator-chartdelay#exportTableToExcel">Export to Excel<span class="fr-icon-file-download-line" aria-hidden="true"></span>
+</button>
   </div>
 </div>
 <table border=1 id="delayTable" class="delayTable">
@@ -70,20 +72,20 @@
 
   <div class="delay-bar w-50">
     <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
-      <h3 class=" text-left">Délai d'activié annuelle graphe</h3>
+      <h6 class=" blueF">Délai d'activié annuelle graphe</h6>
       <div class="" data-controller="pdf-generator-chartdelay">
-        <button id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphBar">Impression</button>
+        <button class="print" id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphBar">Impression<span class="fr-icon-printer-line" aria-hidden="true"></span>
+</button>
       </div>
     </div>
-      <div class="test" style="width:1200px; height:800px;">
-    <canvas id="delayChart" data-chartdelay-target="delayChart"> </canvas></div>
-  </div>
+    <canvas id="delayChart" data-chartdelay-target="delayChart" > </canvas></div>
   <div class="delay-pie w-50">
     <div data-controller="pdf-generator-chartdelay" id="chartPie">
       <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
-        <h3 class=" text-left">Délai d'activié anuelle détaillé par traitement</h3>
+        <h6 class="blueF">Délai d'activié anuelle détaillé par traitement</h6>
         <div class="">
-          <button id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphPie">Impression</button>
+          <button id="pdf" class="print" data-action="click->pdf-generator-chartdelay#downloadgraphPie">Impression<span class="fr-icon-printer-line" aria-hidden="true"></span>
+</button>
         </div>
       </div>
       <div class="d-flex flex-wrap w-100 align-items-center justify-content-center">

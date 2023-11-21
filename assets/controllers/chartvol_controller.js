@@ -33,8 +33,8 @@ export default class extends Controller {
               borderColor: 'rgb(162 225 228)' 
             }],
             options: {
-                responsive: false,
-                maintainAspectRatio: false, // Désactive la mise à l'échelle automatique
+                responsive: true,
+                // maintainAspectRatio: false, // Désactive la mise à l'échelle automatique
 
               scales: {
                 y: {
@@ -63,8 +63,8 @@ export default class extends Controller {
               borderColor: 'rgb(162 225 228)'
             }],
             options: {
-                responsive: false,
-                maintainAspectRatio: false, // Désactive la mise à l'échelle automatique
+                responsive: true,
+                // maintainAspectRatio: false, // Désactive la mise à l'échelle automatique
 
               scales: {
                 y: {

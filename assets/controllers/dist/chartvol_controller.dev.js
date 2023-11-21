@@ -69,9 +69,8 @@ function (_Controller) {
             borderColor: 'rgb(162 225 228)'
           }],
           options: {
-            responsive: false,
-            maintainAspectRatio: false,
-            // Désactive la mise à l'échelle automatique
+            responsive: true,
+            // maintainAspectRatio: false, // Désactive la mise à l'échelle automatique
             scales: {
               y: {
                 beginAtZero: true
@@ -98,9 +97,8 @@ function (_Controller) {
             borderColor: 'rgb(162 225 228)'
           }],
           options: {
-            responsive: false,
-            maintainAspectRatio: false,
-            // Désactive la mise à l'échelle automatique
+            responsive: true,
+            // maintainAspectRatio: false, // Désactive la mise à l'échelle automatique
             scales: {
               y: {
                 beginAtZero: true
