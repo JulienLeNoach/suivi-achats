@@ -299,7 +299,7 @@ $stmt = $conn->prepare($sql);
         SELECT
         MONTH(achat.date_saisie) AS mois,
         SUM(CASE WHEN fournisseurs.pme = 1 THEN 1 ELSE 0 END) AS nombre_achats,
-        (SUM(CASE WHEN fournisseurs.pme = 1 THEN 1 ELSE 0 END) / COUNT(achat.id)) * 100 AS pourcentage_achats_pme
+        ROUND(SUM(CASE WHEN fournisseurs.pme = 1 THEN 1 ELSE 0 END) / COUNT(achat.id) ,0) * 100 AS pourcentage_achats_pme
     FROM
         achat
     JOIN
@@ -356,26 +356,25 @@ $stmt = $conn->prepare($sql);
         $conn = $this->getEntityManager()->getConnection();
         $sql = "
         SELECT
-    fournisseurs.id AS fournisseur_id,
-    fournisseurs.nom_fournisseur AS nom_fournisseur,
-    COUNT(achat.id) AS nombre_achats,
-    SUM(achat.montant_achat) AS somme_montant_achat
-FROM
-    achat
-JOIN
-    fournisseurs ON achat.num_siret_id = fournisseurs.id
-WHERE
-    achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(achat.date_saisie) = :year
-    " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-GROUP BY
-    fournisseurs.id, fournisseurs.nom_fournisseur
-ORDER BY
-    nombre_achats DESC
-LIMIT 5";
+        SUBSTRING(fournisseurs.code_postal, 1, 2) AS departement,
+        COUNT(achat.id) AS total_nombre_achats
+    FROM
+        achat
+    JOIN
+        fournisseurs ON achat.num_siret_id = fournisseurs.id
+    WHERE
+        achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(achat.date_saisie) = :year
+        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+    GROUP BY
+        departement
+    ORDER BY
+        total_nombre_achats DESC
+    LIMIT 5;
+    ";
         
     
     
@@ -420,10 +419,8 @@ $stmt = $conn->prepare($sql);
         $conn = $this->getEntityManager()->getConnection();
         $sql = "
         SELECT
-        fournisseurs.id AS fournisseur_id,
-        fournisseurs.nom_fournisseur AS nom_fournisseur,
-        COUNT(achat.id) AS nombre_achats,
-        SUM(achat.montant_achat) AS somme_montant_achat
+        SUBSTRING(fournisseurs.code_postal, 1, 2) AS departement,
+        ROUND(SUM(achat.montant_achat), 0) AS somme_montant_achat
     FROM
         achat
     JOIN
@@ -436,10 +433,11 @@ $stmt = $conn->prepare($sql);
         " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
         " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
     GROUP BY
-        fournisseurs.id, fournisseurs.nom_fournisseur
+        departement
     ORDER BY
-    somme_montant_achat DESC
-    LIMIT 5";
+        somme_montant_achat DESC
+    LIMIT 5;
+    ";
         
     
     

@@ -69,9 +69,8 @@
             </table>
 
         </div>
-        <div class="graphMount d-flex flex-wrap w-75" data-controller="charttype">
-                <div class="graphType w-100 d-flex">
-                    <div class="mppaMount p-3 w-50">
+
+                    <div class="mppaMount p-3 w-50" data-controller="charttype">
                         <h6 class="blueF">Montant des MPPA</h6>
                         <table id="mppaTable" class="mppaTable" border=1>
                             <tr>
@@ -131,8 +130,7 @@
                         <canvas id="allMountChart" data-charttype-target="allMountChart"></canvas>
                     </div>
                 </div>
-        </div>
-    </div>
+
 </div>
 <script>
     let result_achats_mounts = {{result_achats_mounts | json_encode | raw}};

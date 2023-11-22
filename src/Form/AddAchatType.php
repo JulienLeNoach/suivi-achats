@@ -39,26 +39,36 @@ public function __construct(Security $security)
                 'required' => true,
                 'widget' => 'single_text',
                 'label' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
                         
             ])
             ->add('date_commande_chorus',DateType::class, [
                 'required' => true,
                 'label' => false,
                 'widget' => 'single_text',
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
 
             ])
             ->add('date_valid_inter',DateType::class, [
                 'required' => true,
                 'label' => false,
                 'widget' => 'single_text',
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('objet_achat', TextType::class, [
                 'required' => true,
                 'label' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('id_demande_achat', TextType::class, [
                 'required' => true,
                 'label' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('type_marche', ChoiceType::class, [
                 'choices'  => [
@@ -68,15 +78,20 @@ public function __construct(Security $security)
                 'placeholder' => 'Tous',
                 'expanded' => true,
                 'label' => "Type de marché",
-                'row_attr' => ['class' => 'radio-search']
+                'row_attr' => ['class' => 'radio-search'],
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('montant_achat', TextType::class, [
                 'required' => true,
                 'label' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('observations', TextType::class, [
                 'required' => false,
                 'label' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
 
             ->add('place', ChoiceType::class, [
@@ -87,7 +102,10 @@ public function __construct(Security $security)
                 'placeholder' => 'Tous',
                 'expanded' => true,
                 'label' => "Marché avec publicité ?",
-                'row_attr' => ['class' => 'radio-search']
+                'row_attr' => ['class' => 'radio-search'],
+                'label_attr' => ['class' => 'fr-label'],
+                'choice_attr' => ['class' => 'h1'],
+
             ])
             ->add('devis', ChoiceType::class, [
                 'choices'  => [
@@ -97,12 +115,15 @@ public function __construct(Security $security)
                 'placeholder' => 'Tous',
                 'expanded' => true,
                 'label' => "Devis",
-                'row_attr' => ['class' => 'radio-search']
+                'row_attr' => ['class' => 'radio-search'],
+                'label_attr' => ['class' => 'fr-label']
             ])
             
             ->add('code_cpv', LibelleCpv::class,[
                 'required' => true,
                 'label' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
                 
             ])
 
@@ -110,6 +131,8 @@ public function __construct(Security $security)
                 'label' => "Fournisseur",
                 'label' => false,
                 'required' => true,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
 
             ])
             ->add('code_service', EntityType::class, ['label' => "Code service",
@@ -121,19 +144,17 @@ public function __construct(Security $security)
                     return $er->createQueryBuilder('u')
                     ->andWhere('u.code_service = :val')
                     ->setParameter('val', $user->getCodeService()->getId());
-                },])
+                },
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']])
 
             ->add('code_formation', FormationsAutocompleteField::class
             ,[
-                // 'placeholder' => 'Sélectionnez une formation', // Ajoutez cette ligne
                 'required' => true,
                 'label' => false,
-                // 'query_builder' => function (EntityRepository $er){
-                //     $user = $this->security->getUser();
-                //     return $er->createQueryBuilder('u')
-                //     ->andWhere('u.code_service = :val')
-                //     ->setParameter('val', $user->getCodeService()->getId());
-                // },
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
+
 
             ])
                 
@@ -141,6 +162,8 @@ public function __construct(Security $security)
                 'label' => "Unité organique",
                 'label' => false,
                 'required' => true,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
                             
             ->add('tva_ident', EntityType::class,[
@@ -148,19 +171,20 @@ public function __construct(Security $security)
                 'label' => false,
                 'autocomplete' => true,
                 'required' => true,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
 
             ])
             ->add('Valider', SubmitType::class, [
                 'attr' => [
                     'class' => 'fr-btn'
                 ],
-                'row_attr' => ['class' => 'sub-btn']
 
             ])
             ->add('return', SubmitType::class, [
                 'label' => "Retour à la liste d'achats",
                 'attr' => [
-                    'class' => 'fr-btn search',
+                    'class' => 'fr-btn',
                     'onclick' => '', // Appelle la fonction JavaScript goBack() lors du clic
                 ],
             ]);

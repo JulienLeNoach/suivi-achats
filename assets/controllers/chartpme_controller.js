@@ -19,11 +19,15 @@ export default class extends Controller {
             dataValues.push(achats["nombre_achats"]);
         });
         result_achatsSumVol.forEach((achats) => {
-            dataValues2.push(achats["nombre_achats"]);
+
+            dataValues2.push({
+              key: achats["departement"],
+              value: achats["total_nombre_achats"]
+          });
         });
         result_achatsSumVal.forEach((achats) => {
             dataValues3.push({
-                key: achats["nombre_achats"],
+                key: achats["departement"],
                 value: achats["somme_montant_achat"]
             });
         });
@@ -41,8 +45,8 @@ export default class extends Controller {
                 hoverOffset: 4
               }],
             options: {
-                responsive: false,
-                maintainAspectRatio:false,
+                responsive: true,
+                // maintainAspectRatio:false,
         
               scales: {
                 y: {
@@ -59,12 +63,13 @@ export default class extends Controller {
                 labelsVal.push(item.key);
               dataVal.push(item.value);
           });
+
           new Chart(ctxtopVal, {
             type: 'bar',
             data: {
               labels: labelsVal,
               datasets: [{
-                label: 'NB PME',
+                label: 'Valeur PME',
                 data: dataVal,
                 backgroundColor: [
                   'rgb(251,231,105)',
@@ -84,9 +89,11 @@ export default class extends Controller {
             }
           }
           });
+          console.log(dataValues2);
+
         const labelsVol = [];
         const dataVol = [];
-          dataValues3.forEach((item) => {
+          dataValues2.forEach((item) => {
             labelsVol.push(item.key);
             dataVol.push(item.value);
         });
@@ -96,7 +103,7 @@ export default class extends Controller {
             data: {
                 labels: labelsVol,
                 datasets: [{
-                    label: 'NB PME',
+                    label: 'Volume PME',
                     data: dataVol,
                     backgroundColor: ['rgb(169,251,104)'],
                     hoverOffset: 4

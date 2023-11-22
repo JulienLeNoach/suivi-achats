@@ -20,72 +20,92 @@
     </div>
     {% if app.request.method == 'POST' %}
     <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
-        <h3 class="  w-50 text-left ">Achats MPPA</h3>
         <div class="" data-controller="pdf-generator-pme">
             <button id="pdf" class="print" data-action="click->pdf-generator-pme#downloadgraphBar">Impression <span class="fr-icon-printer-line" aria-hidden="true"></span></button>
             <button id="ex" class="excel" data-action="click->pdf-generator-pme#exportTableToExcel">Export to Excel <span class="fr-icon-file-download-line" aria-hidden="true"></span>
 </button>
         </div>
     </div>
-
     <div data-controller="chartpme">
-        <div class="achatsMppa w-25 d-flex p-3">
-            <table border="1" id="volvalTable" class>
-                <tr>
-                    <th></th>
-                    <th>PME</th>
-                    <th>%PME</th>
-                </tr>
-                <tr>
-                    <td>VALEUR</td>
-                    <td>{{ result_achats[0]["ValeurPME"] }}</td>
-                    <td>{{ result_achats[0]["ValeurPercentPME"] }}%</td>
-                </tr>
-                <tr>
-                    <td>VOLUME</td>
-                    <td>{{ result_achats[0]["VolumePME"] }}</td>
-                    <td>{{ result_achats[0]["VolumePercentPME"] }}%</td>
-                </tr>
-            </table>
-            <canvas id="topVal"></canvas>
-            <canvas id="topVol"></canvas>
+        <div class="achatsMppa d-flex flex-row p-3 mb-5" style="display: flex;">
+                <div class="table-achat-pme w-25" style="flex: 1;">
+                    <h6 class=" blueF ">Achats MPPA</h6>
+                    <table border="1" id="volvalTable" >
+                        <tr>
+                            <thead>
+                            <th></th>
+                            <th>PME</th>
+                            <th>%PME</th>
+                            </thead>
+                        </tr>
+                        <tr>
+                            <td>VALEUR</td>
+                            <td>{{ result_achats[0]["ValeurPME"] }}</td>
+                            <td>{{ result_achats[0]["ValeurPercentPME"] }}%</td>
+                        </tr>
+                        <tr>
+                            <td>VOLUME</td>
+                            <td>{{ result_achats[0]["VolumePME"] }}</td>
+                            <td>{{ result_achats[0]["VolumePercentPME"] }}%</td>
+                        </tr>
+                    </table>
+                </div>
+                    <div class="top-dep d-flex w-75" style="flex: 2; display: flex;">
+                        <div class="graph-top-vol w-50" style="flex: 1; max-height: 150px;">
+                            <h6 class=" blueF ">Top 5 departement mppa pme en volume</h6>
+                            <canvas id="topVol" style="width: 100%; height: 100%;" ></canvas>
+                        </div>
+                        <div class="graph-top-val w-50" style="flex: 1; max-height: 150px;">
+                            <h6 class=" blueF ">Top 5 departement mppa pme en valeur</h6>
+                            <canvas id="topVal" style="width: 100%; height: 100%;"  ></canvas>
+                        </div>
+
+                    </div>
         </div>
-        <div class="achatsMppaMonth ">
-            <table border="1" id="actApproTable">
-                <tr>
-                    <th></th>
-                    {% for month in ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] %}
-                    <th>{{ month }}</th>
-                    {% endfor %}
-                    <th>Total</th> {# Ajouter cette colonne pour le total #}
-                </tr>
-                <tr>
-                    <td>NB PME</td>
-                    {% set totalNombreAchats = 0 %}
-                    {% for achats in result_achatsSum %}
-                    <td>{{ achats["nombre_achats"] }}</td>
-                    {% set totalNombreAchats = totalNombreAchats + achats["nombre_achats"] %}
-                    {% endfor %}
-                    <td>{{ totalNombreAchats }}</td> {# Afficher le total dans la première case de la colonne #}
-                </tr>
-                <tr>
-                    <td>% MPPA</td>
-                    {% set totalPourcentage = 0 %}
-                    {% for achats in result_achatsSum %}
-                    <td>{{ achats["pourcentage_achats_pme"] }}</td>
-                    {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_pme"] %}
-                    {% endfor %}
-                    <td>{{ totalPourcentage / result_achatsSum|length }}</td>
-                    {# Calculer et afficher la moyenne dans la case du dessous #}
-                </tr>
-            </table>
-            <div class="chartActContainer" style="position: relative; height:50vh; width:100vw">
-                <canvas id="actAppro" data-chartpme-target="actAppro"></canvas>
+        <div class="achatsMppaMonth d-flex flex-column ">
+            <div class="title-container justify-content-center align-items-center d-flex">
+                <h6 class="blueF">Activite APPRO PME</h6>
             </div>
+            <div class="appro-stat d-flex flex-row ">          
+                <table border="1" id="actApproTable" class="w-25">
+                    <tr>
+                        <thead>
+                        <th></th>
+                        {% for month in ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] %}
+                        <th>{{ month }}</th>
+                        {% endfor %}
+                        <th>Total</th> {# Ajouter cette colonne pour le total #}
+                        </thead>
+                    </tr>
+                    <tr>
+                        <td>NB PME</td>
+                        {% set totalNombreAchats = 0 %}
+                        {% for achats in result_achatsSum %}
+                        <td>{{ achats["nombre_achats"] }}</td>
+                        {% set totalNombreAchats = totalNombreAchats + achats["nombre_achats"] %}
+                        {% endfor %}
+                        <td>{{ totalNombreAchats }}</td> {# Afficher le total dans la première case de la colonne #}
+                    </tr>
+                    <tr>
+                        <td>% MPPA</td>
+                        {% set totalPourcentage = 0 %}
+                        {% for achats in result_achatsSum %}
+                        <td>{{ achats["pourcentage_achats_pme"] }}</td>
+                        {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_pme"] %}
+                        {% endfor %}
+                        <td>{{ totalPourcentage / result_achatsSum|length }}</td>
+                        {# Calculer et afficher la moyenne dans la case du dessous #}
+                    </tr>
+                </table>
+                <div class="chartActContainer" style="width: 75%; max-height: 200px;">
+                    <canvas id="actAppro" data-chartpme-target="actAppro" style="width: 100%; height: 100%;"></canvas>
+                </div>
+            </div>  
         </div>
     </div>
 </div>
 <script>
+
     let result_achatsSum = {{result_achatsSum | json_encode | raw}};
     let result_achatsSumVol = {{result_achatsSumVol | json_encode | raw}};
     let result_achatsSumVal = {{result_achatsSumVal | json_encode | raw}};

@@ -55,11 +55,14 @@ function (_Controller) {
         dataValues.push(achats["nombre_achats"]);
       });
       result_achatsSumVol.forEach(function (achats) {
-        dataValues2.push(achats["nombre_achats"]);
+        dataValues2.push({
+          key: achats["departement"],
+          value: achats["total_nombre_achats"]
+        });
       });
       result_achatsSumVal.forEach(function (achats) {
         dataValues3.push({
-          key: achats["nombre_achats"],
+          key: achats["departement"],
           value: achats["somme_montant_achat"]
         });
       });
@@ -74,8 +77,8 @@ function (_Controller) {
             hoverOffset: 4
           }],
           options: {
-            responsive: false,
-            maintainAspectRatio: false,
+            responsive: true,
+            // maintainAspectRatio:false,
             scales: {
               y: {
                 beginAtZero: true
@@ -95,7 +98,7 @@ function (_Controller) {
         data: {
           labels: labelsVal,
           datasets: [{
-            label: 'NB PME',
+            label: 'Valeur PME',
             data: dataVal,
             backgroundColor: ['rgb(251,231,105)'],
             hoverOffset: 4
@@ -110,9 +113,10 @@ function (_Controller) {
           }
         }
       });
+      console.log(dataValues2);
       var labelsVol = [];
       var dataVol = [];
-      dataValues3.forEach(function (item) {
+      dataValues2.forEach(function (item) {
         labelsVol.push(item.key);
         dataVol.push(item.value);
       });
@@ -121,7 +125,7 @@ function (_Controller) {
         data: {
           labels: labelsVol,
           datasets: [{
-            label: 'NB PME',
+            label: 'Volume PME',
             data: dataVol,
             backgroundColor: ['rgb(169,251,104)'],
             hoverOffset: 4
