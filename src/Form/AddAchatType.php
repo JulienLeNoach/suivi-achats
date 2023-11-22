@@ -79,7 +79,9 @@ public function __construct(Security $security)
                 'expanded' => true,
                 'label' => "Type de marché",
                 'row_attr' => ['class' => 'radio-search'],
-                'label_attr' => ['class' => 'fr-label']
+                'label_attr' => ['class' => 'fr-label'],
+                'attr' => ['class' => 'fr-input'],
+
             ])
             ->add('montant_achat', TextType::class, [
                 'required' => true,
@@ -105,6 +107,8 @@ public function __construct(Security $security)
                 'row_attr' => ['class' => 'radio-search'],
                 'label_attr' => ['class' => 'fr-label'],
                 'choice_attr' => ['class' => 'h1'],
+                'attr' => ['class' => 'fr-input'],
+
 
             ])
             ->add('devis', ChoiceType::class, [
@@ -116,7 +120,9 @@ public function __construct(Security $security)
                 'expanded' => true,
                 'label' => "Devis",
                 'row_attr' => ['class' => 'radio-search'],
-                'label_attr' => ['class' => 'fr-label']
+                'label_attr' => ['class' => 'fr-label'],
+                'attr' => ['class' => 'fr-input'],
+
             ])
             
             ->add('code_cpv', LibelleCpv::class,[

@@ -15,13 +15,13 @@ class ImprimerType extends AbstractType
         ->add('print', SubmitType::class, [
             'label' => 'Imprimer',
             'attr' => [
-                'class' => 'fr-btn search'   
+                'class' => 'fr-btn '   
             ]
             ])
             ->add('return', SubmitType::class, [
                 'label' => "Retour à la liste d'achats",
                 'attr' => [
-                    'class' => 'fr-btn search',
+                    'class' => 'fr-btn ',
                     'onclick' => 'goBack()', // Appelle la fonction JavaScript goBack() lors du clic
                 ],
             ]);

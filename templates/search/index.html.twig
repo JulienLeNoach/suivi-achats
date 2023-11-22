@@ -40,12 +40,18 @@
                     {{ form_row(form.date) }}
                 </div>
             </div>
-            <label for="achat_search_id_demande_achat">Identifiant de la demande d'achat</label>
-            {{ form_row(form.id_demande_achat)}}
             <label for="achat_search_objet_achat">Objet de l'achat</label>
             {{ form_row(form.objet_achat) }}
-            <label for="achat_search_zipcode">Code postal</label>
-            {{ form_row(form.zipcode) }}
+            <div class="d-flex">
+                <div class="me-3 w-50">
+                <label for="achat_search_id_demande_achat">ID de la demande d'achat</label>
+                {{ form_row(form.id_demande_achat)}}
+                </div>
+                <div class="me-3 w-50">
+                <label for="achat_search_zipcode">Code postal</label>
+                {{ form_row(form.zipcode) }}
+                </div>
+            </div>
             <div class="montant d-flex">
                 <div class="montantMin me-3 w-50">
                     <label for="achat_search_montant_achat">Montant de l'achat minimum</label>
@@ -56,7 +62,8 @@
                     {{ form_row(form.montant_achat)}}
                 </div>
             </div>
-
+            <label for="achat_search_numero_ej">N° engagement juridique</label>
+            {{ form_row(form.numero_ej)}}
         </div>
         <div class="input-grp" style="flex-basis:33%;">
             <label for="achat_search_code_uo_autocomplete-ts-control">Unité organique</label>
@@ -84,8 +91,7 @@
             {{ form_row(form.etat_achat) }}
             {{ form_row(form.devis)}}
             {{ form_row(form.type_marche)}}
-            <label for="achat_search_numero_ej">N° engagement juridique</label>
-            {{ form_row(form.numero_ej)}}
+
 
         </div>
         {{ form_row(form.recherche)}}

@@ -22,7 +22,7 @@ class ValidType extends AbstractType
         ->add('return', SubmitType::class, [
             'label' => "Retour à la liste d'achats",
             'attr' => [
-                'class' => 'fr-btn search',
+                'class' => 'fr-btn',
                 'onclick' => '', // Appelle la fonction JavaScript goBack() lors du clic
             ],
         ]);

@@ -11,49 +11,75 @@
 {% endblock %} #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Valider ou notifier  un achat{% endblock %}
+{% block title %}Valider ou notifier un achat{% endblock %}
 
 {% block body %}
-    <h2 class="title-page mt-5">Valider ou notifier un achat</h2>
-<div class="visu-container">
-<div class="search-form-add modif">
-    <div class="input-grp">
-    <label for="ser">Service</label>
-    <input type="text" id ="ser" value="{{result_achat.codeService}}" disabled>
-    <label for="cpv">CPV</label>
-    <input type="text" id ="cpv" value="{{result_achat.codeCPV}}" disabled>
-    <label for="cpv">Montant autorisé</label>
-    <input type="text" id ="cpv" value="90000" disabled>
-    <label for="cpv">Computation</label>
-    <input type="text" id ="cpv" value="{{result_achat.codeCPV.mtCpv}}" disabled>
-    <label for="cpv">Reliquat</label>
-    <input type="text" id ="cpv" value="{{result_achat.codeCPV.mtCpv - result_achat.montantAchat}}" disabled>
+<div class="achat-container">
+
+        <div class='align-items-center d-flex mt-3 bandeau-form-search'>
+            <span class="fr-icon-search-line" aria-hidden="true"></span>
+
+            <h5 class="mt-4 ms-3 blueF">Valider ou notifier un achat</h5>
+            <div class="bande ms-3">
+            </div>
+        </div>
+       <div class="form-container action-container">
+    {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around flex-wrap p-5'}}) }}
+    <div class="input-grp" style="flex-basis:50%">
+        <div class="d-flex flex-column">
+            <label for="ser" class="fr-label">Service</label>
+            <input class="fr-input" type="text" id="ser" value="{{result_achat.codeService}}" disabled>
+        </div>
+        <div class="d-flex flex-column">
+            <label for="cpv" class="fr-label">CPV</label>
+            <input class="fr-input" type="text" id="cpv" value="{{result_achat.codeCPV}}" disabled>
+        </div>
+            <div class="d-flex">
+        <div class="d-flex flex-column me-3 w-50">
+            <label for="val" class="fr-label">Date de validation</label>
+            <input class="fr-input" size="15" type="text" id="valbox" name="val" value="{{result_achat.dateValidation | join ('') | date('Y/m/d')}}">
+        </div>
+        <div class="d-flex flex-column me-3 w-50" >
+            <label for="val" class="fr-label">Date de notification</label>
+            <input class="fr-input" size="15" type="text" id="notbox" name="not" value="{{result_achat.dateNotification | join ('') | date('Y/m/d')}}">
+        </div>
+        </div>
+        <div class="d-flex flex-column">
+            <label for="val" class="fr-label">Numero EJ</label>
+            <input class="fr-input" size="20" type="text" id="ejbox" name="ej" value="{{result_achat.numeroEj | join ('')}}" required>
+        </div>
+    </div>
+    <div class="input-grp" style="flex-basis:50%">
+        <div class="d-flex flex-column">
+            <label for="mtn" class="fr-label">Montant achat HT</label>
+            <input class="fr-input" type="text" id="mtn" value="{{result_achat.montantAchat}}" disabled>
+        </div>
+        <div class="d-flex flex-column">
+            <label for="cpv" class="fr-label">Montant autorisé</label>
+            <input class="fr-input" type="text" id="cpv" value="90000" disabled>
+        </div>
+        <div class="d-flex flex-column">
+            <label for="cpv" class="fr-label">Computation</label>
+            <input class="fr-input" type="text" id="cpv" value="{{result_achat.codeCPV.mtCpv}}" disabled>
+        </div>
+        <div class="d-flex flex-column">
+            <label for="cpv" class="fr-label">Reliquat</label>
+            <input class="fr-input" type="text" id="cpv" value="{{result_achat.codeCPV.mtCpv - result_achat.montantAchat}}" disabled>
+        </div>
+    </div>
+            <div class="sub-btn d-flex justify-content-between align-items-centers">
+            {{ form_end(form) }}
+            </div> {# Terminez le formulaire #}
 </div>
-        <div class="input-grp">
-    <label for="mtn">Montant achat HT</label>
-    <input type="text" id ="mtn" value="{{result_achat.montantAchat}}" disabled>
-    {{ form_start(form) }}
-    <div class="input-grp">
-                    <label for="val">Date de validation</label>
-                    <input size="15" type="text" id="valbox" name="val"
-                        value="{{result_achat.dateValidation | join ('') | date("Y/m/d")}}">
-                    <label for="val">Date de notification</label>
-                    <input size="15" type="text" id="notbox" name="not"
-                        value="{{result_achat.dateNotification | join ('') | date("Y/m/d")}}">
-                    <label for="val">Numero EJ</label>
-                    <input size="20" type="text" id="ejbox" name="ej" value="{{result_achat.numeroEj | join ('')}}"
-                        required>
-                </div>
+                     {# Démarrez le formulaire #}
+
+        {% for flash_message in app.session.flashbag.get('success') %}
+        <div class="alert alert-success">
+            {{ flash_message }}
+            {% endfor %}
+        </div>
         </div>
 
-</div>
-            {{ form_start(form) }} {# Démarrez le formulaire #}
-{{ form_end(form) }} {# Terminez le formulaire #}
-{% for flash_message in app.session.flashbag.get('success') %}
-<div class="alert alert-success">
-    {{ flash_message }}
-    {% endfor %}
-</div>
-</div>
 
+</div>
 {% endblock %}
