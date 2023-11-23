@@ -112,7 +112,7 @@
                                                 EXCEL</a>{% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_CUMUL_CPV') %}
-                                            <a class="fr-nav__link" href="#" target="_self">Cumul annuel par CPV</a>
+                                            <a class="fr-nav__link" href="{{ path('cumul_cpv') }}" target="_self">Cumul annuel par CPV</a>
                                             {% endif %}
                                         </li>
                                     </ul>

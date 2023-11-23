@@ -34,6 +34,9 @@ class CPV
     #[ORM\ManyToOne(inversedBy: 'CPVs')]
     private ?Services $code_service = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $mt_cpv_auto = null;
+
     public function __construct()
     {
         $this->achats = new ArrayCollection();
@@ -137,6 +140,18 @@ class CPV
     public function __toString()
     {
         return $this->code_cpv.'-'. $this->libelle_cpv ;
+    }
+
+    public function getMtCpvAuto(): ?string
+    {
+        return $this->mt_cpv_auto;
+    }
+
+    public function setMtCpvAuto(string $mt_cpv_auto): static
+    {
+        $this->mt_cpv_auto = $mt_cpv_auto;
+
+        return $this;
     } 
 
 

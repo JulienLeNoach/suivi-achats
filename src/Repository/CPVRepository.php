@@ -21,15 +21,40 @@ class CPVRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, CPV::class);
     }
-    // public function find(int $id)
-    // {
-    //     return $this->createQueryBuilder('a')
-    //         ->leftJoin('a.code_formation', 't')
-    //         ->andWhere('t.libelle_formation = :query3')
-    //         ->setParameter('query3', $query3)
-    //         ->getQuery()
-    //         ->getResult();
-    // }
+    public function showCPV($form,$page)
+    {
+        // $data = $form->getData();
+        $date = $form["date"]->getData();
+        $conn = $this->getEntityManager()->getConnection();
 
+        $sql = "SELECT 
+        cpv.libelle_cpv,
+        SUM(achat.montant_achat) AS somme_montants,
+        cpv.mt_cpv,
+        cpv.mt_cpv_auto,
+        (cpv.mt_cpv_auto - SUM(achat.montant_achat)) AS reliquat
+    FROM 
+        achat
+    JOIN 
+        cpv ON achat.code_cpv_id = cpv.id
+    WHERE 
+        YEAR(achat.date_saisie) = $date
+    GROUP BY 
+        cpv.libelle_cpv, cpv.mt_cpv, cpv.mt_cpv_auto 
+    ORDER BY 
+    somme_montants DESC";
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $conn->executeQuery($sql);
+        $result = $resultSet->fetchAllAssociative();
+    
+
+    
+        return $result;
+
+
+      
+
+    }
 
 }

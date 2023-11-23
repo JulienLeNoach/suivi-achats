@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cumul annuel des montants par CPV{% endblock %}
+
+{% block body %}
+<div class="achat-container">
+    <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+        <h5 class="mt-4 ms-3 blueF">Cumul annuel des montants par CPV</h5>
+        <div class="bande ms-3">
+        </div>
+    </div>
+    <div class="form-container action-container">
+        {{ form_start(form, {'attr': {'class': 'search-form-all align-items-center justify-content-around flex-column d-flex flex-wrap'}})}}
+        <div class="input-grp d-flex w-100 justify-content-around">
+            {{ form_row(form.date) }}
+            {{ form_row(form.alertValue) }}
+        </div>
+        {{ form_row(form.recherche) }}
+        {{ form_end(form) }}
+    </div>
+    {% if result_cpv is not empty %}
+
+    {# {% if app.request.method == 'POST' %} #}
+    {% if result_cpv | length == 0 %}
+    <h4>Aucun résultat pour votre recherche.</h4>
+    {% else %}
+    <div class="action-container mt-5 overflow-auto">
+        <table border="1" id="tab-result" class="cumul-cpv-table">
+            <thead class="position-sticky">
+                <tr>
+                    <th class="position-sticky">CPV</th>
+                    <th class="position-sticky">Mt. achats traités</th>
+                    <th class="position-sticky">Montant total</th>
+                    <th class="position-sticky">Montant autorisé</th>
+                    <th class="position-sticky">Reliquat</th>
+                </tr>
+            </thead>
+            <div id="achat-list-ajax">
+                <tbody id="achat-list-tbody">
+                    <div>
+                        {% for cpv in result_cpv %}
+                        <tr>
+                            <td>{{cpv.libelle_cpv}}</td>
+                            <td>{{cpv.somme_montants}}</td>
+                            <td class="{{ cpv.somme_montants > alertValue ? 'bg-warning' : '' }}">{{cpv.somme_montants}}
+                            </td>
+                            <td>{{ cpv.mt_cpv_auto }}</td>
+                            <td class="{{ cpv.reliquat < 0 ? 'bg-danger' : '' }}">{{ cpv.reliquat }}</td>
+                        </tr>
+                        {% endfor %}
+
+                </tbody>
+            </div>
+    </div>
+
+    </table>
+    <div class="sub-btn d-flex justify-content-center align-items-center mt-5">
+        <button type="button" class="fr-btn" onclick="history.back();">Retour</button>
+    </div>
+
+    {% endif %}
+    {% endif %}
+
+
+</div>
+</div>
+
+{% endblock %}
