@@ -15,6 +15,11 @@
             <a href="{{path('ajout_achat')}}" class="text-center">Nouvel achat</a>
             {% endif %}
         </button>
+            {% for flash_message in app.session.flashbag.get('valid') %}
+    <div class="alert alert-success">
+        {{ flash_message }}
+    </div>
+    {% endfor %}
     </div>
     <!-- Création du formulaire de recherche d'achat -->
     <!-- Le formulaire de recherche est créé à l'aide de la fonction form_start(), 

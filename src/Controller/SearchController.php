@@ -83,30 +83,10 @@ public function show(Request $request,$id,SessionInterface $session): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
 
-    $form = $this->createForm(ImprimerType::class, null, []);
 
-    $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        if ($form->get('print')->isClicked()) {
-
-            $html = $this->render('search/pdf_template.html.twig', [
-                'result_achat' => $result_achat,
-                'form' => $form->createView(),
-            ]);
-
-            return $this->statisticService->generatePDF($html);
-        }
-        if ($form->get('return')->isClicked()) {
-            $currentUrl = $session->get('current_url');
-
-                return $this->redirect($currentUrl);
-        
-    }
-}
     return $this->render('search/result_achat.html.twig', [
         'result_achat' => $result_achat,
-        'form' => $form->createView(),
 
     ]);
 }
@@ -161,15 +141,10 @@ public function valid(Request $request,$id,SessionInterface $session): Response
         // $result_achat->getCodeCpv()->setMtCpv($cpvSold->getMtCpv() - $result_achat->getMontantAchat());
         $this->entityManager->flush();
         $this->entityManager->persist($cpvSold);
-        $this->addFlash('success', "L'achat n° $id est validé");
+        $this->addFlash('valid', "L'achat n° $id est validé");
 
         return $this->redirect("/search");
-        }if ($form->get('return')->isClicked()) {
-            $currentUrl = $session->get('current_url');
-
-                return $this->redirect($currentUrl);
-        
-    }
+        }
 }
     return $this->render('achat/valid_achat.html.twig', [
         'result_achat' => $result_achat,

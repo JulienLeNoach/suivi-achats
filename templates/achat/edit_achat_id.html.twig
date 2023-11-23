@@ -3,37 +3,57 @@
 {% block title %}Modifier un achat{% endblock %}
 
 {% block body %}
-<h2 class="title-page mt-5">Modifier un achat</h1>
-<div class="visu-container">
-{{ form_start(form, {'attr': {'class': 'search-form-add'}}) }}
-    <div class="input-grp">
-        {{ form_row(form.code_service) }}
-        {{ form_row(form.num_siret) }}
-        {{ form_row(form.code_cpv) }}
-        {{ form_row(form.code_uo) }}
-        {{ form_row(form.code_formation) }}
-        {{ form_row(form.utilisateurs) }}</div>
-    <div class="input-grp">
-        {{ form_row(form.montant_achat) }}
-        {{ form_row(form.date_sillage) }}
-        {{ form_row(form.date_commande_chorus) }}
-        {{ form_row(form.type_marche) }}
-        {{ form_row(form.place) }}
-        {{ form_row(form.devis) }}
-        {{ form_row(form.tva_ident) }}
+<div class="achat-container">
+
+    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
+        <span class="fr-icon-search-line" aria-hidden="true"></span>
+        <h5 class=" mt-4 ms-3 blueF">Modifier un achat</h5>
+        <div class="bande ms-3"></div>
     </div>
-    <div class="input-grp">
-        {{ form_row(form.objet_achat) }}
-        {{ form_row(form.observations) }}
-    
-<div class="sub-btn">
-    <button class="fr-btn">{{ button_label|default('Mettre à jour') }}</button><br>
-    </div>
+
+    <div class="form-container">
+        {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around flex-wrap p-5'}}) }}
+
+        <div class="input-grp" style="flex-basis:33%">
+            {{ form_row(form.code_service) }}
+            {{ form_row(form.objet_achat) }}
+            {{ form_row(form.observations) }}
+            {{ form_row(form.montant_achat) }}
+            <div class="d-flex">
+                <div class="w-50 me-3">
+                {{ form_row(form.date_sillage) }}
+                </div>
+                <div class="w-50">
+                {{ form_row(form.date_commande_chorus) }}
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="input-grp" style="flex-basis:33%">
+            
+            {{ form_row(form.code_formation) }}
+            {{ form_row(form.num_siret) }}
+            {{ form_row(form.code_cpv) }}
+            {{ form_row(form.code_uo) }}
+            {{ form_row(form.tva_ident) }}
+        </div>
+
+        <div class="input-grp" style="flex-basis:33%">
+            {{ form_row(form.type_marche) }}
+            {{ form_row(form.place) }}
+            {{ form_row(form.devis) }}
+            
+        </div>
+
+        <div class="sub-btn d-flex justify-content-between align-items-centers">
+            <button class="fr-btn">{{ button_label|default('Mettre à jour') }}</button>
             {{ form_row(form.return) }}
+        </div>
 
-        </div>   
-    {{ form_end(form) }}
+        {{ form_end(form) }}
+    </div>
 
-</div>
 </div>
 {% endblock %}

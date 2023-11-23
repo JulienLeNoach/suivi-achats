@@ -16,14 +16,12 @@ class ValidType extends AbstractType
             'attr' => [
                 'class' => 'fr-btn'
             ],
-            // 'row_attr' => ['class' => 'sub-btn']
-
         ])
         ->add('return', SubmitType::class, [
             'label' => "Retour à la liste d'achats",
             'attr' => [
                 'class' => 'fr-btn',
-                'onclick' => '', // Appelle la fonction JavaScript goBack() lors du clic
+                'onclick' => 'history.back();return false;'
             ],
         ]);
         ;

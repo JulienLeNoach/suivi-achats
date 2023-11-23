@@ -94,11 +94,13 @@
                                             {% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_STAT_MPPA_MABC') %}
-                                            <a class="fr-nav__link" href="{{path('app_statistic_typemarche')}}" target="_self">Statistiques MPPA/MABC</a>
+                                            <a class="fr-nav__link" href="{{path('app_statistic_typemarche')}}"
+                                                target="_self">Statistiques MPPA/MABC</a>
                                             {% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_STAT_PME') %}
-                                            <a class="fr-nav__link" href="{{path('app_statisticpme')}}" target="_self">Statistique PME</a>
+                                            <a class="fr-nav__link" href="{{path('app_statisticpme')}}"
+                                                target="_self">Statistique PME</a>
                                             {% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_CR_ANNUEL') %}
@@ -136,7 +138,7 @@
                                             {% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_PARAMETRES') %}
-                                            <a class="fr-nav__link" href="#" target="_self">Modifier les paramètres</a>
+                                            <a class="fr-nav__link" href="{{ path('parameters') }}" target="_self">Modifier les paramètres</a>
                                             {% endif %}
                                         </li>
                                     </ul>
@@ -148,13 +150,15 @@
                         <div class="fr-header__tools-links">
                             <ul class="fr-btns-group">
 
-                                <li> 
-<a class="fr-btn " href="{{path('app_account')}}"><span class="fr-icon-account-circle-fill" aria-hidden="true"></span>
-  Mon Compte (
+                                <li>
+                                    <a class="fr-btn " href="{{path('app_account')}}"><span
+                                            class="fr-icon-account-circle-fill" aria-hidden="true"></span>
+                                        Mon Compte (
                                         {{ app.user.userIdentifier }}) </a>
                                 </li>
-                                <li> <a class="fr-btn " href="{{path('app_logout')}}"><span class="fr-icon-lock-fill" aria-hidden="true"></span>
- Déconnexion</a>
+                                <li> <a class="fr-btn " href="{{path('app_logout')}}"><span class="fr-icon-lock-fill"
+                                            aria-hidden="true"></span>
+                                        Déconnexion</a>
                                 </li>
                             </ul>
                         </div>

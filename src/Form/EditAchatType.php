@@ -4,8 +4,10 @@ namespace App\Form;
 
 use App\Entity\TVA;
 use App\Entity\Achat;
+use App\Entity\Services;
 use App\Form\LibelleCpv;
 use App\Form\UOAutocompleteField;
+use Doctrine\ORM\EntityRepository;
 use App\Form\ServicesAutocompleteField;
 use Symfony\Component\Form\AbstractType;
 use App\Form\FormationsAutocompleteField;
@@ -29,37 +31,41 @@ class EditAchatType extends AbstractType
             'label' => 'Fournisseur',
 
         ])
-            ->add('code_service', ServicesAutocompleteField::class, [
-                'required' => false,
-                'label' => 'Service',
+        ->add('code_service', EntityType::class, ['label' => "Code service",
+        'label' => 'Service',
 
-            ])
+        'class' => Services::class,
+            'attr' => ['class' => 'fr-input'], 
+            'label_attr' => ['class' => 'fr-label']])
+
 
             ->add('code_formation', FormationsAutocompleteField::class, [
                 'required' => false,
                 'label' => 'Formation',
 
             ])
-            ->add('utilisateurs', UtilisateursAutocompleteField::class, [
-                'required' => false,
-                'label' => 'Acheteur',
 
-            ])
             ->add('date_sillage', DateType::class, [
                 'required' => false,
-                'label' => "Date d'enregistrement dans sillage",
+                'label' => "Date enregistrement sillage",
                 'widget' => 'single_text',
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
 
             ])
             ->add('date_commande_chorus', DateType::class, [
                 'required' => false,
-                'label' => 'Date de commande dans CF',
+                'label' => 'Date commande CF',
                 'widget' => 'single_text',
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
 
             ])
             ->add('objet_achat', TextType::class, [
                 'required' => false,
-                'label' => "Objet de l'achat"
+                'label' => "Objet de l'achat",
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('type_marche', ChoiceType::class, [
                 'choices'  => [
@@ -67,18 +73,25 @@ class EditAchatType extends AbstractType
                     'MPPA' => '1'
                 ],
                 'required' => false,
-                'placeholder' => 'Tous',
+                'placeholder' => false,
                 'expanded' => true,
                 'label' => "Type de marché",
-                'row_attr' => ['class' => 'radio-search']
+                'row_attr' => ['class' => 'radio-search'],
+                'label_attr' => ['class' => 'fr-label'],
+                'attr' => ['class' => 'fr-input'], 
+
             ])
             ->add('montant_achat', TextType::class, [
                 'required' => false,
-                'label' => "Montant de l'achat"
+                'label' => "Montant de l'achat",
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('observations', TextType::class, [
                 'required' => false,
-                'label' => "Observations"
+                'label' => "Observations",
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
 
             ->add('place', ChoiceType::class, [
@@ -87,10 +100,13 @@ class EditAchatType extends AbstractType
                     'Oui' => '1'
                 ],
                 'required' => false,
-                'placeholder' => 'Tous',
+                'placeholder' => false,
                 'expanded' => true,
                 'label' => "Marché avec publicité ?",
-                'row_attr' => ['class' => 'radio-search']
+                'row_attr' => ['class' => 'radio-search'],
+                'label_attr' => ['class' => 'fr-label'],
+                'attr' => ['class' => 'fr-input'], 
+
             ])
             ->add('devis', ChoiceType::class, [
                 'choices'  => [
@@ -98,10 +114,13 @@ class EditAchatType extends AbstractType
                     'GSBdD/PFAF' => '1'
                 ],
                 'required' => false,
-                'placeholder' => 'Tous',
+                'placeholder' => false,
                 'expanded' => true,
                 'label' => "Devis",
-                'row_attr' => ['class' => 'radio-search']
+                'row_attr' => ['class' => 'radio-search'],
+                'label_attr' => ['class' => 'fr-label'],
+                'attr' => ['class' => 'fr-input'], 
+
             ])
 
             ->add('code_cpv', LibelleCpv::class, [
@@ -124,9 +143,9 @@ class EditAchatType extends AbstractType
             ->add('return', SubmitType::class, [
                 'label' => "Retour à la liste d'achats",
                 'attr' => [
-                    'class' => 'fr-btn search',
-                    'onclick' => '', // Appelle la fonction JavaScript goBack() lors du clic
-                ],
+                    'class' => 'fr-btn',
+                    'onclick' => 'history.back();return false;'
+                                ],
             ]);
     }
     public function configureOptions(OptionsResolver $resolver): void

@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="form-container action-container">
-        {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around flex-wrap p-5'}}) }}
+        <form class="search-form-all d-flex justify-content-around flex-wrap p-5">
             <div class="input-grp" style="flex-basis:25%">
                 <div class="d-flex flex-column">
                             <label for="ser" class="fr-label">Service</label>
@@ -88,10 +88,10 @@
                 </div>
                 </div>
                 <div class="sub-btn d-flex justify-content-between align-items-centers">
-                {{ form_row(form.print) }}
-                {{ form_row(form.return) }}
-                {{ form_end(form) }} {# Terminez le formulaire #}
 
+
+</form>
+<button type="button" class="fr-btn" onclick="history.back();">Retour à la liste d'achats</button>
             </div>
             </div>
 

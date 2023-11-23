@@ -75,7 +75,7 @@ public function __construct(Security $security)
                     'MABC' => '0',
                     'MPPA' => '1'
                 ],
-                'placeholder' => 'Tous',
+                'placeholder' => false,
                 'expanded' => true,
                 'label' => "Type de marché",
                 'row_attr' => ['class' => 'radio-search'],
@@ -101,12 +101,11 @@ public function __construct(Security $security)
                     'Non' => '0',
                     'Oui' => '1'
                 ],
-                'placeholder' => 'Tous',
+                'placeholder' => false,
                 'expanded' => true,
                 'label' => "Marché avec publicité ?",
                 'row_attr' => ['class' => 'radio-search'],
                 'label_attr' => ['class' => 'fr-label'],
-                'choice_attr' => ['class' => 'h1'],
                 'attr' => ['class' => 'fr-input'],
 
 
@@ -116,7 +115,7 @@ public function __construct(Security $security)
                     'Prescripteur' => '0',
                     'GSBdD/PFAF' => '1'
                 ],
-                'placeholder' => 'Tous',
+                'placeholder' => false,
                 'expanded' => true,
                 'label' => "Devis",
                 'row_attr' => ['class' => 'radio-search'],
@@ -187,13 +186,7 @@ public function __construct(Security $security)
                 ],
 
             ])
-            ->add('return', SubmitType::class, [
-                'label' => "Retour à la liste d'achats",
-                'attr' => [
-                    'class' => 'fr-btn',
-                    'onclick' => '', // Appelle la fonction JavaScript goBack() lors du clic
-                ],
-            ]);
+
         ;
     }
 

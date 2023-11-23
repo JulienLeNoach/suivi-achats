@@ -11,7 +11,7 @@
             <td>{{ achat.codeFormation }}</td>
             <td>{{ achat.objetAchat }}</td>
             <td>{{ achat.numSiret }}</td>
-            <td>{{ achat.montantAchat }}</td>
+                <td class="{{ achat.montantAchat > 100 ? 'test' : '' }}">{{ achat.montantAchat }}</td>
             <td class="etat">
                 {% if achat.etatAchat == 0 %}
                     En cours
@@ -28,5 +28,4 @@
     </div>
 <script>
   let pagination = {{pagination | json_encode | raw}}
-
 </script>

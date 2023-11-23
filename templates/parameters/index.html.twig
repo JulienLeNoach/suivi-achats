@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des paramètres{% endblock %}
+
+{% block body %}
+<div class="achat-container">
+    <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+        <h5 class="mt-4 ms-3 blueF">Gestion des paramètres</h5>
+        <div class="bande ms-3">
+        </div>
+    </div>
+    <div class="form-container action-container">
+        <div class="d-flex justify-content-center align-items-center">
+
+            <p class="blueF mt-3">Configuration des fourchettes pour les statistiques MPPA/MABC</p>
+        </div>
+        {{ form_start(form, {'attr': {'class': 'search-form-all align-items-center justify-content-around flex-column d-flex flex-wrap'}})
+        }}
+        <div class="input-grp d-flex  p-3">
+            {{ form_row(form.four1) }}
+            {{ form_row(form.four2) }}
+            {{ form_row(form.four3) }}
+            {{ form_row(form.four4) }}
+        </div>
+        <div class="result-param d-flex ">
+            <div class="p-3">Résultat -></div>
+            <div class="four1 p-3">X <= {{parametres.four2 }}€ </div>
+                    <div class="four2 p-3">{{parametres.four2 }} < X <={{parametres.four3 }}€</div>
+                            <div class="four3 p-3">{{parametres.four3 }} < X <={{parametres.four4 }}€</div>
+                                    <div class="four4 p-3">X > {{parametres.four4 }}€</div>
+                            </div>
+                            <div class="sub-btn d-flex mt-3 mb-3">
+
+                                {{ form_end(form) }}
+                            </div>
+
+                            {% for flash_message in app.session.flashbag.get('success') %}
+                            <div class="alert alert-success">
+                                {{ flash_message }}
+                            </div>
+                            {% endfor %}
+                    </div>
+            </div>
+
+            {% endblock %}

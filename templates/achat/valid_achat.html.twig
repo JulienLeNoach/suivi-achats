@@ -1,14 +1,4 @@
-{# {% extends 'base.html.twig' %}
 
-
-{% block body %}
-
-
-    {{ include('achat/tab_achat.html.twig') }}
-
-
-</div>
-{% endblock %} #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Valider ou notifier un achat{% endblock %}
@@ -46,25 +36,25 @@
         </div>
         <div class="d-flex flex-column">
             <label for="val" class="fr-label">Numero EJ</label>
-            <input class="fr-input" size="20" type="text" id="ejbox" name="ej" value="{{result_achat.numeroEj | join ('')}}" required>
+            <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="{{result_achat.numeroEj | join ('')}}" required>
         </div>
     </div>
     <div class="input-grp" style="flex-basis:50%">
         <div class="d-flex flex-column">
             <label for="mtn" class="fr-label">Montant achat HT</label>
-            <input class="fr-input" type="text" id="mtn" value="{{result_achat.montantAchat}}" disabled>
+            <input class="fr-input" type="number" id="mtn" value="{{result_achat.montantAchat}}" disabled>
         </div>
         <div class="d-flex flex-column">
             <label for="cpv" class="fr-label">Montant autorisé</label>
-            <input class="fr-input" type="text" id="cpv" value="90000" disabled>
+            <input class="fr-input" type="number" id="cpv" value="90000" disabled>
         </div>
         <div class="d-flex flex-column">
             <label for="cpv" class="fr-label">Computation</label>
-            <input class="fr-input" type="text" id="cpv" value="{{result_achat.codeCPV.mtCpv}}" disabled>
+            <input class="fr-input" type="number" id="cpv" value="{{result_achat.codeCPV.mtCpv}}" disabled>
         </div>
         <div class="d-flex flex-column">
             <label for="cpv" class="fr-label">Reliquat</label>
-            <input class="fr-input" type="text" id="cpv" value="{{result_achat.codeCPV.mtCpv - result_achat.montantAchat}}" disabled>
+            <input class="fr-input" type="number" id="cpv" value="{{result_achat.codeCPV.mtCpv - result_achat.montantAchat}}" disabled>
         </div>
     </div>
             <div class="sub-btn d-flex justify-content-between align-items-centers">
