@@ -22,8 +22,6 @@
     <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
         <div class="" data-controller="pdf-generator-pme">
             <button id="pdf" class="print" data-action="click->pdf-generator-pme#downloadgraphBar">Impression <span class="fr-icon-printer-line" aria-hidden="true"></span></button>
-            <button id="ex" class="excel" data-action="click->pdf-generator-pme#exportTableToExcel">Export to Excel <span class="fr-icon-file-download-line" aria-hidden="true"></span>
-</button>
         </div>
     </div>
     <div data-controller="chartpme">
@@ -81,8 +79,8 @@
                         <td>NB PME</td>
                         {% set totalNombreAchats = 0 %}
                         {% for achats in result_achatsSum %}
-                        <td>{{ achats["nombre_achats"] }}</td>
-                        {% set totalNombreAchats = totalNombreAchats + achats["nombre_achats"] %}
+                        <td>{{ achats["nombre_total_achats_pme"] }}</td>
+                        {% set totalNombreAchats = totalNombreAchats + achats["nombre_total_achats_pme"] %}
                         {% endfor %}
                         <td>{{ totalNombreAchats }}</td> {# Afficher le total dans la première case de la colonne #}
                     </tr>
@@ -90,8 +88,8 @@
                         <td>% MPPA</td>
                         {% set totalPourcentage = 0 %}
                         {% for achats in result_achatsSum %}
-                        <td>{{ achats["pourcentage_achats_pme"] }}</td>
-                        {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_pme"] %}
+                        <td>{{ achats["pourcentage_achats_type_marche_1"] }}</td>
+                        {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_type_marche_1"] %}
                         {% endfor %}
                         <td>{{ totalPourcentage / result_achatsSum|length }}</td>
                         {# Calculer et afficher la moyenne dans la case du dessous #}

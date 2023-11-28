@@ -23,11 +23,7 @@
           {{ form_row(form.code_cpv) }}
           {{ form_row(form.code_formation) }}
           {{ form_row(form.num_siret) }}
-
-
-
           {{ form_row(form.code_uo) }}
-
           {{ form_row(form.utilisateurs) }}
       </div>
 
@@ -40,6 +36,8 @@
           <!-- Ajoute la classe 'hidden' si la condition est fausse -->
           {% endif %}
           {{ form_row(form.recherche) }}
+          {{ form_row(form.excel)}}
           {{ form_end(form) }}
       </div>
   </div>
+  

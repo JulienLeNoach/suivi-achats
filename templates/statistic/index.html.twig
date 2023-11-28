@@ -13,14 +13,13 @@
     </div>
     {{ include('statistic/stat_form.html.twig') }}
   {% if app.request.method == 'POST' %}
-
   {% if counts1 is not empty %}
 <div class="result-search-container "data-controller="chartvol">
     <div class=" font-weight-bold d-flex flex-row justify-content-between" >
-      <div class="" data-controller="pdf-generator">
-        <button class="excel" id="ex" data-action="click->pdf-generator#exportTableToExcel" >Export Excel<span class="fr-icon-file-download-line" aria-hidden="true"></span>
-</button>
-        <button class="print"id="pdf" data-action="click->pdf-generator#generatePDFTable" >Imprimer
+      <div class="d-flex" data-controller="pdf-generator" >
+
+
+        <button class="print ms-3" id="pdf" data-action="click->pdf-generator#generatePDFTable" >Imprimer
         <span class="fr-icon-printer-line" aria-hidden="true"></span>
         </button>
       </div>
@@ -108,6 +107,7 @@
        <div data-controller="pdf-generator">
       <button class="print" id="pdf" data-action="click->pdf-generator#download" >Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
 </button>
+
       </div>
 <div class="d-flex w-100" >
    <div class="chartval w-50" >

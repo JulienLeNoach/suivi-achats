@@ -52,7 +52,7 @@ function (_Controller) {
       var dataValues2 = [];
       var dataValues3 = [];
       result_achatsSum.forEach(function (achats) {
-        dataValues.push(achats["nombre_achats"]);
+        dataValues.push(achats["nombre_total_achats_pme"]);
       });
       result_achatsSumVol.forEach(function (achats) {
         dataValues2.push({

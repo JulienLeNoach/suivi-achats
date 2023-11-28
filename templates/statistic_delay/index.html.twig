@@ -16,12 +16,12 @@
       class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
 </div>
 {% if app.request.method == 'POST' %}
+{% if achats is not empty %}
+
 <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
   <h6 class="  blueF ">Délai d'activité annuelle tableau</h6>
   <div class="" data-controller="pdf-generator-chartdelay">
     <button class="print" id="pdf" data-action="click->pdf-generator-chartdelay#generatePDFTable">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
-</button>
-    <button class="excel" id="ex" data-action="click->pdf-generator-chartdelay#exportTableToExcel">Export to Excel<span class="fr-icon-file-download-line" aria-hidden="true"></span>
 </button>
   </div>
 </div>
@@ -127,5 +127,6 @@
 
   let achats_delay_all = {{achats_delay_all | json_encode | raw}}
 </script>
+{% endif %}
 {% endif %}
 {% endblock %}

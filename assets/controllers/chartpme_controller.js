@@ -16,7 +16,7 @@ export default class extends Controller {
         const dataValues3 = [];
 
         result_achatsSum.forEach((achats) => {
-            dataValues.push(achats["nombre_achats"]);
+            dataValues.push(achats["nombre_total_achats_pme"]);
         });
         result_achatsSumVol.forEach((achats) => {
 
@@ -57,6 +57,8 @@ export default class extends Controller {
             }
           }
           });
+
+
           const labelsVal = [];
           const dataVal = [];
             dataValues3.forEach((item) => {

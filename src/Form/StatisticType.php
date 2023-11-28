@@ -13,9 +13,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\RadioType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class StatisticType extends AbstractType
 {
@@ -47,6 +48,7 @@ class StatisticType extends AbstractType
             'label_attr' => ['class' => 'fr-label'],
             'placeholder' => false,
             'mapped'=>false,
+            'data'  => 'tJ',
 
         ])
         ->add('num_siret', FournisseursAutocompleteField::class, [  
@@ -110,12 +112,16 @@ class StatisticType extends AbstractType
                 'class' => 'fr-btn search'
             ],
             'row_attr' => ['class' => 'sub-btn d-flex mt-3'],
-            'label' => 'Lancer la recherche', 
-
-
+            'label' => 'Lancer la recherche',
 
         ])
-
+        ->add('excel', SubmitType::class, [
+            'attr' => [
+                'class' => 'excel'
+            ],
+            'label' => 'Export Excel', 
+            
+                    ])
         // Récupération du formulaire
         ->getForm();
     }
