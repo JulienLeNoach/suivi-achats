@@ -936,9 +936,7 @@ $stmt = $conn->prepare($sql);
             COUNT(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE NULL END) AS CountAntInf3,
             COUNT(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE NULL END) AS CountAntSup3,
             COUNT(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE NULL END) AS CountBudgetInf3,
-            COUNT(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1
-            ELSE NULL
-            END) AS CountBudgetSup3,
+            COUNT(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE NULL END) AS CountBudgetSup3,
             COUNT(CASE
             WHEN source = 'APPRO' AND difference <= 7 THEN 1
             ELSE NULL
@@ -972,27 +970,27 @@ $stmt = $conn->prepare($sql);
             ELSE NULL
         END) AS CountPfafSup14,
         (SUM(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_3_Jours_Ant,
-        (SUM(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_3_Jours_Ant,
+        (SUM(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_3_Jours_Ant,
             (SUM(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_3_Jours_Budget,
             (SUM(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_3_Jours_Budget,
             (SUM(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_7_Jours_Appro,
             (SUM(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_7_Jours_Appro,
             (SUM(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_7_Jours_Fin,
-            (SUM(CASE WHEN source = 'FIN' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_7_Jours_Fin,
+            (SUM(CASE WHEN source = 'FIN' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_7_Jours_Fin,
             (SUM(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_10_Jours_Chorus,
         (SUM(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_10_Jours_Chorus,
             (SUM(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_14_Jours_Pfaf,
             (SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_14_Jours_Pfaf,
             COUNT(CASE
-            WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference <= 15) THEN 1
+            WHEN source IN ('Délai total') AND (difference <= 15) THEN 1
             ELSE NULL
         END) AS CountDelaiTotalInf15,
         COUNT(CASE
-            WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference > 15) THEN 1
+            WHEN source IN ('Délai total') AND (difference > 15) THEN 1
             ELSE NULL
         END) AS CountDelaiTotalSup15,
-            (SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_15_Jours,
-            (SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_15_Jours
+            (SUM(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_15_Jours,
+            (SUM(CASE WHEN source IN ('Délai total') AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_15_Jours
                 FROM
                     (
                         SELECT
@@ -1052,7 +1050,7 @@ $stmt = $conn->prepare($sql);
             
                 SELECT
                     'PFAF' AS source,
-                    (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification)) AS difference,
+                    (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_notification)) AS difference,
                     date_saisie
                 FROM achat
                 WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -1066,7 +1064,21 @@ $stmt = $conn->prepare($sql);
             
                 SELECT
                 'Chorus formul.' AS source,
-                (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_notification)) AS difference,
+                (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification)) AS difference,
+                date_saisie
+            FROM achat
+            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
+                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+
+                UNION ALL
+            
+                SELECT
+                'Délai total' AS source,
+                (DATEDIFF(date_validation, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_validation)) AS difference,
                 date_saisie
             FROM achat
             WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -1078,7 +1090,7 @@ $stmt = $conn->prepare($sql);
                 
         
                 ) AS combined_data
-                WHERE source IN ('ANT GSBDD', 'BUDGET', 'APPRO', 'FIN', 'Chorus formul.', 'PFAF')
+                WHERE source IN ('ANT GSBDD', 'BUDGET', 'APPRO', 'FIN', 'Chorus formul.', 'PFAF', 'Délai total')
             GROUP BY source
             ORDER BY
                 source = 'ANT GSBDD' DESC,
@@ -1086,7 +1098,8 @@ $stmt = $conn->prepare($sql);
                 source = 'APPRO' DESC,
                 source = 'FIN' DESC,
                 source = 'Chorus formul.' DESC,
-                source = 'PFAF' DESC
+                source = 'PFAF' DESC,
+                source = 'Délai total' DESC
             LIMIT 0,100
                 ";
                     }
@@ -1151,15 +1164,15 @@ $stmt = $conn->prepare($sql);
                         (SUM(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_14_Jours_Pfaf,
                         (SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_14_Jours_Pfaf,
                         COUNT(CASE
-                        WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference <= 15) THEN 1
+                        WHEN source IN ('Délai total') AND (difference <= 15) THEN 1
                         ELSE NULL
                     END) AS CountDelaiTotalInf15,
                     COUNT(CASE
-                        WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference > 15) THEN 1
+                        WHEN source IN ('Délai total') AND (difference > 15) THEN 1
                         ELSE NULL
                     END) AS CountDelaiTotalSup15,
-                    (SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_15_Jours,
-                    (SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('ANT GSBDD', 'Chorus formul.') THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_15_Jours
+                    (SUM(CASE WHEN source = 'Délai total' AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_15_Jours,
+                    (SUM(CASE WHEN source = 'Délai total' AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_15_Jours
                       FROM (
                         SELECT
                           'ANT GSBDD' AS source,
@@ -1242,9 +1255,22 @@ $stmt = $conn->prepare($sql);
                         " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
                         " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
                         " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-                
+
+                        UNION ALL
+            
+                        SELECT
+                        'Délai total' AS source,
+                        (DATEDIFF(date_validation, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_validation)) AS difference,
+                        date_saisie
+                    FROM achat
+                    WHERE YEAR(date_saisie) = :year AND etat_achat = 2
+                        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+                        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+                        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+                        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+                        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
                       ) AS combined_data
-                      WHERE source IN ('ANT GSBDD', 'BUDGET', 'APPRO', 'FIN','Chorus formul.', 'PFAF')
+                      WHERE source IN ('ANT GSBDD', 'BUDGET', 'APPRO', 'FIN','Chorus formul.', 'PFAF', 'Délai total')
             
                       GROUP BY source
                       -- Organisez les sources dans l'ordre d'apparition
@@ -1254,7 +1280,8 @@ $stmt = $conn->prepare($sql);
                         source = 'APPRO' DESC,
                         source = 'FIN' DESC,
                         source = 'Chorus formul.' DESC,
-                        source = 'PFAF' DESC
+                        source = 'PFAF' DESC,
+                        source = 'Délai total' DESC
                       LIMIT 0,100";
                     }
                 $stmt = $conn->prepare($sql);

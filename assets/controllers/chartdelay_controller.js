@@ -18,7 +18,7 @@ export default class extends Controller {
       ctxdelayChart.width = 1200; // Définit la largeur du premier canvas
       ctxdelayChart.height = 800; // Définit la hauteur du premier canvas
 
-      console.log(transStat);
+      console.log(achats_delay_all);
 
       
         new Chart(ctxdelayChart, {
@@ -226,12 +226,12 @@ export default class extends Controller {
             type: 'pie',
             data: {
               labels: [
-                '<= 15 jours / ' +[achats_delay_all[0]["Pourcentage_Delai_Inf_15_Jours"]] + "%",
-                '> à 15 jours / '+[achats_delay_all[0]["Pourcentage_Delai_Sup_15_Jours"]] + "%",
+                '<= 15 jours / ' +[achats_delay_all[6]["Pourcentage_Delai_Inf_15_Jours"]] + "%",
+                '> à 15 jours / '+[achats_delay_all[6]["Pourcentage_Delai_Sup_15_Jours"]] + "%",
               ],
               datasets: [{
                 label: 'Délai Total',
-                data: [achats_delay_all[0]["CountDelaiTotalInf15"],achats_delay_all[0]["CountDelaiTotalSup15"]],
+                data: [achats_delay_all[6]["CountDelaiTotalInf15"],achats_delay_all[6]["CountDelaiTotalSup15"]],
                 backgroundColor: [
                   'rgb(77 104 188)',
                   'rgb(162 225 228)',
