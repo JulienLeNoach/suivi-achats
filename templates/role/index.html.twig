@@ -3,121 +3,133 @@
     {% block title %}Gestion des droits d'accès{% endblock %}
 
     {% block body %}
-    <h2 class="title-page mt-5">Gestion des droits d'accès</h2>
-
-    {{ form_start(form)}}
-        <div data-controller="role">
-    {{ form_row(form.nom_connexion) }}
-    {{ form_end(form) }}
-    <div class="table-container">
-    <table class="tg" style="undefined;table-layout: fixed; width: 480px">
-        <colgroup>
-            <col style="width: 75.333333px">
-            <col style="width: 404.333333px">
-        </colgroup>
-        <thead>
-            <tr>
-                <th class="tg-c3ow">Autorisé</th>
-                <th class="tg-c3ow">Options</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_ACTIV_ANNUEL" name="ROLE_OPT_ACTIV_ANNUEL"></td>
-                <td class="tg-0pky">Activité annuelle en volume et valeur</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_ANNULER_ACHATS" name="ROLE_OPT_ANNULER_ACHATS"></td>
-                <td class="tg-0pky">Annuler un achat</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_CPV" name="ROLE_OPT_CPV"></td>
-                <td class="tg-0pky">Gérer les CPV</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_CR_ANNUEL" name="ROLE_OPT_CR_ANNUEL"></td>
-                <td class="tg-0pky">Compte rendu annuel</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_CUMUL_CPV" name="ROLE_OPT_CUMUL_CPV"></td>
-                <td class="tg-0pky">Cumul annuel par CPV</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_DELAI_ANNUEL" name="ROLE_OPT_DELAI_ANNUEL"></td>
-                <td class="tg-0pky">Délai activité annuelle</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_DROITS" name="ROLE_OPT_DROITS"></td>
-                <td class="tg-0pky">Gérer les droits d'accès</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_EXTRACT_DONNEES" name="ROLE_OPT_EXTRACT_DONNEES"></td>
-                <td class="tg-0pky">Extraction des données vers EXCEL</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_FORMATIONS" name="ROLE_OPT_FORMATIONS"></td>
-                <td class="tg-0pky">Gérer les formations</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_FOURNISSEURS" name="ROLE_OPT_FOURNISSEURS"></td>
-                <td class="tg-0pky">Gérer les fournisseurs</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="scales" name="scales"></td>
-                <td class="tg-0pky">Gérer le calendrier</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_MODIFIER_ACHATS" name="ROLE_OPT_MODIFIER_ACHATS"></td>
-                <td class="tg-0pky">Modifier un achat</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_PARAMETRES" name="ROLE_OPT_PARAMETRES"></td>
-                <td class="tg-0pky">Modifier les paramètres</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_RECHERCHE_ACHATS" name="ROLE_OPT_RECHERCHE_ACHATS"></td>
-                <td class="tg-0pky">Recherche multicritères</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_REINT_ACHATS" name="ROLE_OPT_REINT_ACHATS"></td>
-                <td class="tg-0pky">Réintégrer un achat annulé</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_SAISIR_ACHATS" name="ROLE_OPT_SAISIR_ACHATS"></td>
-                <td class="tg-0pky">Saisir un achat</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_SERVICES" name="ROLE_OPT_SERVICES"></td>
-                <td class="tg-0pky">Gérer les services</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_STAT_MPPA_MABC" name="ROLE_OPT_STAT_MPPA_MABC"></td>
-                <td class="tg-0pky">Statistiques MPPA/MABC</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_STAT_PME" name="ROLE_OPT_STAT_PME"></td>
-                <td class="tg-0pky">Statistique PME</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_UO" name="ROLE_OPT_UO"></td>
-                <td class="tg-0pky">Gérer les unités organiques</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_UTILISATEURS" name="ROLE_OPT_UTILISATEURS"></td>
-                <td class="tg-0pky">Gérer les utilisateurs</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_VALIDER_ACHATS" name="ROLE_OPT_VALIDER_ACHATS"></td>
-                <td class="tg-0pky">Valider ou notifier un achat</td>
-            </tr>
-            <tr>
-                <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_VISU_ACHATS" name="ROLE_OPT_VISU_ACHATS"></td>
-                <td class="tg-0pky">Visualiser/Imprimer un achat</td>
-            </tr>
-        </tbody>
-    </table>
-    </div>
-    <button id="submitChangesBtn" data-action="click->role#saveRoles">Sauvegarder les changements</button>
-    <div id="role"></div>
+<div class="achat-container">
+            <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+                <h5 class="mt-4 ms-3 blueF">Gestion des droits d'accès</h5>
+                <div class="bande ms-3">
+                </div>
+            </div>
+    <div class="form-container action-container">
+        <div class="d-flex justify-content-center align-items-center">
+            {{ form_start(form)}}
+                <div data-controller="role">
+            {{ form_row(form.nom_connexion) }}
+            {{ form_end(form) }}
+            <div class="table-container">
+            <table class="roleTable" style="undefined;table-layout: fixed; width: 480px">
+                <colgroup>
+                    <col style="width: 75.333333px">
+                    <col style="width: 404.333333px">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th class="tg-c3ow">Autorisé</th>
+                        <th class="tg-c3ow">Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_ACTIV_ANNUEL" name="ROLE_OPT_ACTIV_ANNUEL"></td>
+                        <td class="tg-0pky">Activité annuelle en volume et valeur</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_ANNULER_ACHATS" name="ROLE_OPT_ANNULER_ACHATS"></td>
+                        <td class="tg-0pky">Annuler un achat</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_CPV" name="ROLE_OPT_CPV"></td>
+                        <td class="tg-0pky">Gérer les CPV</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_CR_ANNUEL" name="ROLE_OPT_CR_ANNUEL"></td>
+                        <td class="tg-0pky">Compte rendu annuel</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_CUMUL_CPV" name="ROLE_OPT_CUMUL_CPV"></td>
+                        <td class="tg-0pky">Cumul annuel par CPV</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_DELAI_ANNUEL" name="ROLE_OPT_DELAI_ANNUEL"></td>
+                        <td class="tg-0pky">Délai activité annuelle</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_DROITS" name="ROLE_OPT_DROITS"></td>
+                        <td class="tg-0pky">Gérer les droits d'accès</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_EXTRACT_DONNEES" name="ROLE_OPT_EXTRACT_DONNEES"></td>
+                        <td class="tg-0pky">Extraction des données vers EXCEL</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_FORMATIONS" name="ROLE_OPT_FORMATIONS"></td>
+                        <td class="tg-0pky">Gérer les formations</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_FOURNISSEURS" name="ROLE_OPT_FOURNISSEURS"></td>
+                        <td class="tg-0pky">Gérer les fournisseurs</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="scales" name="scales"></td>
+                        <td class="tg-0pky">Gérer le calendrier</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_MODIFIER_ACHATS" name="ROLE_OPT_MODIFIER_ACHATS"></td>
+                        <td class="tg-0pky">Modifier un achat</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_PARAMETRES" name="ROLE_OPT_PARAMETRES"></td>
+                        <td class="tg-0pky">Modifier les paramètres</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_RECHERCHE_ACHATS" name="ROLE_OPT_RECHERCHE_ACHATS"></td>
+                        <td class="tg-0pky">Recherche multicritères</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_REINT_ACHATS" name="ROLE_OPT_REINT_ACHATS"></td>
+                        <td class="tg-0pky">Réintégrer un achat annulé</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_SAISIR_ACHATS" name="ROLE_OPT_SAISIR_ACHATS"></td>
+                        <td class="tg-0pky">Saisir un achat</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_SERVICES" name="ROLE_OPT_SERVICES"></td>
+                        <td class="tg-0pky">Gérer les services</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_STAT_MPPA_MABC" name="ROLE_OPT_STAT_MPPA_MABC"></td>
+                        <td class="tg-0pky">Statistiques MPPA/MABC</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_STAT_PME" name="ROLE_OPT_STAT_PME"></td>
+                        <td class="tg-0pky">Statistique PME</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_UO" name="ROLE_OPT_UO"></td>
+                        <td class="tg-0pky">Gérer les unités organiques</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_UTILISATEURS" name="ROLE_OPT_UTILISATEURS"></td>
+                        <td class="tg-0pky">Gérer les utilisateurs</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_VALIDER_ACHATS" name="ROLE_OPT_VALIDER_ACHATS"></td>
+                        <td class="tg-0pky">Valider ou notifier un achat</td>
+                    </tr>
+                    <tr>
+                        <td class="tg-0pky"><input type="checkbox" id="ROLE_OPT_VISU_ACHATS" name="ROLE_OPT_VISU_ACHATS"></td>
+                        <td class="tg-0pky">Visualiser/Imprimer un achat</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+            <div class="sub-btn d-flex mt-3 mb-3 justify-content-center">
+                <button id="submitChangesBtn" data-action="click->role#saveRoles" class="fr-btn">Sauvegarder les changements</button>
+            </div>   
+            <div id="role"></div>
+                </div>
         </div>
+    </div>
+</div>                
+                
     {% endblock %}

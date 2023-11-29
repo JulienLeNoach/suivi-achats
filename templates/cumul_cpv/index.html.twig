@@ -15,7 +15,10 @@
             {{ form_row(form.date) }}
             {{ form_row(form.alertValue) }}
         </div>
+        <div class="sub-btn d-flex justify-content-center align-items-center mt-5">
         {{ form_row(form.recherche) }}
+        <button type="button" class="fr-btn" onclick="history.back();">Retour</button>
+    </div>
         {{ form_end(form) }}
     </div>
     {% if result_cpv is not empty %}
@@ -24,7 +27,7 @@
     {% if result_cpv | length == 0 %}
     <h4>Aucun résultat pour votre recherche.</h4>
     {% else %}
-    <div class="action-container mt-5 overflow-auto">
+    <div class=" mt-5 overflow-auto">
         <table border="1" id="tab-result" class="cumul-cpv-table">
             <thead class="position-sticky">
                 <tr>
@@ -54,9 +57,7 @@
     </div>
 
     </table>
-    <div class="sub-btn d-flex justify-content-center align-items-center mt-5">
-        <button type="button" class="fr-btn" onclick="history.back();">Retour</button>
-    </div>
+
 
     {% endif %}
     {% endif %}

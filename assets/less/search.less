@@ -97,16 +97,24 @@
   width: 100%;
   /* Hauteur du conteneur */
   overflow-y: scroll;
+  // border-collapse: collapse;
 
   /* Ajouter une barre de défilement verticale */
   &.search {
     height: 300px !important;
   }
+
 }
 
 table {
-  border-collapse: collapse;
   width: 100%;
+  border-collapse: collapse;
+  thead th {
+    position: sticky;
+    top: 0;
+    background-color: #000091; /* Couleur de fond de l'en-tête */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Ombre optionnelle pour le thead */
+}
 }
 
 thead {
@@ -276,6 +284,14 @@ td {
   /* Centrer l'image dans le conteneur */
 }
 
+.logo{
+  background-image: url('/assets/images/logo-cdad.png');
+  background-repeat: no-repeat;
+  background-position: right;
+height:80px;
+width:50%
+}
+
 .form-container {
 
   border: solid 0 #010202;
@@ -439,4 +455,44 @@ background-color:#4d68bc;
   display: table;
   width: 100%;
   table-layout: fixed;
+}
+
+/* ------------------------------------- calendar -----------------------------------------*/
+.legende-color{
+  border: solid 3px black;
+  margin-bottom: 2px;
+  &#l1{
+    background-color: white;
+  }
+  &#l2{
+    background-color: red;
+    color:white;
+
+  }
+  &#l3{
+    background-color: yellow;
+  }
+  &#l4{
+    background-color: blue;
+    color:white;
+  }
+  &#l5{
+    background-color: green;
+    color:white;
+  }
+}
+
+
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;}
+
+footer {
+  max-width: 100% !important;
+  background-color: #f8f9fa;
+  text-align: center;
+  margin-top: auto;
+
 }

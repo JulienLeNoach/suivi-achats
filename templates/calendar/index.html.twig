@@ -3,28 +3,39 @@
 {% block title %}Gérer le calendrier{% endblock %}
 
 {% block body %}
-    <div style="display: flex;">
-        <div  style="flex: 1;">
-            <div id="calendrier" data-controller="calendar"></div>
+<div class="achat-container">
+            <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+                <h5 class="mt-4 ms-3 blueF">Gestion du calendrier</h5>
+                <div class="bande ms-3">
+                </div>
+            </div>
+    <div class="form-container mb-4">
+        <div class="d-flex justify-content-around ">
+                    <div class="calendar-container w-50 mt-3">
+                    <div id="calendrier" data-controller="calendar">
+                    </div>
+                    </div>
+                    {% block content %}{% form_theme form _self %}
+                    <div class="form-calendar mt-3">
+                        <h1>Modifier un jour</h1>
+                        <div class="legende">
+                            {{ form_start(form) }}
+                            {{ form_widget(form) }}
+                            <button class="fr-btn">{{ button_label|default('Sauvegarder') }}</button>
+                            <button type="button" class="fr-btn" onclick="history.back();">Retour</button>
+                            {{ form_end(form) }}
+                            {% endblock %}
+                            <h3>Legende</h3>
+                            <div id="l1" class="legende-color">Oeuvre</div>
+                            <div id="l2" class="legende-color">Week-end</div>
+                            <div id="l3" class="legende-color">Férié</div>
+                            <div id="l4" class="legende-color">RTT</div>
+                            <div id="l5" class="legende-color">Autre</div>
+                        </div>
+                    </div>
         </div>
-        <div style="flex: 1;">
-            {% block content %}{% form_theme form _self %}
-        <h1>Modifier un jour</h1>
-        <div class="legende">
-                {{ form_start(form) }}
-                    {{ form_widget(form) }}
-                    <button class="fr-btn">{{ button_label|default('Sauvegarder') }}</button>
-                    <button type="button" class="fr-btn" onclick="history.back();">Retour</button>
-                {{ form_end(form) }}
-    {% endblock %}
-        </div>
-        <h3>Legende</h3>
-        <div id="l1" class="legende-color">Oeuvre</div>
-        <div id="l2" class="legende-color">Week-end</div>
-        <div id="l3" class="legende-color">Férié</div>
-        <div id="l4" class="legende-color">RTT</div>
-        <div id="l5" class="legende-color">Autre</div></div>
     </div>
+</div>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.6/index.global.min.js"></script>
     <script>
     var events = {{ events|raw }};

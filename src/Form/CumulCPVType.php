@@ -38,7 +38,7 @@ class CumulCPVType extends AbstractType
             'attr' => [
                 'class' => 'fr-btn search'
             ],
-            'row_attr' => ['class' => 'sub-btn d-flex'],
+            'row_attr' => ['class' => 'sub-btn d-flex p-3'],
             'label' => 'Lancer la recherche', 
         ])
         ;

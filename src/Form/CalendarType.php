@@ -18,7 +18,9 @@ class CalendarType extends AbstractType
         $builder
             ->add('start', DateType::class, [
                 'widget' => 'single_text',
-                'label' =>'Jour '
+                'label' =>'Jour ',
+                'attr' => ['class' => 'fr-input '],  
+                'label_attr' => ['class' => 'fr-label'],
             ])
             ->add('background_color', ChoiceType::class, [
                 'label' =>'Type de journée ',
@@ -30,6 +32,8 @@ class CalendarType extends AbstractType
                     'RTT' => "blue",
                     'Autre' => "green",
                 ],
+                'attr' => ['class' => 'fr-input '],  
+                'label_attr' => ['class' => 'fr-label'],
                 ])
 
         ;
