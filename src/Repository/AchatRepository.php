@@ -699,7 +699,7 @@ $stmt = $conn->prepare($sql);
       FROM (
         SELECT
           'ANT GSBDD' AS source,
-          (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus)) AS difference,
+          (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -712,7 +712,7 @@ $stmt = $conn->prepare($sql);
       
         SELECT
           'BUDGET' AS source,
-          (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter)) AS difference,
+          (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -725,7 +725,7 @@ $stmt = $conn->prepare($sql);
       
         SELECT
           'APPRO' AS source,
-          (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation)) AS difference,
+          (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -738,7 +738,7 @@ $stmt = $conn->prepare($sql);
       
         SELECT
           'FIN' AS source,
-          (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification)) AS difference,
+          (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -751,7 +751,7 @@ $stmt = $conn->prepare($sql);
       
         SELECT
           'PFAF' AS source,
-          (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification)) AS difference,
+          (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -764,7 +764,7 @@ $stmt = $conn->prepare($sql);
       
         SELECT
           'Chorus formul.' AS source,
-          (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_notification)) AS difference,
+          (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
           date_saisie
         FROM achat
         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -995,7 +995,7 @@ $stmt = $conn->prepare($sql);
                     (
                         SELECT
                             'ANT GSBDD' AS source,
-                            (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus)) AS difference,
+                            (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
                             date_saisie
                         FROM achat
                         WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -1009,7 +1009,7 @@ $stmt = $conn->prepare($sql);
 
                 SELECT
                 'BUDGET' AS source,
-                (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter)) AS difference,
+                (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
                 date_saisie
             FROM achat
             WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -1023,7 +1023,7 @@ $stmt = $conn->prepare($sql);
             
                 SELECT
                     'APPRO' AS source,
-                    (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation)) AS difference,
+                    (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
                     date_saisie
                 FROM achat
                 WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -1036,7 +1036,7 @@ $stmt = $conn->prepare($sql);
                 UNION ALL
                 SELECT
                 'FIN' AS source,
-                (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification)) AS difference,
+                (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
                 date_saisie
             FROM achat
             WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -1050,7 +1050,7 @@ $stmt = $conn->prepare($sql);
             
                 SELECT
                     'PFAF' AS source,
-                    (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_notification)) AS difference,
+                    (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
                     date_saisie
                 FROM achat
                 WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -1064,7 +1064,7 @@ $stmt = $conn->prepare($sql);
             
                 SELECT
                 'Chorus formul.' AS source,
-                (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification)) AS difference,
+                (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
                 date_saisie
             FROM achat
             WHERE YEAR(date_saisie) = :year AND etat_achat = 2
@@ -1078,7 +1078,7 @@ $stmt = $conn->prepare($sql);
             
                 SELECT
                 'Délai total' AS source,
-                (DATEDIFF(date_validation, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_validation)) AS difference,
+                (DATEDIFF(date_validation, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_validation AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
                 date_saisie
             FROM achat
             WHERE YEAR(date_saisie) = :year AND etat_achat = 2

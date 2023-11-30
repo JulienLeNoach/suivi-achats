@@ -24,7 +24,7 @@
             <button id="pdf" class="print" data-action="click->pdf-generator-pme#downloadgraphBar">Impression <span class="fr-icon-printer-line" aria-hidden="true"></span></button>
         </div>
     </div>
-    <div data-controller="chartpme">
+    <div data-controller="chartpme" class="result-pme mb-5">
         <div class="achatsMppa d-flex flex-row p-3 mb-5" style="display: flex;">
                 <div class="table-achat-pme w-25" style="flex: 1;">
                     <h6 class=" blueF ">Achats MPPA</h6>
@@ -110,4 +110,6 @@
 </script>
 
 {% endif %}
+</div>
+
 {% endblock %}
