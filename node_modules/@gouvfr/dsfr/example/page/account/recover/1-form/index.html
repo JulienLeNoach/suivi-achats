@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="fr" data-fr-theme>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>Pages de récupération de mot de passe - Système de design</title>
+    <meta name="theme-color" content="#000091"><!-- Défini la couleur de thème du navigateur (Safari/Android) -->
+    <link rel="apple-touch-icon" href="../../../../../dist/favicon/apple-touch-icon.png"><!-- 180×180 -->
+    <link rel="icon" href="../../../../../dist/favicon/favicon.svg" type="image/svg+xml">
+    <!-- si favicon.ico peut etre placé à la racine du serveur, retirer la ligne ci-dessous -->
+    <link rel="shortcut icon" href="../../../../../dist/favicon/favicon.ico" type="image/x-icon"><!-- 32×32 -->
+    <link rel="manifest" href="../../../../../dist/favicon/manifest.webmanifest" crossorigin="use-credentials">
+    <!-- Modifier les chemins relatifs des favicons en fonction de la structure du projet -->
+    <!-- Dans le fichier manifest.webmanifest aussi, modifier les chemins vers les images -->
+    <link href="../../../../../dist/core/core.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/button/button.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/form/form.main.css" rel="stylesheet">
+    <link href="../../../../../dist/scheme/scheme.css" rel="stylesheet">
+    <link href="../../../../../dist/component/link/link.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/accordion/accordion.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/logo/logo.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/badge/badge.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/breadcrumb/breadcrumb.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/alert/alert.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/radio/radio.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/modal/modal.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/navigation/navigation.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/footer/footer.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/input/input.main.css" rel="stylesheet">
+    <link href="../../../../../dist/utility/utility.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/translate/translate.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/search/search.main.css" rel="stylesheet">
+    <link href="../../../../../dist/component/header/header.main.css" rel="stylesheet">
+    <link href="../../../../../dist/core/core.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/button/button.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/form/form.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/link/link.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/accordion/accordion.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/logo/logo.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/badge/badge.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/breadcrumb/breadcrumb.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/alert/alert.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/radio/radio.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/modal/modal.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/navigation/navigation.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/footer/footer.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/input/input.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/utility/utility.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/translate/translate.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/search/search.legacy.css" rel="stylesheet">
+    <link href="../../../../../dist/component/header/header.legacy.css" rel="stylesheet">
+    <style>
+        code[class*="language-"],
+        pre[class*="language-"] {
+            white-space: pre-wrap;
+        }
+
+        .example-controls {
+            z-index: 100000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.1), 0 8px 16px -16px rgba(0, 0, 0, 0.32);
+        }
+
+        .example-controls>button {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .example-controls__content {
+            padding: 16px;
+            background-color: var(--background-elevated-white);
+        }
+
+        .example-controls .fr-collapse--expanded~[aria-expanded] {
+            display: none;
+        }
+
+        .example-controls .fr-collapse:not(.fr-collapse--expanded)~button:not([aria-expanded]) {
+            display: none;
+        }
+
+        .example-controls [class*="-form-group"] {
+            margin-bottom: 0;
+        }
+
+        .fr-display-button {
+            position: fixed;
+            bottom: 3.5rem;
+            right: 2rem;
+        }
+
+        @media screen and (-ms-high-contrast: active),
+        (-ms-high-contrast: none) {
+
+            /* IE10+ specific styles go here */
+            .example-controls {
+                display: none;
+            }
+        }
+
+    </style>
+    <script>
+    window['dsfr'] = {
+      // verbose: true,
+      // production: true,
+      // mode: 'manual',
+    };
+    
+  </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+</head>
+
+<body id="top" class="fr-mb-12w">
+    <script type="module">
+    const e="system",t="dark",c="dark",o="data-fr-theme",a="data-fr-scheme",r=`:root[${o}], :root[${a}]`,m=()=>{document.documentElement.setAttribute(o,c),document.documentElement.style.colorScheme="dark"},n=()=>{window.matchMedia("(prefers-color-scheme: dark)").matches&&m()};(()=>{if(document.documentElement.matches(r)){const c=(()=>{try{return"localStorage"in window&&null!==window.localStorage}catch(e){return!1}})()?localStorage.getItem("scheme"):"",o=document.documentElement.getAttribute(a);switch(!0){case c===t:m();break;case c===e:n();break;case o===t:m();break;case o===e:n()}}})();
+
+  </script>
+    <span id="[url - à modifier]"></span>
+    <div class="fr-mb-12w">
+        <div class="fr-mb-6v">
+            <header role="banner" class="fr-header">
+                <div class="fr-header__body">
+                    <div class="fr-container">
+                        <div class="fr-header__body-row">
+                            <div class="fr-header__brand fr-enlarge-link">
+                                <div class="fr-header__brand-top">
+                                    <div class="fr-header__logo">
+                                        <p class="fr-logo">
+                                            Intitulé
+                                            <br>officiel
+                                        </p>
+                                    </div>
+                                    <div class="fr-header__navbar">
+                                        <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-9802" aria-haspopup="menu" id="button-9803" title="Menu">
+                                            Menu
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="fr-header__service">
+                                    <a href="/" title="Accueil - [À MODIFIER - Nom du site / service] - Nom de l’entité (ministère, secrétariat d‘état, gouvernement)">
+                                        <p class="fr-header__service-title">
+                                            Nom du site / service
+                                        </p>
+                                    </a>
+                                    <p class="fr-header__service-tagline">baseline - précisions sur l‘organisation</p>
+                                </div>
+                            </div>
+                            <div class="fr-header__tools">
+                                <div class="fr-header__tools-links">
+                                    <ul class="fr-btns-group">
+                                        <li>
+                                            <a class="fr-btn fr-icon-add-circle-line" id="button-9805" href="#[url - à modifier]">
+                                                Créer un espace
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="fr-btn fr-icon-lock-line" id="button-9806" href="#[url - à modifier]">
+                                                Se connecter
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="fr-btn fr-icon-account-line" id="button-9807" href="#[url - à modifier]">
+                                                S’enregistrer
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-header__menu fr-modal" id="modal-9802" aria-labelledby="button-9803">
+                    <div class="fr-container">
+                        <button class="fr-btn--close fr-btn" aria-controls="modal-9802" id="button-9808" title="Fermer">
+                            Fermer
+                        </button>
+                        <div class="fr-header__menu-links">
+                        </div>
+                        <nav class="fr-nav" id="navigation-9804" role="navigation" aria-label="Menu principal">
+                            <ul class="fr-nav__list">
+                                <li class="fr-nav__item">
+                                    <button class="fr-nav__btn" aria-expanded="false" aria-controls="collapse-9810">Entrée menu</button>
+                                    <div class="fr-collapse fr-menu" id="collapse-9810">
+                                        <ul class="fr-menu__list">
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9811">Lien de navigation nav-9811</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9812">Lien de navigation nav-9812</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9813">Lien de navigation nav-9813</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9814">Lien de navigation nav-9814</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9815">Lien de navigation nav-9815</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9816">Lien de navigation nav-9816</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9817">Lien de navigation nav-9817</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9818">Lien de navigation nav-9818</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="fr-nav__item">
+                                    <button class="fr-nav__btn" aria-expanded="false" aria-controls="collapse-9820">Entrée mega menu</button>
+                                    <div class="fr-collapse fr-mega-menu" id="collapse-9820">
+                                        <div class="fr-container fr-container--fluid fr-container-lg">
+                                            <div class="fr-grid-row fr-grid-row-lg--gutters">
+                                                <div class="fr-col-12 fr-mb-n3v">
+                                                    <button class="fr-btn--close fr-btn" aria-controls="collapse-9820" id="button-9956" title="Fermer">
+                                                        Fermer
+                                                    </button>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9821">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9822">Lien de navigation nav-9822</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9823">Lien de navigation nav-9823</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9824">Lien de navigation nav-9824</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9825">Lien de navigation nav-9825</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9826">Lien de navigation nav-9826</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9827">Lien de navigation nav-9827</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9828">Lien de navigation nav-9828</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9829">Lien de navigation nav-9829</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9830">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9831">Lien de navigation nav-9831</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9832">Lien de navigation nav-9832</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9833">Lien de navigation nav-9833</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9834">Lien de navigation nav-9834</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9835">Lien de navigation nav-9835</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9836">Lien de navigation nav-9836</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9837">Lien de navigation nav-9837</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9838">Lien de navigation nav-9838</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9839">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9840">Lien de navigation nav-9840</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9841">Lien de navigation nav-9841</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9842" aria-current="page">Lien de navigation nav-9842</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9843">Lien de navigation nav-9843</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9844">Lien de navigation nav-9844</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9845">Lien de navigation nav-9845</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9846">Lien de navigation nav-9846</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9847">Lien de navigation nav-9847</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9848">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9849">Lien de navigation nav-9849</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9850">Lien de navigation nav-9850</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9851">Lien de navigation nav-9851</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9852">Lien de navigation nav-9852</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9853">Lien de navigation nav-9853</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9854">Lien de navigation nav-9854</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9855">Lien de navigation nav-9855</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9856">Lien de navigation nav-9856</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="fr-nav__item">
+                                    <a class="fr-nav__link" href="#" target="_self" id="nav-9857">accès direct nav-9857</a>
+                                </li>
+                                <li class="fr-nav__item">
+                                    <button class="fr-nav__btn" aria-expanded="false" aria-controls="collapse-9859" aria-current="true">Entrée menu</button>
+                                    <div class="fr-collapse fr-menu" id="collapse-9859">
+                                        <ul class="fr-menu__list">
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9860">Lien de navigation nav-9860</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9861">Lien de navigation nav-9861</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9862" aria-current="page">Lien de navigation nav-9862</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9863">Lien de navigation nav-9863</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9864">Lien de navigation nav-9864</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9865">Lien de navigation nav-9865</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9866">Lien de navigation nav-9866</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9867">Lien de navigation nav-9867</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="fr-nav__item">
+                                    <button class="fr-nav__btn" aria-expanded="false" aria-controls="collapse-9869">Entrée mega menu</button>
+                                    <div class="fr-collapse fr-mega-menu" id="collapse-9869">
+                                        <div class="fr-container fr-container--fluid fr-container-lg">
+                                            <div class="fr-grid-row fr-grid-row-lg--gutters">
+                                                <div class="fr-col-12 fr-mb-n3v">
+                                                    <button class="fr-btn--close fr-btn" aria-controls="collapse-9869" id="button-9957" title="Fermer">
+                                                        Fermer
+                                                    </button>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-8 fr-col-offset-lg-4--right fr-mb-4v">
+                                                    <div class="fr-mega-menu__leader">
+                                                        <h4 class="fr-h4 fr-mb-2v">Titre éditorialisé</h4>
+                                                        <p class="fr-hidden fr-unhidden-lg">Lorem ipsum dolor sit amet, consectetur adipiscing, incididunt, ut labore et dolore magna aliqua. Vitae sapien pellentesque habitant morbi tristique senectus et. Diam maecenas sed enim ut. Accumsan lacus vel facilisis volutpat est. Ut aliquam purus sit amet luctus. Lorem ipsum dolor sit amet consectetur adipiscing elit ut.</p>
+                                                        <a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" id="link-9870" href="#">
+                                                            Voir toute la rubrique
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9871">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9872">Lien de navigation nav-9872</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9873">Lien de navigation nav-9873</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9874">Lien de navigation nav-9874</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9875">Lien de navigation nav-9875</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9876">Lien de navigation nav-9876</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9877">Lien de navigation nav-9877</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9878">Lien de navigation nav-9878</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9879">Lien de navigation nav-9879</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9880">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9881">Lien de navigation nav-9881</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9882">Lien de navigation nav-9882</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9883">Lien de navigation nav-9883</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9884">Lien de navigation nav-9884</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9885">Lien de navigation nav-9885</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9886">Lien de navigation nav-9886</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9887">Lien de navigation nav-9887</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9888">Lien de navigation nav-9888</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9889">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9890">Lien de navigation nav-9890</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9891">Lien de navigation nav-9891</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9892" aria-current="page">Lien de navigation nav-9892</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9893">Lien de navigation nav-9893</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9894">Lien de navigation nav-9894</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9895">Lien de navigation nav-9895</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9896">Lien de navigation nav-9896</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9897">Lien de navigation nav-9897</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9898">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9899">Lien de navigation nav-9899</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9900">Lien de navigation nav-9900</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9901">Lien de navigation nav-9901</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9902">Lien de navigation nav-9902</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9903">Lien de navigation nav-9903</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9904">Lien de navigation nav-9904</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9905">Lien de navigation nav-9905</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9906">Lien de navigation nav-9906</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="fr-nav__item">
+                                    <a class="fr-nav__link" href="#" target="_self" id="nav-9907">accès direct nav-9907</a>
+                                </li>
+                                <li class="fr-nav__item">
+                                    <button class="fr-nav__btn" aria-expanded="false" aria-controls="collapse-9909">Entrée mega menu</button>
+                                    <div class="fr-collapse fr-mega-menu" id="collapse-9909">
+                                        <div class="fr-container fr-container--fluid fr-container-lg">
+                                            <div class="fr-grid-row fr-grid-row-lg--gutters">
+                                                <div class="fr-col-12 fr-mb-n3v">
+                                                    <button class="fr-btn--close fr-btn" aria-controls="collapse-9909" id="button-9958" title="Fermer">
+                                                        Fermer
+                                                    </button>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9910">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9911">Lien de navigation nav-9911</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9912">Lien de navigation nav-9912</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9913">Lien de navigation nav-9913</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9914">Lien de navigation nav-9914</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9915">Lien de navigation nav-9915</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9916">Lien de navigation nav-9916</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9917">Lien de navigation nav-9917</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9918">Lien de navigation nav-9918</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9919">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9920">Lien de navigation nav-9920</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9921">Lien de navigation nav-9921</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9922">Lien de navigation nav-9922</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9923">Lien de navigation nav-9923</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9924">Lien de navigation nav-9924</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9925">Lien de navigation nav-9925</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9926">Lien de navigation nav-9926</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9927">Lien de navigation nav-9927</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9928">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9929">Lien de navigation nav-9929</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9930">Lien de navigation nav-9930</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9931" aria-current="page">Lien de navigation nav-9931</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9932">Lien de navigation nav-9932</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9933">Lien de navigation nav-9933</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9934">Lien de navigation nav-9934</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9935">Lien de navigation nav-9935</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9936">Lien de navigation nav-9936</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="fr-col-12 fr-col-lg-3">
+                                                    <h5 class="fr-mega-menu__category">
+                                                        <a class="fr-nav__link" href="#" target="_self" id="category-9937">Nom de catégorie</a>
+                                                    </h5>
+                                                    <ul class="fr-mega-menu__list">
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9938">Lien de navigation nav-9938</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9939">Lien de navigation nav-9939</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9940">Lien de navigation nav-9940</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9941">Lien de navigation nav-9941</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9942">Lien de navigation nav-9942</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9943">Lien de navigation nav-9943</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9944">Lien de navigation nav-9944</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="fr-nav__link" href="#" target="_self" id="nav-9945">Lien de navigation nav-9945</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="fr-nav__item">
+                                    <button class="fr-nav__btn" aria-expanded="false" aria-controls="collapse-9947">Entrée menu</button>
+                                    <div class="fr-collapse fr-menu" id="collapse-9947">
+                                        <ul class="fr-menu__list">
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9948">Lien de navigation nav-9948</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9949">Lien de navigation nav-9949</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9950">Lien de navigation nav-9950</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9951">Lien de navigation nav-9951</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9952">Lien de navigation nav-9952</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9953">Lien de navigation nav-9953</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9954">Lien de navigation nav-9954</a>
+                                            </li>
+                                            <li>
+                                                <a class="fr-nav__link" href="#" target="_self" id="nav-9955">Lien de navigation nav-9955</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <div class="fr-container">
+                <nav role="navigation" class="fr-breadcrumb" aria-label="vous êtes ici :">
+                    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-9959">Voir le fil d’Ariane</button>
+                    <div class="fr-collapse" id="breadcrumb-9959">
+                        <ol class="fr-breadcrumb__list">
+                            <li>
+                                <a class="fr-breadcrumb__link" href="/">Accueil</a>
+                            </li>
+                            <li>
+                                <a class="fr-breadcrumb__link" href="/segment-1/">Nom de la page</a>
+                            </li>
+                            <li>
+                                <a class="fr-breadcrumb__link" href="/segment-1/segment-2/">Nom de la page</a>
+                            </li>
+                            <li>
+                                <a class="fr-breadcrumb__link" aria-current="page">Page Actuelle</a>
+                            </li>
+                        </ol>
+                    </div>
+                </nav>
+            </div>
+            <main role="main" id="content">
+                <div class="fr-container fr-mt-8v fr-mt-md-14v fr-mb-2v fr-mb-md-8v">
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-10 fr-col-lg-8">
+                            <h1 class="fr-h2">Récupération de mot de passe sur [Nom du service-site]</h1>
+                            <p class="fr-text--lead">Chapô — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-container fr-container--fluid fr-mb-md-14v">
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-10 fr-col-lg-8">
+                            <div class="fr-container fr-background-alt--grey fr-px-md-0 fr-pt-10v fr-pt-md-14v fr-pb-6v fr-pb-md-10v">
+                                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+                                    <div class="fr-col-12 fr-col-md-10 fr-col-lg-9">
+                                        <div>
+                                            <form class="fr-mb-0" id="recover">
+                                                <fieldset class="fr-mb-0 fr-fieldset" id="recover-fieldset" aria-labelledby="recover-fieldset-legend recover-fieldset-messages">
+                                                    <legend class="fr-fieldset__legend" id="recover-fieldset-legend">
+                                                        <h2 class="fr-h5">Récupérer le mot de passe de votre compte</h2>
+                                                    </legend>
+                                                    <div class="fr-fieldset__element">
+                                                        <p class="fr-text--sm">Description — Veuillez saisir l’adresse électronique associée à votre compte. Nous vous enverrons plus d’informations sur pour réinitialiser votre mot de passe</p>
+                                                    </div>
+                                                    <div class="fr-fieldset__element">
+                                                        <div class="fr-input-group" id="input-group-9797">
+                                                            <label class="fr-label" for="username-9796">
+                                                                Identifiant
+                                                                <span class="fr-hint-text">Format attendu : nom@domaine.fr</span>
+                                                            </label>
+                                                            <input class="fr-input" aria-describedby="username-9796-messages" name="username" id="username-9796" type="text">
+                                                            <div class="fr-messages-group" id="username-9796-messages" aria-live="polite">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="fr-fieldset__element">
+                                                        <ul class="fr-btns-group--right fr-mt-2v fr-btns-group fr-btns-group--inline">
+                                                            <li>
+                                                                <button class="fr-btn" id="button-9798" type="submit">
+                                                                    Valider
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="fr-messages-group" id="recover-fieldset-messages" aria-live="polite">
+                                                    </div>
+                                                </fieldset>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <footer class="fr-footer" role="contentinfo" id="footer-9960">
+                <div class="fr-container">
+                    <div class="fr-footer__body">
+                        <div class="fr-footer__brand fr-enlarge-link">
+                            <a id="footer-operator" href="/" title="Retour à l’accueil du site - Nom de l’entité (ministère, secrétariat d‘état, gouvernement)">
+                                <p class="fr-logo">
+                                    Intitulé
+                                    <br>officiel
+                                </p>
+                            </a>
+                        </div>
+                        <div class="fr-footer__content">
+                            <p class="fr-footer__content-desc">Lorem ipsum dolor sit amet, consectetur adipiscing, incididunt, ut labore et dolore magna aliqua. Vitae sapien pellentesque habitant morbi tristique senectus et. Diam maecenas sed enim ut. Accumsan lacus vel facilisis volutpat est. Ut aliquam purus sit amet luctus. Lorem ipsum dolor sit amet consectetur adipiscing elit ut.</p>
+                            <ul class="fr-footer__content-list">
+                                <li class="fr-footer__content-item">
+                                    <a id="footer__content-link-9961" class="fr-footer__content-link" target="_blank" href="https://legifrance.gouv.fr">legifrance.gouv.fr</a>
+                                </li>
+                                <li class="fr-footer__content-item">
+                                    <a id="footer__content-link-9962" class="fr-footer__content-link" target="_blank" href="https://gouvernement.fr">gouvernement.fr</a>
+                                </li>
+                                <li class="fr-footer__content-item">
+                                    <a id="footer__content-link-9963" class="fr-footer__content-link" target="_blank" href="https://service-public.fr">service-public.fr</a>
+                                </li>
+                                <li class="fr-footer__content-item">
+                                    <a id="footer__content-link-9964" class="fr-footer__content-link" target="_blank" href="https://data.gouv.fr">data.gouv.fr</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="fr-footer__bottom">
+                        <ul class="fr-footer__bottom-list">
+                            <li class="fr-footer__bottom-item">
+                                <a class="fr-footer__bottom-link" id="footer__bottom-link-9965" href="#">Plan du site</a>
+                            </li>
+                            <li class="fr-footer__bottom-item">
+                                <a class="fr-footer__bottom-link" id="footer__bottom-link-9966" href="#">Accessibilité : non/partiellement/totalement conforme</a>
+                            </li>
+                            <li class="fr-footer__bottom-item">
+                                <a class="fr-footer__bottom-link" id="footer__bottom-link-9967" href="#">Mentions légales</a>
+                            </li>
+                            <li class="fr-footer__bottom-item">
+                                <a class="fr-footer__bottom-link" id="footer__bottom-link-9968" href="#">Données personnelles</a>
+                            </li>
+                            <li class="fr-footer__bottom-item">
+                                <a class="fr-footer__bottom-link" id="footer__bottom-link-9969" href="#">Gestion des cookies</a>
+                            </li>
+                        </ul>
+                        <div class="fr-footer__bottom-copy">
+                            <p>Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank">licence etalab-2.0</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <div class="fr-mb-12v">
+            <section class="fr-accordion">
+                <h3 class="fr-accordion__title">
+                    <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-9801">Extrait de code</button>
+                </h3>
+                <div class="fr-collapse" id="snippet-9801">
+                    <pre class=" language-html"><code>&lt;main role="main" id="content"&gt;
+    &lt;div class="fr-container fr-mt-8v fr-mt-md-14v fr-mb-2v fr-mb-md-8v"&gt;
+        &lt;div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center"&gt;
+            &lt;div class="fr-col-12 fr-col-md-10 fr-col-lg-8"&gt;
+                &lt;h1 class="fr-h2"&gt;Récupération de mot de passe sur [Nom du service-site]&lt;/h1&gt;
+                &lt;p class="fr-text--lead"&gt;Chapô — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et.&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fr-container fr-container--fluid fr-mb-md-14v"&gt;
+        &lt;div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center"&gt;
+            &lt;div class="fr-col-12 fr-col-md-10 fr-col-lg-8"&gt;
+                &lt;div class="fr-container fr-background-alt--grey fr-px-md-0 fr-pt-10v fr-pt-md-14v fr-pb-6v fr-pb-md-10v"&gt;
+                    &lt;div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center"&gt;
+                        &lt;div class="fr-col-12 fr-col-md-10 fr-col-lg-9"&gt;
+                            &lt;div&gt;
+                                &lt;form class="fr-mb-0" id="recover"&gt;
+                                    &lt;fieldset class="fr-mb-0 fr-fieldset" id="recover-fieldset" aria-labelledby="recover-fieldset-legend recover-fieldset-messages"&gt;
+                                        &lt;legend class="fr-fieldset__legend" id="recover-fieldset-legend"&gt;
+                                            &lt;h2 class="fr-h5"&gt;Récupérer le mot de passe de votre compte&lt;/h2&gt;
+                                        &lt;/legend&gt;
+                                        &lt;div class="fr-fieldset__element"&gt;
+                                            &lt;p class="fr-text--sm"&gt;Description — Veuillez saisir l’adresse électronique associée à votre compte. Nous vous enverrons plus d’informations sur pour réinitialiser votre mot de passe&lt;/p&gt;
+                                        &lt;/div&gt;
+                                        &lt;div class="fr-fieldset__element"&gt;
+                                            &lt;div class="fr-input-group" id="input-group-9799"&gt;
+                                                &lt;label class="fr-label" for="username-9796"&gt;
+                                                    Identifiant
+                                                    &lt;span class="fr-hint-text"&gt;Format attendu : nom@domaine.fr&lt;/span&gt;
+                                                &lt;/label&gt;
+                                                &lt;input class="fr-input" aria-describedby="username-9796-messages" name="username" id="username-9796" type="text"&gt;
+                                                &lt;div class="fr-messages-group" id="username-9796-messages" aria-live="polite"&gt;
+                                                &lt;/div&gt;
+                                            &lt;/div&gt;
+                                        &lt;/div&gt;
+                                        &lt;div class="fr-fieldset__element"&gt;
+                                            &lt;ul class="fr-btns-group--right fr-mt-2v fr-btns-group fr-btns-group--inline fr-btns-group fr-btns-group--inline"&gt;
+                                                &lt;li&gt;
+                                                    &lt;button class="fr-btn" id="button-9800" type="submit"&gt;
+                                                        Valider
+                                                    &lt;/button&gt;
+                                                &lt;/li&gt;
+                                            &lt;/ul&gt;
+                                        &lt;/div&gt;
+                                        &lt;div class="fr-messages-group" id="recover-fieldset-messages" aria-live="polite"&gt;
+                                        &lt;/div&gt;
+                                    &lt;/fieldset&gt;
+                                &lt;/form&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/main&gt;
+</code></pre>
+                </div>
+            </section>
+        </div>
+    </div>
+    <button class="fr-display-button fr-background-default--grey fr-btn fr-btn--lg fr-icon-theme-fill fr-btn--secondary" aria-controls="fr-theme-modal" data-fr-opened="false" style="z-index: 1600" id="button-9970">
+        Label bouton
+    </button>
+    <dialog id="fr-theme-modal" class="fr-modal" aria-labelledby="fr-theme-modal-title">
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button class="fr-btn--close fr-btn" aria-controls="fr-theme-modal" id="button-9971" title="Fermer">
+                                Fermer
+                            </button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-theme-modal-title" class="fr-modal__title">
+                                Paramètres d’affichage
+                            </h1>
+                            <div id="fr-display" class="fr-display">
+                                <fieldset class="fr-fieldset" id="display-fieldset">
+                                    <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="display-fieldset-legend">
+                                        Choisissez un thème pour personnaliser l’apparence du site.
+                                    </legend>
+                                    <div class="fr-fieldset__element">
+                                        <div class="fr-radio-group fr-radio-rich">
+                                            <input value="light" type="radio" id="fr-radios-theme-light" name="fr-radios-theme">
+                                            <label class="fr-label" for="fr-radios-theme-light">
+                                                Thème clair
+                                            </label>
+                                            <div class="fr-radio-rich__pictogram">
+                                                <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                                    <use class="fr-artwork-decorative" href="../../../../../dist/artwork/pictograms/environment/sun.svg#artwork-decorative"></use>
+                                                    <use class="fr-artwork-minor" href="../../../../../dist/artwork/pictograms/environment/sun.svg#artwork-minor"></use>
+                                                    <use class="fr-artwork-major" href="../../../../../dist/artwork/pictograms/environment/sun.svg#artwork-major"></use>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="fr-fieldset__element">
+                                        <div class="fr-radio-group fr-radio-rich">
+                                            <input value="dark" type="radio" id="fr-radios-theme-dark" name="fr-radios-theme">
+                                            <label class="fr-label" for="fr-radios-theme-dark">
+                                                Thème sombre
+                                            </label>
+                                            <div class="fr-radio-rich__pictogram">
+                                                <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                                    <use class="fr-artwork-decorative" href="../../../../../dist/artwork/pictograms/environment/moon.svg#artwork-decorative"></use>
+                                                    <use class="fr-artwork-minor" href="../../../../../dist/artwork/pictograms/environment/moon.svg#artwork-minor"></use>
+                                                    <use class="fr-artwork-major" href="../../../../../dist/artwork/pictograms/environment/moon.svg#artwork-major"></use>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="fr-fieldset__element">
+                                        <div class="fr-radio-group fr-radio-rich">
+                                            <input value="system" type="radio" id="fr-radios-theme-system" name="fr-radios-theme">
+                                            <label class="fr-label" for="fr-radios-theme-system">
+                                                Système
+                                                <span class="fr-hint-text">Utilise les paramètres système</span>
+                                            </label>
+                                            <div class="fr-radio-rich__pictogram">
+                                                <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                                    <use class="fr-artwork-decorative" href="../../../../../dist/artwork/pictograms/system/system.svg#artwork-decorative"></use>
+                                                    <use class="fr-artwork-minor" href="../../../../../dist/artwork/pictograms/system/system.svg#artwork-minor"></use>
+                                                    <use class="fr-artwork-major" href="../../../../../dist/artwork/pictograms/system/system.svg#artwork-major"></use>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+    <script type="module" src="../../../../../dist/core/core.module.js"></script>
+    <script type="module" src="../../../../../dist/scheme/scheme.module.js"></script>
+    <script type="module" src="../../../../../dist/component/accordion/accordion.module.js"></script>
+    <script type="module" src="../../../../../dist/component/modal/modal.module.js"></script>
+    <script type="module" src="../../../../../dist/component/navigation/navigation.module.js"></script>
+    <script type="module" src="../../../../../dist/component/breadcrumb/breadcrumb.module.js"></script>
+    <script type="module" src="../../../../../dist/component/display/display.module.js"></script>
+    <script type="module" src="../../../../../dist/component/header/header.module.js"></script>
+    <script type="text/javascript" nomodule src="../../../../../dist/legacy/legacy.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../../../dist/core/core.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../../../dist/component/accordion/accordion.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../../../dist/component/modal/modal.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../../../dist/component/navigation/navigation.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../../../dist/component/breadcrumb/breadcrumb.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../../../dist/component/display/display.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../../../dist/component/header/header.nomodule.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+</body>
+
+</html>

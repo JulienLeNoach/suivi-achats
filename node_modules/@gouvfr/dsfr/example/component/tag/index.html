@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="fr" data-fr-theme>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>Tag - Système de design</title>
+    <meta name="theme-color" content="#000091"><!-- Défini la couleur de thème du navigateur (Safari/Android) -->
+    <link rel="apple-touch-icon" href="../../../dist/favicon/apple-touch-icon.png"><!-- 180×180 -->
+    <link rel="icon" href="../../../dist/favicon/favicon.svg" type="image/svg+xml">
+    <!-- si favicon.ico peut etre placé à la racine du serveur, retirer la ligne ci-dessous -->
+    <link rel="shortcut icon" href="../../../dist/favicon/favicon.ico" type="image/x-icon"><!-- 32×32 -->
+    <link rel="manifest" href="../../../dist/favicon/manifest.webmanifest" crossorigin="use-credentials">
+    <!-- Modifier les chemins relatifs des favicons en fonction de la structure du projet -->
+    <!-- Dans le fichier manifest.webmanifest aussi, modifier les chemins vers les images -->
+    <link href="../../../dist/core/core.main.css" rel="stylesheet">
+    <link href="../../../dist/component/tag/tag.main.css" rel="stylesheet">
+    <link href="../../../dist/scheme/scheme.css" rel="stylesheet">
+    <link href="../../../dist/component/link/link.main.css" rel="stylesheet">
+    <link href="../../../dist/component/accordion/accordion.main.css" rel="stylesheet">
+    <link href="../../../dist/component/form/form.main.css" rel="stylesheet">
+    <link href="../../../dist/component/button/button.main.css" rel="stylesheet">
+    <link href="../../../dist/component/radio/radio.main.css" rel="stylesheet">
+    <link href="../../../dist/component/modal/modal.main.css" rel="stylesheet">
+    <link href="../../../dist/utility/utility.main.css" rel="stylesheet">
+    <link href="../../../dist/core/core.legacy.css" rel="stylesheet">
+    <link href="../../../dist/component/tag/tag.legacy.css" rel="stylesheet">
+    <link href="../../../dist/component/link/link.legacy.css" rel="stylesheet">
+    <link href="../../../dist/component/accordion/accordion.legacy.css" rel="stylesheet">
+    <link href="../../../dist/component/form/form.legacy.css" rel="stylesheet">
+    <link href="../../../dist/component/button/button.legacy.css" rel="stylesheet">
+    <link href="../../../dist/component/radio/radio.legacy.css" rel="stylesheet">
+    <link href="../../../dist/component/modal/modal.legacy.css" rel="stylesheet">
+    <link href="../../../dist/utility/utility.legacy.css" rel="stylesheet">
+    <style>
+        code[class*="language-"],
+        pre[class*="language-"] {
+            white-space: pre-wrap;
+        }
+
+        .example-controls {
+            z-index: 100000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.1), 0 8px 16px -16px rgba(0, 0, 0, 0.32);
+        }
+
+        .example-controls>button {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .example-controls__content {
+            padding: 16px;
+            background-color: var(--background-elevated-white);
+        }
+
+        .example-controls .fr-collapse--expanded~[aria-expanded] {
+            display: none;
+        }
+
+        .example-controls .fr-collapse:not(.fr-collapse--expanded)~button:not([aria-expanded]) {
+            display: none;
+        }
+
+        .example-controls [class*="-form-group"] {
+            margin-bottom: 0;
+        }
+
+        .fr-display-button {
+            position: fixed;
+            bottom: 3.5rem;
+            right: 2rem;
+        }
+
+        @media screen and (-ms-high-contrast: active),
+        (-ms-high-contrast: none) {
+
+            /* IE10+ specific styles go here */
+            .example-controls {
+                display: none;
+            }
+        }
+
+    </style>
+    <script>
+    window['dsfr'] = {
+      // verbose: true,
+      // production: true,
+      // mode: 'manual',
+    };
+    
+  </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+</head>
+
+<body id="top" class="fr-mb-12w">
+    <script type="module">
+    const e="system",t="dark",c="dark",o="data-fr-theme",a="data-fr-scheme",r=`:root[${o}], :root[${a}]`,m=()=>{document.documentElement.setAttribute(o,c),document.documentElement.style.colorScheme="dark"},n=()=>{window.matchMedia("(prefers-color-scheme: dark)").matches&&m()};(()=>{if(document.documentElement.matches(r)){const c=(()=>{try{return"localStorage"in window&&null!==window.localStorage}catch(e){return!1}})()?localStorage.getItem("scheme"):"",o=document.documentElement.getAttribute(a);switch(!0){case c===t:m();break;case c===e:n();break;case o===t:m();break;case o===e:n()}}})();
+
+  </script>
+    <span id="[url - à modifier]"></span>
+    <div class="fr-container fr-mt-2v fr-mb-8w">
+        <a class="fr-icon-arrow-left-line fr-link--icon-left fr-link" href="../">Retour</a>
+        <h1>Tag (tag)</h1>
+        <p>Le tag catégorise/classe/organise les contenus à l'aide de mots-clés. Il aide les utilisateurs à rechercher et à trouver facilement une information.</p>
+        <a href="https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/tag" target="_blank">Documentation</a>
+    </div>
+    <div class="fr-mb-12w">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-md-8 fr-col-12">
+                    <div class="fr-mt-0">
+                        <h2>Tag non cliquable</h2>
+                        <p>Tag simple sans interaction</p>
+                    </div>
+                    <h3>Tag non cliquable sans icône</h3>
+                    <div class="fr-mb-6v">
+                        <p class="fr-tag" id="tag-6695">Label tag</p>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6697">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6697">
+                                <pre class=" language-html"><code>&lt;p class="fr-tag" id="tag-6696"&gt;Label tag&lt;/p&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag non cliquable icône à gauche</h3>
+                    <div class="fr-mb-6v">
+                        <p class="fr-tag fr-icon-arrow-left-line fr-tag--icon-left" id="tag-6698">Label tag</p>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6700">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6700">
+                                <pre class=" language-html"><code>&lt;p class="fr-tag fr-icon-arrow-left-line fr-tag--icon-left" id="tag-6699"&gt;Label tag&lt;/p&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag non cliquable taille SM</h3>
+                    <div class="fr-mb-6v">
+                        <p class="fr-tag fr-tag--sm" id="tag-6701">Label tag</p>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6703">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6703">
+                                <pre class=" language-html"><code>&lt;p class="fr-tag fr-tag--sm" id="tag-6702"&gt;Label tag&lt;/p&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="fr-mt-32v">
+                        <h2>Tag cliquable</h2>
+                        <p>La balise utilisée pour le tag cliquable est un "a" s'il s'agit d'un lien (href), si pas de href utiliser "button".</p>
+                    </div>
+                    <h3>Tag cliquable</h3>
+                    <div class="fr-mb-6v">
+                        <a class="fr-tag" id="tag-6704" href="#">Label tag</a>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6706">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6706">
+                                <pre class=" language-html"><code>&lt;a class="fr-tag" id="tag-6705" href="#"&gt;Label tag&lt;/a&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag cliquable avec icône</h3>
+                    <div class="fr-mb-6v">
+                        <a class="fr-tag fr-icon-arrow-left-line fr-tag--icon-left" id="tag-6707" href="#">Label tag</a>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6709">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6709">
+                                <pre class=" language-html"><code>&lt;a class="fr-tag fr-icon-arrow-left-line fr-tag--icon-left" id="tag-6708" href="#"&gt;Label tag&lt;/a&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag cliquable SM</h3>
+                    <div class="fr-mb-6v">
+                        <a class="fr-tag fr-tag--sm" id="tag-6710" href="#">Label tag</a>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6712">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6712">
+                                <pre class=" language-html"><code>&lt;a class="fr-tag fr-tag--sm" id="tag-6711" href="#"&gt;Label tag&lt;/a&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag cliquable accentué</h3>
+                    <div class="fr-mb-6v">
+                        <a class="fr-tag fr-tag--green-emeraude" id="tag-6713" href="#">Label tag</a>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6715">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6715">
+                                <pre class=" language-html"><code>&lt;a class="fr-tag fr-tag--green-emeraude" id="tag-6714" href="#"&gt;Label tag&lt;/a&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag cliquable désactivé</h3>
+                    <div class="fr-mb-6v">
+                        <a class="fr-tag" id="tag-6716" aria-disabled="true" role="link">Label tag</a>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6718">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6718">
+                                <pre class=" language-html"><code>&lt;a class="fr-tag" id="tag-6717" aria-disabled="true" role="link"&gt;Label tag&lt;/a&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag bouton cliquable désactivé</h3>
+                    <div class="fr-mb-6v">
+                        <button class="fr-tag" id="tag-6719" disabled>Label tag</button>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6721">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6721">
+                                <pre class=" language-html"><code>&lt;button class="fr-tag" id="tag-6720" disabled&gt;Label tag&lt;/button&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag cliquable désactivé SM</h3>
+                    <div class="fr-mb-6v">
+                        <a class="fr-tag fr-tag--sm" id="tag-6722" aria-disabled="true" role="link">Label tag</a>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6724">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6724">
+                                <pre class=" language-html"><code>&lt;a class="fr-tag fr-tag--sm" id="tag-6723" aria-disabled="true" role="link"&gt;Label tag&lt;/a&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="fr-mt-32v">
+                        <h2>Tag sélectionnable</h2>
+                        <p>Le tag sélectionnable n'autorise pas l'accentuation.</p>
+                    </div>
+                    <h3>Tag sélectionnable</h3>
+                    <div class="fr-mb-6v">
+                        <button class="fr-tag" aria-pressed="false" id="tag-6725">Label tag</button>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6727">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6727">
+                                <pre class=" language-html"><code>&lt;button class="fr-tag" aria-pressed="false" id="tag-6726"&gt;Label tag&lt;/button&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag sélectionnable avec icone</h3>
+                    <div class="fr-mb-6v">
+                        <button class="fr-tag fr-icon-information-line fr-tag--icon-left" aria-pressed="false" id="tag-6728">Label tag</button>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6730">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6730">
+                                <pre class=" language-html"><code>&lt;button class="fr-tag fr-icon-information-line fr-tag--icon-left" aria-pressed="false" id="tag-6729"&gt;Label tag&lt;/button&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag sélectionnable taille sm</h3>
+                    <div class="fr-mb-6v">
+                        <button class="fr-tag fr-tag--sm" aria-pressed="false" id="tag-6731">Label tag</button>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6733">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6733">
+                                <pre class=" language-html"><code>&lt;button class="fr-tag fr-tag--sm" aria-pressed="false" id="tag-6732"&gt;Label tag&lt;/button&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag sélectionnable désactivé</h3>
+                    <div class="fr-mb-6v">
+                        <button class="fr-tag" aria-pressed="false" id="tag-6734" disabled>Label tag</button>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6736">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6736">
+                                <pre class=" language-html"><code>&lt;button class="fr-tag" aria-pressed="false" id="tag-6735" disabled&gt;Label tag&lt;/button&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="fr-mt-32v">
+                        <h2>Tag supprimable</h2>
+                        <p>Le tag supprimable n'autorise ni accentuation ni icône personnalisée.
+                            <br>Le javascript présent dans l’attribut onclick est donné à titre d’exemple, à vous de l’implémenter dans votre contexte technique.
+                        </p>
+                    </div>
+                    <h3>Tag supprimable</h3>
+                    <div class="fr-mb-6v">
+                        <button class="fr-tag fr-tag--dismiss" id="tag-6737" aria-label="Retirer [À MODIFIER - le filtre Label tag]">Label tag</button>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6739">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6739">
+                                <pre class=" language-html"><code>&lt;button class="fr-tag fr-tag--dismiss" id="tag-6738" aria-label="Retirer [À MODIFIER - le filtre Label tag]"&gt;Label tag&lt;/button&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag supprimable taille sm</h3>
+                    <div class="fr-mb-6v">
+                        <button class="fr-tag fr-tag--sm fr-tag--dismiss" id="tag-6740" aria-label="Retirer [À MODIFIER - le filtre Label tag]">Label tag</button>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6742">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6742">
+                                <pre class=" language-html"><code>&lt;button class="fr-tag fr-tag--sm fr-tag--dismiss" id="tag-6741" aria-label="Retirer [À MODIFIER - le filtre Label tag]"&gt;Label tag&lt;/button&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Tag supprimable désactivé</h3>
+                    <div class="fr-mb-6v">
+                        <button class="fr-tag fr-tag--dismiss" id="tag-6743" aria-label="Retirer [À MODIFIER - le filtre Label tag]" disabled>Label tag</button>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6745">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6745">
+                                <pre class=" language-html"><code>&lt;button class="fr-tag fr-tag--dismiss" id="tag-6744" aria-label="Retirer [À MODIFIER - le filtre Label tag]" disabled&gt;Label tag&lt;/button&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="fr-mt-32v">
+                        <h2>Groupe de tags</h2>
+                        <p>Lorsque que l'on a plus d'un tag, il convient d'utiliser un groupe de tags.
+                            <br>La taille de tous les tags peut être définie au niveau du groupe.
+                        </p>
+                    </div>
+                    <h3>Groupe de tags non cliquables</h3>
+                    <div class="fr-mb-6v">
+                        <ul class="fr-tags-group">
+                            <li>
+                                <p class="fr-tag" id="tag-6746">Label tag 1</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6747">Label tag 2</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6748">Label tag 3</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6749">Label tag 4</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6750">Label tag 5</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6751">Label tag 6</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6752">Label tag 7</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6753">Label tag 8</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6754">Label tag 9</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6764">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6764">
+                                <pre class=" language-html"><code>&lt;ul class="fr-tags-group"&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6755"&gt;Label tag 1&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6756"&gt;Label tag 2&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6757"&gt;Label tag 3&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6758"&gt;Label tag 4&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6759"&gt;Label tag 5&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6760"&gt;Label tag 6&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6761"&gt;Label tag 7&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6762"&gt;Label tag 8&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6763"&gt;Label tag 9&lt;/p&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Groupe de tags non cliquables SM</h3>
+                    <div class="fr-mb-6v">
+                        <ul class="fr-tags-group fr-tags-group--sm">
+                            <li>
+                                <p class="fr-tag" id="tag-6765">Label tag 1</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6766">Label tag 2</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6767">Label tag 3</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6768">Label tag 4</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6769">Label tag 5</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6770">Label tag 6</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6771">Label tag 7</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6772">Label tag 8</p>
+                            </li>
+                            <li>
+                                <p class="fr-tag" id="tag-6773">Label tag 9</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6783">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6783">
+                                <pre class=" language-html"><code>&lt;ul class="fr-tags-group fr-tags-group--sm"&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6774"&gt;Label tag 1&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6775"&gt;Label tag 2&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6776"&gt;Label tag 3&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6777"&gt;Label tag 4&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6778"&gt;Label tag 5&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6779"&gt;Label tag 6&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6780"&gt;Label tag 7&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6781"&gt;Label tag 8&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;p class="fr-tag" id="tag-6782"&gt;Label tag 9&lt;/p&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Groupe de tags cliquables</h3>
+                    <div class="fr-mb-6v">
+                        <ul class="fr-tags-group">
+                            <li>
+                                <a class="fr-tag" id="tag-6784" href="[À MODIFIER - url]">Label tag 1</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6785" href="[À MODIFIER - url]">Label tag 2</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6786" href="[À MODIFIER - url]">Label tag 3</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6787" href="[À MODIFIER - url]">Label tag 4</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6788" href="[À MODIFIER - url]">Label tag 5</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6789" href="[À MODIFIER - url]">Label tag 6</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6790" href="[À MODIFIER - url]">Label tag 7</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6791" href="[À MODIFIER - url]">Label tag 8</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6792" href="[À MODIFIER - url]">Label tag 9</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6802">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6802">
+                                <pre class=" language-html"><code>&lt;ul class="fr-tags-group"&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6793" href="[À MODIFIER - url]"&gt;Label tag 1&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6794" href="[À MODIFIER - url]"&gt;Label tag 2&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6795" href="[À MODIFIER - url]"&gt;Label tag 3&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6796" href="[À MODIFIER - url]"&gt;Label tag 4&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6797" href="[À MODIFIER - url]"&gt;Label tag 5&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6798" href="[À MODIFIER - url]"&gt;Label tag 6&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6799" href="[À MODIFIER - url]"&gt;Label tag 7&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6800" href="[À MODIFIER - url]"&gt;Label tag 8&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6801" href="[À MODIFIER - url]"&gt;Label tag 9&lt;/a&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Groupe de tags cliquables SM</h3>
+                    <div class="fr-mb-6v">
+                        <ul class="fr-tags-group fr-tags-group--sm">
+                            <li>
+                                <a class="fr-tag" id="tag-6803" href="[À MODIFIER - url]">Label tag 1</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6804" href="[À MODIFIER - url]">Label tag 2</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6805" href="[À MODIFIER - url]">Label tag 3</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6806" href="[À MODIFIER - url]">Label tag 4</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6807" href="[À MODIFIER - url]">Label tag 5</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6808" href="[À MODIFIER - url]">Label tag 6</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6809" href="[À MODIFIER - url]">Label tag 7</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6810" href="[À MODIFIER - url]">Label tag 8</a>
+                            </li>
+                            <li>
+                                <a class="fr-tag" id="tag-6811" href="[À MODIFIER - url]">Label tag 9</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6821">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6821">
+                                <pre class=" language-html"><code>&lt;ul class="fr-tags-group fr-tags-group--sm"&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6812" href="[À MODIFIER - url]"&gt;Label tag 1&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6813" href="[À MODIFIER - url]"&gt;Label tag 2&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6814" href="[À MODIFIER - url]"&gt;Label tag 3&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6815" href="[À MODIFIER - url]"&gt;Label tag 4&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6816" href="[À MODIFIER - url]"&gt;Label tag 5&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6817" href="[À MODIFIER - url]"&gt;Label tag 6&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6818" href="[À MODIFIER - url]"&gt;Label tag 7&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6819" href="[À MODIFIER - url]"&gt;Label tag 8&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a class="fr-tag" id="tag-6820" href="[À MODIFIER - url]"&gt;Label tag 9&lt;/a&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Groupe de tags sélectionnables</h3>
+                    <div class="fr-mb-6v">
+                        <ul class="fr-tags-group">
+                            <li>
+                                <button class="fr-tag" id="tag-6822" aria-pressed="false">Label tag 1</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6823" aria-pressed="false">Label tag 2</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6824" aria-pressed="false">Label tag 3</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6825" aria-pressed="false">Label tag 4</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6826" aria-pressed="false">Label tag 5</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6827" aria-pressed="false">Label tag 6</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6828" aria-pressed="false">Label tag 7</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6829" aria-pressed="false">Label tag 8</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6830" aria-pressed="false">Label tag 9</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6840">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6840">
+                                <pre class=" language-html"><code>&lt;ul class="fr-tags-group"&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6831" aria-pressed="false"&gt;Label tag 1&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6832" aria-pressed="false"&gt;Label tag 2&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6833" aria-pressed="false"&gt;Label tag 3&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6834" aria-pressed="false"&gt;Label tag 4&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6835" aria-pressed="false"&gt;Label tag 5&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6836" aria-pressed="false"&gt;Label tag 6&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6837" aria-pressed="false"&gt;Label tag 7&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6838" aria-pressed="false"&gt;Label tag 8&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6839" aria-pressed="false"&gt;Label tag 9&lt;/button&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Groupe de tags sélectionnables SM</h3>
+                    <div class="fr-mb-6v">
+                        <ul class="fr-tags-group fr-tags-group--sm">
+                            <li>
+                                <button class="fr-tag" id="tag-6841" aria-pressed="false">Label tag 1</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6842" aria-pressed="false">Label tag 2</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6843" aria-pressed="false">Label tag 3</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6844" aria-pressed="false">Label tag 4</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6845" aria-pressed="false">Label tag 5</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6846" aria-pressed="false">Label tag 6</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6847" aria-pressed="false">Label tag 7</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6848" aria-pressed="false">Label tag 8</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag" id="tag-6849" aria-pressed="false">Label tag 9</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6859">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6859">
+                                <pre class=" language-html"><code>&lt;ul class="fr-tags-group fr-tags-group--sm"&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6850" aria-pressed="false"&gt;Label tag 1&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6851" aria-pressed="false"&gt;Label tag 2&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6852" aria-pressed="false"&gt;Label tag 3&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6853" aria-pressed="false"&gt;Label tag 4&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6854" aria-pressed="false"&gt;Label tag 5&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6855" aria-pressed="false"&gt;Label tag 6&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6856" aria-pressed="false"&gt;Label tag 7&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6857" aria-pressed="false"&gt;Label tag 8&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag" id="tag-6858" aria-pressed="false"&gt;Label tag 9&lt;/button&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Groupe de tags supprimables</h3>
+                    <div class="fr-mb-6v">
+                        <ul class="fr-tags-group">
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6860" aria-label="Retirer [À MODIFIER - le filtre Label tag 1]">Label tag 1</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6861" aria-label="Retirer [À MODIFIER - le filtre Label tag 2]">Label tag 2</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6862" aria-label="Retirer [À MODIFIER - le filtre Label tag 3]">Label tag 3</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6863" aria-label="Retirer [À MODIFIER - le filtre Label tag 4]">Label tag 4</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6864" aria-label="Retirer [À MODIFIER - le filtre Label tag 5]">Label tag 5</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6865" aria-label="Retirer [À MODIFIER - le filtre Label tag 6]">Label tag 6</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6866" aria-label="Retirer [À MODIFIER - le filtre Label tag 7]">Label tag 7</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6867" aria-label="Retirer [À MODIFIER - le filtre Label tag 8]">Label tag 8</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6868" aria-label="Retirer [À MODIFIER - le filtre Label tag 9]">Label tag 9</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6878">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6878">
+                                <pre class=" language-html"><code>&lt;ul class="fr-tags-group"&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6869" aria-label="Retirer [À MODIFIER - le filtre Label tag 1]"&gt;Label tag 1&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6870" aria-label="Retirer [À MODIFIER - le filtre Label tag 2]"&gt;Label tag 2&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6871" aria-label="Retirer [À MODIFIER - le filtre Label tag 3]"&gt;Label tag 3&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6872" aria-label="Retirer [À MODIFIER - le filtre Label tag 4]"&gt;Label tag 4&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6873" aria-label="Retirer [À MODIFIER - le filtre Label tag 5]"&gt;Label tag 5&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6874" aria-label="Retirer [À MODIFIER - le filtre Label tag 6]"&gt;Label tag 6&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6875" aria-label="Retirer [À MODIFIER - le filtre Label tag 7]"&gt;Label tag 7&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6876" aria-label="Retirer [À MODIFIER - le filtre Label tag 8]"&gt;Label tag 8&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6877" aria-label="Retirer [À MODIFIER - le filtre Label tag 9]"&gt;Label tag 9&lt;/button&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h3>Groupe de tags supprimables SM</h3>
+                    <div class="fr-mb-6v">
+                        <ul class="fr-tags-group fr-tags-group--sm">
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6879" aria-label="Retirer [À MODIFIER - le filtre Label tag 1]">Label tag 1</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6880" aria-label="Retirer [À MODIFIER - le filtre Label tag 2]">Label tag 2</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6881" aria-label="Retirer [À MODIFIER - le filtre Label tag 3]">Label tag 3</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6882" aria-label="Retirer [À MODIFIER - le filtre Label tag 4]">Label tag 4</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6883" aria-label="Retirer [À MODIFIER - le filtre Label tag 5]">Label tag 5</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6884" aria-label="Retirer [À MODIFIER - le filtre Label tag 6]">Label tag 6</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6885" aria-label="Retirer [À MODIFIER - le filtre Label tag 7]">Label tag 7</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6886" aria-label="Retirer [À MODIFIER - le filtre Label tag 8]">Label tag 8</button>
+                            </li>
+                            <li>
+                                <button class="fr-tag fr-tag--dismiss" id="tag-6887" aria-label="Retirer [À MODIFIER - le filtre Label tag 9]">Label tag 9</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="fr-mb-12v">
+                        <section class="fr-accordion">
+                            <h3 class="fr-accordion__title">
+                                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="snippet-6897">Extrait de code</button>
+                            </h3>
+                            <div class="fr-collapse" id="snippet-6897">
+                                <pre class=" language-html"><code>&lt;ul class="fr-tags-group fr-tags-group--sm"&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6888" aria-label="Retirer [À MODIFIER - le filtre Label tag 1]"&gt;Label tag 1&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6889" aria-label="Retirer [À MODIFIER - le filtre Label tag 2]"&gt;Label tag 2&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6890" aria-label="Retirer [À MODIFIER - le filtre Label tag 3]"&gt;Label tag 3&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6891" aria-label="Retirer [À MODIFIER - le filtre Label tag 4]"&gt;Label tag 4&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6892" aria-label="Retirer [À MODIFIER - le filtre Label tag 5]"&gt;Label tag 5&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6893" aria-label="Retirer [À MODIFIER - le filtre Label tag 6]"&gt;Label tag 6&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6894" aria-label="Retirer [À MODIFIER - le filtre Label tag 7]"&gt;Label tag 7&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6895" aria-label="Retirer [À MODIFIER - le filtre Label tag 8]"&gt;Label tag 8&lt;/button&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;button class="fr-tag fr-tag--dismiss" id="tag-6896" aria-label="Retirer [À MODIFIER - le filtre Label tag 9]"&gt;Label tag 9&lt;/button&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="fr-display-button fr-background-default--grey fr-btn fr-btn--lg fr-icon-theme-fill fr-btn--secondary" aria-controls="fr-theme-modal" data-fr-opened="false" style="z-index: 1600" id="button-6898">
+        Label bouton
+    </button>
+    <dialog id="fr-theme-modal" class="fr-modal" aria-labelledby="fr-theme-modal-title">
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button class="fr-btn--close fr-btn" aria-controls="fr-theme-modal" id="button-6899" title="Fermer">
+                                Fermer
+                            </button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-theme-modal-title" class="fr-modal__title">
+                                Paramètres d’affichage
+                            </h1>
+                            <div id="fr-display" class="fr-display">
+                                <fieldset class="fr-fieldset" id="display-fieldset">
+                                    <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="display-fieldset-legend">
+                                        Choisissez un thème pour personnaliser l’apparence du site.
+                                    </legend>
+                                    <div class="fr-fieldset__element">
+                                        <div class="fr-radio-group fr-radio-rich">
+                                            <input value="light" type="radio" id="fr-radios-theme-light" name="fr-radios-theme">
+                                            <label class="fr-label" for="fr-radios-theme-light">
+                                                Thème clair
+                                            </label>
+                                            <div class="fr-radio-rich__pictogram">
+                                                <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                                    <use class="fr-artwork-decorative" href="../../../dist/artwork/pictograms/environment/sun.svg#artwork-decorative"></use>
+                                                    <use class="fr-artwork-minor" href="../../../dist/artwork/pictograms/environment/sun.svg#artwork-minor"></use>
+                                                    <use class="fr-artwork-major" href="../../../dist/artwork/pictograms/environment/sun.svg#artwork-major"></use>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="fr-fieldset__element">
+                                        <div class="fr-radio-group fr-radio-rich">
+                                            <input value="dark" type="radio" id="fr-radios-theme-dark" name="fr-radios-theme">
+                                            <label class="fr-label" for="fr-radios-theme-dark">
+                                                Thème sombre
+                                            </label>
+                                            <div class="fr-radio-rich__pictogram">
+                                                <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                                    <use class="fr-artwork-decorative" href="../../../dist/artwork/pictograms/environment/moon.svg#artwork-decorative"></use>
+                                                    <use class="fr-artwork-minor" href="../../../dist/artwork/pictograms/environment/moon.svg#artwork-minor"></use>
+                                                    <use class="fr-artwork-major" href="../../../dist/artwork/pictograms/environment/moon.svg#artwork-major"></use>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="fr-fieldset__element">
+                                        <div class="fr-radio-group fr-radio-rich">
+                                            <input value="system" type="radio" id="fr-radios-theme-system" name="fr-radios-theme">
+                                            <label class="fr-label" for="fr-radios-theme-system">
+                                                Système
+                                                <span class="fr-hint-text">Utilise les paramètres système</span>
+                                            </label>
+                                            <div class="fr-radio-rich__pictogram">
+                                                <svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
+                                                    <use class="fr-artwork-decorative" href="../../../dist/artwork/pictograms/system/system.svg#artwork-decorative"></use>
+                                                    <use class="fr-artwork-minor" href="../../../dist/artwork/pictograms/system/system.svg#artwork-minor"></use>
+                                                    <use class="fr-artwork-major" href="../../../dist/artwork/pictograms/system/system.svg#artwork-major"></use>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+    <script type="module" src="../../../dist/core/core.module.js"></script>
+    <script type="module" src="../../../dist/component/tag/tag.module.js"></script>
+    <script type="module" src="../../../dist/scheme/scheme.module.js"></script>
+    <script type="module" src="../../../dist/component/accordion/accordion.module.js"></script>
+    <script type="module" src="../../../dist/component/modal/modal.module.js"></script>
+    <script type="module" src="../../../dist/component/display/display.module.js"></script>
+    <script type="text/javascript" nomodule src="../../../dist/legacy/legacy.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../dist/core/core.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../dist/component/tag/tag.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../dist/component/accordion/accordion.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../dist/component/modal/modal.nomodule.js"></script>
+    <script type="text/javascript" nomodule src="../../../dist/component/display/display.nomodule.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+</body>
+
+</html>

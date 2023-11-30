@@ -1,0 +1,75 @@
+{# templates/my_pagination_theme.html.twig #}
+
+{% if pageCount > 1 %}
+    <nav role="navigation" class="fr-pagination" aria-label="Pagination">
+        <ul class="fr-pagination__list">
+
+            {% if previous is defined %}
+                <li>
+                    <a class="fr-pagination__link fr-pagination__link--first" aria-disabled="true" role="link">
+                        Première page
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a class="fr-pagination__link fr-pagination__link--first" aria-disabled="true" role="link">
+                        Première page
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if previous is defined %}
+                <li>
+                    <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label" href="{{ path(route, query|merge({(pageParameterName): previous})) }}" role="link">
+                        Page précédente
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label" aria-disabled="true" role="link">
+                        Page précédente
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for page in pagesInRange %}
+                <li>
+                    <a class="fr-pagination__link{% if page == current %} fr-pagination__link--current{% endif %}" href="{{ path(route, query|merge({(pageParameterName): page})) }}" title="Page {{ page }}" role="link">
+                        {{ page }}
+                    </a>
+                </li>
+            {% endfor %}
+
+
+
+            {% if next is defined %}
+                <li>
+                    <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label" href="{{ path(route, query|merge({(pageParameterName): next})) }}" role="link">
+                        Page suivante
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label" aria-disabled="true" role="link">
+                        Page suivante
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if next is defined %}
+                <li>
+                    <a class="fr-pagination__link fr-pagination__link--last" href="{{ path(route, query|merge({(pageParameterName): pageCount})) }}" role="link">
+                        Dernière page
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a class="fr-pagination__link fr-pagination__link--last" aria-disabled="true" role="link">
+                        Dernière page
+                    </a>
+                </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+{% endif %}
