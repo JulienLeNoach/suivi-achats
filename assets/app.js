@@ -6,6 +6,7 @@
  */
 import { startStimulusApp } from '@symfony/stimulus-bridge';
 import Chart from 'chart.js/auto';
+import Calendar from 'fullcalendar';
 
 // any CSS you import will output into a single css file (app.css in this case)
 
@@ -26,6 +27,7 @@ import './styles/app.css';
 
 
 import './bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/@gouvfr/dsfr/dist/dsfr.module.js'
 // Registers Stimulus controllers from controllers.json and in the controllers/ directory
 

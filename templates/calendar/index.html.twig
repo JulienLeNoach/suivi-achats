@@ -12,7 +12,7 @@
     <div class="form-container mb-4">
         <div class="d-flex justify-content-around ">
                     <div class="calendar-container w-50 mt-3">
-                    <div id="calendrier" data-controller="calendar">
+                    <div id="calendar" data-controller="calendar">
                     </div>
                     </div>
                     {% block content %}{% form_theme form _self %}
@@ -36,7 +36,7 @@
         </div>
     </div>
 </div>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.6/index.global.min.js"></script>
+    {# <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.6/index.global.min.js"></script> #}
     <script>
     var events = {{ events|raw }};
     </script>

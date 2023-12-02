@@ -7,6 +7,8 @@ exports["default"] = void 0;
 
 var _stimulus = require("@hotwired/stimulus");
 
+var _fullcalendar = require("fullcalendar");
+
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -44,9 +46,12 @@ function (_Controller) {
   }, {
     key: "initCustomCalendar",
     value: function initCustomCalendar() {
-      var calendarElt = document.querySelector("#calendrier");
-      var calendar = new FullCalendar.Calendar(calendarElt, {
-        initialView: 'dayGridYear',
+      var calendarEl = document.getElementById('calendar'); // const calendar = new Calendar(calendarEl, {
+      //   initialView: 'dayGridMonth'
+      // })
+
+      var calendar = new _fullcalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
         locale: 'fr',
         timeZone: 'Europe/Paris',
         firstDay: 1,
@@ -56,7 +61,9 @@ function (_Controller) {
           end: 'dayGridYear,dayGridMonth,timeGridWeek'
         },
         events: events,
+        // Assurez-vous que 'events' est défini quelque part dans votre code
         eventContent: function eventContent(info) {
+          // Votre logique personnalisée pour eventContent
           var dateStr = info.event.start.toISOString().slice(0, 10);
           var tdElts = document.querySelectorAll('td[data-date="' + dateStr + '"]');
 
@@ -67,6 +74,12 @@ function (_Controller) {
           return {
             html: '<style> td[data-date="' + info.event.start.toISOString().slice(0, 10) + '"]{background-color:' + info.backgroundColor + ';}</style>'
           };
+        },
+        dayCellDidMount: function dayCellDidMount(info) {
+          if (info.date.getUTCDay() === 6 || info.date.getUTCDay() === 0) {
+            // 6 = Samedi, 0 = Dimanche
+            info.el.style.backgroundColor = 'red';
+          }
         }
       });
       calendar.render();

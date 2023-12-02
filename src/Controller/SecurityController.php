@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
-{
+{   
     private $entityManager;
 
     public function __construct(
@@ -22,7 +22,8 @@ class SecurityController extends AbstractController
 
     }
 
-    #[Route(path: '/connexion', name: 'app_login')]
+    #[Route(path: '
+    /connexion', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
