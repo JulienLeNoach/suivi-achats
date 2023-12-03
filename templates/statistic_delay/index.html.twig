@@ -17,13 +17,21 @@
 </div>
 {% if app.request.method == 'POST' %}
 {% if achats is not empty %}
-  <div class="result-delay mb-5">
-    <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
-      <h6 class="  blueF ">Délai d'activité annuelle tableau</h6>
-      <div class="" data-controller="pdf-generator-chartdelay">
+    <div class="p-3 font-weight-bold d-flex flex-row ">
+<form action="{{ path('app_statistic_delay_export_excel') }}" method="post">
+    <input type="hidden" name="achats" value="{{ achats | json_encode }}">
+    <input type="hidden" name="achats_delay_all" value="{{ achats_delay_all | json_encode }}">
+    <button type="submit" class="print">Exporter vers Excel</button>
+</form>
+      <div class="ms-3" data-controller="pdf-generator-chartdelay">
         <button class="print" id="pdf" data-action="click->pdf-generator-chartdelay#generatePDFTable">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
     </button>
       </div>
+    </div>
+  <div class="result-delay mb-5">
+    <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
+      <h4 class="  blueF ">Délai d'activité annuelle tableau</h4>
+
     </div>
     <table border=1 id="delayTable" class="delayTable">
       <thead>
@@ -72,7 +80,7 @@
 
       <div class="delay-bar w-50">
         <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
-          <h6 class=" blueF">Délai d'activié annuelle graphe</h6>
+          <h4 class=" blueF">Délai d'activié annuelle graphe</h4>
           <div class="" data-controller="pdf-generator-chartdelay">
             <button class="print" id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphBar">Impression<span class="fr-icon-printer-line" aria-hidden="true"></span>
     </button>
@@ -82,7 +90,7 @@
       <div class="delay-pie w-50">
         <div data-controller="pdf-generator-chartdelay" id="chartPie">
           <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
-            <h6 class="blueF">Délai d'activié anuelle détaillé par traitement</h6>
+            <h4 class="blueF">Délai d'activié anuelle détaillé par traitement</h4>
             <div class="">
               <button id="pdf" class="print" data-action="click->pdf-generator-chartdelay#downloadgraphPie">Impression<span class="fr-icon-printer-line" aria-hidden="true"></span>
     </button>

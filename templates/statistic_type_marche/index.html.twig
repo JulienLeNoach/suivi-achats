@@ -19,8 +19,18 @@
                 class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
     </div>
     {% if app.request.method == 'POST' %}
-    <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
-        <div class="" data-controller="pdf-generator-charttype">
+        {# {{parameter[0]}} #}
+        <div class="p-3 font-weight-bold d-flex flex-row ">
+<form action="{{ path('app_statistic_typemarche_excel') }}" method="post">
+    <input type="hidden" name="result_achats" value="{{ result_achats | json_encode }}">
+    <input type="hidden" name="result_achats_mounts" value="{{ result_achats_mounts | json_encode }}">
+    <input type="hidden" name="parameter2" value="{{ parameter[0].four2 | json_encode }}">
+    <input type="hidden" name="parameter3" value="{{ parameter[0].four3 | json_encode }}">
+    <input type="hidden" name="parameter4" value="{{ parameter[0].four4 | json_encode }}">
+
+    <button type="submit" class="print">Exporter vers Excel</button>
+</form>
+<div class="ms-3" data-controller="pdf-generator-charttype">
             <button class="print" id="pdf" data-action="click->pdf-generator-charttype#downloadgraphBar">Impression <span class="fr-icon-printer-line" aria-hidden="true"></span></button>
 </button>
         </div>

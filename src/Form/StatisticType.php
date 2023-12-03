@@ -114,14 +114,7 @@ class StatisticType extends AbstractType
             'row_attr' => ['class' => 'sub-btn d-flex mt-3'],
             'label' => 'Lancer la recherche',
 
-        ])
-        ->add('excel', SubmitType::class, [
-            'attr' => [
-                'class' => 'excel'
-            ],
-            'label' => 'Export Excel', 
-            
-                    ])
+        ])  
         // Récupération du formulaire
         ->getForm();
     }

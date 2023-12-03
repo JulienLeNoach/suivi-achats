@@ -15,11 +15,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class StatisticTypeMarcheService  extends AbstractController
 {
-    public function generateExcelFile($result_achats, $result_achats_mounts, $parameter, $projectDir)
+    public function generateExcelFile($result_achats, $result_achats_mounts, $parameters, $projectDir)
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-
+        // dd($parameters['parameter2']);
         //------------------------------ Tab % vol/val_type --------------------------//
             $sheet->setCellValue('B2', "MPPA"); 
             $sheet->setCellValue('C2', "MABC"); 
@@ -46,30 +46,30 @@ class StatisticTypeMarcheService  extends AbstractController
 
         //------------------------------ Tab montant_type --------------------------//
             $sheet->setCellValue('H2', "Montant des MPPA"); 
-            $sheet->setCellValue('G3', "X <= ". $parameter[0]->getFour2()); 
-            $sheet->setCellValue('H3', $parameter[0]->getFour2()." < X <=".$parameter[0]->getFour3()); 
-            $sheet->setCellValue('I3',  $parameter[0]->getFour3()." < X <=".$parameter[0]->getFour4()); 
-            $sheet->setCellValue('J3', "X > ". $parameter[0]->getFour4()); 
+            $sheet->setCellValue('G3', "X <= ". $parameters['parameter2']); 
+            $sheet->setCellValue('H3', $parameters['parameter2']." < X <=".$parameters['parameter3']); 
+            $sheet->setCellValue('I3',  $parameters['parameter3']." < X <=".$parameters['parameter4']); 
+            $sheet->setCellValue('J3', "X > ". $parameters['parameter4']); 
             $sheet->setCellValue('G4', $result_achats_mounts[0]["nombre_achats_inf_four1"]); 
             $sheet->setCellValue('H4', $result_achats_mounts[0]["nombre_achats_four1_four2"]); 
             $sheet->setCellValue('I4',  $result_achats_mounts[0]["nombre_achats_four2_four3"]); 
             $sheet->setCellValue('J4', $result_achats_mounts[0]["nombre_achats_sup_four3"]); 
 
             $sheet->setCellValue('M2', "Montant des MABC"); 
-            $sheet->setCellValue('L3', "X <= ". $parameter[0]->getFour2()); 
-            $sheet->setCellValue('M3', $parameter[0]->getFour2()." < X <=".$parameter[0]->getFour3()); 
-            $sheet->setCellValue('N3',  $parameter[0]->getFour3()." < X <=".$parameter[0]->getFour4()); 
-            $sheet->setCellValue('O3', "X > ". $parameter[0]->getFour4()); 
+            $sheet->setCellValue('L3', "X <= ". $parameters['parameter2']); 
+            $sheet->setCellValue('M3', $parameters['parameter2']." < X <=".$parameters['parameter3']); 
+            $sheet->setCellValue('N3',  $parameters['parameter3']." < X <=".$parameters['parameter4']); 
+            $sheet->setCellValue('O3', "X > ". $parameters['parameter4']); 
             $sheet->setCellValue('L4', $result_achats_mounts[1]["nombre_achats_inf_four1"]); 
             $sheet->setCellValue('M4', $result_achats_mounts[1]["nombre_achats_four1_four2"]); 
             $sheet->setCellValue('N4',  $result_achats_mounts[1]["nombre_achats_four2_four3"]); 
             $sheet->setCellValue('O4', $result_achats_mounts[1]["nombre_achats_sup_four3"]); 
 
             $sheet->setCellValue('R2', "Montant des MABC + MPPA"); 
-            $sheet->setCellValue('Q3', "X <= ". $parameter[0]->getFour2()); 
-            $sheet->setCellValue('R3', $parameter[0]->getFour2()." < X <=".$parameter[0]->getFour3()); 
-            $sheet->setCellValue('S3',  $parameter[0]->getFour3()." < X <=".$parameter[0]->getFour4()); 
-            $sheet->setCellValue('T3', "X > ". $parameter[0]->getFour4()); 
+            $sheet->setCellValue('Q3', "X <= ". $parameters['parameter2']); 
+            $sheet->setCellValue('R3',$parameters['parameter2']." < X <=".$parameters['parameter3']); 
+            $sheet->setCellValue('S3',  $parameters['parameter3']." < X <=".$parameters['parameter4']); 
+            $sheet->setCellValue('T3', "X > ". $parameters['parameter4']); 
             $sheet->setCellValue('Q4', $result_achats_mounts[0]["nombre_achats_inf_four1"] + $result_achats_mounts[1]["nombre_achats_inf_four1"]); 
             $sheet->setCellValue('R4', $result_achats_mounts[0]["nombre_achats_four1_four2"] + $result_achats_mounts[1]["nombre_achats_four1_four2"]); 
             $sheet->setCellValue('S4',  $result_achats_mounts[0]["nombre_achats_four2_four3"] + $result_achats_mounts[1]["nombre_achats_four2_four3"]); 

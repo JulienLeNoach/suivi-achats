@@ -7,6 +7,7 @@ namespace App\Controller\Statistic;
 use Dompdf\Dompdf;
 use App\Form\StatisticType;
 use App\Form\ValidAchatType;
+use App\Form\CreateExcelType;
 use App\Service\CalendarService;
 use App\Repository\AchatRepository;
 use App\Service\StatisticVolValService;
@@ -58,6 +59,7 @@ class StatisticVolController extends AbstractController
     {
 
         $form = $this->createForm(StatisticType::class, null, []);
+        $excelForm = $this->createForm(CreateExcelType::class); 
 
         $form->handleRequest($request);
 
@@ -84,6 +86,8 @@ class StatisticVolController extends AbstractController
 
                 return $this->render('statistic/index.html.twig', [
                     'form' => $form->createView(),
+                    'excelForm' => $excelForm->createView(),
+
                     'counts1' => $counts1,
                     'counts2' => $counts2,
                     'purchaseCountByMonth' => $purchaseCountByMonth,
@@ -94,27 +98,35 @@ class StatisticVolController extends AbstractController
                     'datasets4' => $datasets4,
                 ]);
             } 
-
-            if ($form->get('excel')->isClicked() ) {
-     
-                   
-
-                $filePath = $statisticService->generateExcelFile($datasets1, $datasets2, $datasets3, $datasets4, $this->projectDir);
-                return new BinaryFileResponse($filePath);                        }
         }
+
         return $this->render('statistic/index.html.twig', [
             'form' => $form->createView(),
+            'excelForm' => $excelForm->createView(),
+
         ]);
     }
 
-    #[Route('/statistic/vol_excel', name: 'vol_excel')]
-    public function excel(Request $request, EntityManagerInterface $entityManager, ChartBuilderInterface $chartBuilder): Response
-    {
-        $form = $this->createForm(StatisticType::class, null, []);
+/**
+ * @Route("/statistic/vol/export_excel", name="app_statistic_vol_export_excel")
+ */
+public function exportExcel(Request $request, StatisticVolValService $statisticService): Response
+{
+    // Traitez la requête pour obtenir les données nécessaires à l'export Excel
+    // Supposons que les données sont passées via une requête GET ou POST
+    $datasets1 = $request->get('datasets1');
+    $datasets2 = $request->get('datasets2');
+    $datasets3 = $request->get('datasets3');
+    $datasets4 = $request->get('datasets4');
 
-        $form->handleRequest($request);
-        
+    // Convertir les données JSON en tableau PHP
+    $datasets1 = json_decode($datasets1, true);
+    $datasets2 = json_decode($datasets2, true);
+    $datasets3 = json_decode($datasets3, true);
+    $datasets4 = json_decode($datasets4, true);
 
-
-    }
+    // Générer le fichier Excel
+    $filePath = $statisticService->generateExcelFile($datasets1, $datasets2, $datasets3, $datasets4, $this->projectDir);
+    return new BinaryFileResponse($filePath);
+}
 }

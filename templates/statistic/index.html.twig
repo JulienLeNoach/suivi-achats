@@ -16,7 +16,13 @@
   {% if counts1 is not empty %}
       <div class=" font-weight-bold d-flex flex-row justify-content-between" >
       <div class="d-flex" data-controller="pdf-generator" >
-
+<form action="{{ path('app_statistic_vol_export_excel') }}" method="post">
+    <input type="hidden" name="datasets1" value="{{ datasets1 | json_encode }}">
+    <input type="hidden" name="datasets2" value="{{ datasets2 | json_encode }}">
+    <input type="hidden" name="datasets3" value="{{ datasets3 | json_encode }}">
+    <input type="hidden" name="datasets4" value="{{ datasets4 | json_encode }}">
+    <button type="submit" class="print">Exporter vers Excel</button>
+</form>
 
         <button class="print ms-3" id="pdf" data-action="click->pdf-generator#generatePDFTable" >Imprimer
         <span class="fr-icon-printer-line" aria-hidden="true"></span>

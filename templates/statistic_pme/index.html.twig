@@ -19,8 +19,15 @@
                 class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
     </div>
     {% if app.request.method == 'POST' %}
-    <div class="p-3 font-weight-bold d-flex flex-row justify-content-between">
-        <div class="" data-controller="pdf-generator-pme">
+    <div class="p-3 font-weight-bold d-flex flex-row ">
+<form action="{{ path('app_statistic_pme_export_excel') }}" method="post">
+    <input type="hidden" name="result_achats" value="{{ result_achats | json_encode }}">
+    <input type="hidden" name="result_achatsSum" value="{{ result_achatsSum | json_encode }}">
+    <input type="hidden" name="result_achatsSumVol" value="{{ result_achatsSumVol | json_encode }}">
+    <input type="hidden" name="result_achatsSumVal" value="{{ result_achatsSumVal | json_encode }}">
+    <button type="submit" class="print">Exporter vers Excel</button>
+</form>
+        <div class="ms-3" data-controller="pdf-generator-pme">
             <button id="pdf" class="print" data-action="click->pdf-generator-pme#downloadgraphBar">Impression <span class="fr-icon-printer-line" aria-hidden="true"></span></button>
         </div>
     </div>

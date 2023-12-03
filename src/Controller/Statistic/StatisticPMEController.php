@@ -2,6 +2,7 @@
 
 namespace App\Controller\Statistic;
 use App\Form\StatisticType;
+use App\Form\CreateExcelType;
 use App\Repository\AchatRepository;
 use App\Service\StatisticPMEService;
 use PhpOffice\PhpSpreadsheet\Chart\Chart;
@@ -46,14 +47,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
                 $result_achatsSum = $this->achatRepository->statisticPMEMonth($form);
                 $result_achatsSumVol = $this->achatRepository->statisticPMETopVol($form);
                 $result_achatsSumVal = $this->achatRepository->statisticPMETopVal($form);
-                    if ($form->get('excel')->isClicked()) {
-
+                $excelForm = $this->createForm(CreateExcelType::class); 
+                if ($excelForm->isSubmitted() && $excelForm->isValid()) {
       
-                        $filePath = $statisticPMEService->createExcelFile($result_achats, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
-                        return new BinaryFileResponse($filePath);
+                    $filePath = $statisticPMEService->createExcelFile($result_achats, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
+                    return new BinaryFileResponse($filePath);
+
                 }
                 return $this->render('statistic_pme/index.html.twig', [
                     'form' => $form->createView(),
+                    'excelForm' => $excelForm->createView(),
                     'result_achats'=>$result_achats,
                     'result_achatsSum'=>$result_achatsSum,
                     'result_achatsSumVol'=>$result_achatsSumVol,
@@ -66,4 +69,27 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
                 'form' => $form->createView(),
             ]);
         }
+
+        /**
+ * @Route("/statistic/pme/export_excel", name="app_statistic_pme_export_excel")
+ */
+public function exportExcel(Request $request, StatisticPMEService $statisticPMEService): Response
+{
+    // Traitez la requête pour obtenir les données nécessaires à l'export Excel
+    // Supposons que les données sont passées via une requête GET ou POST
+    $result_achats = $request->get('result_achats');
+    $result_achatsSum = $request->get('result_achatsSum');
+    $result_achatsSumVol = $request->get('result_achatsSumVol');
+    $result_achatsSumVal = $request->get('result_achatsSumVal');
+
+    // Convertir les données JSON en tableau PHP
+    $result_achats = json_decode($result_achats, true);
+    $result_achatsSum = json_decode($result_achatsSum, true);
+    $result_achatsSumVol = json_decode($result_achatsSumVol, true);
+    $result_achatsSumVal = json_decode($result_achatsSumVal, true);
+
+    // Générer le fichier Excel
+    $filePath = $statisticPMEService->createExcelFile($result_achats, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
+    return new BinaryFileResponse($filePath);
+}
     }

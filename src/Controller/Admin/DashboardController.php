@@ -128,12 +128,14 @@ return $this->redirect($url);
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Suiviachats');
+            ->setTitle('Suivi des achats');
+
     }
 
     public function configureMenuItems(): iterable
     {
-        
+        yield MenuItem::linkToRoute("Retour vers la page d'accueil", 'fas fa-home', 'app_login');
+
         if ($this->isGranted('ROLE_OPT_SERVICES')){        
         yield MenuItem::subMenu('Utilisateurs', 'fas fa-bars')->setSubItems([
             MenuItem::linkToCrud('Créer un utilisateur','fas fa-plus', Utilisateurs::class)->setAction(Crud::PAGE_NEW),
