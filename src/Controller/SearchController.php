@@ -48,11 +48,10 @@ class SearchController extends AbstractController
     // avec les données du formulaire et les résultats de la recherche.
 
     #[Route('/search', name: 'app_search')]
-    public function index(Request $request, EntityManagerInterface $entityManager,PaginatorInterface $paginator,SessionInterface $session): Response
+    public function index(Request $request,PaginatorInterface $paginator,SessionInterface $session): Response
     {
 
 
-        // $allAchats = $this->entityManager->getRepository(Achat::class)->findAll();
 
         $form = $this->createForm(AchatSearchType::class, null, [
             // 'allAchats' => $allAchats,
@@ -63,7 +62,7 @@ class SearchController extends AbstractController
         $pagination = null; // Initialiser $pagination à null
         if($form->isSubmitted() && $form->isValid()){
 
-            $query = $this->entityManager->getRepository(Achat::class)->searchAchat($form, $paginator);
+            $query = $this->entityManager->getRepository(Achat::class)->searchAchat($form);
             $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
             $currentUrl = $request->getUri();
             $session->set('current_url', $currentUrl);
@@ -90,6 +89,7 @@ public function show(Request $request,$id,SessionInterface $session): Response
 
     ]);
 }
+
 #[Route('/ajout_achat', name: 'ajout_achat')]
 public function add(Request $request,SessionInterface $session): Response
 {

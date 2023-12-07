@@ -32,13 +32,17 @@ class FournisseursCrudController extends AbstractCrudController
     }
     public function configureFields(string $pageName): iterable
     {
-        if ($pageName === 'index') {
             return [
-                TextField::new('nom_fournisseur')->setLabel('Nom du fournisseur'),
                 TextField::new('num_siret')->setLabel('Numéro siret'),
+                TextField::new('nom_fournisseur')->setLabel('Nom du fournisseur'),
                 TextField::new('ville'),
+                TextField::new('code_postal'),
+                BooleanField::new('pme')->setLabel('PME ?'),
+                TextField::new('tel')->setLabel('Téléphone'),
+                TextField::new('FAX'),
+                TextField::new('mail'), 
             ];
-        } else {
+        
 
             return [
                 TextField::new('num_siret')->setLabel('Numéro siret'),
@@ -51,6 +55,6 @@ class FournisseursCrudController extends AbstractCrudController
                 TextField::new('mail'),
                 TextField::new('date_maj_fournisseur')->setLabel('Date de mise à jour du fournisseur')
             ];
-        }
+        
     }
 }

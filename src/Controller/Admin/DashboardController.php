@@ -22,7 +22,7 @@ class DashboardController extends AbstractDashboardController
 {
 
     public function __construct(
-        private AdminUrlGenerator $adminUrlGenerator) // injection de dépendance ( https://www.youtube.com/watch?v=ze6XJTACo1s )
+        private AdminUrlGenerator $adminUrlGenerator) 
         {
     }
     #[Route('/fournisseurs', name: 'fournisseurs')]

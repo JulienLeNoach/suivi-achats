@@ -14,9 +14,6 @@ import './less/search.less';
 import '../node_modules/@gouvfr/dsfr/dist/dsfr.min.css'
 import '../node_modules/@gouvfr/dsfr/dist/utility/icons/icons.css';
 import './styles/app.css';
-// import './less/calendar.less';   
-// import './less/role.less';
-// import './less/stat.less';
 
 
     

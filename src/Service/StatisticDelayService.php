@@ -65,7 +65,7 @@ class StatisticDelayService  extends AbstractController
                     $sumTransmission += $achat[$monthName];
                 } elseif ($achat['source'] === 'APPRO' || $achat['source'] === 'FIN') {
                     $sumNotification += $achat[$monthName];
-                }
+                }   
             }
     
             $transmission[$monthName] = $sumTransmission;
@@ -74,7 +74,8 @@ class StatisticDelayService  extends AbstractController
     
         // Calculer la ligne "Délai TOTAL"
         foreach ($monthNames as $monthName) {
-            $delaiTotal[$monthName] = $transmission[$monthName] + $notification[$monthName];
+            $total = $transmission[$monthName] + $notification[$monthName];
+            $delaiTotal[$monthName] = number_format($total, 1);
         }
         $delaiTotal['source'] = 'Délai TOTAL';
         $transmission['source'] = 'Transmission';
@@ -95,7 +96,7 @@ class StatisticDelayService  extends AbstractController
         array_splice($orderedAchats, 2, 0, [$transmission]);
         array_splice($orderedAchats, 5, 0, [$notification]);
         $orderedAchats[] = $delaiTotal;
-    
+        
         return $orderedAchats;
     }
     

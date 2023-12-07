@@ -228,13 +228,16 @@ td {
   background-color: #f5f5f5;
   transition: max-height 1s ease-in-out;
   /* Increased duration and smoother easing */
-  max-height: 1000px;
+  max-height: 1088px;
   /* Adjust this value based on the maximum height of your content */
   overflow: hidden;
 }
 .form-container.collapsed {
   max-height: 0;
   /* Réduit la div */
+}
+.input-condi-form {
+  border: 1px solid #000091;
 }
 .addAchat {
   display: flex;

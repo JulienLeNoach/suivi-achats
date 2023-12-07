@@ -66,7 +66,7 @@
         <td>{{ achat.Novembre }}</td>
         <td>{{ achat.Decembre }}</td>
         <td>
-          {{ (achat.Janvier + achat.Février + achat.Mars + achat.Avril + achat.Mai + achat.Juin + achat.Juillet + achat.Aout + achat.Septembre + achat.Octobre + achat.Novembre + achat.Decembre) / 12 }}
+{{ ((achat.Janvier + achat.Février + achat.Mars + achat.Avril + achat.Mai + achat.Juin + achat.Juillet + achat.Aout + achat.Septembre + achat.Octobre + achat.Novembre + achat.Decembre) / 12)|number_format(2, '.', '') }}
         </td>
       </tr>
       {% endfor %}

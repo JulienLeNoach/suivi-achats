@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Extraction des données vers EXCEL{% endblock %}
+
+{% block body %}
+<div class="achat-container">
+
+    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
+        <span class="fr-icon-search-line" aria-hidden="true"></span>
+
+        <h5 class="mt-4 ms-3 blueF">Extraction des données vers excel</h5>
+        <div class="bande ms-3">
+        </div>
+        </div>
+        <div class="form-container mb-3 ">
+                <!--  Partie conditionnelle du formulaire de recherche -->
+        {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around flex-wrap p-5'}}) }}
+        <div class="input-condi-form d-flex flex-wrap" style="flex-basis:100%">
+            <div class="input-grp" style="flex-basis:33%;">
+                <div class="chrono d-flex">
+                    <div class="chronoN  me-3 w-50">
+                        <label for="achat_search_numero_achat">N° Chrono</label>
+                        {{ form_row(form.numero_achat) }}
+                    </div>
+                    <div class="chronoD w-50">
+                        <label for="achat_search_date">Année</label>
+                        {{ form_row(form.date) }}
+                    </div>
+                </div>
+                <label for="achat_search_objet_achat">Objet de l'achat</label>
+                {{ form_row(form.objet_achat) }}
+                <div class="d-flex">
+                    <div class="me-3 w-50">
+                    <label for="achat_search_id_demande_achat">ID de la demande d'achat</label>
+                    {{ form_row(form.id_demande_achat)}}
+                    </div>
+                    <div class="me-3 w-50">
+                    <label for="achat_search_zipcode">Code postal</label>
+                    {{ form_row(form.zipcode) }}
+                    </div>
+                </div>
+                <div class="montant d-flex">
+                    <div class="montantMin me-3 w-50">
+                        <label for="achat_search_montant_achat">Montant de l'achat minimum</label>
+                        {{ form_row(form.montant_achat_min)}}
+                    </div>
+                    <div class="montantMax w-50">
+                        <label for="achat_search_montant_achat">Montant de l'achat maximum</label>
+                        {{ form_row(form.montant_achat)}}
+                    </div>
+                </div>
+                <label for="achat_search_numero_ej">N° engagement juridique</label>
+                {{ form_row(form.numero_ej)}}
+            </div>
+            <div class="input-grp" style="flex-basis:33%;">
+                <label for="achat_search_code_uo_autocomplete-ts-control">Unité organique</label>
+                {{ form_row(form.code_uo) }}
+                <label for="achat_search_code_cpv_autocomplete-ts-control">CPV</label>
+                {{ form_row(form.code_cpv) }}
+                <label for="achat_search_code_formation_autocomplete-ts-control">Formation</label>
+                {{ form_row(form.code_formation) }}
+                <label for="achat_search_utilisateurs_autocomplete-ts-control">Utilisateurs</label>
+                {{ form_row(form.utilisateurs) }}
+                <label for="achat_search_num_siret_autocomplete-ts-control">N° SIRET</label>
+                {{ form_row(form.num_siret) }}
+                <div class="rec d-flex ">
+                    <div class="recdebut me-3 w-50">
+                        <label for="achat_search_debut_rec">Date de début d'enregistrement</label>
+                        {{ form_row(form.debut_rec)}}
+                    </div>
+                    <div class="recfin w-50">
+                        <label for="achat_search_fin_rec">Date de fin d'enregistrement</label>
+                        {{ form_row(form.fin_rec)}}
+                    </div>
+                </div>
+            </div>
+            <div class="input-grp" style="flex-basis:33%;">
+                {{ form_row(form.etat_achat) }}
+                {{ form_row(form.devis)}}
+                {{ form_row(form.type_marche)}}
+            </div>
+        </div>
+                <!--  Partie choix des attribut à exporter -->
+        <h6 class="mt-4 ms-3 blueF">Sélection des informations à extraire</h6>
+        <div class="input-condi-form d-flex flex-wrap" style="flex-basis:100%">
+            <div class="input-grp" style="flex-basis:25%;">
+            {{ form_row(form.chrono_attr) }}
+            {{ form_row(form.code_service_attr) }}
+            {{ form_row(form.nom_service_attr) }}
+            {{ form_row(form.code_acheteur_attr) }}
+            {{ form_row(form.nom_acheteur_attr) }}
+            {{ form_row(form.code_formation_attr) }}
+            {{ form_row(form.libelle_formation_attr) }}
+            {{ form_row(form.siret_fournisseur_attr) }}
+            {{ form_row(form.nom_fournisseur_attr) }}
+            {{ form_row(form.code_uo_attr) }}
+            </div>
+            <div class="input-grp" style="flex-basis:25%;">
+            {{ form_row(form.libelle_uo_attr) }}
+            {{ form_row(form.code_cpv_attr) }}
+            {{ form_row(form.libelle_cpv_attr) }}
+            {{ form_row(form.id_dem_achat_attr) }}
+            {{ form_row(form.date_sillage_attr) }}
+            {{ form_row(form.date_commande_chorus_attr) }}
+            {{ form_row(form.date_valid_inter_attr) }}
+            {{ form_row(form.date_valid_attr) }}
+            {{ form_row(form.date_notif_attr) }}
+            {{ form_row(form.date_annul_attr) }}
+            </div>
+            <div class="input-grp" style="flex-basis:25%;">
+            {{ form_row(form.ej_attr) }}
+            {{ form_row(form.objet_achat_attr) }}
+            {{ form_row(form.type_marche_attr) }}
+            {{ form_row(form.montant_ht_attr) }}
+            {{ form_row(form.tva_attr) }}
+            {{ form_row(form.montant_ttc_attr) }}
+            {{ form_row(form.devis_attr) }}
+            {{ form_row(form.obs_attr) }}
+            {{ form_row(form.etat_achat_attr) }}
+            {{ form_row(form.place_attr) }}
+            </div>
+            <div class="input-grp" style="flex-basis:25%;">
+            <h6 class="mt-4 ms-3 blueF">Détail fournisseur</h6>
+            {{ form_row(form.ville_fournisseur_attr) }}
+            {{ form_row(form.cp_fournisseur_attr) }}
+            {{ form_row(form.pme_fournisseurs_attr) }}
+            {{ form_row(form.code_client_fournisseur_attr) }}
+            {{ form_row(form.chorus_fournisseur_attr) }}
+            {{ form_row(form.tel_fournisseur_attr) }}
+            {{ form_row(form.fax_fournisseur_attr) }}
+            {{ form_row(form.mail_fournisseur_attr) }}
+            {{ form_row(form.excel)}}
+            {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -23,7 +23,6 @@ class AccountController extends AbstractController
     #[Route('/compte', name: 'app_account')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-
         return $this->render('account/index.html.twig', [
         ]);
     }

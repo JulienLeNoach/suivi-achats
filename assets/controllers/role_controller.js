@@ -7,7 +7,7 @@ const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 export default class extends Controller {
     connect() {
         document.querySelector('form').addEventListener('submit', this.handleFormSubmit);
-    }S
+    }
 
     handleFormSubmit(event) {
         // Empêcher la soumission par défaut du formulaire

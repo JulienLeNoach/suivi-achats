@@ -458,7 +458,7 @@ $stmt = $conn->prepare($sql);
     //comme le numéro SIRET, le code UO, le code CPV et le code de formation.
     //prepareCountsArray est une méthode qui transforme le résultat en un tableau avec
     //le nombre d'éléments et la somme totale pour chaque mois de l'année.
-    public function searchAchat($form, PaginatorInterface $paginator)
+    public function searchAchat($form)
     {
         $data = $form->getData();
         $queryBuilder = $this->createQueryBuilder('b');
@@ -588,7 +588,203 @@ $stmt = $conn->prepare($sql);
     
         return $query;
     }
+    public function extractSearchAchat($form)
+    {
+        $data = $form->getData();
+        $queryBuilder = $this->createQueryBuilder('b');
+        $achatmin = $form["montant_achat_min"]->getData();
+        $user = $this->security->getUser();   
+        if ($form['etat_achat']->getData() === "EC") {
+            // Convertir la chaîne "0" en valeur numérique 0
+            $etat = 0;
+        } 
+        switch ($form['etat_achat']->getData()) {
+            case 'EC':
+                $etat = 0;
+                break;
+            case 'V':
+                $etat = 2;
+                break;
+            case 'A':
+                $etat = 1;
+                break;
+            default:
+                // Gérer le cas par défaut ici, si nécessaire
+                break;
+        }
     
+    switch ($form['type_marche']->getData()) {
+        case 'MABC':
+            $type = 0;
+            break;
+        case 'MPPA':
+            $type = 1;
+            break;
+        default:
+            // Gérer le cas par défaut ici, si nécessaire
+            break;
+    }
+    switch ($form['devis']->getData()) {
+        case 'Pr':
+            $devis = 0;
+            break;
+        case 'Gs':
+            $devis = 1;
+            break;
+        default:
+            // Gérer le cas par défaut ici, si nécessaire
+            break;
+    }
+        //    dd($form['date_valid_inter_attr']->getData() == true);
+            // Vérifier si la case 'objet_achat_attr' est cochée
+            
+
+            
+           
+
+            $selectFields[] = $form['chrono_attr']->getData() == true ? 'b.numero_achat' : null;
+            $selectFields[] = $form['id_dem_achat_attr']->getData() == true ? 'b.id_demande_achat' : null;
+            $selectFields[] = $form['date_sillage_attr']->getData() == true ? 'b.date_sillage' : null;
+            $selectFields[] = $form['date_commande_chorus_attr']->getData() == true ? 'b.date_commande_chorus' : null;
+            $selectFields[] = $form['date_valid_inter_attr']->getData() == true ? 'b.date_valid_inter' : null;
+            $selectFields[] = $form['date_valid_attr']->getData() == true ? 'b.date_validation' : null;
+            $selectFields[] = $form['date_notif_attr']->getData() == true ? 'b.date_notification' : null;
+            $selectFields[] = $form['date_annul_attr']->getData() == true ? 'b.date_annulation' : null;
+            $selectFields[] = $form['ej_attr']->getData() == true ? 'b.numero_ej' : null;
+            $selectFields[] = $form['objet_achat_attr']->getData() == true ? 'b.objet_achat' : null;
+            $selectFields[] = $form['type_marche_attr']->getData() == true ? 'b.type_marche' : null;
+            $selectFields[] = $form['montant_ht_attr']->getData() == true ? 'b.montant_achat' : null;
+            $selectFields[] = $form['montant_ttc_attr']->getData() == true ? 'b.montant_achat   ' : null;
+            $selectFields[] = $form['devis_attr']->getData() == true ? 'b.devis' : null;
+            $selectFields[] = $form['obs_attr']->getData() == true ? 'b.observations' : null;
+            $selectFields[] = $form['etat_achat_attr']->getData() == true ? 'b.etat_achat' : null;
+            $selectFields[] = $form['place_attr']->getData() == true ? 'b.place' : null;
+            $selectFields = array_filter($selectFields);
+
+        $queryBuilder
+            ->select($selectFields)
+            ->Where('b.utilisateurs = :utilisateurs')
+            ->setParameter('utilisateurs', $user);
+
+           
+            $form['code_acheteur_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.utilisateurs) as utilisateurs_id') : null;
+            $form['nom_acheteur_attr']->getData() == true ? $queryBuilder->leftJoin('b.utilisateurs', 'u')->addSelect('u.nom_utilisateur') : null;
+
+            $form['code_formation_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.code_formation) as code_formation_id') : null;
+            $form['libelle_formation_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_formation', 'g')->addSelect('g.libelle_formation') : null;
+
+            $form['code_uo_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.code_uo) as code_uo_id') : null;
+            $form['libelle_uo_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_uo', 'o')->addSelect('o.libelle_uo') : null;
+
+            $form['code_cpv_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.code_cpv) as code_cpv_id') : null;
+            $form['libelle_cpv_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_cpv', 'c')->addSelect('c.libelle_cpv') : null;
+
+            $form['tva_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.tva_ident) as tva_ident_id') : null;
+
+
+            if ($form['chorus_fournisseur_attr']->getData() == true ||  $form['code_client_fournisseur_attr']->getData() == true ||  $form['ville_fournisseur_attr']->getData() == true 
+            ||  $form['cp_fournisseur_attr']->getData() == true||  $form['pme_fournisseurs_attr']->getData() == true ||  $form['tel_fournisseur_attr']->getData() == true 
+            ||  $form['fax_fournisseur_attr']->getData() == true||  $form['mail_fournisseur_attr']->getData() == true||  $form['siret_fournisseur_attr']->getData() == true||  $form['nom_fournisseur_attr']->getData() == true ) {
+
+                $queryBuilder->leftJoin('b.num_siret', 'f'); // Jointure avec la table 'fournisseurs'
+    
+               
+                $form['ville_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.ville') : null;
+                $form['cp_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.code_postal') : null;
+                $form['pme_fournisseurs_attr']->getData() == true ? $queryBuilder->addSelect('f.pme') : null;
+                $form['tel_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.tel') : null;
+                $form['fax_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.FAX') : null;
+                $form['mail_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.mail') : null;
+                $form['siret_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.num_siret') : null;
+                $form['nom_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.nom_fournisseur') : null;
+                
+            }
+            if ($form['nom_service_attr']->getData() == true ||  $form['code_service_attr'] == true) {
+
+                $queryBuilder->leftJoin('b.code_service', 's'); // Jointure avec la table 'service'
+                $selectFields[] = $form['code_service_attr']->getData() == true ? $queryBuilder->addSelect('s.code_service') : null;
+                $selectFields[] = $form['nom_service_attr']->getData() == true ?  $queryBuilder->addSelect('s.nom_service') : null;
+            }
+
+
+            if ($form["objet_achat"]->getData()){
+                $queryBuilder
+                    ->andWhere('b.objet_achat LIKE :objet_achat')
+                    ->setParameter('objet_achat', '%' . $data->getObjetAchat() . '%');
+            }
+
+            if ($form["num_siret"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.num_siret = :num_siret')
+                    ->setParameter('num_siret', $data->getNumSiret());
+            }
+            if ($form["utilisateurs"]->getData()) {
+                $queryBuilder 
+                    ->andWhere('b.utilisateurs = :utilisateurs')
+                    ->setParameter('utilisateurs', $data->getUtilisateurs());
+            }
+            if ($form["code_uo"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.code_uo = :code_uo')
+                    ->setParameter('code_uo', $data->getCodeUo());
+            }
+            if ($form["code_cpv"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.code_cpv = :code_cpv')
+                    ->setParameter('code_cpv', $data->getCodeCpv());
+            }
+
+            if ($form["code_formation"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.code_formation = :code_formation')
+                    ->setParameter('code_formation', $data->getCodeFormation());
+            }
+            if ($form["etat_achat"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.etat_achat = :etat_achat')
+                    ->setParameter('etat_achat',$etat);
+            }
+            if ($form["devis"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.devis = :devis')
+                    ->setParameter('devis', $devis);
+            }
+            if ($form["type_marche"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.type_marche = :type_marche')
+                    ->setParameter('type_marche', $type);
+            }
+            if ($form["montant_achat"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.montant_achat < :montant_achat2')
+                    ->andWhere('b.montant_achat > :achatmin')
+                    ->setParameter('achatmin', $achatmin)
+                    ->setParameter('montant_achat2', $data->getMontantAchat());
+            }
+            if ($form["date"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.date_saisie LIKE :date_saisie')
+                    ->setParameter('date_saisie', '%' . $form["date"]->getData() . '%');
+            }
+            if ($form["numero_ej"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.numero_ej LIKE :numero_ej')
+                    ->setParameter('numero_ej', '%' . $form["numero_ej"]->getData() . '%');
+            }
+            if ($form["debut_rec"]->getData()) {
+                $queryBuilder
+                    ->andWhere('b.date_saisie > :debut_rec')
+                    ->andWhere('b.date_saisie < :fin_rec')
+                    ->setParameter('debut_rec',  $form["debut_rec"]->getData()->format('Y-m-d') )
+                    ->setParameter('fin_rec',   $form["fin_rec"]->getData()->format('Y-m-d') );
+            }
+        // ... Votre logique de construction de la requête ici ...
+        $queryBuilder->orderBy('b.date_saisie', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+    
+        return $query;
+    }
     public function getPurchaseCountAndTotalAmount($type,$form)
     {   
         $data = $form->getData();
@@ -684,18 +880,18 @@ $stmt = $conn->prepare($sql);
         $sql = "
         SELECT
         source,
-        AVG(CASE WHEN MONTH(date_saisie) = 1 THEN difference END) AS Mois_1,
-        AVG(CASE WHEN MONTH(date_saisie) = 2 THEN difference END) AS Mois_2,
-        AVG(CASE WHEN MONTH(date_saisie) = 3 THEN difference END) AS Mois_3,
-        AVG(CASE WHEN MONTH(date_saisie) = 4 THEN difference END) AS Mois_4,
-        AVG(CASE WHEN MONTH(date_saisie) = 5 THEN difference END) AS Mois_5,
-        AVG(CASE WHEN MONTH(date_saisie) = 6 THEN difference END) AS Mois_6,
-        AVG(CASE WHEN MONTH(date_saisie) = 7 THEN difference END) AS Mois_7,
-        AVG(CASE WHEN MONTH(date_saisie) = 8 THEN difference END) AS Mois_8,
-        AVG(CASE WHEN MONTH(date_saisie) = 9 THEN difference END) AS Mois_9,
-        AVG(CASE WHEN MONTH(date_saisie) = 10 THEN difference END) AS Mois_10,
-        AVG(CASE WHEN MONTH(date_saisie) = 11 THEN difference END) AS Mois_11,
-        AVG(CASE WHEN MONTH(date_saisie) = 12 THEN difference END) AS Mois_12
+        ROUND(AVG(CASE WHEN MONTH(date_saisie) = 1 THEN difference END), 1) AS Mois_1,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 2 THEN difference END), 1) AS Mois_2,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 3 THEN difference END), 1) AS Mois_3,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 4 THEN difference END), 1) AS Mois_4,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 5 THEN difference END), 1) AS Mois_5,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 6 THEN difference END), 1) AS Mois_6,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 7 THEN difference END), 1) AS Mois_7,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 8 THEN difference END), 1) AS Mois_8,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 9 THEN difference END), 1) AS Mois_9,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 10 THEN difference END), 1) AS Mois_10,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 11 THEN difference END), 1) AS Mois_11,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 12 THEN difference END), 1) AS Mois_12
       FROM (
         SELECT
           'ANT GSBDD' AS source,
@@ -788,18 +984,18 @@ $stmt = $conn->prepare($sql);
         else{
             $sql = "SELECT
             source,
-            AVG(CASE WHEN MONTH(date_saisie) = 1 THEN difference END) AS Mois_1,
-            AVG(CASE WHEN MONTH(date_saisie) = 2 THEN difference END) AS Mois_2,
-            AVG(CASE WHEN MONTH(date_saisie) = 3 THEN difference END) AS Mois_3,
-            AVG(CASE WHEN MONTH(date_saisie) = 4 THEN difference END) AS Mois_4,
-            AVG(CASE WHEN MONTH(date_saisie) = 5 THEN difference END) AS Mois_5,
-            AVG(CASE WHEN MONTH(date_saisie) = 6 THEN difference END) AS Mois_6,
-            AVG(CASE WHEN MONTH(date_saisie) = 7 THEN difference END) AS Mois_7,
-            AVG(CASE WHEN MONTH(date_saisie) = 8 THEN difference END) AS Mois_8,
-            AVG(CASE WHEN MONTH(date_saisie) = 9 THEN difference END) AS Mois_9,
-            AVG(CASE WHEN MONTH(date_saisie) = 10 THEN difference END) AS Mois_10,
-            AVG(CASE WHEN MONTH(date_saisie) = 11 THEN difference END) AS Mois_11,
-            AVG(CASE WHEN MONTH(date_saisie) = 12 THEN difference END) AS Mois_12
+            ROUND(AVG(CASE WHEN MONTH(date_saisie) = 1 THEN difference END), 1) AS Mois_1,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 2 THEN difference END), 1) AS Mois_2,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 3 THEN difference END), 1) AS Mois_3,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 4 THEN difference END), 1) AS Mois_4,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 5 THEN difference END), 1) AS Mois_5,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 6 THEN difference END), 1) AS Mois_6,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 7 THEN difference END), 1) AS Mois_7,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 8 THEN difference END), 1) AS Mois_8,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 9 THEN difference END), 1) AS Mois_9,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 10 THEN difference END), 1) AS Mois_10,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 11 THEN difference END), 1) AS Mois_11,
+    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 12 THEN difference END), 1) AS Mois_12
           FROM (
             SELECT
               'ANT GSBDD' AS source,
@@ -933,64 +1129,34 @@ $stmt = $conn->prepare($sql);
 
             $sql = "SELECT
             source,
-            COUNT(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE NULL END) AS CountAntInf3,
-            COUNT(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE NULL END) AS CountAntSup3,
-            COUNT(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE NULL END) AS CountBudgetInf3,
-            COUNT(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE NULL END) AS CountBudgetSup3,
-            COUNT(CASE
-            WHEN source = 'APPRO' AND difference <= 7 THEN 1
-            ELSE NULL
-         END) AS CountApproInf7,
-        COUNT(CASE
-            WHEN source = 'APPRO' AND difference > 7 THEN 1
-            ELSE NULL
-        END) AS CountApproSup7,
-        COUNT(CASE
-            WHEN source = 'FIN' AND difference <= 7 THEN 1
-            ELSE NULL
-        END) AS CountFinInf7,
-        COUNT(CASE
-            WHEN source = 'FIN' AND difference > 7 THEN 1
-            ELSE NULL
-        END) AS CountFinSup7,
-        COUNT(CASE
-        WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1
-        ELSE NULL
-    END) AS CountChorusFormInf10,
-    COUNT(CASE
-        WHEN source = 'Chorus formul.' AND difference > 10 THEN 1
-        ELSE NULL
-    END) AS CountChorusFormSup10,
-        COUNT(CASE
-            WHEN source = 'PFAF' AND difference <= 14 THEN 1
-            ELSE NULL
-        END) AS CountPfafInf14,
-        COUNT(CASE
-            WHEN source = 'PFAF' AND difference > 14 THEN 1
-            ELSE NULL
-        END) AS CountPfafSup14,
-        (SUM(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_3_Jours_Ant,
-        (SUM(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_3_Jours_Ant,
-            (SUM(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_3_Jours_Budget,
-            (SUM(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_3_Jours_Budget,
-            (SUM(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_7_Jours_Appro,
-            (SUM(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_7_Jours_Appro,
-            (SUM(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_7_Jours_Fin,
-            (SUM(CASE WHEN source = 'FIN' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_7_Jours_Fin,
-            (SUM(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_10_Jours_Chorus,
-        (SUM(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_10_Jours_Chorus,
-            (SUM(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_14_Jours_Pfaf,
-            (SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_14_Jours_Pfaf,
-            COUNT(CASE
-            WHEN source IN ('Délai total') AND (difference <= 15) THEN 1
-            ELSE NULL
-        END) AS CountDelaiTotalInf15,
-        COUNT(CASE
-            WHEN source IN ('Délai total') AND (difference > 15) THEN 1
-            ELSE NULL
-        END) AS CountDelaiTotalSup15,
-            (SUM(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_15_Jours,
-            (SUM(CASE WHEN source IN ('Délai total') AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_15_Jours
+            ROUND(COUNT(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE NULL END), 2) AS CountAntInf3,
+    ROUND(COUNT(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE NULL END), 2) AS CountAntSup3,
+    ROUND(COUNT(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE NULL END), 2) AS CountBudgetInf3,
+    ROUND(COUNT(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE NULL END), 2) AS CountBudgetSup3,
+    ROUND(COUNT(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE NULL END), 2) AS CountApproInf7,
+    ROUND(COUNT(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE NULL END), 2) AS CountApproSup7,
+    ROUND(COUNT(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE NULL END), 2) AS CountFinInf7,
+    ROUND(COUNT(CASE WHEN source = 'FIN' AND difference > 7 THEN 1 ELSE NULL END), 2) AS CountFinSup7,
+    ROUND(COUNT(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE NULL END), 2) AS CountChorusFormInf10,
+    ROUND(COUNT(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE NULL END), 2) AS CountChorusFormSup10,
+    ROUND(COUNT(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE NULL END), 2) AS CountPfafInf14,
+    ROUND(COUNT(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE NULL END), 2) AS CountPfafSup14,
+    ROUND((SUM(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Ant,
+    ROUND((SUM(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Ant,
+    ROUND((SUM(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Budget,
+    ROUND((SUM(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Budget,
+    ROUND((SUM(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Appro,
+    ROUND((SUM(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Appro,
+    ROUND((SUM(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Fin,
+    ROUND((SUM(CASE WHEN source = 'FIN' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Fin,
+    ROUND((SUM(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_10_Jours_Chorus,
+    ROUND((SUM(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_10_Jours_Chorus,
+    ROUND((SUM(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_14_Jours_Pfaf,
+    ROUND((SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_14_Jours_Pfaf,
+    ROUND(COUNT(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE NULL END), 2) AS CountDelaiTotalInf15,
+    ROUND(COUNT(CASE WHEN source IN ('Délai total') AND (difference > 15) THEN 1 ELSE NULL END), 2) AS CountDelaiTotalSup15,
+    ROUND((SUM(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_15_Jours,
+    ROUND((SUM(CASE WHEN source IN ('Délai total') AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_15_Jours
                 FROM
                     (
                         SELECT
@@ -1106,73 +1272,34 @@ $stmt = $conn->prepare($sql);
                     else{
                         $sql="SELECT
                         source,
-                           COUNT(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE NULL END) AS CountAntInf3,
-                    COUNT(CASE
-                        WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1
-                        ELSE NULL
-                    END) AS CountAntSup3,
-                    COUNT(CASE
-                        WHEN source = 'BUDGET' AND difference <= 3 THEN 1
-                        ELSE NULL
-                    END) AS CountBudgetInf3,
-                    COUNT(CASE
-                        WHEN source = 'BUDGET' AND difference > 3 THEN 1
-                        ELSE NULL
-                    END) AS CountBudgetSup3,
-                    COUNT(CASE
-                        WHEN source = 'APPRO' AND difference <= 7 THEN 1
-                        ELSE NULL
-                    END) AS CountApproInf7,
-                    COUNT(CASE
-                        WHEN source = 'APPRO' AND difference > 7 THEN 1
-                        ELSE NULL
-                    END) AS CountApproSup7,
-                    COUNT(CASE
-                        WHEN source = 'FIN' AND difference <= 7 THEN 1
-                        ELSE NULL
-                    END) AS CountFinInf7,
-                    COUNT(CASE
-                        WHEN source = 'FIN' AND difference > 7 THEN 1
-                        ELSE NULL
-                    END) AS CountFinSup7,
-                    COUNT(CASE
-                    WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1
-                    ELSE NULL
-                END) AS CountChorusFormInf10,
-                COUNT(CASE
-                    WHEN source = 'Chorus formul.' AND difference > 10 THEN 1
-                    ELSE NULL
-                END) AS CountChorusFormSup10,
-                    COUNT(CASE
-                        WHEN source = 'PFAF' AND difference <= 14 THEN 1
-                        ELSE NULL
-                    END) AS CountPfafInf14,
-                    COUNT(CASE
-                        WHEN source = 'PFAF' AND difference > 14 THEN 1
-                        ELSE NULL
-                    END) AS CountPfafSup14,
-                        (SUM(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_3_Jours_Ant,
-                        (SUM(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_3_Jours_Ant,
-                        (SUM(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_3_Jours_Budget,
-                        (SUM(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_3_Jours_Budget,
-                        (SUM(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_7_Jours_Appro,
-                        (SUM(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_7_Jours_Appro,
-                        (SUM(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_7_Jours_Fin,
-                        (SUM(CASE WHEN source = 'FIN' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_7_Jours_Fin,
-                        (SUM(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_10_Jours_Chorus,
-                    (SUM(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_10_Jours_Chorus,
-                        (SUM(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_14_Jours_Pfaf,
-                        (SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_14_Jours_Pfaf,
-                        COUNT(CASE
-                        WHEN source IN ('Délai total') AND (difference <= 15) THEN 1
-                        ELSE NULL
-                    END) AS CountDelaiTotalInf15,
-                    COUNT(CASE
-                        WHEN source IN ('Délai total') AND (difference > 15) THEN 1
-                        ELSE NULL
-                    END) AS CountDelaiTotalSup15,
-                    (SUM(CASE WHEN source = 'Délai total' AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Inf_15_Jours,
-                    (SUM(CASE WHEN source = 'Délai total' AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100 AS Pourcentage_Delai_Sup_15_Jours
+                        COUNT(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE NULL END) AS CountAntInf3,
+    COUNT(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE NULL END) AS CountAntSup3,
+    COUNT(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE NULL END) AS CountBudgetInf3,
+    COUNT(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE NULL END) AS CountBudgetSup3,
+    COUNT(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE NULL END) AS CountApproInf7,
+    COUNT(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE NULL END) AS CountApproSup7,
+    COUNT(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE NULL END) AS CountFinInf7,
+    COUNT(CASE WHEN source = 'FIN' AND difference > 7 THEN 1 ELSE NULL END) AS CountFinSup7,
+    COUNT(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE NULL END) AS CountChorusFormInf10,
+    COUNT(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE NULL END) AS CountChorusFormSup10,
+    COUNT(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE NULL END) AS CountPfafInf14,
+    COUNT(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE NULL END) AS CountPfafSup14,
+    ROUND((SUM(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Ant,
+    ROUND((SUM(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Ant,
+    ROUND((SUM(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Budget,
+    ROUND((SUM(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Budget,
+    ROUND((SUM(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Appro,
+    ROUND((SUM(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Appro,
+    ROUND((SUM(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Fin,
+    ROUND((SUM(CASE WHEN source = 'FIN' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Fin,
+    ROUND((SUM(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_10_Jours_Chorus,
+    ROUND((SUM(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_10_Jours_Chorus,
+    ROUND((SUM(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_14_Jours_Pfaf,
+    ROUND((SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_14_Jours_Pfaf,
+    COUNT(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE NULL END) AS CountDelaiTotalInf15,
+    COUNT(CASE WHEN source IN ('Délai total') AND (difference > 15) THEN 1 ELSE NULL END) AS CountDelaiTotalSup15,
+    ROUND((SUM(CASE WHEN source = 'Délai total' AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_15_Jours,
+    ROUND((SUM(CASE WHEN source = 'Délai total' AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_15_Jours
                       FROM (
                         SELECT
                           'ANT GSBDD' AS source,
@@ -1260,7 +1387,7 @@ $stmt = $conn->prepare($sql);
             
                         SELECT
                         'Délai total' AS source,
-                        (DATEDIFF(date_validation, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_validation)) AS difference,
+                        (DATEDIFF(date_validation, date_sillage)) AS difference,
                         date_saisie
                     FROM achat
                     WHERE YEAR(date_saisie) = :year AND etat_achat = 2

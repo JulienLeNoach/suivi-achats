@@ -136,15 +136,15 @@ class StatisticVolValService  extends AbstractController
         }
 
         $sheet->setCellValue('D1', 'Volume'); 
-        $sheet->setCellValue('D2', 'MPPA'); 
-        $sheet->setCellValue('D3', 'MABC'); 
-        $sheet->setCellValue('D4', 'TOTAL'); 
+        $sheet->setCellValue('B2', 'MPPA'); 
+        $sheet->setCellValue('B3', 'MABC'); 
+        $sheet->setCellValue('B4', 'TOTAL'); 
         $sheet->setCellValue('Q1', 'TOTAL');
 
-        $sheet->setCellValue('D21', 'Valeur (HT)'); 
-        $sheet->setCellValue('D22', 'MPPA'); 
-        $sheet->setCellValue('D23', 'MABC'); 
-        $sheet->setCellValue('D24', 'TOTAL'); 
+        $sheet->setCellValue('B21', 'Valeur (HT)'); 
+        $sheet->setCellValue('B22', 'MPPA'); 
+        $sheet->setCellValue('B23', 'MABC'); 
+        $sheet->setCellValue('B24', 'TOTAL'); 
         $sheet->setCellValue('Q21', 'TOTAL'); 
 
         // Insérer les mois en première ligne
@@ -167,8 +167,8 @@ class StatisticVolValService  extends AbstractController
         $sheet->setCellValue('Q24', '=SUM(E24:P24)');
 
         $dataSeriesLabels = [
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$D$2', null, 12), 
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$D$3', null, 12), // Mois
+            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$2', null, 12), 
+            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$3', null, 12), // Mois
         ];
         $xAxisTickValues = [
             new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$E$1:$P$1', null, 12), // 'Valeurs'
@@ -199,7 +199,7 @@ class StatisticVolValService  extends AbstractController
                     $plotArea
                 );
                 
-                $chart->setTopLeftPosition('D5');
+                $chart->setTopLeftPosition('B5');
                 $chart->setBottomRightPosition('R20');
                 
                 //valeur
@@ -230,7 +230,7 @@ class StatisticVolValService  extends AbstractController
                         $legend2,
                         $plotArea2
                     );
-                    $chart2->setTopLeftPosition('D25');
+                    $chart2->setTopLeftPosition('B25');
                     $chart2->setBottomRightPosition('R40');
                 
 

@@ -107,8 +107,8 @@
                                             <a class="fr-nav__link" href="#" target="_self">Compte rendu annuel</a>
                                             {% endif %}
                                         </li>
-                                        <li>{% if is_granted ('ROLE_OPT_EXCTRACT_DONNEES') %}
-                                            <a class="fr-nav__link" href="#" target="_self">Extraction des données vers
+                                        <li>{% if is_granted ('ROLE_OPT_EXTRACT_DONNEES') %}
+                                            <a class="fr-nav__link" href="{{ path('data_extract') }}" target="_self">Extraction des données vers
                                                 EXCEL</a>{% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_CUMUL_CPV') %}
