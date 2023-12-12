@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UORepository::class)]
 class UO
@@ -16,6 +17,14 @@ class UO
     #[ORM\Column]
     private ?int $id = null;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Unit::class, inversedBy="achats")
+     * @ORM\JoinColumn(nullable=false, name="code_uo", referencedColumnName="code_uo")
+     * @Assert\Regex(
+     *     pattern="/^[a-zA-Z0-9]{1,5}$/",
+     *     message="Le code UO doit contenir au maximum 5 caractères alphanumériques."
+     * )
+     */
     #[ORM\Column(length: 255)]
     private ?string $code_uo = null;
 
@@ -121,6 +130,6 @@ class UO
 
     public function __toString()
     {
-        return $this->libelle_uo;
+        return $this->code_uo.' - '. $this->libelle_uo;
     }
 }

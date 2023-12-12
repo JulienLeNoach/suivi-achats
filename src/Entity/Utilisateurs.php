@@ -45,7 +45,7 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $administrateur_central = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $etat_utilisateur = null;
+    private ?bool $etat_utilisateur = null;
 
     #[ORM\OneToMany(mappedBy: 'utilisateurs', targetEntity: Achat::class)]
     private Collection $achats;
@@ -191,7 +191,6 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getEtatUtilisateur(): ?bool
     {
-        $etat_utilisateur = $this->etat_utilisateur;
 
         
 
@@ -292,7 +291,7 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
 
       public function __toString()
     {
-        return (string)$this->nom_connexion;
+        return  $this->trigram.' - '. $this->nom_utilisateur;
     }
 
       /**

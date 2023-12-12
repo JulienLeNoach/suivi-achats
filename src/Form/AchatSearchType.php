@@ -12,13 +12,14 @@ use App\Form\FormationsAutocompleteField;
 use App\Form\FournisseursAutocompleteField;
 use App\Form\UtilisateursAutocompleteField;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\RadioType;
 
 class AchatSearchType extends AbstractType
 {           
@@ -38,20 +39,19 @@ class AchatSearchType extends AbstractType
             'required' => false,
             'label' => false,
             'attr' => ['class' => 'fr-input'],
-            'label_attr' => ['class' => 'fr-label']
+            'label_attr' => ['class' => 'fr-label'],
+            'constraints' => [
+                new Length(['max' => 10, 'maxMessage' => "Le numéro chrono doit contenir au maximum 12 caractères."]),
+            ],
         ])
         ->add('id_demande_achat', IntegerType::class, [
             'required' => false,
             'label' => false,
             'attr' => ['class' => 'fr-input'],
-            'label_attr' => ['class' => 'fr-label']
+            'label_attr' => ['class' => 'fr-label'],
+
         ])
-            ->add('objet_achat', TextType::class, [
-                'required' => false,
-                'label' => false,
-                'attr' => ['class' => 'fr-input'],
-                'label_attr' => ['class' => 'fr-label']
-            ])
+
             ->add('etat_achat', ChoiceType::class, [
                 'choices'  => [
                     'En cours' => "EC",
@@ -96,14 +96,28 @@ class AchatSearchType extends AbstractType
                 'label_attr' => ['class' => 'fr-label']
 
             ])
-            ->add('date', IntegerType::class, [
+            ->add('place', ChoiceType::class, [
+                'choices'  => [
+                    'Oui' => 'Oui',
+                    'Non' => 'Non'
+                ],
+                'required' => false,
+                'placeholder' => 'Tous',
+                'expanded' => true,
+                'label' => "Marché avec publicité ?",
+                'row_attr' => ['class' => 'radio-search'],
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
+
+            ])
+            ->add('date', ChoiceType::class, [
                 'required' => false,
                 'label' => false,
                 'mapped' => false,
-                'attr' => ['class' => 'fr-input'],  
-                'label_attr' => ['class' => 'fr-label']
-
-
+                'attr' => ['class' => 'fr-input'],
+                'label_attr' => ['class' => 'fr-label'],
+                'choices' => $this->getYearChoices(),
+                'placeholder' => 'Choisir une année',
             ])
             ->add('num_siret', FournisseursAutocompleteField::class, [  
                 'required' => false,
@@ -116,7 +130,10 @@ class AchatSearchType extends AbstractType
                 'label' => false,
                 'mapped' => false,
                 'attr' => ['class' => 'fr-input'],  
-                'label_attr' => ['class' => 'fr-label']
+                'label_attr' => ['class' => 'fr-label'],
+                'constraints' => [
+                    new Length(['max' => 5, 'maxMessage' => 'Le code postal doit contenir au maximum 5 caractères.']),
+                ],
 
             ])
             ->add('utilisateurs', UtilisateursAutocompleteField::class, [  
@@ -151,7 +168,8 @@ class AchatSearchType extends AbstractType
                 'required' => false,
                 'label' => false,
                 'attr' => ['class' => 'fr-input'],  
-                'label_attr' => ['class' => 'fr-label']
+                'label_attr' => ['class' => 'fr-label'],
+
 
             ])
             ->add('montant_achat_min', IntegerType::class, [
@@ -159,7 +177,10 @@ class AchatSearchType extends AbstractType
                 'label' => false,
                 'mapped' => false,
                 'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']
+                'label_attr' => ['class' => 'fr-label'],
+                'constraints' => [
+                    new Length(['max' => 10, 'maxMessage' => 'Le montant achat minimum doit contenir au maximum 10 caractères.']),
+                ],
             ])
             ->add('debut_rec', DateType::class, [
                 'required' => false,
@@ -181,7 +202,24 @@ class AchatSearchType extends AbstractType
                 'required' => false,
                 'label' => false,
                 'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']
+                'label_attr' => ['class' => 'fr-label'],
+
+            ])
+            ->add('tax', ChoiceType::class, [
+                'choices'  => [
+                    'HT' => "ht",
+                    'TTC' => "ttc",
+                ],
+                'required' => false,
+                'expanded' => true,
+                'label'=>false,
+                'row_attr' => ['class' => 'radio-search'],
+                'attr' => ['class' => ''], 
+                'label_attr' => ['class' => 'fr-label'],
+                'placeholder' => false,
+                'mapped'=>false,
+                'data'  => 'ht',
+    
             ])
             ->add('recherche', SubmitType::class, [
                 'attr' => [
@@ -205,5 +243,18 @@ $resolver->setDefaults([
         // 'cpv' => [],
     ]);
     $resolver->setAllowedTypes('allAchats', 'array');
+    }
+
+    private function getYearChoices()
+    {
+        $currentYear = date('Y');
+        $endYear = $currentYear - 20; // par exemple, 10 ans en arrière
+        $years = [];
+    
+        for ($year = $currentYear; $year >= $endYear; $year--) {
+            $years[$year] = $year;
+        }
+    
+        return $years;
     }
 }

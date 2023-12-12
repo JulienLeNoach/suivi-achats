@@ -100,7 +100,6 @@ a {
   height: 400px;
   width: 100%;
   /* Hauteur du conteneur */
-  overflow-y: scroll;
   // border-collapse: collapse;
 
   /* Ajouter une barre de défilement verticale */
@@ -109,7 +108,15 @@ a {
   }
 
 }
+#achat-list{
+  overflow-y: scroll;
+  height: 300px;
 
+}
+.fr-pagination__link--current{
+  background-color: #000091 !important;
+  color:white!important;
+}
 table {
   width: 100%;
   border-collapse: collapse;
@@ -119,8 +126,17 @@ table {
     background-color: #000091; /* Couleur de fond de l'en-tête */
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Ombre optionnelle pour le thead */
 }
-}
 
+}
+#tab-result th:first-child {
+  width: 10% !important;
+
+}
+#tab-result {
+  .pagination {
+      display: none !important;
+  }
+}
 thead {
   background-color: #000091;
   // position: sticky;
@@ -295,7 +311,9 @@ td {
 height:80px;
 width:50%
 }
-
+// ul li {
+//   color: red; /* Changez la couleur du texte en rouge */
+// }
 .form-container {
 
   border: solid 0 #010202;

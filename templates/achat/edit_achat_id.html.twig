@@ -16,15 +16,24 @@
 
         <div class="input-grp" style="flex-basis:33%">
             {{ form_row(form.code_service) }}
+            {{ form_row(form.numero_achat) }}
             {{ form_row(form.objet_achat) }}
             {{ form_row(form.observations) }}
-            {{ form_row(form.montant_achat) }}
             <div class="d-flex">
                 <div class="w-50 me-3">
-                {{ form_row(form.date_sillage) }}
+                    {{ form_row(form.montant_achat) }}
                 </div>
                 <div class="w-50">
-                {{ form_row(form.date_commande_chorus) }}
+                    {{ form_row(form.date_valid_inter) }}
+
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="w-50 me-3">
+                    {{ form_row(form.date_sillage) }}
+                </div>
+                <div class="w-50">
+                    {{ form_row(form.date_commande_chorus) }}
                 </div>
             </div>
         </div>
@@ -32,7 +41,7 @@
 
 
         <div class="input-grp" style="flex-basis:33%">
-            
+
             {{ form_row(form.code_formation) }}
             {{ form_row(form.num_siret) }}
             {{ form_row(form.code_cpv) }}
@@ -44,12 +53,11 @@
             {{ form_row(form.type_marche) }}
             {{ form_row(form.place) }}
             {{ form_row(form.devis) }}
-            
+
         </div>
 
         <div class="sub-btn d-flex justify-content-between align-items-centers">
             <button class="fr-btn">{{ button_label|default('Mettre à jour') }}</button>
-            {{ form_row(form.return) }}
         </div>
 
         {{ form_end(form) }}

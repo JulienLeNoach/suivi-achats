@@ -14,24 +14,16 @@ class ParametersType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('four1', IntegerType::class, [  
-                'required' => true,
-                'label'=>'Valeur n°1',
-                'attr' => ['class' => 'fr-input'],  
-                'label_attr' => ['class' => 'fr-label'],
-                'row_attr' => ['class' => 'p-3'],
-
-            ])
             ->add('four2', IntegerType::class, [  
                 'required' => true,
-                'label'=>'Valeur n°2',
+                'label'=>'Valeur n°1',
                 'attr' => ['class' => 'fr-input'],  
                 'label_attr' => ['class' => 'fr-label'],
                 'row_attr' => ['class' => 'p-3'],
             ])
             ->add('four3', IntegerType::class, [  
                 'required' => true,
-                'label'=>'Valeur n°3',
+                'label'=>'Valeur n°2',
                 'attr' => ['class' => 'fr-input'],  
                 'label_attr' => ['class' => 'fr-label'],
                 'row_attr' => ['class' => 'p-3'],
@@ -40,24 +32,18 @@ class ParametersType extends AbstractType
             ])
             ->add('four4', IntegerType::class, [  
                 'required' => true,
-                'label'=>'Valeur n°4',
+                'label'=>'Valeur n°3',
                 'attr' => ['class' => 'fr-input'],  
                 'label_attr' => ['class' => 'fr-label'],
                 'row_attr' => ['class' => 'p-3'],
             ])
             ->add('Valider', SubmitType::class, [
                 'attr' => [
-                    'class' => 'fr-btn me-5'
+                    'class' => 'fr-btn '
                 ],
                 
             ])
-            ->add('return', SubmitType::class, [
-                'label' => "Retour à la liste d'achats",
-                'attr' => [
-                    'class' => 'fr-btn',
-                    'onclick' => 'history.back();return false;'
-                ],
-            ]);
+
         ;
     }
 

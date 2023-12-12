@@ -31,8 +31,16 @@ class ServicesCrudController extends AbstractCrudController
     }
     public function configureFields(string $pageName): iterable
     {
+
+        if ($pageName === Crud::PAGE_NEW) {
+            return [
+                IdField::new('code_service'),
+                TextField::new('nom_service')->setLabel('Nom du service'),
+            ];
+
+        }
         return [
-            IdField::new('code_service'),
+            IdField::new('code_service')->onlyOnIndex(),
             TextField::new('nom_service')->setLabel('Nom du service'),
         ];
     }

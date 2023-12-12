@@ -24,6 +24,10 @@
             <input type="text" id="sir" class="fr-input" value="{{result_achat.numSiret}}" disabled>
         </div>
         <div class="d-flex flex-column">
+            <label for="id_demande_achat" class="fr-label">Identifiant de la demande d'achat</label>
+            <input type="text" id="id_demande_achat" class="fr-input" value="{{result_achat.idDemandeAchat}}" disabled>
+        </div>
+        <div class="d-flex flex-column">
             <label for="cpv" class="fr-label">CPV</label>
             <input type="text" id="cpv" class="fr-input" value="{{result_achat.codeCPV}}" disabled>
         </div>
@@ -91,7 +95,6 @@
 
 
 </form>
-<button type="button" class="fr-btn" onclick="history.back();">Retour à la liste d'achats</button>
             </div>
             </div>
 

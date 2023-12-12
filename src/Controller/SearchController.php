@@ -2,27 +2,22 @@
 
 namespace App\Controller;
 
-use Dompdf\Dompdf;
 use App\Entity\CPV;
 use App\Entity\Achat;
-use App\Form\EditAchatType;
 use App\Form\ValidType;
 use App\Form\AddAchatType;
-use App\Form\ImprimerType;
+use App\Form\EditAchatType;
 use App\Factory\AchatFactory;
 use App\Form\AchatSearchType;
-use App\Service\StatisticVolValService;
 use App\Repository\AchatRepository;
+use App\Service\StatisticVolValService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Knp\Component\Pager\Pagination\SlidingPaginationInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -48,34 +43,48 @@ class SearchController extends AbstractController
     // avec les données du formulaire et les résultats de la recherche.
 
     #[Route('/search', name: 'app_search')]
-    public function index(Request $request,PaginatorInterface $paginator,SessionInterface $session): Response
+    public function index(Request $request): Response
     {
-
-
-
-        $form = $this->createForm(AchatSearchType::class, null, [
-            // 'allAchats' => $allAchats,
-        ]);
-
+        $form = $this->createForm(AchatSearchType::class);
         $form->handleRequest($request);
+    
+        $limit = 7; // Limite pour le nombre d'achats à charger
+        $offset = $request->query->getInt('offset', 0); // Décalage pour le chargement infini
+        $tax = $form["tax"]->getData(); // Récupérer la taxe si elle est définie
 
-        $pagination = null; // Initialiser $pagination à null
-        if($form->isSubmitted() && $form->isValid()){
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $query = $this->entityManager->getRepository(Achat::class)->searchAchat($form);
-            $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
-            $currentUrl = $request->getUri();
-            $session->set('current_url', $currentUrl);
+    
+            // Récupérer les achats avec la limite et le décalage
+            $achats = $query->setMaxResults($limit)->setFirstResult($offset)->getResult();
+    
+            if ($tax == "ttc") {
+                foreach ($achats as $achat) {
+                    $achat->setMontantAchat($achat->getMontantAchat() * ($achat->getTvaIdent()->getTvaTaux()/100) + $achat->getMontantAchat());
+                }
+            }
+            // Gérer la réponse pour les requêtes AJAX
+            if ($request->isXmlHttpRequest()) {
+                dd("test");
+                return $this->render('search/partial_results.html.twig', [
+                    'achats' => $achats,
+                ]);
+            }
+    
+            // Réponse pour la recherche initiale
+            return $this->render('search/index.html.twig', [
+                'form' => $form->createView(),
+                'achats' => $achats,
+                'tax' => $tax,
+            ]);
         }
-
-
+    
+        // Réponse pour une requête GET initiale (sans soumission de formulaire)
         return $this->render('search/index.html.twig', [
             'form' => $form->createView(),
-            'pagination' => $pagination,
-            // 'allAchats' => $allAchats,
         ]);
     }
-
+    
 // 
 #[Route('/result_achat/{id}', name: 'achat_result')]
 public function show(Request $request,$id,SessionInterface $session): Response
@@ -103,18 +112,13 @@ public function add(Request $request,SessionInterface $session): Response
 
     if ($form->isSubmitted() && $form->isValid()) {
 
-        if ($form->get('Valider')->isClicked()) {
 
         $query = $this->entityManager->getRepository(Achat::class)->add($achat);
         $this->addFlash('success', 'Nouvel achat n° ' . $achat->getId() . " sauvegardé");
         return $this->redirect("/search");
 
 
-    }if ($form->get('return')->isClicked()) {
-
-                return $this->redirect($currentUrl);
-        
-    }
+    
 }
     return $this->render('achat/addAchat.html.twig', [
         'form' => $form->createView(),
@@ -159,7 +163,7 @@ public function cancel($id, Request $request,SessionInterface $session): Respons
     $currentUrl = $session->get('current_url');
     $query = $this->entityManager->getRepository(Achat::class)->cancel($id);
 
-    $this->addFlash('success', 'Achat n° ' . $id . "annulé");
+    $this->addFlash('success', 'Achat n° ' . $id . " annulé");
 
     return $this->redirect($currentUrl);
 }
@@ -186,12 +190,7 @@ public function edit(Request $request, $id, Achat $achat,  AchatRepository $acha
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-        if ($form->get('return')->isClicked()) {
-            $currentUrl = $session->get('current_url');
-
-                return $this->redirect($currentUrl);
         
-    }
         $achatRepository->edit($achat, true);
 
         $this->addFlash('success', 'Achat n° ' . $id . " modifié");

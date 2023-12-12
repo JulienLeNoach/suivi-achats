@@ -29,6 +29,7 @@ class FormationsAutocompleteField extends AbstractType
             'query_builder' => function(FormationsRepository $formationsRepository) {
                 $user = $this->security->getUser();
                 return $formationsRepository->createQueryBuilder('u')->andWhere('u.code_service = :val')
+                ->andWhere('u.etat_formation = 1')
                 ->setParameter('val', $user->getCodeService()->getId());
             },
             //'security' => 'ROLE_SOMETHING',

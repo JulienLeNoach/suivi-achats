@@ -380,7 +380,7 @@ class Services
 
     public function __toString()
     {
-        return $this->nom_service;
+        return $this->code_service.' - '. $this->nom_service;
     }
 
  

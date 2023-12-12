@@ -24,11 +24,13 @@ class UtilisateursAutocompleteField extends AbstractType
         $resolver->setDefaults([
             'placeholder' => 'Sélectionnez un utilisateur', 
             'class' => Utilisateurs::class,
+            'searchable_fields' => ['nom_utilisateur'],
             //'choice_label' => 'name',
 
             'query_builder' => function(UtilisateursRepository $utilisateursRepository) {
                 $user = $this->security->getUser();
                 return $utilisateursRepository->createQueryBuilder('u')->andWhere('u.code_service = :val')
+                ->andWhere('u.etat_utilisateur = 1')
                 ->setParameter('val', $user->getCodeService()->getId());
             },
             //'security' => 'ROLE_SOMETHING',

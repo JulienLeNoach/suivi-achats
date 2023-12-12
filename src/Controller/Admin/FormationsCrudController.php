@@ -35,9 +35,27 @@ class FormationsCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            TextField::new('libelle_formation')->setLabel('Libellé de la formation'),
-        ];
+        if ($pageName === Crud::PAGE_NEW) {
+
+            $fields[] = TextField::new('code_formation')->setLabel('Code de la formation');
+            $fields[] = TextField::new('libelle_formation')->setLabel('Libellé de la formation');
+            $fields[] =BooleanField::new('etat_formation')->setLabel('Etat de la formation');
+        }
+        if ($pageName === Crud::PAGE_EDIT) {
+
+            $fields[] =TextField::new('code_formation')->setLabel('Code de la formation')->onlyOnIndex();
+            $fields[] =TextField::new('libelle_formation')->setLabel('Libellé de la formation');
+            $fields[] =BooleanField::new('etat_formation')->setLabel('Etat de la formation');
+        
+        }
+        if ($pageName === Crud::PAGE_INDEX) {
+
+            $fields[] =TextField::new('code_formation')->setLabel('Code de la formation')->onlyOnIndex();
+            $fields[] =TextField::new('libelle_formation')->setLabel('Libellé de la formation');
+        
+        }
+        return $fields;
+
     }
     
 }

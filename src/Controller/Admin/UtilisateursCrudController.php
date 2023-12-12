@@ -48,16 +48,37 @@ class UtilisateursCrudController extends AbstractCrudController
     }
     public function configureFields(string $pageName): iterable
     {
-        $fields =  [
-            AssociationField::new('code_service')->setLabel('Service'),
+        if ($pageName === Crud::PAGE_INDEX) {
+
+        return   [
+            TextField::new('code_service')->setLabel('Service'),
             TextField::new('nom_utilisateur'),
             TextField::new('prenom_utilisateur'),
             TextField::new('nom_connexion'),
             TextField::new('trigram'),
         ];
+    }
+    if ($pageName === Crud::PAGE_EDIT) {
 
-    
-        return $fields;
+        return   [
+            BooleanField::new('etat_utilisateur'),
+            TextField::new('code_service')->setLabel('Service'),
+            TextField::new('nom_utilisateur'),
+            TextField::new('prenom_utilisateur'),
+            TextField::new('nom_connexion'),
+            TextField::new('trigram'),
+        ];
+    }        if ($pageName === Crud::PAGE_NEW) {
+
+        return   [
+            BooleanField::new('etat_utilisateur'),
+            TextField::new('code_service')->setLabel('Service'),
+            TextField::new('nom_utilisateur'),
+            TextField::new('prenom_utilisateur'),
+            TextField::new('nom_connexion'),
+            TextField::new('trigram'),
+        ];
+    }
     }
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {

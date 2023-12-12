@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class EditAchatType extends AbstractType
 {
@@ -38,7 +39,13 @@ class EditAchatType extends AbstractType
             'attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label']])
 
+            ->add('numero_achat', TextType::class, [
+                'required' => false,
+                'label' => 'N°Chrono',
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
 
+            ])
             ->add('code_formation', FormationsAutocompleteField::class, [
                 'required' => false,
                 'label' => 'Formation',
@@ -56,6 +63,14 @@ class EditAchatType extends AbstractType
             ->add('date_commande_chorus', DateType::class, [
                 'required' => false,
                 'label' => 'Date commande CF',
+                'widget' => 'single_text',
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
+
+            ])
+            ->add('date_valid_inter', DateType::class, [
+                'required' => false,
+                'label' => 'Date de validation par le RUO',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'fr-input'], 
                 'label_attr' => ['class' => 'fr-label']
@@ -81,8 +96,8 @@ class EditAchatType extends AbstractType
                 'attr' => ['class' => 'fr-input'], 
 
             ])
-            ->add('montant_achat', TextType::class, [
-                'required' => false,
+            ->add('montant_achat', IntegerType::class, [
+                'required' => true,
                 'label' => "Montant de l'achat",
                 'attr' => ['class' => 'fr-input'], 
                 'label_attr' => ['class' => 'fr-label']
@@ -132,7 +147,7 @@ class EditAchatType extends AbstractType
                 'class' => TVA::class,
                 'label' => 'TVA',
                 'autocomplete' => true,
-
+                'required' => true,
             ])
 
             ->add('code_uo', UOAutocompleteField::class, [
@@ -140,13 +155,7 @@ class EditAchatType extends AbstractType
                 'label' => 'Unité organique',
 
             ])
-            ->add('return', SubmitType::class, [
-                'label' => "Retour à la liste d'achats",
-                'attr' => [
-                    'class' => 'fr-btn',
-                    'onclick' => 'history.back();return false;'
-                                ],
-            ]);
+;
     }
     public function configureOptions(OptionsResolver $resolver): void
     {

@@ -61,6 +61,17 @@ function (_Controller) {
   }, {
     key: "attachEventListeners",
     value: function attachEventListeners() {
+      var table = document.querySelector('table');
+      var footer = document.querySelector('footer');
+      var noResult = document.querySelector('#noResult'); // Vérifier si la table existe
+
+      table ? footer.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
+      }) : noResult ? noResult.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
+      }) : null;
       var rows = document.querySelectorAll('.clickable-row');
       var btnElements = document.querySelectorAll('#btn');
       rows.forEach(function (row) {
@@ -76,7 +87,7 @@ function (_Controller) {
           var selectedRow = document.querySelector('.selected');
 
           if (etatAchatText == 'Validé') {
-            document.querySelectorAll('.valid, .reint, .edit').forEach(function (el) {
+            document.querySelectorAll('.valid, .reint').forEach(function (el) {
               return el.setAttribute('disabled', 'disabled');
             });
           } else if (etatAchatText == 'Encours') {
@@ -92,10 +103,19 @@ function (_Controller) {
           row.classList.add('selected');
           btnElements.forEach(function (btn) {
             btn.addEventListener('click', function () {
+              // Récupérer le lien et l'ID
               var link = btn.getAttribute('data-link');
-              var detailLink = document.getElementById('detail');
-              var id = document.querySelector('.selected').getAttribute('data-id');
-              detailLink.setAttribute('href', '/' + link + '/' + id);
+              var action = btn.getAttribute('data-action');
+              var id = document.querySelector('.selected').getAttribute('data-id'); // Construire le message d'alerte
+
+              var confirmationMessage = "Voulez-vous vraiment ".concat(action, " cet achat?"); // Afficher l'alerte et rediriger si l'utilisateur confirme
+
+              if (confirm(confirmationMessage)) {
+                var detailLink = document.getElementById('detail');
+                detailLink.setAttribute('href', '/' + link + '/' + id); // Rediriger
+
+                window.location.href = detailLink.getAttribute('href');
+              }
             });
           });
         });

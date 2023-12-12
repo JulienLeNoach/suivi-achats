@@ -15,11 +15,11 @@
             <a href="{{path('ajout_achat')}}" class="text-center">Nouvel achat</a>
             {% endif %}
         </button>
-            {% for flash_message in app.session.flashbag.get('valid') %}
-    <div class="alert alert-success">
-        {{ flash_message }}
-    </div>
-    {% endfor %}
+        {% for flash_message in app.session.flashbag.get('valid') %}
+        <div class="alert alert-success">
+            {{ flash_message }}
+        </div>
+        {% endfor %}
     </div>
     <!-- Création du formulaire de recherche d'achat -->
     <!-- Le formulaire de recherche est créé à l'aide de la fonction form_start(), 
@@ -45,16 +45,14 @@
                     {{ form_row(form.date) }}
                 </div>
             </div>
-            <label for="achat_search_objet_achat">Objet de l'achat</label>
-            {{ form_row(form.objet_achat) }}
             <div class="d-flex">
                 <div class="me-3 w-50">
-                <label for="achat_search_id_demande_achat">ID de la demande d'achat</label>
-                {{ form_row(form.id_demande_achat)}}
+                    <label for="achat_search_id_demande_achat">ID de la demande d'achat</label>
+                    {{ form_row(form.id_demande_achat)}}
                 </div>
                 <div class="me-3 w-50">
-                <label for="achat_search_zipcode">Code postal</label>
-                {{ form_row(form.zipcode) }}
+                    <label for="achat_search_zipcode">Code postal</label>
+                    {{ form_row(form.zipcode) }}
                 </div>
             </div>
             <div class="montant d-flex">
@@ -69,18 +67,6 @@
             </div>
             <label for="achat_search_numero_ej">N° engagement juridique</label>
             {{ form_row(form.numero_ej)}}
-        </div>
-        <div class="input-grp" style="flex-basis:33%;">
-            <label for="achat_search_code_uo_autocomplete-ts-control">Unité organique</label>
-            {{ form_row(form.code_uo) }}
-            <label for="achat_search_code_cpv_autocomplete-ts-control">CPV</label>
-            {{ form_row(form.code_cpv) }}
-            <label for="achat_search_code_formation_autocomplete-ts-control">Formation</label>
-            {{ form_row(form.code_formation) }}
-            <label for="achat_search_utilisateurs_autocomplete-ts-control">Utilisateurs</label>
-            {{ form_row(form.utilisateurs) }}
-            <label for="achat_search_num_siret_autocomplete-ts-control">N° SIRET</label>
-            {{ form_row(form.num_siret) }}
             <div class="rec d-flex ">
                 <div class="recdebut me-3 w-50">
                     <label for="achat_search_debut_rec">Date de début d'enregistrement</label>
@@ -93,11 +79,32 @@
             </div>
         </div>
         <div class="input-grp" style="flex-basis:33%;">
+            <label for="achat_search_code_uo_autocomplete-ts-control">Unité organique</label>
+            {{ form_row(form.code_uo) }}
+            <label for="achat_search_code_cpv_autocomplete-ts-control">CPV</label>
+            {{ form_row(form.code_cpv) }}
+            <label for="achat_search_code_formation_autocomplete-ts-control">Formation</label>
+            {{ form_row(form.code_formation) }}
+            <label for="achat_search_utilisateurs_autocomplete-ts-control">Utilisateurs</label>
+            {{ form_row(form.utilisateurs) }}
+            <label for="achat_search_num_siret_autocomplete-ts-control">N° SIRET</label>
+            {{ form_row(form.num_siret) }}
+
+        </div>
+        <div class="input-grp" style="flex-basis:33%;">
             {{ form_row(form.etat_achat) }}
             {{ form_row(form.devis)}}
-            {{ form_row(form.type_marche)}}
+            {{ form_row(form.place)}}
+            <div class="d-flex">
 
+                <div class="type_marche w-75">
+                    {{ form_row(form.type_marche)}}
+                </div>
+                <div class="pub me-3 w-25">
+                    {{ form_row(form.tax)}}
 
+                </div>
+            </div>
         </div>
         {{ form_row(form.recherche)}}
         {{ form_end(form) }}
@@ -114,12 +121,14 @@
         {{ flash_message }}
     </div>
     {% endfor %}
-    {% if pagination is not empty %}
+    {# {{dump(pagination)}} #}
+    {% if achats is  defined  %}
 
-    {# {% if app.request.method == 'POST' %} #}
-    {% if pagination | length == 0 %}
-    <h4>Aucun résultat pour votre recherche.</h4>
+    {% if app.request.method == 'GET' %}
+    {% if achats | length == null %}
+    <h4 id="noResult">Aucun résultat pour votre recherche.</h4>
     {% else %}
+
     <div class='align-items-center d-flex mt-3 bandeau-form-search'>
 
         <h5 class="mt-4 ms-3 blueF">Liste des achats</h5>
@@ -132,32 +141,39 @@
         <p class="mt-4 ms-5 blueF">Sélectionner un achat pour appliquer une action</p>
 
         <a id="detail" class="form-btn-search ms-auto">
-            <button class="fr-btn result" id="btn" data-link="result_achat">Détail de l'achat</button>
-            <button class="fr-btn valid" id="btn" data-link="valid_achat">Valider un achat</button>
-            <button class="fr-btn annul" id="btn" data-link="annul_achat">Annuler un achat</button>
-            <button class="fr-btn reint" id="btn" data-link="reint_achat">Réintégrer un achat</button>
-            <button class="fr-btn edit" id="btn" data-link="edit_achat">Modifier un achat</button>
+            <button class="fr-btn result" id="btn" data-link="result_achat" data-action="visualiser">Détail de
+                l'achat</button>
+            <button class="fr-btn valid" id="btn" data-link="valid_achat" data-action="valider">Valider un
+                achat</button>
+            <button class="fr-btn annul" id="btn" data-link="annul_achat" data-action="annuler">Annuler un
+                achat</button>
+            <button class="fr-btn reint" id="btn" data-link="reint_achat" data-action="reintégrer">Réintégrer un
+                achat</button>
+            <button class="fr-btn edit" id="btn" data-link="edit_achat" data-action="modifier">Modifier un
+                achat</button>
         </a>
     </div>
     <div class="result-search-container">
         <div class="table-container search">
             <div id="achat-list">
-                <table border="1" id="tab-result">
+                <table border="1" id="tab-result" class="mb-5">
                     <thead>
                         <tr>
                             <th>N°Chrono</th>
                             <th>Date de saisie</th>
                             <th>Utilisateurs</th>
                             <th>Formation</th>
-                            <th>Objet</th>
+                            <th>Objet de l'achat</th>
                             <th>Fournisseur</th>
+                            {% if tax == 'ttc' %}
+                            <th>Montant TTC</th>
+                            {% else %}
                             <th>Montant HT</th>
+                            {% endif %}
                             <th>Etat</th>
                         </tr>
                     </thead>
-                    <div id="achat-list-ajax">
                         {{ include('search/partial_results.html.twig') }}
-                    </div>
 
                 </table>
 
@@ -165,18 +181,38 @@
 
 
         </div>
-        <div class="pagination ">
-            {{ knp_pagination_render(pagination ,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig') }}
-        </div>
     </div>
 </div>
 
 {% endif %}
-{# {% endif %} #}
+
+{% endif %}
+
 {% endif %}
 
 
 
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let offset = 5; // Commencer après les premiers résultats initialement chargés
+    const limit = 5;
+    const tbody = document.getElementById('achat-list-tbody');
+    const tableContainer = document.getElementById('achat-list');
 
+    tableContainer.addEventListener('scroll', function() {
+        if (tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight) {
+            fetch(`/search?offset=${offset}&limit=${limit}`, { 
+                headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+            })
+            .then(response => response.text())
+            .then(html => {
+                tbody.insertAdjacentHTML('beforeend', html);
+                offset += limit; // Augmenter l'offset pour la prochaine requête
+            })
+            .catch(error => console.error('Erreur:', error));
+        }
+    });
+});
+</script>
 {% endblock %}

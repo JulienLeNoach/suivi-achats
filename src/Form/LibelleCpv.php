@@ -32,6 +32,7 @@ class LibelleCpv extends AbstractType
                 $user = $this->security->getUser();
 
                 return $cPVRepository->createQueryBuilder('u')->andWhere('u.code_service = :val')
+                ->andWhere('u.etat_cpv = 1')
                 ->setParameter('val', $user->getCodeService()->getId());
             },
             //'security' => 'ROLE_SOMETHING',

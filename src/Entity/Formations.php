@@ -23,7 +23,7 @@ class Formations
     private ?string $libelle_formation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $etat_formation = null;
+    private ?bool $etat_formation = null;
 
     #[ORM\OneToMany(mappedBy: 'code_formation', targetEntity: Achat::class)]
     private Collection $achats;
@@ -65,12 +65,12 @@ class Formations
         return $this;
     }
 
-    public function getEtatFormation(): ?string
+    public function getEtatFormation(): ?bool
     {
         return $this->etat_formation;
     }
 
-    public function setEtatFormation(?string $etat_formation): self
+    public function setEtatFormation(?bool $etat_formation): self
     {
         $this->etat_formation = $etat_formation;
 
@@ -121,6 +121,6 @@ class Formations
 
     public function __toString()
     {
-        return $this->libelle_formation ;
+        return $this->code_formation . ' - '. $this->libelle_formation ;
     }
 }

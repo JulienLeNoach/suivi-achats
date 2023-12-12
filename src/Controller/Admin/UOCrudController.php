@@ -32,10 +32,25 @@ class UOCrudController extends AbstractCrudController
     
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('code_uo')->setLabel("Code de l'unité organique"),
-            TextField::new('libelle_uo')->setLabel("Libellé de l'unité organique"),
-        ];
+
+    
+        if ($pageName === Crud::PAGE_NEW) {
+            // Add 'code_uo' field only on the 'New' page
+            $fields[] = IdField::new('code_uo')->setLabel("Code de l'unité organique");
+            $fields[] =  TextField::new('libelle_uo')->setLabel("Libellé de l'unité organique");
+                }
+        if ($pageName === Crud::PAGE_INDEX) {
+            // Add 'code_uo' field only on the 'New' page
+            $fields[] = IdField::new('code_uo')->setLabel("Code de l'unité organique");
+            $fields[] =  TextField::new('libelle_uo')->setLabel("Libellé de l'unité organique");
+
+        }
+        if ($pageName === Crud::PAGE_EDIT) {
+            // Add 'code_uo' field only on the 'New' page
+            $fields[] =  TextField::new('libelle_uo')->setLabel("Libellé de l'unité organique");
+
+        }
+        return $fields;
     }
     
 }

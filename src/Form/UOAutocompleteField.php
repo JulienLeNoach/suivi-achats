@@ -29,6 +29,7 @@ class UOAutocompleteField extends AbstractType
             'query_builder' => function(UORepository $uORepository) {
                 $user = $this->security->getUser();
                 return $uORepository->createQueryBuilder('u')->andWhere('u.code_service = :val')
+                ->andWhere('u.etat_uo = 1')
                 ->setParameter('val', $user->getCodeService()->getId());
             },
             //'security' => 'ROLE_SOMETHING',

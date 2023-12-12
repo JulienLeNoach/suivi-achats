@@ -462,12 +462,9 @@ $stmt = $conn->prepare($sql);
     {
         $data = $form->getData();
         $queryBuilder = $this->createQueryBuilder('b');
-        $achatmin = $form["montant_achat_min"]->getData();
+        $montantAchatMin = $form["montant_achat_min"]->getData();
+        $montantAchatMax = $form["montant_achat"]->getData();
         $user = $this->security->getUser();   
-        if ($form['etat_achat']->getData() === "EC") {
-            // Convertir la chaîne "0" en valeur numérique 0
-            $etat = 0;
-        } 
         switch ($form['etat_achat']->getData()) {
             case 'EC':
                 $etat = 0;
@@ -505,16 +502,27 @@ $stmt = $conn->prepare($sql);
             // Gérer le cas par défaut ici, si nécessaire
             break;
     }
+    switch ($form['place']->getData()) {
+        case 'Oui':
+            $place = 1;
+            break;
+        case 'Non':
+            $place = 0;
+            break;
+        default:
+            // Gérer le cas par défaut ici, si nécessaire
+            break;
+    }
         $queryBuilder
             ->select('b')
             ->Where('b.utilisateurs = :utilisateurs')
             ->setParameter('utilisateurs', $user);
 
-            if ($form["objet_achat"]->getData()){
-                $queryBuilder
-                    ->andWhere('b.objet_achat LIKE :objet_achat')
-                    ->setParameter('objet_achat', '%' . $data->getObjetAchat() . '%');
-            }
+            // if ($form["objet_achat"]->getData()){
+            //     $queryBuilder
+            //         ->andWhere('b.objet_achat LIKE :objet_achat')
+            //         ->setParameter('objet_achat', '%' . $data->getObjetAchat() . '%');
+            // }
 
             if ($form["num_siret"]->getData()) {
                 $queryBuilder
@@ -557,12 +565,29 @@ $stmt = $conn->prepare($sql);
                     ->andWhere('b.type_marche = :type_marche')
                     ->setParameter('type_marche', $type);
             }
-            if ($form["montant_achat"]->getData()) {
+            if ($form["place"]->getData()) {
                 $queryBuilder
-                    ->andWhere('b.montant_achat < :montant_achat2')
-                    ->andWhere('b.montant_achat > :achatmin')
-                    ->setParameter('achatmin', $achatmin)
-                    ->setParameter('montant_achat2', $data->getMontantAchat());
+                    ->andWhere('b.place = :place')
+                    ->setParameter('place', $place);
+            }
+
+            if ($montantAchatMin && $montantAchatMax) {
+                // Cas où les deux valeurs sont fournies
+                $queryBuilder
+                    ->andWhere('b.montant_achat > :montant_achat_min')
+                    ->andWhere('b.montant_achat < :montant_achat_max')
+                    ->setParameter('montant_achat_min', $montantAchatMin)
+                    ->setParameter('montant_achat_max', $montantAchatMax);
+            } elseif ($montantAchatMin) {
+                // Cas où seulement montant_achat_min est fourni
+                $queryBuilder
+                    ->andWhere('b.montant_achat > :montant_achat_min')
+                    ->setParameter('montant_achat_min', $montantAchatMin);
+            } elseif ($montantAchatMax) {
+                // Cas où seulement montant_achat_max est fourni
+                $queryBuilder
+                    ->andWhere('b.montant_achat < :montant_achat_max')
+                    ->setParameter('montant_achat_max', $montantAchatMax);
             }
             if ($form["date"]->getData()) {
                 $queryBuilder
@@ -580,6 +605,19 @@ $stmt = $conn->prepare($sql);
                     ->andWhere('b.date_saisie < :fin_rec')
                     ->setParameter('debut_rec',  $form["debut_rec"]->getData()->format('Y-m-d') )
                     ->setParameter('fin_rec',   $form["fin_rec"]->getData()->format('Y-m-d') );
+            }
+            if ($form["zipcode"]->getData()) {
+                // Add a join with the 'fournisseurs' table to filter by 'zipcode'
+                $queryBuilder
+                    ->join('b.num_siret', 'f') // Assuming 'numSiret' is the association to 'fournisseurs' in your 'achat' entity
+                    ->andWhere('f.code_postal = :zipcode')
+                    ->setParameter('zipcode', $form["zipcode"]->getData());
+            }
+            if ($form["id_demande_achat"]->getData()) {
+                // Add a join with the 'fournisseurs' table to filter by 'zipcode'
+                $queryBuilder
+                    ->andWhere('b.id_demande_achat = :id_demande_achat')
+                    ->setParameter('id_demande_achat', $form["id_demande_achat"]->getData());
             }
         // ... Votre logique de construction de la requête ici ...
         $queryBuilder->orderBy('b.date_saisie', 'DESC');
@@ -653,8 +691,7 @@ $stmt = $conn->prepare($sql);
             $selectFields[] = $form['ej_attr']->getData() == true ? 'b.numero_ej' : null;
             $selectFields[] = $form['objet_achat_attr']->getData() == true ? 'b.objet_achat' : null;
             $selectFields[] = $form['type_marche_attr']->getData() == true ? 'b.type_marche' : null;
-            $selectFields[] = $form['montant_ht_attr']->getData() == true ? 'b.montant_achat' : null;
-            $selectFields[] = $form['montant_ttc_attr']->getData() == true ? 'b.montant_achat   ' : null;
+            $selectFields[] = $form['montant_ht_attr']->getData() == true ? 'b.montant_achat montant_ht' : null;
             $selectFields[] = $form['devis_attr']->getData() == true ? 'b.devis' : null;
             $selectFields[] = $form['obs_attr']->getData() == true ? 'b.observations' : null;
             $selectFields[] = $form['etat_achat_attr']->getData() == true ? 'b.etat_achat' : null;
@@ -662,9 +699,9 @@ $stmt = $conn->prepare($sql);
             $selectFields = array_filter($selectFields);
 
         $queryBuilder
-            ->select($selectFields)
-            ->Where('b.utilisateurs = :utilisateurs')
-            ->setParameter('utilisateurs', $user);
+            ->select($selectFields);
+            // ->Where('b.utilisateurs = :utilisateurs')
+            // ->setParameter('utilisateurs', $user);
 
            
             $form['code_acheteur_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.utilisateurs) as utilisateurs_id') : null;
@@ -679,8 +716,13 @@ $stmt = $conn->prepare($sql);
             $form['code_cpv_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.code_cpv) as code_cpv_id') : null;
             $form['libelle_cpv_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_cpv', 'c')->addSelect('c.libelle_cpv') : null;
 
-            $form['tva_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.tva_ident) as tva_ident_id') : null;
+            // $form['tva_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.tva_ident) as tva_ident_id') : null;
+            if ($form['tva_attr']->getData() == true ||  $form['montant_ttc_attr'] == true) {
 
+                $queryBuilder->leftJoin('b.tva_ident', 't'); // Jointure avec la table 'service'
+                $selectFields[] = $form['tva_attr']->getData() == true ? $queryBuilder->addSelect('t.tva_ident') : null;
+                $selectFields[] = $form['montant_ttc_attr']->getData() == true ?  $queryBuilder->addSelect('(b.montant_achat * (t.tva_taux / 100) + b.montant_achat) montant_ttc') : null;
+            }
 
             if ($form['chorus_fournisseur_attr']->getData() == true ||  $form['code_client_fournisseur_attr']->getData() == true ||  $form['ville_fournisseur_attr']->getData() == true 
             ||  $form['cp_fournisseur_attr']->getData() == true||  $form['pme_fournisseurs_attr']->getData() == true ||  $form['tel_fournisseur_attr']->getData() == true 

@@ -6,6 +6,7 @@ use App\Repository\FournisseursRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FournisseursRepository::class)]
 class Fournisseurs
@@ -14,39 +15,113 @@ class Fournisseurs
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
+/**
+ * @ORM\Column(length=255)
+ * @Assert\Regex(
+ *     pattern="/^\d{1,14}$/",
+ *     message="Le numéro SIRET doit contenir uniquement des chiffres et avoir un maximum de 14 caractères."
+ * )
+ */
     #[ORM\Column(length: 255)]
     private ?string $num_siret = null;
-
+/**
+ * @ORM\Column(length=255)
+ * @Assert\Length(
+ *     max=255,
+ *     maxMessage="Le nom du fournisseur ne doit pas dépasser 255 caractères."
+ * )
+ */
     #[ORM\Column(length: 255)]
     private ?string $nom_fournisseur = null;
-
+/**
+ * @ORM\Column(length=255)
+ * @Assert\Length(
+ *     max=50,
+ *     maxMessage="Le nom de la ville ne doit pas dépasser 50 caractères."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $ville = null;
-
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Length(
+ *     max=5,
+ *     maxMessage="Le code postal ne doit pas dépasser 5 caractères."
+ * )
+ * @Assert\Regex(
+ *     pattern="/^\d*$/",
+ *     message="Le code postal doit contenir uniquement des chiffres."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $code_postal = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $pme = null;
-
+    private ?bool $pme = null;
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Length(
+ *     max=20,
+ *     maxMessage="Le code client ne doit pas dépasser 20 caractères."
+ * )
+ * @Assert\Regex(
+ *     pattern="/^\d*$/",
+ *     message="Le code client doit contenir uniquement des chiffres."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $code_client = null;
-
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Length(
+ *     max=10,
+ *     maxMessage="Le numéro chorus ne doit pas dépasser 10 caractères."
+ * )
+ * @Assert\Regex(
+ *     pattern="/^\d*$/",
+ *     message="Le numéro chorus doit contenir uniquement des chiffres."
+ * )
+ */
     #[ORM\Column(nullable: true)]
-    private ?float $num_chorus_fournisseur = null;
-
+    private ?string $num_chorus_fournisseur = null;
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Length(
+ *     max=20,
+ *     maxMessage="Le numéro de téléphone ne doit pas dépasser 20 caractères."
+ * )
+ * @Assert\Regex(
+ *     pattern="/^\d*(?:\s*\d*)*$/",
+ *     message="Le numéro de téléphone doit contenir uniquement des chiffres."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tel = null;
-
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Length(
+ *     max=20,
+ *     maxMessage="Le numéro de fax ne doit pas dépasser 10 caractères."
+ * )
+ * @Assert\Regex(
+ *     pattern="/^\d*(?:\s*\d*)*$/",
+ *     message="Le numéro de fax doit contenir uniquement des chiffres."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $FAX = null;
-
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Regex(
+ *     pattern="/^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/",
+ *     message="L'adresse email n'est pas valide."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $mail = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $etat_fournisseur = null;
+    private ?bool $etat_fournisseur = null;
 
     #[ORM\ManyToOne(inversedBy: 'fournisseurs')]
     private ?Services $code_service = null;
@@ -56,7 +131,17 @@ class Fournisseurs
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $date_maj_fournisseur = null;
-
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Length(
+ *     max=20,
+ *     maxMessage="Le numéro de mobile ne doit pas dépasser 20 caractères."
+ * )
+ * @Assert\Regex(
+ *     pattern="/^\d*(?:\s*\d*)*$/",
+ *     message="Le numéro de mobile doit contenir uniquement des chiffres."
+ * )
+ */
     #[ORM\Column(length: 255)]
     private ?string $mobile = null;
 
@@ -118,12 +203,12 @@ class Fournisseurs
         return $this;
     }
 
-    public function getPme(): ?string
+    public function getPme(): ?bool
     {
         return $this->pme;
     }
 
-    public function setPme(?string $pme): self
+    public function setPme(?bool $pme): self
     {
         $this->pme = $pme;
 
@@ -142,12 +227,12 @@ class Fournisseurs
         return $this;
     }
 
-    public function getNumChorusFournisseur(): ?float
+    public function getNumChorusFournisseur(): ?string
     {
         return $this->num_chorus_fournisseur;
     }
 
-    public function setNumChorusFournisseur(?float $num_chorus_fournisseur): self
+    public function setNumChorusFournisseur(?string $num_chorus_fournisseur): self
     {
         $this->num_chorus_fournisseur = $num_chorus_fournisseur;
 
@@ -190,12 +275,12 @@ class Fournisseurs
         return $this;
     }
 
-    public function getEtatFournisseur(): ?string
+    public function getEtatFournisseur(): ?bool
     {
         return $this->etat_fournisseur;
     }
 
-    public function setEtatFournisseur(?string $etat_fournisseur): self
+    public function setEtatFournisseur(?bool $etat_fournisseur): self
     {
         $this->etat_fournisseur = $etat_fournisseur;
 
@@ -269,7 +354,8 @@ class Fournisseurs
     }
     public function __toString()
     {
-        return $this->nom_fournisseur;
+        return $this->num_siret.'-'. $this->nom_fournisseur;
+
     } 
 
 }

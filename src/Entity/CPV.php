@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CPVRepository::class)]
 class CPV
@@ -15,15 +16,33 @@ class CPV
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
+/**
+ * @ORM\Column(length=8, nullable=true)
+ * @Assert\Regex(
+ *     pattern="/^[a-zA-Z0-9]{1,8}$/",
+ *     message="Le champ doit contenir des chiffres et/ou des lettres et avoir une longueur maximale de 8 caractères."
+ * )
+ */
     #[ORM\Column(length: 255)]
     private ?string $code_cpv = null;
-
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Length(
+ *     max=255,
+ *     maxMessage="Le libellé CPV ne doit pas dépasser 255 caractères."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $libelle_cpv = null;
-
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Regex(
+ *     pattern="/^\d{1,10}([.,]\d+)?$/",
+ *     message="Le champ doit contenir uniquement des chiffres positifs et peut inclure un point ou une virgule pour les décimales, avec un maximum de 10 chiffres."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $mt_cpv = null;
+    private ?float $mt_cpv = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $etat_cpv = null;
@@ -33,9 +52,15 @@ class CPV
 
     #[ORM\ManyToOne(inversedBy: 'CPVs')]
     private ?Services $code_service = null;
-
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Regex(
+ *     pattern="/^\d{1,10}([.,]\d+)?$/",
+ *     message="Le champ doit contenir uniquement des chiffres positifs et peut inclure un point ou une virgule pour les décimales, avec un maximum de 10 chiffres."
+ * )
+ */
     #[ORM\Column(length: 255)]
-    private ?string $mt_cpv_auto = null;
+    private ?float $mt_cpv_auto = null;
 
     public function __construct()
     {
@@ -71,24 +96,24 @@ class CPV
         return $this;
     }
 
-    public function getMtCpv(): ?string
+    public function getMtCpv(): ?float
     {
         return $this->mt_cpv;
     }
 
-    public function setMtCpv(?string $mt_cpv): self
+    public function setMtCpv(?float $mt_cpv): self
     {
         $this->mt_cpv = $mt_cpv;
 
         return $this;
     }
 
-    public function getEtatCpv(): ?string
+    public function getEtatCpv(): ?bool
     {
         return $this->etat_cpv;
     }
 
-    public function setEtatCpv(?string $etat_cpv): self
+    public function setEtatCpv(?bool $etat_cpv): self
     {
         $this->etat_cpv = $etat_cpv;
 
@@ -139,15 +164,15 @@ class CPV
 
     public function __toString()
     {
-        return $this->code_cpv.'-'. $this->libelle_cpv ;
+        return $this->code_cpv.' - '. $this->libelle_cpv ;
     }
 
-    public function getMtCpvAuto(): ?string
+    public function getMtCpvAuto(): ?float
     {
         return $this->mt_cpv_auto;
     }
 
-    public function setMtCpvAuto(string $mt_cpv_auto): static
+    public function setMtCpvAuto(float $mt_cpv_auto): static
     {
         $this->mt_cpv_auto = $mt_cpv_auto;
 

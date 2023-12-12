@@ -4,10 +4,8 @@
           <div class="chronoStat d-flex">
               <div class="chronoY ">
                   {{ form_row(form.date) }}
-
               </div>
               <div class="chronoJ ">
-
                   {% if app.request.attributes.get('_route') == 'app_statistic_delay' %}
                   {{ form_row(form.jourcalendar, {'attr': {'class': ""}}) }}
                   <!-- Retire la classe 'hidden' si la condition est vraie -->

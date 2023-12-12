@@ -9,8 +9,8 @@ export default class extends Controller {
     }
     collapse() {
 
-        var formContainer = document.querySelector('.form-container');
-        var toggleButton = document.getElementById('toggleFormBtn');
+        let formContainer = document.querySelector('.form-container');
+        let toggleButton = document.getElementById('toggleFormBtn');
         formContainer.classList.add('collapsed');
         toggleButton.innerHTML = '<span class="fr-icon-arrow-down-fill" aria-hidden="true"></span>';
 
@@ -28,9 +28,15 @@ export default class extends Controller {
     }
     
     attachEventListeners() {
+        let table = document.querySelector('table');
+        let footer = document.querySelector('footer');
+        let noResult = document.querySelector('#noResult');
+        // Vérifier si la table existe
+        table ? footer.scrollIntoView({ behavior: 'smooth', block: 'nearest' }) : 
+        (noResult ? noResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' }) : null);
 
-        var rows = document.querySelectorAll('.clickable-row');
-        var btnElements = document.querySelectorAll('#btn');
+        let rows = document.querySelectorAll('.clickable-row');
+        let btnElements = document.querySelectorAll('#btn');
 
         rows.forEach(function (row) {
             row.addEventListener('click', function () {
@@ -40,13 +46,13 @@ export default class extends Controller {
                 rows.forEach(function (otherRow) {
                     otherRow.classList.remove('selected');
                 });
-                var etatCell = row.cells[7];
-                var etatAchatText = etatCell.textContent.replace(/\s+/g, '');
+                let etatCell = row.cells[7];
+                let etatAchatText = etatCell.textContent.replace(/\s+/g, '');
 
-                    var selectedRow = document.querySelector('.selected');
+                let selectedRow = document.querySelector('.selected');
                         if (etatAchatText =='Validé') {
 
-                            document.querySelectorAll('.valid, .reint, .edit').forEach(el => el.setAttribute('disabled', 'disabled'));
+                            document.querySelectorAll('.valid, .reint').forEach(el => el.setAttribute('disabled', 'disabled'));
                         } else if (etatAchatText == 'Encours') {
 
                             document.querySelectorAll('.reint').forEach(el => el.setAttribute('disabled', 'disabled'));
@@ -58,12 +64,22 @@ export default class extends Controller {
                 row.classList.add('selected');
                 btnElements.forEach((btn) => {
                     btn.addEventListener('click', () => {
-                        var link = btn.getAttribute('data-link');
-                        var detailLink = document.getElementById('detail');
-                        var id = document.querySelector('.selected').getAttribute('data-id');
-                        detailLink.setAttribute('href', '/' + link + '/' + id);
-        
-
+                        // Récupérer le lien et l'ID
+                        let link = btn.getAttribute('data-link');
+                        let action = btn.getAttribute('data-action');
+                        let id = document.querySelector('.selected').getAttribute('data-id');
+                
+                        // Construire le message d'alerte
+                        let confirmationMessage = `Voulez-vous vraiment ${action} cet achat?`;
+                
+                        // Afficher l'alerte et rediriger si l'utilisateur confirme
+                        if (confirm(confirmationMessage)) {
+                            let detailLink = document.getElementById('detail');
+                            detailLink.setAttribute('href', '/' + link + '/' + id);
+                
+                            // Rediriger
+                            window.location.href = detailLink.getAttribute('href');
+                        }
                     });
                 });
 

@@ -17,13 +17,7 @@ class ValidType extends AbstractType
                 'class' => 'fr-btn'
             ],
         ])
-        ->add('return', SubmitType::class, [
-            'label' => "Retour à la liste d'achats",
-            'attr' => [
-                'class' => 'fr-btn',
-                'onclick' => 'history.back();return false;'
-            ],
-        ]);
+
         ;
     }
 

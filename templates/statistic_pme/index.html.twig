@@ -45,12 +45,12 @@
                         <tr>
                             <td>VALEUR</td>
                             <td>{{ result_achats[0]["ValeurPME"] }}</td>
-                            <td>{{ result_achats[0]["ValeurPercentPME"] }}%</td>
+                            <td>{{ result_achats[0]["ValeurPercentPME"] | round }}%</td>
                         </tr>
                         <tr>
                             <td>VOLUME</td>
                             <td>{{ result_achats[0]["VolumePME"] }}</td>
-                            <td>{{ result_achats[0]["VolumePercentPME"] }}%</td>
+                            <td>{{ result_achats[0]["VolumePercentPME"]  | round}}%</td>
                         </tr>
                     </table>
                 </div>
@@ -97,7 +97,7 @@
                         <td>{{ achats["pourcentage_achats_type_marche_1"] }}</td>
                         {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_type_marche_1"] %}
                         {% endfor %}
-                        <td>{{ totalPourcentage / result_achatsSum|length }}</td>
+<td>{{ (totalPourcentage / result_achatsSum|length)| round }}</td>
                     </tr>
                 </table>
                 <div class="chartActContainer" style="width: 75%; max-height: 200px;">

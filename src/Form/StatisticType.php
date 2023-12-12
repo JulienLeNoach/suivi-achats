@@ -24,15 +24,16 @@ class StatisticType extends AbstractType
     {
         $builder
 
-        ->add('date', TextType::class, [
+        ->add('date', ChoiceType::class, [
             'required' => false,
-            'label' => "Année",
             'mapped' => false,
-            'empty_data'  => date('Y'),
-            'attr' => ['class' => 'fr-input '],  
+            'attr' => ['class' => 'fr-input'],
             'label_attr' => ['class' => 'fr-label'],
-            'row_attr' => ['class' => '']
-
+            'choices' => $this->getYearChoices(),
+            'placeholder' => 'Choisir une année',
+            'label'=>'Année',
+            'data' =>  date('Y'),
+            // 'row_attr' => ['class' => 'fr-input-stat']
 
         ])
         ->add('jourcalendar', ChoiceType::class, [
@@ -124,5 +125,18 @@ class StatisticType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Achat::class,
         ]);
+    }
+
+    private function getYearChoices()
+    {
+        $currentYear = date('Y');
+        $endYear = $currentYear - 20; // par exemple, 10 ans en arrière
+        $years = [];
+    
+        for ($year = $currentYear; $year >= $endYear; $year--) {
+            $years[$year] = $year;
+        }
+    
+        return $years;
     }
 }
