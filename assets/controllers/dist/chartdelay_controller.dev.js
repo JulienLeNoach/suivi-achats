@@ -57,7 +57,7 @@ function (_Controller) {
 
       ctxdelayChart.height = 800; // Définit la hauteur du premier canvas
 
-      console.log(achats_delay_all);
+      console.log(notStat);
       new _auto["default"](ctxdelayChart, {
         type: 'bar',
         data: {

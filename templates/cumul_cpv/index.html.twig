@@ -19,6 +19,7 @@
         {{ form_row(form.recherche) }}
     </div>
         {{ form_end(form) }}
+
     </div>
     {% if result_cpv is not empty %}
 
@@ -26,8 +27,9 @@
     {% if result_cpv | length == 0 %}
     <h4>Aucun résultat pour votre recherche.</h4>
     {% else %}
-    <div class=" mt-5 overflow-auto">
-        <table border="1" id="tab-result" class="cumul-cpv-table">
+    <div class="cumulcpv d-flex flex-column align-items-center">
+    <div id="achat-list"class="mt-3">
+        <table border="1" id="tab-result-cpv" class="cumul-cpv-table">
             <thead class="position-sticky">
                 <tr>
                     <th class="position-sticky">CPV</th>
@@ -37,32 +39,47 @@
                     <th class="position-sticky">Reliquat</th>
                 </tr>
             </thead>
-            <div id="achat-list-ajax">
-                <tbody id="achat-list-tbody">
-                    <div>
-                        {% for cpv in result_cpv %}
-                        <tr>
-                            <td>{{cpv.libelle_cpv}}</td>
-                            <td>{{cpv.somme_montants}}</td>
-                            <td class="{{ cpv.somme_montants > alertValue ? 'bg-warning' : '' }}">{{cpv.somme_montants}}
-                            </td>
-                            <td>{{ cpv.mt_cpv_auto }}</td>
-                            <td class="{{ cpv.reliquat < 0 ? 'bg-danger' : '' }}">{{ cpv.reliquat }}</td>
-                        </tr>
-                        {% endfor %}
+                        {{ include('cumul_cpv/partial_results.html.twig') }}
 
-                </tbody>
-            </div>
-    </div>
+   
 
     </table>
 
+ </div>
+        <form action="{{ path('pdf_generator_cpv') }}" method="post">
+    <input type="hidden" name="date" value="{{ form.date | json_encode }}">
+    <input type="hidden" name="alertValue" value="{{ form.alertValue | json_encode }}">
 
+    <button type="submit" class="fr-btn align-item-center mt-5">Exporter vers Excel</button>
+</form> 
+</div>
     {% endif %}
     {% endif %}
 
 
 </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let offset = 7; // Commencer après les premiers résultats initialement chargés
+    const limit = 7;
+    const tbody = document.getElementById('achat-list-tbody');
+    const tableContainer = document.getElementById('achat-list');
 
+    tableContainer.addEventListener('scroll', function() {
+                    console.log("test");
+        if (tableContainer.scrollTop + tableContainer.clientHeight+1 >= tableContainer.scrollHeight) {
+            fetch(`/cumulcpv?offset=${offset}&limit=${limit}`, { 
+                headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+            })
+            .then(response => response.text())
+            .then(html => {
+                tbody.insertAdjacentHTML('beforeend', html);
+                offset += limit; // Augmenter l'offset pour la prochaine requête
+            })
+            .catch(error => console.error('Erreur:', error));
+        }
+    });
+});
+</script>
 {% endblock %}

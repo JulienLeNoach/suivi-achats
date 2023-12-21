@@ -107,15 +107,14 @@ function (_Controller) {
               var link = btn.getAttribute('data-link');
               var action = btn.getAttribute('data-action');
               var id = document.querySelector('.selected').getAttribute('data-id'); // Construire le message d'alerte
+              // let confirmationMessage = `Voulez-vous vraiment ${action} cet achat?`;
+              // Afficher l'alerte et rediriger si l'utilisateur confirme
+              // if (confirm(confirmationMessage)) {
 
-              var confirmationMessage = "Voulez-vous vraiment ".concat(action, " cet achat?"); // Afficher l'alerte et rediriger si l'utilisateur confirme
-
-              if (confirm(confirmationMessage)) {
-                var detailLink = document.getElementById('detail');
-                detailLink.setAttribute('href', '/' + link + '/' + id); // Rediriger
-
-                window.location.href = detailLink.getAttribute('href');
-              }
+              console.log("confirm");
+              var detailLink = document.getElementById('detail');
+              detailLink.setAttribute('href', '/' + link + '/' + id);
+              window.location.href = detailLink.getAttribute('href'); // }
             });
           });
         });

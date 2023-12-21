@@ -15,10 +15,14 @@
         {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around flex-wrap p-5'}}) }}
 
         <div class="input-grp" style="flex-basis:33%">
+        <div class="d-flex">
+        <div class="w-50 me-3">
             {{ form_row(form.code_service) }}
+            </div>
+            <div class="w-50">
             {{ form_row(form.numero_achat) }}
-            {{ form_row(form.objet_achat) }}
-            {{ form_row(form.observations) }}
+            </div>
+            </div>
             <div class="d-flex">
                 <div class="w-50 me-3">
                     {{ form_row(form.montant_achat) }}
@@ -36,6 +40,8 @@
                     {{ form_row(form.date_commande_chorus) }}
                 </div>
             </div>
+                        {{ form_row(form.objet_achat) }}
+            {{ form_row(form.observations) }}
         </div>
 
 

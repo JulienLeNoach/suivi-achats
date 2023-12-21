@@ -10,13 +10,14 @@ use App\Form\EditAchatType;
 use App\Factory\AchatFactory;
 use App\Form\AchatSearchType;
 use App\Repository\AchatRepository;
+use App\Service\AchatNumberService;
 use App\Service\StatisticVolValService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,18 +44,40 @@ class SearchController extends AbstractController
     // avec les données du formulaire et les résultats de la recherche.
 
     #[Route('/search', name: 'app_search')]
-    public function index(Request $request): Response
+    public function index(Request $request,SessionInterface $session): Response
     {
         $form = $this->createForm(AchatSearchType::class);
         $form->handleRequest($request);
     
         $limit = 7; // Limite pour le nombre d'achats à charger
         $offset = $request->query->getInt('offset', 0); // Décalage pour le chargement infini
-        $tax = $form["tax"]->getData(); // Récupérer la taxe si elle est définie
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $currentUrl = $request->getUri(); // Récupérer l'URL actuelle
+            $session->set('current_url', $currentUrl);
+            $session->set('form', $form->getData());
+            $criteria = [
+                // Les champs mappés à l'entité
+                'mappedData' => $form->getData(),
+                // Les champs non mappés
+                'montant_achat_min' =>  $form["montant_achat_min"]->getData(),
+                'date' => $form->get('date')->getData(),
+                'zipcode' => $form->get('zipcode')->getData(),
+                'debut_rec' => $form->get('debut_rec')->getData(),
+                'fin_rec' => $form->get('fin_rec')->getData(),
+                'all_user' => $form->get('all_user')->getData(),
+                'tax' => $form->get('tax')->getData(),
+
+                // Ajoutez autant de champs non mappés que nécessaire
+            ];            
+            $session->set('criteria', $criteria);
+
             $query = $this->entityManager->getRepository(Achat::class)->searchAchat($form);
-    
+
+
+                $tax = $form["tax"]->getData(); // Récupérer la taxe si elle est définie
+
             // Récupérer les achats avec la limite et le décalage
             $achats = $query->setMaxResults($limit)->setFirstResult($offset)->getResult();
     
@@ -64,12 +87,7 @@ class SearchController extends AbstractController
                 }
             }
             // Gérer la réponse pour les requêtes AJAX
-            if ($request->isXmlHttpRequest()) {
-                dd("test");
-                return $this->render('search/partial_results.html.twig', [
-                    'achats' => $achats,
-                ]);
-            }
+
     
             // Réponse pour la recherche initiale
             return $this->render('search/index.html.twig', [
@@ -78,6 +96,24 @@ class SearchController extends AbstractController
                 'tax' => $tax,
             ]);
         }
+            if ($request->isXmlHttpRequest()) {
+                $crit=  $session->get('criteria');
+
+        $offset = $request->query->getInt('offset', 7);
+        $query = $this->entityManager->getRepository(Achat::class)->searchAchatwithAjax($crit);
+        // dd($query);
+
+        $achats = $query->setMaxResults($limit)->setFirstResult($offset)->getResult();
+        // ... traitement des achats ...
+        if ($crit["tax"] == "ttc") {
+            foreach ($achats as $achat) {
+                $achat->setMontantAchat($achat->getMontantAchat() * ($achat->getTvaIdent()->getTvaTaux()/100) + $achat->getMontantAchat());
+            }
+        }
+        return $this->render('search/partial_results.html.twig', [
+            'achats' => $achats,
+        ]);
+    }
     
         // Réponse pour une requête GET initiale (sans soumission de formulaire)
         return $this->render('search/index.html.twig', [
@@ -100,10 +136,11 @@ public function show(Request $request,$id,SessionInterface $session): Response
 }
 
 #[Route('/ajout_achat', name: 'ajout_achat')]
-public function add(Request $request,SessionInterface $session): Response
+public function add(Request $request,SessionInterface $session,): Response
 {
     
     $achat = $this->achatFactory->create();
+
     $form = $this->createForm(AddAchatType::class, $achat);
     $form->handleRequest($request);
     $currentUrl = $session->get('current_url');
@@ -112,8 +149,11 @@ public function add(Request $request,SessionInterface $session): Response
 
     if ($form->isSubmitted() && $form->isValid()) {
 
+        // dd($numeroAchat);
 
-        $query = $this->entityManager->getRepository(Achat::class)->add($achat);
+        $this->entityManager->getRepository(Achat::class)->add($achat);
+        // dd($numeroAchat);
+
         $this->addFlash('success', 'Nouvel achat n° ' . $achat->getId() . " sauvegardé");
         return $this->redirect("/search");
 
@@ -190,7 +230,7 @@ public function edit(Request $request, $id, Achat $achat,  AchatRepository $acha
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-        
+        dump($achat);
         $achatRepository->edit($achat, true);
 
         $this->addFlash('success', 'Achat n° ' . $id . " modifié");

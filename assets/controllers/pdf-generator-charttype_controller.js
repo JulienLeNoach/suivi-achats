@@ -39,18 +39,12 @@ export default class extends Controller {
     const mabcTableImage = mabcTableCanvas.toDataURL('image/png', 1.0);
     const allMountTableCanvasImage = allMountTableCanvas.toDataURL('image/png', 1.0);
 
-    let pdf = new jsPDF('p', 'mm', [300, 200]); 
+    let pdf = new jsPDF('l', 'mm', 'a3');
     pdf.setFontSize(15);
 
     pdf.addImage(canvasImage1, 'png', 15, 15, 70, 70);
-
     pdf.addImage(canvasImage2, 'png', 115, 15, 70, 70);
-
     pdf.addImage(canvasImage3, 'png', 65, 120, 70, 70);
-
-
-    pdf.text("Montant Total ", 75, 235);
-    pdf.addImage(tableTotauxImage, 'png', 25, 240, 150, 60);
 
     pdf.text("Montant des MPPA", 25, 90);
     pdf.addImage(mppaTableImage, 'png', 15, 95, 80, 15);
@@ -58,10 +52,19 @@ export default class extends Controller {
     pdf.text("Montant des MABC", 120, 90);
     pdf.addImage(mabcTableImage, 'png', 100, 95, 80, 15);
 
+    pdf.text("Statistiques MPPA/MABC", 190, 25); // Déplace le titre au-dessus de l'image
+    pdf.addImage(tableTotauxImage, 'png', 190, 30, 100, 80); // Ajustement des coordonnées pour placer à droite
+
     pdf.text("Montant des MABC + MPPA", 65, 195);
     pdf.addImage(allMountTableCanvasImage, 'png', 55, 200, 80, 15);
 
     pdf.setFillColor(106, 106, 244, 1);
+    const dateEdited = `édité le ${new Date().toLocaleDateString()}`;
+    const pageCount = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
+    }
     pdf.save('Graphique.pdf');
   }
 

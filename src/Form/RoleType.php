@@ -18,7 +18,7 @@ class RoleType extends AbstractType
             'class' => Utilisateurs::class,
             'required' => false,
             'label' => "Nom d'utilisateur",
-            'autocomplete' => true,
+            // 'autocomplete' => true,
             'attr' => ['data-action' => 'change->role#getRoles',
             'class' => 'fr-input '],
                 'label_attr' => ['class' => 'fr-label'],

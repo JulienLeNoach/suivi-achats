@@ -50,8 +50,17 @@ function (_Controller) {
       var canvasImage = canvas.toDataURL('image/png', 1.0);
       var pdf = new _jspdf["default"]('p', 'mm', [360, 350]);
       pdf.setFontSize(20);
+      pdf.text('Délai d\'activité annuelle', 15, 10);
       pdf.addImage(canvasImage, 'png', 15, 15, 280, 150);
       pdf.setFillColor(106, 106, 244, 1);
+      var dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
+      var pageCount = pdf.internal.getNumberOfPages();
+
+      for (var i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
+      }
+
       pdf.save('Graphique.pdf');
     }
   }, {
@@ -78,15 +87,42 @@ function (_Controller) {
       var ctxPFAFImage = ctxPFAF.toDataURL('image/png', 1.0);
       var ctxChorusImage = ctxChorus.toDataURL('image/png', 1.0);
       var ctxTotalDelayImage = ctxTotalDelay.toDataURL('image/png', 1.0);
-      var pdf = new _jspdf["default"]('p', 'mm', [360, 350]);
-      pdf.setFontSize(20);
-      pdf.addImage(ctxAntenneImage, 'png', 15, 15, 70, 70);
-      pdf.addImage(ctxBudgetImage, 'png', 85, 15, 70, 70);
-      pdf.addImage(ctxApproImage, 'png', 170, 15, 70, 70);
-      pdf.addImage(ctxFinImage, 'png', 255, 15, 70, 70);
-      pdf.addImage(ctxPFAFImage, 'png', 15, 85, 70, 70);
-      pdf.addImage(ctxChorusImage, 'png', 85, 85, 70, 70);
-      pdf.addImage(ctxTotalDelayImage, 'png', 170, 85, 70, 70);
+      var pdf = new _jspdf["default"]('p', 'mm', [360, 370]); // Augmentation de la hauteur pour le décalage
+
+      pdf.setFontSize(20); // Ajout du titre au-dessus de tous les éléments
+
+      pdf.text('Délai d\'activité annuelle détaillé par traitement', 15, 10); // Ajout des titres et images pour chaque graphique avec décalage
+
+      var titles = ['Ant. GSBDD', 'Budget', 'Appro', 'Fin', 'PFAF', 'Chorus', 'Délai total'];
+      var images = [ctxAntenneImage, ctxBudgetImage, ctxApproImage, ctxFinImage, ctxPFAFImage, ctxChorusImage, ctxTotalDelayImage];
+      var positions = [{
+        x: 15,
+        y: 35
+      }, {
+        x: 85,
+        y: 35
+      }, {
+        x: 170,
+        y: 35
+      }, {
+        x: 255,
+        y: 35
+      }, {
+        x: 15,
+        y: 120
+      }, {
+        x: 85,
+        y: 120
+      }, {
+        x: 170,
+        y: 120
+      }];
+      titles.forEach(function (title, index) {
+        // Ajout du titre au-dessus de chaque graphique avec le décalage
+        pdf.text(title, positions[index].x, positions[index].y - 5); // Ajout de chaque graphique avec le titre et le décalage
+
+        pdf.addImage(images[index], 'png', positions[index].x, positions[index].y, 70, 70);
+      });
       pdf.setFillColor(106, 106, 244, 1);
       pdf.save('GraphPieDelay.pdf');
     }
@@ -94,14 +130,39 @@ function (_Controller) {
     key: "generatePDFTable",
     value: function generatePDFTable() {
       // Créez un objet jsPDF
-      var pdf = new _jspdf["default"]('l'); // Select the table HTML element
+      var pdf = new _jspdf["default"]('l', 'mm', 'a3'); // Select the table HTML element
 
       var table = document.getElementById('delayTable'); // Use html2canvas to render the table as an image
 
       (0, _html2canvas["default"])(table).then(function (canvas) {
-        var imgData = canvas.toDataURL('image/png'); // Add the image to the PDF
+        // Réduction de la taille de l'image
+        var scale = 0.2;
+        var imgWidth = canvas.width * scale;
+        var imgHeight = canvas.height * scale; // Conversion du canvas en image PNG
 
-        pdf.addImage(imgData, 'PNG', 5, 30); // Save the PDF file
+        var imgData = canvas.toDataURL('image/png');
+        var yearOption = document.querySelector('#statistic_date option:checked').text;
+        var checkedElement = document.querySelector('#statistic_jourcalendar input:checked');
+        console.log(checkedElement); // Ajout d'un titre au-dessus du tableau
+
+        var title = 'Délai Activité Annuelle';
+        pdf.setFontSize(16);
+        pdf.text(title, 60, 60); // Position du titre
+
+        pdf.text(yearOption, 120, 60); // Position du titre
+        // Si vous voulez ajouter le texte sélectionné à côté de l'année
+
+        pdf.setFontSize(12); // Ajout de l'image redimensionnée au PDF
+
+        pdf.addImage(imgData, 'PNG', 30, 80, imgWidth, imgHeight);
+        var dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
+        var pageCount = pdf.internal.getNumberOfPages();
+
+        for (var i = 1; i <= pageCount; i++) {
+          pdf.setPage(i);
+          pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
+        } // Enregistrement du PDF
+
 
         pdf.save('table.pdf');
       });

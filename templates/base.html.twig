@@ -41,7 +41,7 @@
                                 </button> </div>
                         </div>
                         <div class="fr-header__service"> <a href="{{path('app_account')}}" title="Accueil - ">
-                                <p class="fr-header__service-title"> Suivi des achats </p>
+                                <p class="fr-header__service-title title-sa"> Suivi des achats </p>
                             </a>
                         </div>
                     </div>
@@ -104,7 +104,7 @@
                                             {% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_CR_ANNUEL') %}
-                                            <a class="fr-nav__link" href="#" target="_self">Compte rendu annuel</a>
+                                            <a class="fr-nav__link" href="{{ path('cr_annuel') }}" target="_self">Compte rendu annuel</a>
                                             {% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_EXTRACT_DONNEES') %}

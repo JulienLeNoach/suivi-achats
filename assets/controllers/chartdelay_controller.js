@@ -1,6 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 import Chart from 'chart.js/auto'
 
+
 const labels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 const ctxdelayChart = document.getElementById('delayChart');
 const ctxAntenne = document.getElementById('ctxAntenne');
@@ -18,7 +19,7 @@ export default class extends Controller {
       ctxdelayChart.width = 1200; // Définit la largeur du premier canvas
       ctxdelayChart.height = 800; // Définit la hauteur du premier canvas
 
-      console.log(achats_delay_all);
+      console.log(notStat);
 
       
         new Chart(ctxdelayChart, {
@@ -48,7 +49,8 @@ export default class extends Controller {
                 }
               },
 
-            }
+            },
+
           }
           });
           
@@ -81,7 +83,8 @@ export default class extends Controller {
                     display: true,
                     text: 'Custom Chart Title',
                     
-                }
+                },
+                
               },
             }
           }

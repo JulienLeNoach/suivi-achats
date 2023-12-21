@@ -48,12 +48,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
                 $result_achatsSumVol = $this->achatRepository->statisticPMETopVol($form);
                 $result_achatsSumVal = $this->achatRepository->statisticPMETopVal($form);
                 $excelForm = $this->createForm(CreateExcelType::class); 
-                if ($excelForm->isSubmitted() && $excelForm->isValid()) {
+                // if ($excelForm->isSubmitted() && $excelForm->isValid()) {
       
-                    $filePath = $statisticPMEService->createExcelFile($result_achats, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
-                    return new BinaryFileResponse($filePath);
+                //     $filePath = $statisticPMEService->createExcelFile($result_achats, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
+                //     return new BinaryFileResponse($filePath);
 
-                }
+                // }
                 return $this->render('statistic_pme/index.html.twig', [
                     'form' => $form->createView(),
                     'excelForm' => $excelForm->createView(),
@@ -77,19 +77,19 @@ public function exportExcel(Request $request, StatisticPMEService $statisticPMES
 {
     // Traitez la requête pour obtenir les données nécessaires à l'export Excel
     // Supposons que les données sont passées via une requête GET ou POST
-    $result_achats = $request->get('result_achats');
+    $result_achatsPME = $request->get('result_achats');
     $result_achatsSum = $request->get('result_achatsSum');
     $result_achatsSumVol = $request->get('result_achatsSumVol');
     $result_achatsSumVal = $request->get('result_achatsSumVal');
 
     // Convertir les données JSON en tableau PHP
-    $result_achats = json_decode($result_achats, true);
+    $result_achatsPME = json_decode($result_achatsPME, true);
     $result_achatsSum = json_decode($result_achatsSum, true);
     $result_achatsSumVol = json_decode($result_achatsSumVol, true);
     $result_achatsSumVal = json_decode($result_achatsSumVal, true);
 
     // Générer le fichier Excel
-    $filePath = $statisticPMEService->createExcelFile($result_achats, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
+    $filePath = $statisticPMEService->createExcelFile($result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
     return new BinaryFileResponse($filePath);
 }
     }

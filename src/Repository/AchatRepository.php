@@ -6,6 +6,7 @@ use DateTime;
 use App\Entity\Achat;
 use App\Factory\AchatFactory;
 use Doctrine\ORM\Query\Expr\Join;
+use App\Service\AchatNumberService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
@@ -28,13 +29,15 @@ class AchatRepository extends ServiceEntityRepository
     private $security;
     private $achatFactory;
     private $entityManager;
+    private $achatNumberService;
 
-    public function __construct(ManagerRegistry $registry,Security $security,AchatFactory $achatFactory,EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry,Security $security,AchatFactory $achatFactory,EntityManagerInterface $entityManager,AchatNumberService $achatNumberService)
     {
         parent::__construct($registry, Achat::class);
         $this->security = $security;
         $this->achatFactory = $achatFactory;
         $this->entityManager = $entityManager;
+        $this->achatNumberService = $achatNumberService;
 
 
     }
@@ -461,10 +464,12 @@ $stmt = $conn->prepare($sql);
     public function searchAchat($form)
     {
         $data = $form->getData();
+        // dd($form["zipcode"]);
         $queryBuilder = $this->createQueryBuilder('b');
         $montantAchatMin = $form["montant_achat_min"]->getData();
         $montantAchatMax = $form["montant_achat"]->getData();
         $user = $this->security->getUser();   
+        // dd($form);
         switch ($form['etat_achat']->getData()) {
             case 'EC':
                 $etat = 0;
@@ -514,10 +519,12 @@ $stmt = $conn->prepare($sql);
             break;
     }
         $queryBuilder
-            ->select('b')
+            ->select('b');
+            if($form['all_user']->getData()==false){
+                $queryBuilder
             ->Where('b.utilisateurs = :utilisateurs')
             ->setParameter('utilisateurs', $user);
-
+        }
             // if ($form["objet_achat"]->getData()){
             //     $queryBuilder
             //         ->andWhere('b.objet_achat LIKE :objet_achat')
@@ -544,7 +551,11 @@ $stmt = $conn->prepare($sql);
                     ->andWhere('b.code_cpv = :code_cpv')
                     ->setParameter('code_cpv', $data->getCodeCpv());
             }
-
+            if ($form["numero_achat"]->getData()) {
+                $queryBuilder
+                    ->andWhere("SUBSTRING(b.numero_achat, LENGTH(b.numero_achat) - 3) = :numero_achat")
+                    ->setParameter('numero_achat',$form["numero_achat"]->getData());
+            }
             if ($form["code_formation"]->getData()) {
                 $queryBuilder
                     ->andWhere('b.code_formation = :code_formation')
@@ -599,12 +610,22 @@ $stmt = $conn->prepare($sql);
                     ->andWhere('b.numero_ej LIKE :numero_ej')
                     ->setParameter('numero_ej', '%' . $form["numero_ej"]->getData() . '%');
             }
-            if ($form["debut_rec"]->getData()) {
+            if ($form["debut_rec"]->getData() && $form["fin_rec"]->getData()) {
                 $queryBuilder
                     ->andWhere('b.date_saisie > :debut_rec')
                     ->andWhere('b.date_saisie < :fin_rec')
                     ->setParameter('debut_rec',  $form["debut_rec"]->getData()->format('Y-m-d') )
                     ->setParameter('fin_rec',   $form["fin_rec"]->getData()->format('Y-m-d') );
+            }
+            elseif($form["debut_rec"]->getData()){
+                $queryBuilder
+                ->andWhere('b.date_saisie > :debut_rec')
+                ->setParameter('debut_rec',  $form["debut_rec"]->getData()->format('Y-m-d') );
+            }
+            elseif($form["fin_rec"]->getData()){
+                $queryBuilder
+                ->andWhere('b.date_saisie > :fin_rec')
+                ->setParameter('fin_rec',  $form["fin_rec"]->getData()->format('Y-m-d') );
             }
             if ($form["zipcode"]->getData()) {
                 // Add a join with the 'fournisseurs' table to filter by 'zipcode'
@@ -620,7 +641,196 @@ $stmt = $conn->prepare($sql);
                     ->setParameter('id_demande_achat', $form["id_demande_achat"]->getData());
             }
         // ... Votre logique de construction de la requête ici ...
-        $queryBuilder->orderBy('b.date_saisie', 'DESC');
+        $queryBuilder->orderBy('b.id', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+    
+        return $query;
+    }
+
+
+    public function searchAchatwithAjax($form)
+    {
+        // dd($form["zipcode"]);
+        $queryBuilder = $this->createQueryBuilder('b');
+        $montantAchatMin = $form["montant_achat_min"];
+        $montantAchatMax = $form["mappedData"]->getMontantAchat();
+        $user = $this->security->getUser();   
+        // dd($form);
+        
+        switch ($form["mappedData"]->getEtatAchat()) {
+            case 'EC':
+                $etat = 0;
+                break;
+            case 'V':
+                $etat = 2;
+                break;
+            case 'A':
+                $etat = 1;
+                break;
+            default:
+                // Gérer le cas par défaut ici, si nécessaire
+                break;
+        }
+    
+    switch ($form['mappedData']->getTypeMarche()) {
+        case 'MABC':
+            $type = 0;
+            break;
+        case 'MPPA':
+            $type = 1;
+            break;
+        default:
+            // Gérer le cas par défaut ici, si nécessaire
+            break;
+    }
+    switch ($form['mappedData']->getDevis()) {
+        case 'Pr':
+            $devis = 0;
+            break;
+        case 'Gs':
+            $devis = 1;
+            break;
+        default:
+            // Gérer le cas par défaut ici, si nécessaire
+            break;
+    }
+    switch ($form['mappedData']->getPlace()) {
+        case 'Oui':
+            $place = 1;
+            break;
+        case 'Non':
+            $place = 0;
+            break;
+        default:
+            // Gérer le cas par défaut ici, si nécessaire
+            break;
+    }
+        $queryBuilder
+            ->select('b');
+            if($form['all_user']==false){
+                $queryBuilder
+            ->Where('b.utilisateurs = :utilisateurs')
+            ->setParameter('utilisateurs', $user);
+        }
+            // if ($form["objet_achat"]->getData()){
+            //     $queryBuilder
+            //         ->andWhere('b.objet_achat LIKE :objet_achat')
+            //         ->setParameter('objet_achat', '%' . $data->getObjetAchat() . '%');
+            // }
+
+            if ($form["mappedData"]->getNumSiret()) {
+                $queryBuilder
+                    ->andWhere('b.num_siret = :num_siret')
+                    ->setParameter('num_siret', $form["mappedData"]->getNumSiret());
+            }
+            if ($form["mappedData"]->getUtilisateurs()) {
+                $queryBuilder 
+                    ->andWhere('b.utilisateurs = :utilisateurs')
+                    ->setParameter('utilisateurs', $form["mappedData"]->getUtilisateurs());
+            }
+            if ($form["mappedData"]->getCodeUo()) {
+                $queryBuilder
+                    ->andWhere('b.code_uo = :code_uo')
+                    ->setParameter('code_uo', $form["mappedData"]->getCodeUo());
+            }
+            if ($form["mappedData"]->getCodeCpv()) {
+                $queryBuilder
+                    ->andWhere('b.code_cpv = :code_cpv')
+                    ->setParameter('code_cpv', $form["mappedData"]->getCodeCpv());
+            }
+
+            if ($form["mappedData"]->getCodeFormation()) {
+                $queryBuilder
+                    ->andWhere('b.code_formation = :code_formation')
+                    ->setParameter('code_formation', $form["mappedData"]->getCodeFormation());
+            }
+            if ($form["mappedData"]->getEtatAchat()) {
+                $queryBuilder
+                    ->andWhere('b.etat_achat = :etat_achat')
+                    ->setParameter('etat_achat',$etat);
+            }
+            if ($form["mappedData"]->getDevis()) {
+                $queryBuilder
+                    ->andWhere('b.devis = :devis')
+                    ->setParameter('devis', $devis);
+            }
+            if ($form["mappedData"]->getNumeroAchat()) {
+                $queryBuilder
+                    ->andWhere("SUBSTRING(b.numero_achat, LENGTH(b.numero_achat) - 3) = :numero_achat")
+                    ->setParameter('numero_achat',$form["mappedData"]->getNumeroAchat());
+            }
+            if ($form["mappedData"]->getTypeMarche()) {
+                $queryBuilder
+                    ->andWhere('b.type_marche = :type_marche')
+                    ->setParameter('type_marche', $type);
+            }
+            if ($form["mappedData"]->getPlace()) {
+                $queryBuilder
+                    ->andWhere('b.place = :place')
+                    ->setParameter('place', $place);
+            }
+
+            if ($montantAchatMin && $montantAchatMax) {
+                // Cas où les deux valeurs sont fournies
+                $queryBuilder
+                    ->andWhere('b.montant_achat > :montant_achat_min')
+                    ->andWhere('b.montant_achat < :montant_achat_max')
+                    ->setParameter('montant_achat_min', $montantAchatMin)
+                    ->setParameter('montant_achat_max', $montantAchatMax);
+            } elseif ($montantAchatMin) {
+                // Cas où seulement montant_achat_min est fourni
+                $queryBuilder
+                    ->andWhere('b.montant_achat > :montant_achat_min')
+                    ->setParameter('montant_achat_min', $montantAchatMin);
+            } elseif ($montantAchatMax) {
+                // Cas où seulement montant_achat_max est fourni
+                $queryBuilder
+                    ->andWhere('b.montant_achat < :montant_achat_max')
+                    ->setParameter('montant_achat_max', $montantAchatMax);
+            }
+            if ($form["date"]) {
+                $queryBuilder
+                    ->andWhere('b.date_saisie LIKE :date_saisie')
+                    ->setParameter('date_saisie', '%' . $form["date"] . '%');
+            }
+            if ($form["mappedData"]->getNumeroEj()) {
+                $queryBuilder
+                    ->andWhere('b.numero_ej LIKE :numero_ej')
+                    ->setParameter('numero_ej', '%' . $form["mappedData"]->getNumeroEj() . '%');
+            }
+            if ($form["debut_rec"] && $form["fin_rec"] ) {
+                $queryBuilder
+                    ->andWhere('b.date_saisie > :debut_rec')
+                    ->andWhere('b.date_saisie < :fin_rec')
+                    ->setParameter('debut_rec',  $form["debut_rec"]->format('Y-m-d') )
+                    ->setParameter('fin_rec',   $form["fin_rec"]->format('Y-m-d') );
+            }
+            elseif($form["debut_rec"]){
+                $queryBuilder
+                ->andWhere('b.date_saisie > :debut_rec')
+                ->setParameter('debut_rec',  $form["debut_rec"]->format('Y-m-d') );
+            }
+            elseif($form["fin_rec"]){
+                $queryBuilder
+                ->andWhere('b.date_saisie > :fin_rec')
+                ->setParameter('fin_rec',  $form["fin_rec"]->format('Y-m-d') );
+            }
+            if ($form["zipcode"]) {
+                // Add a join with the 'fournisseurs' table to filter by 'zipcode'
+                $queryBuilder
+                    ->join('b.num_siret', 'f') // Assuming 'numSiret' is the association to 'fournisseurs' in your 'achat' entity
+                    ->andWhere('f.code_postal = :zipcode')
+                    ->setParameter('zipcode', $form["zipcode"]);
+            }
+            if ($form["mappedData"]->getIdDemandeAchat()) {
+                // Add a join with the 'fournisseurs' table to filter by 'zipcode'
+                $queryBuilder
+                    ->andWhere('b.id_demande_achat = :id_demande_achat')
+                    ->setParameter('id_demande_achat', $form["mappedData"]->getIdDemandeAchat());
+            }
+        // ... Votre logique de construction de la requête ici ...
+        $queryBuilder->orderBy('b.id', 'DESC');
 
         $query = $queryBuilder->getQuery();
     
@@ -813,7 +1023,7 @@ $stmt = $conn->prepare($sql);
                     ->andWhere('b.numero_ej LIKE :numero_ej')
                     ->setParameter('numero_ej', '%' . $form["numero_ej"]->getData() . '%');
             }
-            if ($form["debut_rec"]->getData()) {
+            if ($form["debut_rec"]->getData() ) {
                 $queryBuilder
                     ->andWhere('b.date_saisie > :debut_rec')
                     ->andWhere('b.date_saisie < :fin_rec')
@@ -835,22 +1045,22 @@ $stmt = $conn->prepare($sql);
         $qb = $this->createQueryBuilder('a');
         if($tax=='ht'){
             $result = $qb->select('MONTH(a.date_saisie) AS month, COUNT(a) AS count,SUM(a.montant_achat) AS totalmontant')
-                ->andWhere('a.date_saisie LIKE :date_saisie')
+                ->andWhere('YEAR(a.date_saisie) = :year')
                 ->andWhere('a.type_marche = :type_marche')
-                ->andWhere('a.etat_achat IN (:etat_achats)')
-                ->setParameter('date_saisie', '%' . $date . '%')
+                ->andWhere('a.etat_achat = (:etat_achats)')
+                ->setParameter('year', $date)
                 ->setParameter('type_marche', $type)
-                ->setParameter('etat_achats', [0, 2]);
+                ->setParameter('etat_achats', 2);
         }
         elseif($tax=='ttc'){
             $result = $qb->select('MONTH(a.date_saisie) AS month, COUNT(a) AS count,SUM(a.montant_achat * (1 + t.tva_taux / 100)) AS totalmontant')
                 ->innerJoin('\App\Entity\TVA', 't', Join::WITH, 'a.tva_ident = t.id') 
-                ->andWhere('a.date_saisie LIKE :date_saisie')
+                ->andWhere('YEAR(a.date_saisie) = :year')
                 ->andWhere('a.type_marche = :type_marche')
-                ->andWhere('a.etat_achat IN (:etat_achats)')
-                ->setParameter('date_saisie', '%' . $date . '%')
+                ->andWhere('a.etat_achat = (:etat_achats)')
+                ->setParameter('year', $date)
                 ->setParameter('type_marche', $type)
-                ->setParameter('etat_achats', [0, 2]);
+                ->setParameter('etat_achats', 2);
         }
 
         if ($data->getUtilisateurs()) {
@@ -1461,6 +1671,83 @@ $stmt = $conn->prepare($sql);
                 // dd($achats);
                 return $achats;
             }
+
+
+
+            public function volValDelay($form){
+
+                $userId = null;
+                $numSiretId = null;
+                $cpvId = null;
+                $uOId = null;
+                $formationId = null;
+        
+                $date = $form["date"]->getData();
+                $user = $form["utilisateurs"]->getData();
+                $numSiret = $form["num_siret"]->getData();
+                $cpv = $form["code_cpv"]->getData();
+                $uO = $form["code_uo"]->getData();
+                $formation = $form["code_formation"]->getData();
+                if ($user) {
+                    // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
+                    $userId = $user->getId();
+                }
+                if ($numSiret) {
+                    $numSiretId = $numSiret->getId();
+                }
+                if ($cpv) {
+                    $cpvId = $cpv->getId();
+                }
+                if ($uO) {
+                    $uOId = $uO->getId();
+                }
+                if ($formation) {
+                    $formationId = $formation->getId();
+                }
+                $conn = $this->getEntityManager()->getConnection();
+                $sql = "WITH Mois AS (
+                    SELECT 1 AS Mois UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL 
+                    SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL 
+                    SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL 
+                    SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12
+                ), 
+                Calculs AS (
+                    SELECT 
+                        MONTH(a.date_saisie) AS MoisNotif, 
+                        DATEDIFF(a.date_notification, a.date_valid_inter) AS DiffJours
+                    FROM 
+                        achat a
+                        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
+                        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
+                        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
+                        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
+                        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
+                        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                )
+                SELECT
+                    m.Mois,
+                    SUM(CASE WHEN c.DiffJours <= 15 THEN 1 ELSE 0 END) AS 'Achats <= 15 jours',
+                    SUM(CASE WHEN c.DiffJours BETWEEN 16 AND 30 THEN 1 ELSE 0 END) AS 'Achats 16-30 jours',
+                    SUM(CASE WHEN c.DiffJours > 30 THEN 1 ELSE 0 END) AS 'Achats > 30 jours'
+                FROM
+                    Mois m
+                LEFT JOIN
+                    Calculs c ON m.Mois = c.MoisNotif
+                GROUP BY
+                    m.Mois
+                LIMIT 100";
+        
+        $stmt = $conn->prepare($sql);
+                        
+                        $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+                        $achats=$resultSet->fetchAllAssociative();
+                        // dd($achats);
+                        return $achats;
+        }
+
+
+
+
     public function edit(Achat $achat, bool $flush = false): void
     {
         $this->getEntityManager()->persist($achat);
@@ -1508,9 +1795,10 @@ $stmt = $conn->prepare($sql);
             $achat->setUtilisateurs($user);
             $achat->setDateSaisie($date);
             $achat->setEtatAchat(0);
+            $numeroAchat = $this->achatNumberService->generateAchatNumber();
+            $achat->setNumeroAchat($numeroAchat);
             $this->entityManager->persist($achat);
             $this->entityManager->flush();
-
         
     }
     public function cancel($id)

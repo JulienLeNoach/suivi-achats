@@ -7,6 +7,7 @@ use PhpOffice\PhpSpreadsheet\Chart\Chart;
 use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Chart\Layout;
 use PhpOffice\PhpSpreadsheet\Chart\Legend;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
@@ -109,6 +110,9 @@ class StatisticDelayService  extends AbstractController
             $mois = ['Délai','Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre','TOTAL'];
             $col = 2; 
             $colmonth='B';
+            foreach (range('A', 'Q') as $columnID) {
+                $sheet->getColumnDimension($columnID)->setWidth(15); // Définir la largeur à 15 pour chaque colonne
+            }
             for($j=0;$j<=13;$j++){
                 $sheet->setCellValue($colmonth . 1, $mois[$j]);
                 $colmonth++;
@@ -152,10 +156,11 @@ class StatisticDelayService  extends AbstractController
                 $notTransxAx,
                 $notTransValues
             );
-
-            $notTransplotArea = new PlotArea(null, [$notTransSeries]);
+            $layout = new Layout();
+            $layout->setShowVal(true);
+            $notTransplotArea = new PlotArea($layout, [$notTransSeries]);
             $notTransLegend = new Legend(Legend::POSITION_RIGHT, null, false);
-            $notTransTitle = new Title('Activité appro en volume');
+            $notTransTitle = new Title("Délai d'activié annuelle");
                     
                     $approVolChart = new Chart(
                         'approVolChart',
@@ -170,9 +175,9 @@ class StatisticDelayService  extends AbstractController
 
 
     //-------------------------- Ant GSBDD chart -------------------------------- // 
-                $sheet->setCellValue('A' . 27, 'Antenne GSBDD');
-                $sheet->setCellValue('B' . 26, '<= 3 jours / ' .$achats_delay_all[0]["Pourcentage_Delai_Inf_3_Jours_Ant"]. "%");
-                $sheet->setCellValue('C' . 26, '> 3 jours / '.$achats_delay_all[0]["Pourcentage_Delai_Sup_3_Jours_Ant"] . "%");  
+                $sheet->setCellValue('A' . 27, 'Ant. GSBDD');
+                $sheet->setCellValue('B' . 26, '<= 3j / ' .$achats_delay_all[0]["Pourcentage_Delai_Inf_3_Jours_Ant"]. "%");
+                $sheet->setCellValue('C' . 26, '> 3j / '.$achats_delay_all[0]["Pourcentage_Delai_Sup_3_Jours_Ant"] . "%");  
                 $sheet->setCellValue('B' . 27, $achats_delay_all[0]["CountAntInf3"]); 
                 $sheet->setCellValue('C' . 27, $achats_delay_all[0]["CountAntSup3"]); 
 
@@ -196,7 +201,9 @@ class StatisticDelayService  extends AbstractController
                     $antxAx, // plotCategory
                     $antValues          // plotValues
                 );
-                $antplotArea = new PlotArea(null, [$antSeries]);
+                $layout = new Layout();
+                $layout->setShowVal(true);
+                $antplotArea = new PlotArea($layout, [$antSeries]);
                 $antLegend = new Legend(Legend::POSITION_RIGHT, null, false);
                 $antTitle = new Title('ANT GSBDD');
                         
@@ -217,8 +224,8 @@ class StatisticDelayService  extends AbstractController
     //-------------------------- Budget chart -------------------------------- // 
 
             $sheet->setCellValue('G' . 27, 'Budget');
-            $sheet->setCellValue('H' . 26, '<= 3 jours / ' .$achats_delay_all[1]["Pourcentage_Delai_Inf_3_Jours_Budget"] . "%");
-            $sheet->setCellValue('I' . 26, '> 3 jours / '. $achats_delay_all[1]["Pourcentage_Delai_Sup_3_Jours_Budget"] . "%");  
+            $sheet->setCellValue('H' . 26, '<= 3j / ' .$achats_delay_all[1]["Pourcentage_Delai_Inf_3_Jours_Budget"] . "%");
+            $sheet->setCellValue('I' . 26, '> 3j / '. $achats_delay_all[1]["Pourcentage_Delai_Sup_3_Jours_Budget"] . "%");  
             $sheet->setCellValue('H' . 27, $achats_delay_all[1]["CountBudgetInf3"]); 
             $sheet->setCellValue('I' . 27, $achats_delay_all[1]["CountBudgetSup3"]); 
 
@@ -242,7 +249,9 @@ class StatisticDelayService  extends AbstractController
                 $budgetxAx, // plotCategory
                 $budgetValues          // plotValues
             );
-            $budgetplotArea = new PlotArea(null, [$budgetSeries]);
+            $layout = new Layout();
+                $layout->setShowVal(true);
+            $budgetplotArea = new PlotArea($layout, [$budgetSeries]);
             $budgetLegend = new Legend(Legend::POSITION_RIGHT, null, false);
             $budgetTitle = new Title('Budget');
                 
@@ -265,8 +274,8 @@ class StatisticDelayService  extends AbstractController
     //-------------------------- APPRO chart -------------------------------- // 
 
         $sheet->setCellValue('M' . 27, 'APPRO');
-        $sheet->setCellValue('N' . 26, '<= 7 jours / ' .$achats_delay_all[2]["Pourcentage_Delai_Inf_7_Jours_Appro"]. "%");
-        $sheet->setCellValue('O' . 26, '> 7 jours / '.$achats_delay_all[2]["Pourcentage_Delai_Sup_7_Jours_Appro"]. "%");  
+        $sheet->setCellValue('N' . 26, '<= 7j / ' .$achats_delay_all[2]["Pourcentage_Delai_Inf_7_Jours_Appro"]. "%");
+        $sheet->setCellValue('O' . 26, '> 7j / '.$achats_delay_all[2]["Pourcentage_Delai_Sup_7_Jours_Appro"]. "%");  
         $sheet->setCellValue('N' . 27, $achats_delay_all[2]["CountApproInf7"]); 
         $sheet->setCellValue('O' . 27, $achats_delay_all[2]["CountApproSup7"]); 
 
@@ -290,7 +299,9 @@ class StatisticDelayService  extends AbstractController
             $approxAx, // plotCategory
             $approValues          // plotValues
         );
-        $approplotArea = new PlotArea(null, [$approSeries]);
+        $layout = new Layout();
+                $layout->setShowVal(true);
+        $approplotArea = new PlotArea($layout, [$approSeries]);
         $approLegend = new Legend(Legend::POSITION_RIGHT, null, false);
         $approTitle = new Title('Appro');
                 
@@ -310,8 +321,8 @@ class StatisticDelayService  extends AbstractController
 
 
         $sheet->setCellValue('A' . 43, 'Fin');
-        $sheet->setCellValue('B' . 42, '< 7 jours / ' .$achats_delay_all[3]["Pourcentage_Delai_Inf_7_Jours_Fin"] . "%");
-        $sheet->setCellValue('C' . 42, '> 7 jours / '.$achats_delay_all[3]["Pourcentage_Delai_Sup_7_Jours_Fin"] . "%");  
+        $sheet->setCellValue('B' . 42, '< 7j / ' .$achats_delay_all[3]["Pourcentage_Delai_Inf_7_Jours_Fin"] . "%");
+        $sheet->setCellValue('C' . 42, '> 7j / '.$achats_delay_all[3]["Pourcentage_Delai_Sup_7_Jours_Fin"] . "%");  
         $sheet->setCellValue('B' . 43, $achats_delay_all[3]["CountFinInf7"]); 
         $sheet->setCellValue('C' . 43, $achats_delay_all[3]["CountFinSup7"]); 
 
@@ -335,7 +346,9 @@ class StatisticDelayService  extends AbstractController
             $finxAx, // plotCategory
             $finValues          // plotValues
         );
-        $finplotArea = new PlotArea(null, [$finSeries]);
+        $layout = new Layout();
+                $layout->setShowVal(true);
+        $finplotArea = new PlotArea($layout, [$finSeries]);
         $finLegend = new Legend(Legend::POSITION_RIGHT, null, false);
         $finTitle = new Title('Fin');
                 
@@ -359,8 +372,8 @@ class StatisticDelayService  extends AbstractController
     
 
         $sheet->setCellValue('G' . 43, 'Chorus formul.');
-        $sheet->setCellValue('H' . 42, '<= 10 jours / ' .$achats_delay_all[4]["Pourcentage_Delai_Inf_10_Jours_Chorus"] . "%");
-        $sheet->setCellValue('I' . 42, '> à 10 jours / '.$achats_delay_all[4]["Pourcentage_Delai_Sup_10_Jours_Chorus"] . "%");  
+        $sheet->setCellValue('H' . 42, '<= 10j / ' .$achats_delay_all[4]["Pourcentage_Delai_Inf_10_Jours_Chorus"] . "%");
+        $sheet->setCellValue('I' . 42, '> à 10j / '.$achats_delay_all[4]["Pourcentage_Delai_Sup_10_Jours_Chorus"] . "%");  
         $sheet->setCellValue('H' . 43, $achats_delay_all[4]["CountChorusFormInf10"]); 
         $sheet->setCellValue('I' . 43, $achats_delay_all[4]["CountChorusFormSup10"]); 
 
@@ -384,7 +397,9 @@ class StatisticDelayService  extends AbstractController
             $chorxAx, // plotCategory
             $chorValues          // plotValues
         );
-        $chorplotArea = new PlotArea(null, [$chorSeries]);
+        $layout = new Layout();
+                $layout->setShowVal(true);
+        $chorplotArea = new PlotArea($layout, [$chorSeries]);
         $chorLegend = new Legend(Legend::POSITION_RIGHT, null, false);
         $chorTitle = new Title('Chorus formul.');
                 
@@ -407,8 +422,8 @@ class StatisticDelayService  extends AbstractController
     //-------------------------- PFAF chart -------------------------------- // 
 
         $sheet->setCellValue('M' . 43, 'PFAF');
-        $sheet->setCellValue('N' . 42,  '<= 14 jours / ' .$achats_delay_all[5]["Pourcentage_Delai_Inf_14_Jours_Pfaf"] . "%");
-        $sheet->setCellValue('O' . 42, '> à 14 jours / '.$achats_delay_all[5]["Pourcentage_Delai_Sup_14_Jours_Pfaf"] . "%");  
+        $sheet->setCellValue('N' . 42,  '<= 14j / ' .$achats_delay_all[5]["Pourcentage_Delai_Inf_14_Jours_Pfaf"] . "%");
+        $sheet->setCellValue('O' . 42, '> à 14j / '.$achats_delay_all[5]["Pourcentage_Delai_Sup_14_Jours_Pfaf"] . "%");  
         $sheet->setCellValue('N' . 43, $achats_delay_all[5]["CountPfafInf14"]); 
         $sheet->setCellValue('O' . 43, $achats_delay_all[5]["CountPfafSup14"]); 
 
@@ -432,7 +447,9 @@ class StatisticDelayService  extends AbstractController
             $pfafxAx, // plotCategory
             $pfafValues          // plotValues
         );
-        $pfafplotArea = new PlotArea(null, [$pfafSeries]);
+        $layout = new Layout();
+                $layout->setShowVal(true);
+        $pfafplotArea = new PlotArea($layout, [$pfafSeries]);
         $pfafLegend = new Legend(Legend::POSITION_RIGHT, null, false);
         $pfafTitle = new Title('PFAF');
                 
@@ -451,10 +468,10 @@ class StatisticDelayService  extends AbstractController
     //-------------------------- Total chart -------------------------------- // 
 
         $sheet->setCellValue('A' . 60, 'Délai total');
-        $sheet->setCellValue('B' . 59,  '<= 15 jours / ' .$achats_delay_all[0]["Pourcentage_Delai_Inf_15_Jours"]. "%");
-        $sheet->setCellValue('C' . 59, '> à 15 jours / '.$achats_delay_all[0]["Pourcentage_Delai_Sup_15_Jours"]. "%");  
-        $sheet->setCellValue('B' . 60, $achats_delay_all[0]["CountDelaiTotalInf15"]); 
-        $sheet->setCellValue('C' . 60, $achats_delay_all[0]["CountDelaiTotalSup15"]); 
+        $sheet->setCellValue('B' . 59,  '<= 15j / ' .$achats_delay_all[6]["Pourcentage_Delai_Inf_15_Jours"]. "%");
+        $sheet->setCellValue('C' . 59, '> à 15j / '.$achats_delay_all[6]["Pourcentage_Delai_Sup_15_Jours"]. "%");  
+        $sheet->setCellValue('B' . 60, $achats_delay_all[6]["CountDelaiTotalInf15"]); 
+        $sheet->setCellValue('C' . 60, $achats_delay_all[6]["CountDelaiTotalSup15"]); 
 
         $totalLabels = [
             new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$A$59', null, 12), 
@@ -476,7 +493,9 @@ class StatisticDelayService  extends AbstractController
             $totalxAx, // plotCategory
             $totalValues // plotValues
         );
-        $totalplotArea = new PlotArea(null, [$totalSeries]);
+        $layout = new Layout();
+                $layout->setShowVal(true);
+        $totalplotArea = new PlotArea($layout, [$totalSeries]);
         $totalLegend = new Legend(Legend::POSITION_RIGHT, null, false);
         $totalTitle = new Title('Délai Total');
                 

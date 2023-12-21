@@ -23,7 +23,7 @@ class Achat
     #[Groups(['achat:list', 'achat:item'])]
     private ?\DateTime $date_saisie = null;
 
-
+    #[ORM\Column(length: 255)]
     #[Groups(['achat:list', 'achat:item'])]
     private ?string $numero_achat = null;
 /**
@@ -35,12 +35,12 @@ class Achat
  * )
  * @Assert\Length(
  *     max=10,
- *     maxMessage="L'ID de la demande d'achat ne doit pas dépasser 10 caractèresd."
+ *     maxMessage="L'ID de la demande d'achat ne doit pas dépasser 10 caractères."
  * )
  */
     #[ORM\Column]
     #[Groups(['achat:list', 'achat:item'])]
-    private ?float $id_demande_achat = null;
+    private ?string $id_demande_achat = null;
 
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -88,7 +88,7 @@ class Achat
  * @ORM\Column(length=255, nullable=true)
  * @Groups({"achat:list", "achat:item"})
  * @Assert\Regex(
- *     pattern="/^[a-zA-Z0-9À-ÿ ']+$/u",
+ *     pattern="/^[a-zA-Z0-9À-ÿ '\s]+$/u",
  *     message="L'objet d'achat ne doit contenir que des valeurs alphanumériques."
  * )
  * @Assert\Length(
@@ -121,13 +121,12 @@ class Achat
 #[Groups(['achat:list', 'achat:item'])]
 private ?float $montant_achat = null;
 
-
 /**
  * @ORM\Column(length=255, nullable=true)
  * @Groups({"achat:list", "achat:item"})
  * @Assert\Regex(
- *     pattern="/^[a-zA-Z0-9À-ÿ ']+$/u",
- *     message="L'observation ne doit contenir que des valeurs alphanumériques."
+ *     pattern="/^[a-zA-Z0-9À-ÿ '\s]+$/u",
+ *     message="L'observation ne doit contenir que des valeurs alphanumériques, des espaces et des retours à la ligne."
  * )
  * @Assert\Length(
  *     max=400,
@@ -174,11 +173,12 @@ private ?float $montant_achat = null;
 
     
 
-    public function setNumeroAchat()
+    public function setNumeroAchat(string $numero_achat)
     {
         // Générez le numéro d'achat basé sur l'année en cours et l'ID
-        $anneeEnCours = date('Y');
-        $this->numero_achat = $anneeEnCours . '-' . $this->id;
+        $this->numero_achat = $numero_achat;
+
+        return $this;
     }
 
     public function getId(): ?int
@@ -204,12 +204,12 @@ private ?float $montant_achat = null;
     }
 
 
-    public function getIdDemandeAchat(): ?float
+    public function getIdDemandeAchat(): ?string
     {
         return $this->id_demande_achat;
     }
 
-    public function setIdDemandeAchat(float $id_demande_achat): self
+    public function setIdDemandeAchat(string $id_demande_achat): self
     {
         $this->id_demande_achat = $id_demande_achat;
 

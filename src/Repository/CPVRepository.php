@@ -21,40 +21,30 @@ class CPVRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, CPV::class);
     }
-    public function showCPV($form,$page)
+    public function showCPV($form)
     {
-        // $data = $form->getData();
-        $date = $form["date"]->getData();
-        $conn = $this->getEntityManager()->getConnection();
+        $date = $form["date"];
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder
+            ->select('cpv.libelle_cpv')
+            ->addSelect('SUM(achat.montant_achat) AS somme_montants')
+            ->addSelect('cpv.mt_cpv')
+            ->addSelect('cpv.mt_cpv_auto')
+            ->addSelect('(cpv.mt_cpv_auto - SUM(achat.montant_achat)) AS reliquat')
+            ->from('App\Entity\Achat', 'achat')
 
-        $sql = "SELECT 
-        cpv.libelle_cpv,
-        SUM(achat.montant_achat) AS somme_montants,
-        cpv.mt_cpv,
-        cpv.mt_cpv_auto,
-        (cpv.mt_cpv_auto - SUM(achat.montant_achat)) AS reliquat
-    FROM 
-        achat
-    JOIN 
-        cpv ON achat.code_cpv_id = cpv.id
-    WHERE 
-        YEAR(achat.date_saisie) = $date
-    GROUP BY 
-        cpv.libelle_cpv, cpv.mt_cpv, cpv.mt_cpv_auto 
-    ORDER BY 
-    somme_montants DESC";
-
-        $stmt = $conn->prepare($sql);
-        $resultSet = $conn->executeQuery($sql);
-        $result = $resultSet->fetchAllAssociative();
+            ->join('achat.code_cpv', 'cpv')
+            ->where("YEAR(achat.date_saisie) = :date")
+            ->setParameter('date',$date)
+            ->andWhere("cpv.etat_cpv = :etat")
+            ->setParameter('etat', 1)
+            ->groupBy('cpv.libelle_cpv, cpv.mt_cpv, cpv.mt_cpv_auto')
+            ->orderBy('somme_montants', 'DESC');
     
-
+        $query = $queryBuilder->getQuery();
+        $result = $query->getResult();
     
-        return $result;
-
-
-      
-
+        return $query;
     }
 
 }

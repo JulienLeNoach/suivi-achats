@@ -4,30 +4,16 @@ namespace App\Controller\Statistic;
 
 // ...
 
-use Dompdf\Dompdf;
 use App\Form\StatisticType;
-use App\Form\ValidAchatType;
 use App\Form\CreateExcelType;
-use App\Service\CalendarService;
 use App\Repository\AchatRepository;
 use App\Service\StatisticVolValService;
 use Doctrine\ORM\EntityManagerInterface;
-use PhpOffice\PhpSpreadsheet\Chart\Chart;
-use PhpOffice\PhpSpreadsheet\Chart\Title;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Chart\Legend;
-use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use Symfony\Component\HttpFoundation\Request;
-use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\KernelInterface;
-use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
-use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Entity\Achat; // Make sure this use statement is correct
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 //La méthode showStat de la classe, qui est associée à la route '/statistic',
@@ -55,7 +41,7 @@ class StatisticVolController extends AbstractController
     }
 
     #[Route('/statistic/vol', name: 'app_statistic_vol')]
-    public function showStat(Request $request,StatisticVolValService $statisticService): Response
+    public function showStat(Request $request): Response
     {
 
         $form = $this->createForm(StatisticType::class, null, []);
@@ -74,7 +60,7 @@ class StatisticVolController extends AbstractController
             $counts2 = $this->statisticService->totalPerMonth($counts2);
             $purchaseCountByMonth = $this->statisticService->purchaseCountByMonth($counts1,$counts2);
             $purchaseTotalAmountByMonth = $this->statisticService->purchaseTotalAmountByMonth($counts1,$counts2);
-
+            $delayVolVal = $this->achatRepository->volValDelay($form);
             $chartData = $this->statisticService->arrayMapChart( $counts1, $counts2, 'count');
             $chartData2 = $this->statisticService->arrayMapChart($counts1, $counts2, 'totalmontant');
             $datasets1 = $chartData['datasets'];
@@ -87,11 +73,11 @@ class StatisticVolController extends AbstractController
                 return $this->render('statistic/index.html.twig', [
                     'form' => $form->createView(),
                     'excelForm' => $excelForm->createView(),
-
                     'counts1' => $counts1,
                     'counts2' => $counts2,
                     'purchaseCountByMonth' => $purchaseCountByMonth,
                     'purchaseTotalAmountByMonth' => $purchaseTotalAmountByMonth,
+                    'delayVolVal'=>$delayVolVal,
                     'datasets1' => $datasets1,
                     'datasets2' => $datasets2,
                     'datasets3' => $datasets3,

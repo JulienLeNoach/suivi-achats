@@ -26,10 +26,7 @@ Saisir un achat
                     {{ form_row(form.id_demande_achat) }}
                 </div>
             </div>
-            <label for="add_achat_objet_achat">Objet de l'achat</label>
-            {{ form_row(form.objet_achat) }}
-            <label for="add_achat_observations">Observations</label>
-            {{ form_row(form.observations) }}
+           
             <div class="d-flex">
                 <div class="w-50 me-3">
                     <label for="add_achat_date_sillage">Date enregistrement Sillage</label>
@@ -50,6 +47,10 @@ Saisir un achat
                     {{ form_row(form.montant_achat)}}
                 </div>
             </div>
+             <label for="add_achat_objet_achat">Objet de l'achat</label>
+            {{ form_row(form.objet_achat) }}
+            <label for="add_achat_observations">Observations</label>
+            {{ form_row(form.observations) }}
         </div>
         <div class="input-grp" style="flex-basis:33%;">
 

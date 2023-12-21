@@ -34,7 +34,7 @@ class StatisticTypeMarcheController extends AbstractController
 
 
     #[Route('/statistic/typemarche', name: 'app_statistic_typemarche')]
-    public function index(Request $request,StatisticTypeMarcheService $statisticDelayService): Response
+    public function index(Request $request): Response
     {
         $form = $this->createForm(StatisticType::class, null, []);
 
@@ -61,17 +61,7 @@ class StatisticTypeMarcheController extends AbstractController
     ]);
 
         }
-        // if ($excelForm->isSubmitted() && $excelForm->isValid()) {
-        //     $form = $this->createForm(StatisticType::class, null, []);
 
-        // $form->handleRequest($request);
-        //     $result_achats = $this->achatRepository->searchAchatToStat($form);
-        //     $result_achats_mounts = $this->achatRepository->searchAchatToStatMount($form);
-        //     $parameter = $this->parametresRepository->findById(1);
-        //     $filePath = $statisticDelayService->generateExcelFile($result_achats, $result_achats_mounts, $parameter, $this->projectDir);
-        //     return new BinaryFileResponse($filePath);
-    
-        // }
         return $this->render('statistic_type_marche/index.html.twig', [
             'excelForm' => $excelForm->createView(),
             'form' => $form->createView(),

@@ -26,7 +26,7 @@ class CalendarType extends AbstractType
                 'label' =>'Type de journée ',
                 'choices'  => [
                     ''=>'',
-                    'Oeuvré' => "lightgray",
+                    'Oeuvré' => "#f5f5f5",
                     'Week-end' => "red",
                     'Férié' => "yellow",
                     'RTT' => "blue",

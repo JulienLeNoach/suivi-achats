@@ -50,8 +50,17 @@ class CalendarController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $calendar->setUserId($user);
-            $calendarRepository->save($calendar, true);
+            // dd($calendar);
+            $existingEvent = $calendarRepository->findOneBy(['start' => $calendar->getStart()]);
 
+            if ($existingEvent) {
+                // Suppression de l'événement existant s'il y en a un
+                $this->entityManager->remove($existingEvent);
+                $this->entityManager->flush();
+            }
+        
+            // Enregistrement du nouvel événement
+            $calendarRepository->save($calendar, true);
             return $this->redirectToRoute('app_calendar', [], Response::HTTP_SEE_OTHER);
         }
 

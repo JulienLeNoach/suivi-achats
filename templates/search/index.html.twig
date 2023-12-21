@@ -85,27 +85,26 @@
             {{ form_row(form.code_cpv) }}
             <label for="achat_search_code_formation_autocomplete-ts-control">Formation</label>
             {{ form_row(form.code_formation) }}
-            <label for="achat_search_utilisateurs_autocomplete-ts-control">Utilisateurs</label>
+            <div class="d-flex">
+                <div class="w-75">
             {{ form_row(form.utilisateurs) }}
+                </div>
+                <div class="w-25">
+            {{ form_row(form.all_user) }}
+                </div>
+            </div>
             <label for="achat_search_num_siret_autocomplete-ts-control">N° SIRET</label>
             {{ form_row(form.num_siret) }}
+                    {{ form_row(form.tax)}}
 
         </div>
         <div class="input-grp" style="flex-basis:33%;">
             {{ form_row(form.etat_achat) }}
             {{ form_row(form.devis)}}
             {{ form_row(form.place)}}
-            <div class="d-flex">
 
-                <div class="type_marche w-75">
                     {{ form_row(form.type_marche)}}
-                </div>
-                <div class="pub me-3 w-25">
-                    {{ form_row(form.tax)}}
-
-                </div>
-            </div>
-        </div>
+      </div>
         {{ form_row(form.recherche)}}
         {{ form_end(form) }}
     </div>
@@ -195,13 +194,14 @@
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    let offset = 5; // Commencer après les premiers résultats initialement chargés
-    const limit = 5;
+    let offset = 7; // Commencer après les premiers résultats initialement chargés
+    const limit = 7;
     const tbody = document.getElementById('achat-list-tbody');
     const tableContainer = document.getElementById('achat-list');
 
     tableContainer.addEventListener('scroll', function() {
-        if (tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight) {
+        if (tableContainer.scrollTop + tableContainer.clientHeight+1 >= tableContainer.scrollHeight) {
+
             fetch(`/search?offset=${offset}&limit=${limit}`, { 
                 headers: { 'X-Requested-With': 'XMLHttpRequest' } 
             })

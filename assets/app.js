@@ -7,7 +7,21 @@
 import { startStimulusApp } from '@symfony/stimulus-bridge';
 import Chart from 'chart.js/auto';
 import Calendar from 'fullcalendar';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+Chart.register(ChartDataLabels);
 
+Chart.defaults.set('plugins.datalabels', {
+    color: 'black',
+    anchor: 'end',
+    // size: '20',
+    font: {
+        size:16,
+      },
+      align:'top',
+      display: function(context) {
+        return context.dataset.data[context.dataIndex] > 1; // or >= 1 or ...
+     }
+  });
 // any CSS you import will output into a single css file (app.css in this case)
 
 import './less/search.less';

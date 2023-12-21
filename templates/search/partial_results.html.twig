@@ -4,13 +4,13 @@
     <tbody id="achat-list-tbody" class="achat-list-tbody" data-controller="search-achat">
         {% for achat in achats  %}
             <tr class="clickable-row" data-id="{{ achat.id }}" data-action="click->search-achat#attachEventListeners">
-                <td>{{achat.numeroAchat}}</td>
+                <td>{{achat.id}}</td>
                 <td>{{achat.dateSaisie|date('d-m-Y')}}</td>
                 <td>{{ achat.utilisateurs.trigram }}</td>
                 <td>{{ achat.codeFormation.libelleFormation }}</td>
                 <td>{{ achat.objetAchat}}</td>
                 <td>{{ achat.numSiret.nomFournisseur }}</td>
-                    <td >{{ achat.montantAchat }}</td>
+                    <td >{{ achat.montantAchat|round(2  , 'floor') }}</td>
                 <td class="etat">
                     {% if achat.etatAchat == 0 %}En cours{% elseif achat.etatAchat == 1 %}Annulé{% elseif achat.etatAchat == 2 %}Validé{% endif %}
                 </td>

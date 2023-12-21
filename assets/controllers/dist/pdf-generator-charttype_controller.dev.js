@@ -45,7 +45,7 @@ function (_Controller) {
   _createClass(_default, [{
     key: "downloadgraphBar",
     value: function downloadgraphBar() {
-      var canvas1, canvasImage1, canvas2, canvasImage2, canvas3, canvasImage3, tableTotaux, mppaTable, mabcTable, allMountTable, tableTotauxCanvas, mpppaTableCanvas, mabcTableCanvas, allMountTableCanvas, tableTotauxImage, mppaTableImage, mabcTableImage, allMountTableCanvasImage, pdf;
+      var canvas1, canvasImage1, canvas2, canvasImage2, canvas3, canvasImage3, tableTotaux, mppaTable, mabcTable, allMountTable, tableTotauxCanvas, mpppaTableCanvas, mabcTableCanvas, allMountTableCanvas, tableTotauxImage, mppaTableImage, mabcTableImage, allMountTableCanvasImage, pdf, dateEdited, pageCount, i;
       return regeneratorRuntime.async(function downloadgraphBar$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -94,23 +94,33 @@ function (_Controller) {
               mppaTableImage = mpppaTableCanvas.toDataURL('image/png', 1.0);
               mabcTableImage = mabcTableCanvas.toDataURL('image/png', 1.0);
               allMountTableCanvasImage = allMountTableCanvas.toDataURL('image/png', 1.0);
-              pdf = new _jspdf["default"]('p', 'mm', [300, 200]);
+              pdf = new _jspdf["default"]('l', 'mm', 'a3');
               pdf.setFontSize(15);
               pdf.addImage(canvasImage1, 'png', 15, 15, 70, 70);
               pdf.addImage(canvasImage2, 'png', 115, 15, 70, 70);
               pdf.addImage(canvasImage3, 'png', 65, 120, 70, 70);
-              pdf.text("Montant Total ", 75, 235);
-              pdf.addImage(tableTotauxImage, 'png', 25, 240, 150, 60);
               pdf.text("Montant des MPPA", 25, 90);
               pdf.addImage(mppaTableImage, 'png', 15, 95, 80, 15);
               pdf.text("Montant des MABC", 120, 90);
               pdf.addImage(mabcTableImage, 'png', 100, 95, 80, 15);
+              pdf.text("Statistiques MPPA/MABC", 190, 25); // Déplace le titre au-dessus de l'image
+
+              pdf.addImage(tableTotauxImage, 'png', 190, 30, 100, 80); // Ajustement des coordonnées pour placer à droite
+
               pdf.text("Montant des MABC + MPPA", 65, 195);
               pdf.addImage(allMountTableCanvasImage, 'png', 55, 200, 80, 15);
               pdf.setFillColor(106, 106, 244, 1);
+              dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
+              pageCount = pdf.internal.getNumberOfPages();
+
+              for (i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+                pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
+              }
+
               pdf.save('Graphique.pdf');
 
-            case 48:
+            case 51:
             case "end":
               return _context.stop();
           }

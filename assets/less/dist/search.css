@@ -8,6 +8,11 @@ a {
   display: flex;
   justify-content: center;
 }
+.title-sa {
+  display: inline-block !important;
+  /* ou display: inline; selon le contexte */
+  white-space: nowrap !important;
+}
 .h4 {
   display: flex;
 }
@@ -27,6 +32,9 @@ a {
 .action-container {
   margin: 0 400px 0 400px;
 }
+.action-container-visu {
+  margin: 0 200px 0 200px;
+}
 .search-form {
   display: flex;
   flex-wrap: wrap;
@@ -37,6 +45,10 @@ a {
   height: auto;
   flex-wrap: nowrap !important;
   border: 2px #6a6af4 solid;
+}
+input,
+textarea:disabled {
+  color: black!important;
 }
 .input-grp {
   padding: 5px;
@@ -55,12 +67,13 @@ a {
 .input-grp-tab:last-child {
   text-align: center;
 }
-.radio-search {
-  margin-top: 40px;
-}
 .radio-search input {
   margin-left: 20px;
   display: inline-block !important;
+}
+.all_user {
+  height: 40px !important;
+  width: 40px !important;
 }
 .table-container {
   height: 400px;
@@ -360,9 +373,6 @@ td {
 }
 .cumul-cpv-table tbody {
   display: block;
-  max-height: 500px;
-  /* Ajustez cette valeur selon vos besoins */
-  overflow-y: auto;
   width: 100%;
 }
 .cumul-cpv-table tbody tr {

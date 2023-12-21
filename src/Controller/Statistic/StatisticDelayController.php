@@ -38,7 +38,7 @@ class StatisticDelayController extends AbstractController
     }
 
     #[Route('/statistic/delay', name: 'app_statistic_delay')]
-    public function index(Request $request, StatisticDelayService $statisticDelayService): Response
+    public function index(Request $request, ): Response
     {
 
         $form = $this->createForm(StatisticType::class, null, []);
@@ -50,12 +50,18 @@ class StatisticDelayController extends AbstractController
             // dd($achats_delay);
             $achats = $this->statisticDelayService->totalDelayPerMonth($achats_delay);
             $achats_delay_all = $this->achatRepository->yearDelayCount($form);
-            
+            // $submittedData = [];
+
+            // foreach ($form as $fieldName => $formField) {
+            //     $data = $formField->getData();
+            //     if ($data !== null && $data !== '') {
+            //     $submittedData[$fieldName] = $formField->getData();
+            //     }
+            // }
         // Récupérez les données achats
         $transStat = array_filter(array_values($achats[2]), 'is_numeric');
         $notStat = array_filter(array_values($achats[5]), 'is_numeric');
         $excelForm = $this->createForm(CreateExcelType::class); 
-
         return $this->render('statistic_delay/index.html.twig', [
             'form' => $form->createView(),
             'excelForm' => $excelForm->createView(),

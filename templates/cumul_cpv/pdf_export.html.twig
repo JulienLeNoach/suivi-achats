@@ -1,0 +1,22 @@
+ <h1>Cumul annuel des montants par CPV  pour l'année {{criteriaCPV["date"]}}</h1>
+ <h3>Valeur d'alerte : {{criteriaCPV["alertValue"]}} € </h3>
+ <table border=1>
+     <thead class="position-sticky">
+         <tr>
+             <th class="position-sticky">CPV</th>
+             <th class="position-sticky">Mt. achats traités</th>
+             <th class="position-sticky">Montant total</th>
+             <th class="position-sticky">Montant autorisé</th>
+             <th class="position-sticky">Reliquat</th>
+         </tr>
+     </thead>{% for cpv in result_cpv %}
+     <tr>
+         <td>{{cpv.libelle_cpv}}</td>
+         <td>{{cpv.somme_montants}}</td>
+         <td style="{{ cpv.somme_montants > criteriaCPV["alertValue"] ? 'background-color:orange;' : '' }}">{{cpv.somme_montants}}
+         </td>
+         <td>{{ cpv.mt_cpv_auto }}</td>
+         <td style="{{ cpv.reliquat < 0 ? 'background-color:red;' : '' }}">{{ cpv.reliquat }}</td>
+     </tr>
+     {% endfor %}
+ </table>

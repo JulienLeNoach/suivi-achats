@@ -7,7 +7,11 @@ a {
   justify-content: center;
 
 }
+.title-sa {
+  display: inline-block !important; /* ou display: inline; selon le contexte */
+  white-space: nowrap !important;
 
+}
 .h4 {
   display: flex;
 
@@ -34,7 +38,10 @@ a {
   margin: 0 400px 0 400px;
 
 }
+.action-container-visu{
+  margin: 0 200px 0 200px;
 
+}
 // 
 .search-form {
   display: flex;
@@ -62,7 +69,9 @@ a {
 //   // border: 2px #6a6af4 solid;
 
 // }
-
+input,textarea:disabled{
+  color:black!important;
+}
 .input-grp {
   padding: 5px;
 
@@ -86,7 +95,7 @@ a {
 }
 
 .radio-search {
-  margin-top: 40px;
+  // margin-top: 40px;
 
   input {
     margin-left: 20px;
@@ -95,7 +104,10 @@ a {
 
 
 }
-
+.all_user{
+  height:40px !important;
+  width:40px !important;
+}
 .table-container {
   height: 400px;
   width: 100%;
@@ -470,10 +482,11 @@ background-color:#4d68bc;
 
 .cumul-cpv-table tbody {
   display: block;
-  max-height: 500px; /* Ajustez cette valeur selon vos besoins */
-  overflow-y: auto;
+  // max-height: 500px; /* Ajustez cette valeur selon vos besoins */
   width: 100%;
 }
+
+
 
 .cumul-cpv-table tbody tr {
   display: table;

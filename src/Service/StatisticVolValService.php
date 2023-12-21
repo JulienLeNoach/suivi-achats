@@ -6,6 +6,7 @@ use PhpOffice\PhpSpreadsheet\Chart\Chart;
 use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Chart\Layout;
 use PhpOffice\PhpSpreadsheet\Chart\Legend;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
@@ -130,22 +131,22 @@ class StatisticVolValService  extends AbstractController
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $col = 'E'; // Commencez à partir de la colonne E pour les données
+        $col = 'C'; // Commencez à partir de la colonne E pour les données
         foreach (range('B', 'Q') as $columnID) {
             $sheet->getColumnDimension($columnID)->setWidth(15); // Définir la largeur à 15 pour chaque colonne
         }
 
-        $sheet->setCellValue('D1', 'Volume'); 
+        $sheet->setCellValue('B1', 'Volume'); 
         $sheet->setCellValue('B2', 'MPPA'); 
         $sheet->setCellValue('B3', 'MABC'); 
         $sheet->setCellValue('B4', 'TOTAL'); 
-        $sheet->setCellValue('Q1', 'TOTAL');
+        $sheet->setCellValue('O1', 'TOTAL');
 
         $sheet->setCellValue('B21', 'Valeur (HT)'); 
         $sheet->setCellValue('B22', 'MPPA'); 
         $sheet->setCellValue('B23', 'MABC'); 
         $sheet->setCellValue('B24', 'TOTAL'); 
-        $sheet->setCellValue('Q21', 'TOTAL'); 
+        $sheet->setCellValue('O21', 'TOTAL'); 
 
         // Insérer les mois en première ligne
         foreach ($mois as $index => $moi) {
@@ -159,23 +160,23 @@ class StatisticVolValService  extends AbstractController
             $sheet->setCellValue($col . '24', $datasets3[$index % count($datasets3)] + $datasets4[$index % count($datasets4)]); // Valeur de datasets2
             $col++; // Passer à la colonne suivante pour le mois suivant
         }   
-        $sheet->setCellValue('Q2', '=SUM(E2:P2)');
-        $sheet->setCellValue('Q3', '=SUM(E3:P3)');
-        $sheet->setCellValue('Q4', '=SUM(E4:P4)');
-        $sheet->setCellValue('Q22', '=SUM(E22:P22)');
-        $sheet->setCellValue('Q23', '=SUM(E23:P23)');
-        $sheet->setCellValue('Q24', '=SUM(E24:P24)');
+        $sheet->setCellValue('O2', '=SUM(C2:N2)');
+        $sheet->setCellValue('O3', '=SUM(C3:N3)');
+        $sheet->setCellValue('O4', '=SUM(C4:N4)');
+        $sheet->setCellValue('O22', '=SUM(C22:N22)');
+        $sheet->setCellValue('O23', '=SUM(C23:N23)');
+        $sheet->setCellValue('O24', '=SUM(C24:N24)');
 
         $dataSeriesLabels = [
             new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$2', null, 12), 
             new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$3', null, 12), // Mois
         ];
         $xAxisTickValues = [
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$E$1:$P$1', null, 12), // 'Valeurs'
+            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$C$1:$N$1', null, 12), // 'Valeurs'
         ];
         $dataSeriesValues = [
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$E$2:$P$2', null, 12), // Valeurs pour datasets1
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$E$3:$P$3', null, 12), // Valeurs pour datasets2
+            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$2:$N$2', null, 12), // Valeurs pour datasets1
+            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$3:$N$3', null, 12), // Valeurs pour datasets2
         ];
 
                 
@@ -187,8 +188,9 @@ class StatisticVolValService  extends AbstractController
             $xAxisTickValues,
             $dataSeriesValues
         );
-
-        $plotArea = new PlotArea(null, [$series1]);
+        $layout = new Layout();
+        $layout->setShowVal(true);
+        $plotArea = new PlotArea( $layout, [$series1]);
         $legend = new Legend(Legend::POSITION_RIGHT, null, false);
         $title = new Title('Activité appro en volume');
                 
@@ -207,8 +209,8 @@ class StatisticVolValService  extends AbstractController
 
 
                     $dataSeriesValues2 = [
-                        new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$E$22:$P$22', null, 12), // Valeurs
-                        new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$E$23:$P$23', null, 12), // Valeurs pour datasets2
+                        new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$22:$N$22', null, 12), // Valeurs
+                        new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$23:$N$23', null, 12), // Valeurs pour datasets2
                     ];
 
                     $series2 = new DataSeries(
@@ -219,8 +221,9 @@ class StatisticVolValService  extends AbstractController
                         $xAxisTickValues,
                         $dataSeriesValues2
                     );
-
-                    $plotArea2 = new PlotArea(null, [$series2]);
+                    $layout = new Layout();
+                    $layout->setShowVal(true);
+                    $plotArea2 = new PlotArea($layout, [$series2]);
                     $legend2 = new Legend(Legend::POSITION_RIGHT, null, false);
                     $title2 = new Title('Activité appro en valeur (HT)');
                     

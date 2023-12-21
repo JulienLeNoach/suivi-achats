@@ -27,7 +27,7 @@ class Calendar
     #[ORM\Column]
     private ?bool $all_day = null;
 
-    #[ORM\Column(length: 7)]
+    #[ORM\Column(length: 15)]
     private ?string $background_color = null;
 
     #[ORM\Column(length: 7)]

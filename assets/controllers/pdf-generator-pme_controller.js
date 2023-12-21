@@ -30,20 +30,24 @@ export default class extends Controller {
     const volvalTableImage = volvalTableCanvas.toDataURL('image/png', 1.0);
     const actApproImage = actApproTableCanvas.toDataURL('image/png', 1.0);
 
-    let pdf = new jsPDF('l', 'mm', [300, 200]); 
+    let pdf = new jsPDF('l', 'mm', 'a3'); 
     pdf.setFontSize(15);
 
-    pdf.addImage(canvasImage1, 'png', 190, 15, 70, 70);
+    pdf.text("Achats MPPA", 10, 15); // Titre pour 'volvalTableImage'
+    pdf.addImage(volvalTableImage, 'png', 10, 25, 140, 35);
 
-    pdf.addImage(canvasImage2, 'png', 115, 15, 70, 70);
+    pdf.text("Top 5 Département MPPA PME en valeur", 10, 75); // Titre pour 'canvasImage1'
+    pdf.addImage(canvasImage1, 'png', 10, 75, 175, 70);
 
-    pdf.addImage(canvasImage3, 'png', 15, 120, 270, 70);
+    pdf.text("Top 5 Département MPPA PME en volume", 195, 75); // Titre pour 'canvasImage2'
+    pdf.addImage(canvasImage2, 'png', 195, 75, 175, 70);
+
+    pdf.addImage(canvasImage3, 'png', 95, 200, 190, 35);
 
 
-    pdf.addImage(volvalTableImage, 'png', 20, 25, 90, 40);
 
-    pdf.text("Activité appro PME", 120, 120);
-    pdf.addImage(actApproImage, 'png', 15, 95, 270, 15);
+    pdf.text("Activité appro PME", 170, 160);
+    pdf.addImage(actApproImage, 'png', 95, 165, 190, 30);
 
 
     pdf.setFillColor(106, 106, 244, 1);

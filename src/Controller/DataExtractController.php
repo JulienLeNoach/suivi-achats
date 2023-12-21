@@ -50,6 +50,7 @@ class DataExtractController extends AbstractController
 
              // Supposons que $achats est un tableau contenant tous vos tableaux achat
              if (!empty($achats)) {
+                
                 $column = 'B'; // Colonne de départ pour les titres
             
                 // Afficher les titres des colonnes
@@ -65,10 +66,19 @@ class DataExtractController extends AbstractController
             
                 foreach ($achats as $achat) {
                     $column = 'B'; // Réinitialiser la colonne pour chaque nouveau tableau achat
+                    if (isset($achat["devis"])){
                     $achat["devis"] = $achat["devis"] == 0 ? "Prescripteur" : "GSBdD/PFAF";
+                }
+                if (isset($achat["type_marche"])){
                     $achat["type_marche"] = $achat["type_marche"] == 0 ? "MABC" : "MPPA";
+                }
+                if (isset($achat["etat_achat"])){
                     $achat["etat_achat"] = $achat["etat_achat"] == 0 ? "En cours" : ($achat["etat_achat"] == 1 ? "Annulé" : "Validé");
+                }
+                if (isset($achat["place"])){
                     $achat["place"] = $achat["place"] == 0 ? "Non" : "Oui";
+                }
+
                     foreach ($achat as $value) {
                         $cell = $column . $row; // Construisez la référence de cellule pour les données, ex: B2, C2, etc.
                         $sheet->setCellValue($cell, $value);

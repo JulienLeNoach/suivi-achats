@@ -2,14 +2,10 @@
 
 namespace App\Form;
 
-use App\Entity\CPV;
 use App\Entity\TVA;
 use App\Entity\Achat;
-use App\Form\CPVIdType;
 use App\Entity\Services;
 use App\Form\LibelleCpv;
-use App\Entity\Formations;
-use App\Entity\Utilisateurs;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use App\Form\FournisseursAutocompleteField;
@@ -21,6 +17,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class AddAchatType extends AbstractType
 {
@@ -64,7 +62,7 @@ public function __construct(Security $security)
                 'attr' => ['class' => 'fr-input'], 
                 'label_attr' => ['class' => 'fr-label']
             ])
-            ->add('id_demande_achat', TextType::class, [
+            ->add('id_demande_achat', IntegerType::class, [
                 'required' => true,
                 'label' => false,
                 'attr' => ['class' => 'fr-input'], 
@@ -78,18 +76,18 @@ public function __construct(Security $security)
                 'placeholder' => false,
                 'expanded' => true,
                 'label' => "Type de marché",
-                'row_attr' => ['class' => 'radio-search'],
+                'row_attr' => ['class' => 'radio-search mt-5'],
                 'label_attr' => ['class' => 'fr-label'],
                 'attr' => ['class' => 'fr-input'],
 
             ])
-            ->add('montant_achat', TextType::class, [
+            ->add('montant_achat', IntegerType::class, [
                 'required' => true,
                 'label' => false,
                 'attr' => ['class' => 'fr-input'], 
                 'label_attr' => ['class' => 'fr-label']
             ])
-            ->add('observations', TextType::class, [
+            ->add('observations', TextareaType::class, [
                 'required' => false,
                 'label' => false,
                 'attr' => ['class' => 'fr-input'], 
@@ -118,7 +116,7 @@ public function __construct(Security $security)
                 'placeholder' => false,
                 'expanded' => true,
                 'label' => "Devis",
-                'row_attr' => ['class' => 'radio-search'],
+                'row_attr' => ['class' => 'radio-search mt-5'],
                 'label_attr' => ['class' => 'fr-label'],
                 'attr' => ['class' => 'fr-input'],
 

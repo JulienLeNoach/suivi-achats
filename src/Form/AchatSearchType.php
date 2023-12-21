@@ -12,6 +12,7 @@ use App\Form\FormationsAutocompleteField;
 use App\Form\FournisseursAutocompleteField;
 use App\Form\UtilisateursAutocompleteField;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -20,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class AchatSearchType extends AbstractType
 {           
@@ -35,13 +37,17 @@ class AchatSearchType extends AbstractType
 
 
         $builder
-        ->add('numero_achat', IntegerType::class, [
+        ->add('numero_achat', TextType::class, [
             'required' => false,
             'label' => false,
             'attr' => ['class' => 'fr-input'],
             'label_attr' => ['class' => 'fr-label'],
             'constraints' => [
-                new Length(['max' => 10, 'maxMessage' => "Le numéro chrono doit contenir au maximum 12 caractères."]),
+                new Length(['max' => 4, 'maxMessage' => "Le numéro chrono doit contenir au maximum 4 caractères."]),
+                new Regex([
+                    'pattern' => '/^\d+$/', // Expression régulière pour autoriser uniquement les chiffres
+                    'message' => 'Veuillez saisir uniquement des chiffres.', // Message en cas d'erreur
+                ]),
             ],
         ])
         ->add('id_demande_achat', IntegerType::class, [
@@ -118,6 +124,7 @@ class AchatSearchType extends AbstractType
                 'label_attr' => ['class' => 'fr-label'],
                 'choices' => $this->getYearChoices(),
                 'placeholder' => 'Choisir une année',
+                'data' => date('Y'),
             ])
             ->add('num_siret', FournisseursAutocompleteField::class, [  
                 'required' => false,
@@ -138,9 +145,17 @@ class AchatSearchType extends AbstractType
             ])
             ->add('utilisateurs', UtilisateursAutocompleteField::class, [  
                 'required' => false,
-                'label' => false,
-                'attr' => ['class' => 'fr-input'], 
+                    'attr' => ['class' => 'fr-input'], 
                 'label_attr' => ['class' => 'fr-label']
+
+            ])
+            ->add('all_user', CheckboxType::class, [  
+                'required' => false,
+                'label'=>'Tous les util.',
+                'mapped'=>false,
+                'attr' => ['class' => 'all_user align-self-end'], 
+                // 'label_attr' => ['class' => 'fr-label']
+                'row_attr'=> ['class'=>'d-flex flex-column ']
 
             ])
             ->add('code_uo', UOAutocompleteField::class, [  
@@ -213,7 +228,7 @@ class AchatSearchType extends AbstractType
                 'required' => false,
                 'expanded' => true,
                 'label'=>false,
-                'row_attr' => ['class' => 'radio-search'],
+                'row_attr' => ['class' => 'radio-search d-flex justify-content-center'],
                 'attr' => ['class' => ''], 
                 'label_attr' => ['class' => 'fr-label'],
                 'placeholder' => false,

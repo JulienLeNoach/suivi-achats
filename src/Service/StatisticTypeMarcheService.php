@@ -7,6 +7,7 @@ use PhpOffice\PhpSpreadsheet\Chart\Chart;
 use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Chart\Layout;
 use PhpOffice\PhpSpreadsheet\Chart\Legend;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
@@ -19,6 +20,9 @@ class StatisticTypeMarcheService  extends AbstractController
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
+        foreach (range('A', 'T') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setWidth(15); // Définir la largeur à 15 pour chaque colonne
+        }
         // dd($parameters['parameter2']);
         //------------------------------ Tab % vol/val_type --------------------------//
             $sheet->setCellValue('B2', "MPPA"); 
@@ -28,7 +32,7 @@ class StatisticTypeMarcheService  extends AbstractController
             $sheet->setCellValue('A4', "NOMBRE"); 
             $sheet->setCellValue('A5', "MOYENNE"); 
             $sheet->setCellValue('A6', "% VALEUR");
-            $sheet->setCellValue('A6', "% VOLUME"); 
+            $sheet->setCellValue('A7', "% VOLUME"); 
             $sheet->setCellValue('B3', $result_achats[0]["somme_montant_type_1"]); 
             $sheet->setCellValue('C3', $result_achats[1]["somme_montant_type_0"]); 
             $sheet->setCellValue('D3', $result_achats[1]["somme_montant_type_0"] + $result_achats[0]["somme_montant_type_1"]); 
@@ -98,7 +102,9 @@ class StatisticTypeMarcheService  extends AbstractController
                 $mppaxAx, // plotCategory
                 $mppaValues          // plotValues
             );
-            $mppaplotArea = new PlotArea(null, [$mppaSeries]);
+            $layout = new Layout();
+                $layout->setShowVal(true);
+            $mppaplotArea = new PlotArea($layout, [$mppaSeries]);
             $mppaLegend = new Legend(Legend::POSITION_RIGHT, null, false);
             $mppaTitle = new Title('Montant des MPPA');
                     
@@ -135,7 +141,9 @@ class StatisticTypeMarcheService  extends AbstractController
                 $mabcxAx, // plotCategory
                 $mabcValues          // plotValues
             );
-            $mabcplotArea = new PlotArea(null, [$mabcSeries]);
+            $layout = new Layout();
+                $layout->setShowVal(true);
+            $mabcplotArea = new PlotArea($layout, [$mabcSeries]);
             $mabcLegend = new Legend(Legend::POSITION_RIGHT, null, false);
             $mabcTitle = new Title('Montant des MABC');
                     
@@ -171,7 +179,9 @@ class StatisticTypeMarcheService  extends AbstractController
                 $totaltypexAx, // plotCategory
                 $totaltypeValues          // plotValues
             );
-            $totaltypeplotArea = new PlotArea(null, [$totaltypeSeries]);
+            $layout = new Layout();
+                $layout->setShowVal(true);
+            $totaltypeplotArea = new PlotArea($layout, [$totaltypeSeries]);
             $totaltypeLegend = new Legend(Legend::POSITION_RIGHT, null, false);
             $totaltypeTitle = new Title('Montant des MABC + MPPA');
                     

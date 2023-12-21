@@ -8,6 +8,7 @@ use PhpOffice\PhpSpreadsheet\Chart\Chart;
 use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Chart\Layout;
 use PhpOffice\PhpSpreadsheet\Chart\Legend;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
@@ -43,7 +44,7 @@ class StatisticPMEService  extends AbstractController
         $sheet->setCellValue('D4', $result_achats[0]["VolumePME"]);
         $sheet->setCellValue('E4', $result_achats[0]["VolumePercentPME"]);
 
-        $sheet->setCellValue('H2', 'TOP PME VALEUR');
+        $sheet->setCellValue('G2', 'TOP PME VALEUR');
         $sheet->setCellValue('I3','VALEUR');
         $sheet->setCellValue('I4', 'DEPARTEMENT');
 
@@ -55,8 +56,8 @@ class StatisticPMEService  extends AbstractController
         }
 
 
-        $sheet->setCellValue('Q2', 'TOP PME VALEUR');
-        $sheet->setCellValue('R3','VALEUR');
+        $sheet->setCellValue('P2', 'TOP PME VOLUME');
+        $sheet->setCellValue('R3','VOLUME');
         $sheet->setCellValue('R4', 'DEPARTEMENT');
 
         for($i=0;$i<5;$i++){
@@ -76,7 +77,7 @@ class StatisticPMEService  extends AbstractController
             ];
 
             $depValxAx = [
-                new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$J$4:$N$4', null, 5), // 'Valeurs'
+                new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$G$2', null, 5), // 'Valeurs'
             ];
             $depValValues = [
                 new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$J$3', null, 5), // Valeurs pour datasets1
@@ -93,8 +94,9 @@ class StatisticPMEService  extends AbstractController
                 $depValxAx,
                 $depValValues
             );
-
-            $depValplotArea = new PlotArea(null, [$depValSeries]);
+            $layout = new Layout();
+            $layout->setShowVal(true);
+            $depValplotArea = new PlotArea($layout, [$depValSeries]);
             $depValLegend = new Legend(Legend::POSITION_RIGHT, null, false);
             $depValTitle = new Title('TOP 5 DEPARTEMENT MPPA PME EN VALEUR');
                     
@@ -124,7 +126,7 @@ class StatisticPMEService  extends AbstractController
 
             $depVolxAx = [
                 new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$S$4:$W$4', null, 5), // 'Valeurs'
-            ];
+            ];  
             $depVolValues = [
                 new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$S$3', null, 5), // Valeurs pour datasets1
                 new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$T$3', null, 5), // Valeurs pour datasets1
@@ -140,8 +142,9 @@ class StatisticPMEService  extends AbstractController
                 $depVolxAx,
                 $depVolValues
             );
-
-            $depVolplotArea = new PlotArea(null, [$depVolSeries]);
+            $layout = new Layout();
+            $layout->setShowVal(true);
+            $depVolplotArea = new PlotArea($layout, [$depVolSeries]);
             $depVolLegend = new Legend(Legend::POSITION_RIGHT, null, false);
             $depVolTitle = new Title('TOP 5 DEPARTEMENT MPPA PME EN VOLUME');
                     
@@ -195,8 +198,9 @@ class StatisticPMEService  extends AbstractController
             $approPmexAx,
             $approPmeValues
         );
-
-        $approPmeplotArea = new PlotArea(null, [$approPmeSeries]);
+        $layout = new Layout();
+        $layout->setShowVal(true);
+        $approPmeplotArea = new PlotArea($layout, [$approPmeSeries]);
         $approPmeLegend = new Legend(Legend::POSITION_RIGHT, null, false);
         $approPmeTitle = new Title('Activité appro PME');
                 

@@ -70,16 +70,15 @@ export default class extends Controller {
                         let id = document.querySelector('.selected').getAttribute('data-id');
                 
                         // Construire le message d'alerte
-                        let confirmationMessage = `Voulez-vous vraiment ${action} cet achat?`;
+                        // let confirmationMessage = `Voulez-vous vraiment ${action} cet achat?`;
                 
                         // Afficher l'alerte et rediriger si l'utilisateur confirme
-                        if (confirm(confirmationMessage)) {
+                        // if (confirm(confirmationMessage)) {
+                            console.log("confirm");
                             let detailLink = document.getElementById('detail');
                             detailLink.setAttribute('href', '/' + link + '/' + id);
-                
-                            // Rediriger
                             window.location.href = detailLink.getAttribute('href');
-                        }
+                        // }
                     });
                 });
 

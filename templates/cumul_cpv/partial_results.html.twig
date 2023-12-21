@@ -1,0 +1,13 @@
+<tbody id="achat-list-tbody">
+                        {% for cpv in result_cpv %}
+                        <tr>
+                            <td>{{cpv.libelle_cpv}}</td>
+                            <td>{{cpv.somme_montants}}</td>
+                            <td class="{{ cpv.somme_montants > alertValue ? 'bg-warning' : '' }}">{{cpv.somme_montants}}
+                            </td>
+                            <td>{{ cpv.mt_cpv_auto }}</td>
+                            <td class="{{ cpv.reliquat < 0 ? 'bg-danger' : '' }}">{{ cpv.reliquat }}</td>
+                        </tr>
+                        {% endfor %}
+
+                </tbody>

@@ -77,7 +77,6 @@
 
 
     <div class="align-items-center justify-content-center w-100 mw-75 d-flex" data-controller="chartdelay">
-
       <div class="delay-bar w-50">
         <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
           <h4 class=" blueF">Délai d'activié annuelle graphe</h4>
@@ -131,8 +130,8 @@
     </div>
   </div>
 <script>
-  let transStat = {{transStat | json_encode | raw}}
-  let notStat = {{notStat | json_encode | raw}}
+    let transStat = {{ transStat | map(v => v|number_format(1, '.', '')) | json_encode | raw }};
+    let notStat = {{ notStat | map(v => v|number_format(1, '.', '')) | json_encode | raw }};
 
   let achats_delay_all = {{achats_delay_all | json_encode | raw}}
 </script>
