@@ -20,6 +20,8 @@ export default class extends Controller {
     const volvalTable = document.getElementById('volvalTable');
     const actApproTable = document.getElementById('actApproTable');
     
+    const criteriaForm = criteria; 
+
 
     volvalTable.style.backgroundColor = "white";
     actApproTable.style.backgroundColor = "white";
@@ -30,27 +32,38 @@ export default class extends Controller {
     const volvalTableImage = volvalTableCanvas.toDataURL('image/png', 1.0);
     const actApproImage = actApproTableCanvas.toDataURL('image/png', 1.0);
 
-    let pdf = new jsPDF('l', 'mm', 'a3'); 
+    const values = Object.entries(criteriaForm)
+    .filter(([key, value]) => value !== null && value !== undefined)
+    .map(([key, value]) => `${key}: ${value}`);
+    const criteriaText = values.join(', ');
+
+    let pdf = new jsPDF('l', 'mm', 'a4'); 
+    pdf.setFontSize(10);
+    pdf.text("Critères de sélection : " + criteriaText, 15, 10);
     pdf.setFontSize(15);
 
-    pdf.text("Achats MPPA", 10, 15); // Titre pour 'volvalTableImage'
-    pdf.addImage(volvalTableImage, 'png', 10, 25, 140, 35);
 
-    pdf.text("Top 5 Département MPPA PME en valeur", 10, 75); // Titre pour 'canvasImage1'
-    pdf.addImage(canvasImage1, 'png', 10, 75, 175, 70);
+    pdf.text("Top 5 Département MPPA PME en valeur", 10, 25); // Titre pour 'canvasImage1'
+    pdf.addImage(canvasImage1, 'png', 10, 25, 130, 35);
 
-    pdf.text("Top 5 Département MPPA PME en volume", 195, 75); // Titre pour 'canvasImage2'
-    pdf.addImage(canvasImage2, 'png', 195, 75, 175, 70);
+    pdf.text("Top 5 Département MPPA PME en volume", 150, 25); // Titre pour 'canvasImage2'
+    pdf.addImage(canvasImage2, 'png', 150, 25, 140, 35);
 
-    pdf.addImage(canvasImage3, 'png', 95, 200, 190, 35);
-
+    pdf.text("Activité appro PME en valeur", 110, 70);
+    pdf.addImage(canvasImage3, 'png',10, 75, 260, 35);
 
 
-    pdf.text("Activité appro PME", 170, 160);
-    pdf.addImage(actApproImage, 'png', 95, 165, 190, 30);
+
 
 
     pdf.setFillColor(106, 106, 244, 1);
+    pdf.setFontSize(10);
+    const dateEdited = `édité le ${new Date().toLocaleDateString()}`;
+    const pageCount = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {50
+        pdf.setPage(i);
+        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 10);
+    }
     pdf.save('Graphique.pdf');
   }
 

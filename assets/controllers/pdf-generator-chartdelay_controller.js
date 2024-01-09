@@ -6,19 +6,30 @@ export default class extends Controller {
   
   downloadgraphBar() {
     const canvas = document.getElementById('delayChart');
+    const criteriaForm = criteria; 
+
     canvas.fillStyle = "white";
     const canvasImage = canvas.toDataURL('image/png', 1.0);
-    let pdf = new jsPDF('p', 'mm', [360, 350]);
-    pdf.setFontSize(20);
-    pdf.text('Délai d\'activité annuelle', 15, 10);
 
-    pdf.addImage(canvasImage, 'png', 15, 15, 280, 150);
+    const values = Object.entries(criteriaForm)
+    .filter(([key, value]) => value !== null && value !== undefined)
+    .map(([key, value]) => `${key}: ${value}`);
+    const criteriaText = values.join(', ');
+
+    let pdf = new jsPDF('p', 'mm', 'a4');
+    pdf.setFontSize(8);
+    pdf.text("Critères de sélection : " + criteriaText, 15, 5);
+    pdf.setFontSize(15);
+    pdf.text('Délai d\'activité annuelle', 15, 15);
+
+    pdf.addImage(canvasImage, 'png', 15, 20, 180, 150);
     pdf.setFillColor(106, 106, 244, 1);
     const dateEdited = `édité le ${new Date().toLocaleDateString()}`;
     const pageCount = pdf.internal.getNumberOfPages();
+    pdf.setFontSize(8);
     for (let i = 1; i <= pageCount; i++) {
         pdf.setPage(i);
-        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
+        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 5);
     }
     pdf.save('Graphique.pdf');
   }
@@ -30,6 +41,7 @@ export default class extends Controller {
     const ctxPFAF = document.getElementById('ctxPFAF');
     const ctxChorus = document.getElementById('ctxChorus');
     const ctxTotalDelay = document.getElementById('ctxTotalDelay');
+    const criteriaForm = criteria; 
 
     ctxAntenne.fillStyle = "white";
     ctxBudget.fillStyle = "white";
@@ -47,11 +59,26 @@ export default class extends Controller {
     const ctxChorusImage = ctxChorus.toDataURL('image/png', 1.0);
     const ctxTotalDelayImage = ctxTotalDelay.toDataURL('image/png', 1.0);
 
+    const values = Object.entries(criteriaForm)
+    .filter(([key, value]) => value !== null && value !== undefined)
+    .map(([key, value]) => `${key}: ${value}`);
+    const criteriaText = values.join(', ');
+
     let pdf = new jsPDF('p', 'mm', [360, 370]); // Augmentation de la hauteur pour le décalage
+    pdf.setFontSize(8);
+    pdf.text("Critères de sélection : " + criteriaText, 15, 5);
+
+    const dateEdited = `édité le ${new Date().toLocaleDateString()}`;
+    const pageCount = pdf.internal.getNumberOfPages();
+    pdf.setFontSize(8);
+    for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 5);
+    }
     pdf.setFontSize(20);
     
     // Ajout du titre au-dessus de tous les éléments
-    pdf.text('Délai d\'activité annuelle détaillé par traitement', 15, 10);
+    pdf.text('Délai d\'activité annuelle détaillé par traitement', 15, 15);
 
     // Ajout des titres et images pour chaque graphique avec décalage
     const titles = [

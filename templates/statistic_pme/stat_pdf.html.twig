@@ -1,0 +1,57 @@
+
+    <h2>Statistic sur les PME (marché MPPA)</h2>
+    <h5 class="blueF">Critères du formulaire : 
+{% for key, value in criteria %}
+  {% if value is not null %}
+    {{ key|capitalize }} : {{ value }},
+  {% endif %}
+{% endfor %}
+<h6 class=" blueF ">Achats MPPA</h6>
+                    <table border="1" id="volvalTable" >
+                            <thead>
+                            <th></th>
+                            <th>PME</th>
+                            <th>%PME</th>
+                            </thead>
+                        <tr>
+                            <td>VALEUR</td>
+                            <td>{{ result_achats[0]["ValeurPME"] }}</td>
+                            <td>{{ result_achats[0]["ValeurPercentPME"] | round }}%</td>
+                        </tr>
+                        <tr>
+                            <td>VOLUME</td>
+                            <td>{{ result_achats[0]["VolumePME"] }}</td>
+                            <td>{{ result_achats[0]["VolumePercentPME"]  | round}}%</td>
+                        </tr>
+                    </table>
+
+<h6 class="blueF">Activité APPRO PME</h6>
+            </div>
+            <div class="appro-stat d-flex flex-row ">          
+                <table border="1" id="actApproTable" class="w-25">
+                        <thead>
+                        <th></th>
+                        {% for month in ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] %}
+                        <th>{{ month }}</th>
+                        {% endfor %}
+                        <th>Total</th> 
+                        </thead>
+                    <tr>
+                        <td>NB PME</td>
+                        {% set totalNombreAchats = 0 %}
+                        {% for achats in result_achatsSum %}
+                        <td>{{ achats["nombre_total_achats_pme"] }}</td>
+                        {% set totalNombreAchats = totalNombreAchats + achats["nombre_total_achats_pme"] %}
+                        {% endfor %}
+                        <td>{{ totalNombreAchats }}</td> 
+                    </tr>
+                    <tr>
+                        <td>% MPPA</td>
+                        {% set totalPourcentage = 0 %}
+                        {% for achats in result_achatsSum %}
+                        <td>{{ achats["pourcentage_achats_type_marche_1"] }}</td>
+                        {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_type_marche_1"] %}
+                        {% endfor %}
+<td>{{ (totalPourcentage / result_achatsSum|length)| round }}</td>
+                    </tr>
+                </table>

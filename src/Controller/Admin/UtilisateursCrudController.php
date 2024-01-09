@@ -90,7 +90,6 @@ class UtilisateursCrudController extends AbstractCrudController
                 'type' => PasswordType::class,
                 'first_options' => ['label' => 'Password'],
                 'second_options' => ['label' => '(Repeat)'],
-                // 'mapped' => false
             ])
             ->setRequired($pageName === Crud::PAGE_NEW)
             ->onlyOnForms()

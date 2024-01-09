@@ -15,6 +15,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -46,19 +54,37 @@ function (_Controller) {
     key: "downloadgraphBar",
     value: function downloadgraphBar() {
       var canvas = document.getElementById('delayChart');
+      var criteriaForm = criteria;
       canvas.fillStyle = "white";
       var canvasImage = canvas.toDataURL('image/png', 1.0);
-      var pdf = new _jspdf["default"]('p', 'mm', [360, 350]);
-      pdf.setFontSize(20);
-      pdf.text('Délai d\'activité annuelle', 15, 10);
-      pdf.addImage(canvasImage, 'png', 15, 15, 280, 150);
+      var values = Object.entries(criteriaForm).filter(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            key = _ref2[0],
+            value = _ref2[1];
+
+        return value !== null && value !== undefined;
+      }).map(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            key = _ref4[0],
+            value = _ref4[1];
+
+        return "".concat(key, ": ").concat(value);
+      });
+      var criteriaText = values.join(', ');
+      var pdf = new _jspdf["default"]('p', 'mm', 'a4');
+      pdf.setFontSize(8);
+      pdf.text("Critères de sélection : " + criteriaText, 15, 5);
+      pdf.setFontSize(15);
+      pdf.text('Délai d\'activité annuelle', 15, 15);
+      pdf.addImage(canvasImage, 'png', 15, 20, 180, 150);
       pdf.setFillColor(106, 106, 244, 1);
       var dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
       var pageCount = pdf.internal.getNumberOfPages();
+      pdf.setFontSize(8);
 
       for (var i = 1; i <= pageCount; i++) {
         pdf.setPage(i);
-        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
+        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 5);
       }
 
       pdf.save('Graphique.pdf');
@@ -73,6 +99,7 @@ function (_Controller) {
       var ctxPFAF = document.getElementById('ctxPFAF');
       var ctxChorus = document.getElementById('ctxChorus');
       var ctxTotalDelay = document.getElementById('ctxTotalDelay');
+      var criteriaForm = criteria;
       ctxAntenne.fillStyle = "white";
       ctxBudget.fillStyle = "white";
       ctxAppro.fillStyle = "white";
@@ -87,11 +114,36 @@ function (_Controller) {
       var ctxPFAFImage = ctxPFAF.toDataURL('image/png', 1.0);
       var ctxChorusImage = ctxChorus.toDataURL('image/png', 1.0);
       var ctxTotalDelayImage = ctxTotalDelay.toDataURL('image/png', 1.0);
+      var values = Object.entries(criteriaForm).filter(function (_ref5) {
+        var _ref6 = _slicedToArray(_ref5, 2),
+            key = _ref6[0],
+            value = _ref6[1];
+
+        return value !== null && value !== undefined;
+      }).map(function (_ref7) {
+        var _ref8 = _slicedToArray(_ref7, 2),
+            key = _ref8[0],
+            value = _ref8[1];
+
+        return "".concat(key, ": ").concat(value);
+      });
+      var criteriaText = values.join(', ');
       var pdf = new _jspdf["default"]('p', 'mm', [360, 370]); // Augmentation de la hauteur pour le décalage
+
+      pdf.setFontSize(8);
+      pdf.text("Critères de sélection : " + criteriaText, 15, 5);
+      var dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
+      var pageCount = pdf.internal.getNumberOfPages();
+      pdf.setFontSize(8);
+
+      for (var i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 5);
+      }
 
       pdf.setFontSize(20); // Ajout du titre au-dessus de tous les éléments
 
-      pdf.text('Délai d\'activité annuelle détaillé par traitement', 15, 10); // Ajout des titres et images pour chaque graphique avec décalage
+      pdf.text('Délai d\'activité annuelle détaillé par traitement', 15, 15); // Ajout des titres et images pour chaque graphique avec décalage
 
       var titles = ['Ant. GSBDD', 'Budget', 'Appro', 'Fin', 'PFAF', 'Chorus', 'Délai total'];
       var images = [ctxAntenneImage, ctxBudgetImage, ctxApproImage, ctxFinImage, ctxPFAFImage, ctxChorusImage, ctxTotalDelayImage];

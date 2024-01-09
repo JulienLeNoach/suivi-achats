@@ -1,0 +1,46 @@
+
+    <h2>Statistiques MPPA/MABC</h2>
+    <h5 class="blueF">Critères du formulaire : 
+{% for key, value in criteria %}
+  {% if value is not null %}
+    {{ key|capitalize }} : {{ value }},
+  {% endif %}
+{% endfor %}
+            <table id="tableTotaux" border=1>
+<thead>
+        <tr>
+            <th></th>
+            <th>MPPA</th>
+            <th>MABC</th>
+            <th>TOTAUX</th>
+        </tr>
+    </thead>
+                <tr>
+                    <td>VALEUR</td>
+                    <td>{{result_achats[0]["somme_montant_type_1"]}}</td>
+                    <td>{{result_achats[1]["somme_montant_type_0"]}}</td>
+                    <td>{{result_achats[0]["somme_montant_type_1"] + result_achats[1]["somme_montant_type_0"]}}</td>
+                </tr>
+                <tr>
+                    <td>NOMBRE</td>
+                    <td>{{result_achats[0]["nombre_achats_type_1"]}}</td>
+                    <td>{{result_achats[1]["nombre_achats_type_0"]}}</td>
+                    <td>{{result_achats[0]["nombre_achats_type_1"] + result_achats[1]["nombre_achats_type_0"]}}</td>
+                </tr>
+                <tr>
+                    <td>MOYENNE</td>
+                    <td>{{result_achats[0]["moyenne_montant_type_1"]}}</td>
+                    <td>{{result_achats[1]["moyenne_montant_type_0"]}}</td>
+                    <td>{{result_achats[0]["moyenne_montant_type_1"] + result_achats[1]["moyenne_montant_type_0"]}}</td>
+                </tr>
+                <tr>
+                    <td>% VALEUR</td>
+                    <td>{{result_achats[0]["pourcentage_type_1_total"]}} %</td>
+                    <td>{{result_achats[1]["pourcentage_type_0_total"]}} %</td>
+                </tr>
+                <tr>
+                    <td>% VOLUME</td>
+                    <td>{{result_achats[0]["pourcentage_type_1"]}} %</td>
+                    <td>{{result_achats[1]["pourcentage_type_0"]}} %</td>
+                </tr>
+            </table>

@@ -64,8 +64,17 @@ class UtilisateursType extends AbstractType
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'first_options' => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Confirmer le mot de passe'],
+                'first_options' => [
+                    'label' => 'Mot de passe',
+                    'attr' => ['class' => 'fr-input'],
+                    'label_attr' => ['class' => 'fr-label'] // Ajout de la classe fr-input
+                ],
+                'second_options' => [
+                    'label' => 'Confirmer le mot de passe',
+                    'attr' => ['class' => 'fr-input'],
+                    'label_attr' => ['class' => 'fr-label']
+                     // Ajout de la classe fr-input
+                ],
                 'label'=>'Mot de passe',
                 'required' => !$isEdit
             ])

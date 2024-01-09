@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -129,7 +128,7 @@ class StatisticVolController extends AbstractController
         $dompdf->loadHtml($html);
         $dompdf->render();
          
-        $dompdf->stream('cumul_cpv', array('Attachment' => 0));
+        $dompdf->stream('stat_vol', array('Attachment' => 0));
         return new Response('', 200, [
             'Content-Type' => 'application/pdf',
         ]);

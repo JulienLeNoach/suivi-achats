@@ -2,18 +2,20 @@
 
 namespace App\Controller\Statistic;
 
+use Dompdf\Dompdf;
 use App\Form\StatisticType;
 use App\Form\CreateExcelType;
 use App\Repository\AchatRepository;
 use App\Repository\ParametresRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
+use Doctrine\ORM\EntityManagerInterface;
 use App\Service\StatisticTypeMarcheService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class StatisticTypeMarcheController extends AbstractController
@@ -34,7 +36,7 @@ class StatisticTypeMarcheController extends AbstractController
 
 
     #[Route('/statistic/typemarche', name: 'app_statistic_typemarche')]
-    public function index(Request $request): Response
+    public function index(Request $request, SessionInterface $session): Response
     {
         $form = $this->createForm(StatisticType::class, null, []);
 
@@ -50,6 +52,23 @@ class StatisticTypeMarcheController extends AbstractController
             $result_achats = $this->achatRepository->searchAchatToStat($form);
             $result_achats_mounts = $this->achatRepository->searchAchatToStatMount($form);
             $parameter = $this->parametresRepository->findById(1);
+            $toPDF=[
+                'criteria'=>[
+                'Date' =>  $form["date"]->getData(),
+                'Fournisseur' =>  ($form["num_siret"]->getData() !== null) ? $form["num_siret"]->getData()->getNomFournisseur() : null,
+                'Utilisateur' =>  ($form["utilisateurs"]->getData() !== null) ? $form["utilisateurs"]->getData()->getNomConnexion() : null,
+                'Unité organique' =>  ($form["code_uo"]->getData() !== null) ? $form["code_uo"]->getData()->getLibelleUo() : null,
+                'CPV' =>  ($form["code_cpv"]->getData() !== null) ? $form["code_cpv"]->getData()->getLibelleCPV() : null,
+                'Formation ' =>  ($form["code_formation"]->getData() !== null) ? $form["code_formation"]->getData()->getLibelleFormation() : null,
+                'Taxe' =>  $form["tax"]->getData(),
+                ],
+                'result_achats' => $result_achats,
+                'result_achats_mounts' => $result_achats_mounts,
+                'parameter' => $parameter,
+
+            ];
+            $session->set('toPDF', $toPDF);
+
             $excelForm = $this->createForm(CreateExcelType::class); 
 
             return $this->render('statistic_type_marche/index.html.twig', [
@@ -57,7 +76,8 @@ class StatisticTypeMarcheController extends AbstractController
                 'form' => $form->createView(),
                 'result_achats' => $result_achats,
                 'result_achats_mounts' => $result_achats_mounts,
-                'parameter' => $parameter
+                'parameter' => $parameter,
+                'toPDF' => $toPDF
     ]);
 
         }
@@ -71,6 +91,27 @@ class StatisticTypeMarcheController extends AbstractController
                     
         ]);
     }
+    #[Route('/pdf/generator/stat_type_marche', name: 'pdf_generator_stat_type_marche')]
+    public function pdf(SessionInterface $session): Response
+    {
+        
+        $html =  $this->renderView('statistic_type_marche/stat_pdf.html.twig', [
+            'criteria' => $session->get('toPDF')["criteria"],
+            'result_achats' => $session->get('toPDF')["result_achats"],
+            'result_achats_mounts' => $session->get('toPDF')["result_achats_mounts"],
+            'parameter' => $session->get('toPDF')["parameter"],
+
+        ]);
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->render();
+         
+        $dompdf->stream('stat_type', array('Attachment' => 0));
+        return new Response('', 200, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
     /**
  * @Route("/statistic/typemarche/excel", name="app_statistic_typemarche_excel")
  */

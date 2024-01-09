@@ -27,7 +27,13 @@
     <button type="submit" class="print">Exporter vers Excel</button>
 </form>
         <div class="ms-3" data-controller="pdf-generator-pme">
-            <button id="pdf" class="print" data-action="click->pdf-generator-pme#downloadgraphBar">Impression <span class="fr-icon-printer-line" aria-hidden="true"></span></button>
+          <form action="{{ path('pdf_generator_stat_pme') }}" method="post">
+            <button type="submit" class="print">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span></button>
+          </form></div>
+          <div class="ms-auto" data-controller="pdf-generator-pme">
+            <button class="print" id="pdf" data-action="click->pdf-generator-pme#downloadgraphBar">Impression <span class="fr-icon-printer-line" aria-hidden="true"></span></button>
+</button>
+        
         </div>
     </div>
     <div data-controller="chartpme" class="result-pme mb-5">
@@ -112,6 +118,7 @@
     let result_achatsSum = {{result_achatsSum | json_encode | raw}};
     let result_achatsSumVol = {{result_achatsSumVol | json_encode | raw}};
     let result_achatsSumVal = {{result_achatsSumVal | json_encode | raw}};
+    let criteria = {{toPDF["criteria"] | json_encode | raw}};x
 </script>
 
 {% endif %}

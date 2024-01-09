@@ -1,0 +1,51 @@
+    <h2>Délai d'activité annuelle tableau</h2>
+    <h5 class="blueF">Critères du formulaire : 
+{% for key, value in criteria %}
+  {% if value is not null %}
+    {{ key|capitalize }} : {{ value }},
+  {% endif %}
+{% endfor %}
+
+
+    </div>
+    <table border=1 id="delayTable" class="delayTable">
+      <thead>
+        <th>Délai</th>
+        <th>Janvier</th>
+        <th>Février</th>
+        <th>Mars</th>
+        <th>Avril</th>
+        <th>Mai</th>
+        <th>Juin</th>
+        <th>Juillet</th>
+        <th>Aout</th>
+        <th>Septembre</th>
+        <th>Octobre</th>
+        <th>Novembre</th>
+        <th>Decembre</th>
+        <th>Total</th>
+      </thead>
+      {% for achat in achats %}
+      <tr>
+        <th>{{ achat.source }}</th>
+        <td>{{ achat.Janvier }}</td>
+        <td>{{ achat.Février }}</td>
+        <td>{{ achat.Mars }}</td>
+        <td>{{ achat.Avril }}</td>
+        <td>{{ achat.Mai }}</td>
+        <td>{{ achat.Juin }}</td>
+        <td>{{ achat.Juillet }}</td>
+        <td>{{ achat.Aout }}</td>
+        <td>{{ achat.Septembre }}</td>
+        <td>{{ achat.Octobre }}</td>
+        <td>{{ achat.Novembre }}</td>
+        <td>{{ achat.Decembre }}</td>
+        <td>
+{{ ((achat.Janvier + achat.Février + achat.Mars + achat.Avril + achat.Mai + achat.Juin + achat.Juillet + achat.Aout + achat.Septembre + achat.Octobre + achat.Novembre + achat.Decembre) / 12)|number_format(2, '.', '') }}
+        </td>
+      </tr>
+      {% endfor %}
+      </thead>
+      <tbody>
+      </tbody>
+    </table>

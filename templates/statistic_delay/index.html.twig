@@ -24,8 +24,11 @@
     <button type="submit" class="print">Exporter vers Excel</button>
 </form>
       <div class="ms-3" data-controller="pdf-generator-chartdelay">
-        <button class="print" id="pdf" data-action="click->pdf-generator-chartdelay#generatePDFTable">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
-    </button>
+          <form action="{{ path('pdf_generator_stat_delay') }}" method="post">
+
+
+            <button type="submit" class="print">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span></button>
+          </form>
       </div>
     </div>
   <div class="result-delay mb-5">
@@ -132,8 +135,8 @@
 <script>
     let transStat = {{ transStat | map(v => v|number_format(1, '.', '')) | json_encode | raw }};
     let notStat = {{ notStat | map(v => v|number_format(1, '.', '')) | json_encode | raw }};
-
-  let achats_delay_all = {{achats_delay_all | json_encode | raw}}
+    let criteria = {{toPDF["criteria"] | json_encode | raw}};
+    let achats_delay_all = {{achats_delay_all | json_encode | raw}}
 </script>
 {% endif %}
 {% endif %}

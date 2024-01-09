@@ -31,6 +31,13 @@
     <button type="submit" class="print">Exporter vers Excel</button>
 </form>
 <div class="ms-3" data-controller="pdf-generator-charttype">
+          <form action="{{ path('pdf_generator_stat_type_marche') }}" method="post">
+
+
+            <button type="submit" class="print">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span></button>
+          </form>
+        </div>
+        <div class="ms-auto" data-controller="pdf-generator-charttype">
             <button class="print" id="pdf" data-action="click->pdf-generator-charttype#downloadgraphBar">Impression <span class="fr-icon-printer-line" aria-hidden="true"></span></button>
 </button>
         </div>
@@ -146,6 +153,7 @@
     let parameter1 = {{parameter[0].four2 | json_encode | raw}};
     let parameter2 = {{parameter[0].four3 | json_encode | raw}};
     let parameter3 = {{parameter[0].four4 | json_encode | raw}};
+    let criteria = {{toPDF["criteria"] | json_encode | raw}};
 </script>
 {% endif %}
 </div>

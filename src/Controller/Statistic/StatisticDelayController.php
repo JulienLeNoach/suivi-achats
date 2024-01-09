@@ -2,23 +2,18 @@
 
 namespace App\Controller\Statistic;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use App\Form\StatisticType;
 use App\Form\CreateExcelType;
 use App\Repository\AchatRepository;
 use App\Service\StatisticDelayService;
-use PhpOffice\PhpSpreadsheet\Chart\Chart;
-use PhpOffice\PhpSpreadsheet\Chart\Title;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Chart\Legend;
-use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use Symfony\Component\HttpFoundation\Request;
-use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\KernelInterface;
-use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class StatisticDelayController extends AbstractController
@@ -38,7 +33,7 @@ class StatisticDelayController extends AbstractController
     }
 
     #[Route('/statistic/delay', name: 'app_statistic_delay')]
-    public function index(Request $request, ): Response
+    public function index(Request $request, SessionInterface $session): Response
     {
 
         $form = $this->createForm(StatisticType::class, null, []);
@@ -47,20 +42,27 @@ class StatisticDelayController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $achats_delay = $this->achatRepository->yearDelayDiff($form);
-            // dd($achats_delay);
             $achats = $this->statisticDelayService->totalDelayPerMonth($achats_delay);
             $achats_delay_all = $this->achatRepository->yearDelayCount($form);
-            // $submittedData = [];
-
-            // foreach ($form as $fieldName => $formField) {
-            //     $data = $formField->getData();
-            //     if ($data !== null && $data !== '') {
-            //     $submittedData[$fieldName] = $formField->getData();
-            //     }
-            // }
-        // Récupérez les données achats
+            
         $transStat = array_filter(array_values($achats[2]), 'is_numeric');
         $notStat = array_filter(array_values($achats[5]), 'is_numeric');
+        $toPDF=[
+            'criteria'=>[
+            'Date' =>  $form["date"]->getData(),
+            'Fournisseur' =>  ($form["num_siret"]->getData() !== null) ? $form["num_siret"]->getData()->getNomFournisseur() : null,
+            'Utilisateur' =>  ($form["utilisateurs"]->getData() !== null) ? $form["utilisateurs"]->getData()->getNomConnexion() : null,
+            'Unité organique' =>  ($form["code_uo"]->getData() !== null) ? $form["code_uo"]->getData()->getLibelleUo() : null,
+            'CPV' =>  ($form["code_cpv"]->getData() !== null) ? $form["code_cpv"]->getData()->getLibelleCPV() : null,
+            'Formation ' =>  ($form["code_formation"]->getData() !== null) ? $form["code_formation"]->getData()->getLibelleFormation() : null,
+            'Taxe' =>  $form["tax"]->getData(),
+            ],
+            'achats' => $achats,
+            'transStat' => $transStat,
+            'notStat' => $notStat,
+            'achats_delay_all' => $achats_delay_all,
+        ];
+        $session->set('toPDF', $toPDF);
         $excelForm = $this->createForm(CreateExcelType::class); 
         return $this->render('statistic_delay/index.html.twig', [
             'form' => $form->createView(),
@@ -69,6 +71,7 @@ class StatisticDelayController extends AbstractController
             'transStat' => $transStat,
             'notStat' => $notStat,
             'achats_delay_all' => $achats_delay_all,
+            'toPDF' => $toPDF
 
         ]);
 
@@ -76,6 +79,30 @@ class StatisticDelayController extends AbstractController
         return $this->render('statistic_delay/index.html.twig', [
             'form' => $form->createView(),
             'achats' => $achats,
+        ]);
+    }
+
+    #[Route('/pdf/generator/stat_delay', name: 'pdf_generator_stat_delay')]
+    public function pdf(SessionInterface $session): Response
+    {
+        
+        $html =  $this->renderView('statistic_delay/stat_pdf.html.twig', [
+            'criteria' => $session->get('toPDF')["criteria"],
+            'achats' => $session->get('toPDF')["achats"],
+            'transStat' => $session->get('toPDF')["transStat"],
+            'notStat' => $session->get('toPDF')["notStat"],
+            'achats_delay_all' => $session->get('toPDF')["achats_delay_all"],
+
+        ]);
+    
+        $dompdf = new Dompdf();
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->loadHtml($html);
+        $dompdf->render();
+         
+        $dompdf->stream('stat_delay', array('Attachment' => 0));
+        return new Response('', 200, [
+            'Content-Type' => 'application/pdf',
         ]);
     }
 /**

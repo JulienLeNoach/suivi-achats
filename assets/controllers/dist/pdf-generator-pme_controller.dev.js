@@ -15,6 +15,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -45,7 +53,7 @@ function (_Controller) {
   _createClass(_default, [{
     key: "downloadgraphBar",
     value: function downloadgraphBar() {
-      var canvas1, canvasImage1, canvas2, canvasImage2, canvas3, canvasImage3, volvalTable, actApproTable, volvalTableCanvas, actApproTableCanvas, volvalTableImage, actApproImage, pdf;
+      var canvas1, canvasImage1, canvas2, canvasImage2, canvas3, canvasImage3, volvalTable, actApproTable, criteriaForm, volvalTableCanvas, actApproTableCanvas, volvalTableImage, actApproImage, values, criteriaText, pdf, dateEdited, pageCount, i;
       return regeneratorRuntime.async(function downloadgraphBar$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -64,38 +72,61 @@ function (_Controller) {
               canvasImage3 = canvas3.toDataURL('image/png', 1.0);
               volvalTable = document.getElementById('volvalTable');
               actApproTable = document.getElementById('actApproTable');
+              criteriaForm = criteria;
               volvalTable.style.backgroundColor = "white";
               actApproTable.style.backgroundColor = "white";
-              _context.next = 15;
+              _context.next = 16;
               return regeneratorRuntime.awrap((0, _html2canvas["default"])(volvalTable));
 
-            case 15:
+            case 16:
               volvalTableCanvas = _context.sent;
-              _context.next = 18;
+              _context.next = 19;
               return regeneratorRuntime.awrap((0, _html2canvas["default"])(actApproTable));
 
-            case 18:
+            case 19:
               actApproTableCanvas = _context.sent;
               volvalTableImage = volvalTableCanvas.toDataURL('image/png', 1.0);
               actApproImage = actApproTableCanvas.toDataURL('image/png', 1.0);
-              pdf = new _jspdf["default"]('l', 'mm', 'a3');
+              values = Object.entries(criteriaForm).filter(function (_ref) {
+                var _ref2 = _slicedToArray(_ref, 2),
+                    key = _ref2[0],
+                    value = _ref2[1];
+
+                return value !== null && value !== undefined;
+              }).map(function (_ref3) {
+                var _ref4 = _slicedToArray(_ref3, 2),
+                    key = _ref4[0],
+                    value = _ref4[1];
+
+                return "".concat(key, ": ").concat(value);
+              });
+              criteriaText = values.join(', ');
+              pdf = new _jspdf["default"]('l', 'mm', 'a4');
+              pdf.setFontSize(10);
+              pdf.text("Critères de sélection : " + criteriaText, 15, 10);
               pdf.setFontSize(15);
-              pdf.text("Achats MPPA", 10, 15); // Titre pour 'volvalTableImage'
+              pdf.text("Top 5 Département MPPA PME en valeur", 10, 25); // Titre pour 'canvasImage1'
 
-              pdf.addImage(volvalTableImage, 'png', 10, 25, 140, 35);
-              pdf.text("Top 5 Département MPPA PME en valeur", 10, 75); // Titre pour 'canvasImage1'
+              pdf.addImage(canvasImage1, 'png', 10, 25, 130, 35);
+              pdf.text("Top 5 Département MPPA PME en volume", 150, 25); // Titre pour 'canvasImage2'
 
-              pdf.addImage(canvasImage1, 'png', 10, 75, 175, 70);
-              pdf.text("Top 5 Département MPPA PME en volume", 195, 75); // Titre pour 'canvasImage2'
-
-              pdf.addImage(canvasImage2, 'png', 195, 75, 175, 70);
-              pdf.addImage(canvasImage3, 'png', 95, 200, 190, 35);
-              pdf.text("Activité appro PME", 170, 160);
-              pdf.addImage(actApproImage, 'png', 95, 165, 190, 30);
+              pdf.addImage(canvasImage2, 'png', 150, 25, 140, 35);
+              pdf.text("Activité appro PME en valeur", 110, 70);
+              pdf.addImage(canvasImage3, 'png', 10, 75, 260, 35);
               pdf.setFillColor(106, 106, 244, 1);
+              pdf.setFontSize(10);
+              dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
+              pageCount = pdf.internal.getNumberOfPages();
+
+              for (i = 1; i <= pageCount; i++) {
+                50;
+                pdf.setPage(i);
+                pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 10);
+              }
+
               pdf.save('Graphique.pdf');
 
-            case 34:
+            case 40:
             case "end":
               return _context.stop();
           }

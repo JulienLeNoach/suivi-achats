@@ -15,6 +15,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -45,7 +53,7 @@ function (_Controller) {
   _createClass(_default, [{
     key: "downloadgraphBar",
     value: function downloadgraphBar() {
-      var canvas1, canvasImage1, canvas2, canvasImage2, canvas3, canvasImage3, tableTotaux, mppaTable, mabcTable, allMountTable, tableTotauxCanvas, mpppaTableCanvas, mabcTableCanvas, allMountTableCanvas, tableTotauxImage, mppaTableImage, mabcTableImage, allMountTableCanvasImage, pdf, dateEdited, pageCount, i;
+      var canvas1, canvasImage1, canvas2, canvasImage2, canvas3, canvasImage3, mppaTable, mabcTable, allMountTable, criteriaForm, mpppaTableCanvas, mabcTableCanvas, allMountTableCanvas, mppaTableImage, mabcTableImage, allMountTableCanvasImage, values, criteriaText, pdf, dateEdited, pageCount, i;
       return regeneratorRuntime.async(function downloadgraphBar$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -62,65 +70,71 @@ function (_Controller) {
               canvas3.style.backgroundColor = "white"; // Assurez-vous que le fond est blanc
 
               canvasImage3 = canvas3.toDataURL('image/png', 1.0);
-              tableTotaux = document.getElementById('tableTotaux');
               mppaTable = document.getElementById('mppaTable');
               mabcTable = document.getElementById('mabcTable');
               allMountTable = document.getElementById('allMountTable');
-              tableTotaux.style.backgroundColor = "white";
+              criteriaForm = criteria;
               mppaTable.style.backgroundColor = "white";
               mabcTable.style.backgroundColor = "white";
               allMountTable.style.backgroundColor = "white";
-              _context.next = 19;
-              return regeneratorRuntime.awrap((0, _html2canvas["default"])(tableTotaux));
-
-            case 19:
-              tableTotauxCanvas = _context.sent;
-              _context.next = 22;
+              _context.next = 18;
               return regeneratorRuntime.awrap((0, _html2canvas["default"])(mppaTable));
 
-            case 22:
+            case 18:
               mpppaTableCanvas = _context.sent;
-              _context.next = 25;
+              _context.next = 21;
               return regeneratorRuntime.awrap((0, _html2canvas["default"])(mabcTable));
 
-            case 25:
+            case 21:
               mabcTableCanvas = _context.sent;
-              _context.next = 28;
+              _context.next = 24;
               return regeneratorRuntime.awrap((0, _html2canvas["default"])(allMountTable));
 
-            case 28:
+            case 24:
               allMountTableCanvas = _context.sent;
-              tableTotauxImage = tableTotauxCanvas.toDataURL('image/png', 1.0);
               mppaTableImage = mpppaTableCanvas.toDataURL('image/png', 1.0);
               mabcTableImage = mabcTableCanvas.toDataURL('image/png', 1.0);
               allMountTableCanvasImage = allMountTableCanvas.toDataURL('image/png', 1.0);
-              pdf = new _jspdf["default"]('l', 'mm', 'a3');
+              values = Object.entries(criteriaForm).filter(function (_ref) {
+                var _ref2 = _slicedToArray(_ref, 2),
+                    key = _ref2[0],
+                    value = _ref2[1];
+
+                return value !== null && value !== undefined;
+              }).map(function (_ref3) {
+                var _ref4 = _slicedToArray(_ref3, 2),
+                    key = _ref4[0],
+                    value = _ref4[1];
+
+                return "".concat(key, ": ").concat(value);
+              });
+              criteriaText = values.join(', ');
+              pdf = new _jspdf["default"]('l', 'mm', 'a4');
+              pdf.setFontSize(10);
+              pdf.text("Critères de sélection : " + criteriaText, 15, 5);
               pdf.setFontSize(15);
               pdf.addImage(canvasImage1, 'png', 15, 15, 70, 70);
               pdf.addImage(canvasImage2, 'png', 115, 15, 70, 70);
-              pdf.addImage(canvasImage3, 'png', 65, 120, 70, 70);
+              pdf.addImage(canvasImage3, 'png', 205, 15, 70, 70);
               pdf.text("Montant des MPPA", 25, 90);
               pdf.addImage(mppaTableImage, 'png', 15, 95, 80, 15);
               pdf.text("Montant des MABC", 120, 90);
               pdf.addImage(mabcTableImage, 'png', 100, 95, 80, 15);
-              pdf.text("Statistiques MPPA/MABC", 190, 25); // Déplace le titre au-dessus de l'image
-
-              pdf.addImage(tableTotauxImage, 'png', 190, 30, 100, 80); // Ajustement des coordonnées pour placer à droite
-
-              pdf.text("Montant des MABC + MPPA", 65, 195);
-              pdf.addImage(allMountTableCanvasImage, 'png', 55, 200, 80, 15);
+              pdf.text("Montant des MABC + MPPA", 195, 90);
+              pdf.addImage(allMountTableCanvasImage, 'png', 185, 95, 80, 15);
+              pdf.setFontSize(10);
               pdf.setFillColor(106, 106, 244, 1);
               dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
               pageCount = pdf.internal.getNumberOfPages();
 
               for (i = 1; i <= pageCount; i++) {
                 pdf.setPage(i);
-                pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
+                pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 10);
               }
 
               pdf.save('Graphique.pdf');
 
-            case 51:
+            case 49:
             case "end":
               return _context.stop();
           }
