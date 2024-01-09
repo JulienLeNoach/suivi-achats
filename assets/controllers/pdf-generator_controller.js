@@ -11,7 +11,7 @@ export default class extends Controller {
     const canvas2 = document.getElementById('myChart2');
 
     const criteriaForm = criteria; 
-
+    
     canvas.fillStyle = "white";
     const canvasImage = canvas.toDataURL('image/png', 1.0);
     const canvasImage2 = canvas2.toDataURL('image/png', 1.0);

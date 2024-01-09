@@ -1,4 +1,4 @@
-    <h2>Délai d'activité annuelle tableau</h2>
+    <h2 style="color:#000091;">Délai d'activité annuelle</h2>
     <h5 class="blueF">Critères du formulaire : 
 {% for key, value in criteria %}
   {% if value is not null %}
@@ -9,7 +9,7 @@
 
     </div>
     <table border=1 id="delayTable" class="delayTable">
-      <thead>
+      <thead style="background-color:#000091;color:white;">
         <th>Délai</th>
         <th>Janvier</th>
         <th>Février</th>
@@ -26,8 +26,8 @@
         <th>Total</th>
       </thead>
       {% for achat in achats %}
-      <tr>
-        <th>{{ achat.source }}</th>
+      <tr {% if achat.source == 'Transmission' %} style="background-color:#a2e1e4;"{% elseif achat.source == 'Notification' %} style="background-color:#a2b0dc;"{% elseif achat.source == 'Délai TOTAL' %} style="background-color:#eedeb6;"{% endif %}>
+<th>{{ achat.source }}</th>
         <td>{{ achat.Janvier }}</td>
         <td>{{ achat.Février }}</td>
         <td>{{ achat.Mars }}</td>

@@ -1,4 +1,4 @@
-    <h2>Activité annuelle en volume et valeur</h2>
+    <h2 style="color:#000091;">Activité annuelle en volume et valeur</h2>
     <h5 class="blueF">Critères du formulaire : 
 {% for key, value in criteria %}
   {% if value is not null %}
@@ -6,9 +6,9 @@
   {% endif %}
 {% endfor %}
 </h5>
-    <h6 class="blueF">Activité en volume</h6>
+    <b><h6 class="blueF" style="color:#000091;">Activité en volume</h6></b>
     <table id='tableCheck' border=1>
-            <thead>
+            <thead style="background-color:#000091;color:white;">
         <tr>
           <th>Mois</th>
           {% set totalmppa = 0 %}
@@ -72,9 +72,9 @@
         </tr>
       </tbody>
     </table>
-    <h6 class="blueF">Activité en valeur (HT)</h6>
+    <h6 class="blueF" style="color:#000091;">Activité en valeur (HT)</h6>
     <table id="volValTable" border=1>
-              <thead>
+              <thead style="background-color:#000091;color:white;">
         <tr>
           <th>Mois</th>
           {% set MtMppa = 0 %}

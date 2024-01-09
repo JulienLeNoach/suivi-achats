@@ -1,14 +1,15 @@
 
-    <h2>Statistic sur les PME (marché MPPA)</h2>
+    <h2 style="color:#000091;">Statistic sur les PME (marché MPPA)</h2>
     <h5 class="blueF">Critères du formulaire : 
 {% for key, value in criteria %}
   {% if value is not null %}
     {{ key|capitalize }} : {{ value }},
   {% endif %}
 {% endfor %}
-<h6 class=" blueF ">Achats MPPA</h6>
+<br><br><br>
+<h6 class=" blueF " style="color:#000091;">Achats MPPA</h6>
                     <table border="1" id="volvalTable" >
-                            <thead>
+                            <thead style="background-color:#000091;color:white;">
                             <th></th>
                             <th>PME</th>
                             <th>%PME</th>
@@ -25,11 +26,11 @@
                         </tr>
                     </table>
 
-<h6 class="blueF">Activité APPRO PME</h6>
+<h6 class="blueF" style="color:#000091;">Activité APPRO PME</h6>
             </div>
             <div class="appro-stat d-flex flex-row ">          
                 <table border="1" id="actApproTable" class="w-25">
-                        <thead>
+                        <thead style="background-color:#000091;color:white;">
                         <th></th>
                         {% for month in ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] %}
                         <th>{{ month }}</th>
