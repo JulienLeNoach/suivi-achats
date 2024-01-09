@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Unité organique{% endblock %}
+
+{% block body %}
+<div class="achat-container">
+    <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+        <h5 class="mt-4 ms-3 blueF">Unité organique N°{{u_o.codeUo}}</h5>
+        <div class="bande ms-3">
+        </div>
+    </div>
+    <div class="action-container p-3">
+
+    <table class="">
+        <tbody>
+            <tr>
+                <th>Code_uo</th>
+                <td>{{ u_o.codeUo }}</td>
+            </tr>
+            <tr>
+                <th>Libelle_uo</th>
+                <td>{{ u_o.libelleUo }}</td>
+            </tr>
+            <tr>
+                <th>Etat_uo</th>
+                <td>{{ u_o.etatUo }}</td>
+            </tr>
+         </tbody>
+    </table>
+
+    <div class="align-items-center justify-content-center d-flex mt-3">
+
+    <a class="fr-btn me-3" href="{{ path('app_u_o_edit', {'id': u_o.id}) }}">Modifier</a>
+
+    {{ include('uo/_delete_form.html.twig') }}
+    </div>
+    <div class="align-items-center justify-content-center d-flex mt-3">
+        <a class="fr-btn" href="{{ path('app_u_o_index') }}">Retour à la liste</a>
+</div>
+    </div>
+    </div>
+
+</div>
+{% endblock %}

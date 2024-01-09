@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
             $this->entityManager = $entityManager;
 
         }
-        #[Route('/pdf/generator', name: 'pdf_generator_cpv')]
+        #[Route('/pdf/generator/cpv', name: 'pdf_generator_cpv')]
         public function pdf(SessionInterface $session): Response
         {
             $form = $this->createForm(CumulCPVType::class);
@@ -33,7 +33,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
             $html =  $this->renderView('cumul_cpv/pdf_export.html.twig', [
                 'result_cpv' => $result_cpv,
                 'criteriaCPV' => $criteriaCPV,
-
             ]);
             $dompdf = new Dompdf();
             $dompdf->loadHtml($html);

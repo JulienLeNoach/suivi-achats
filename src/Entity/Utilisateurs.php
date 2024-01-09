@@ -2,15 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\UtilisateursRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 #[ORM\Entity(repositoryClass: UtilisateursRepository::class)]
 #[ApiResource]
 class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
@@ -38,11 +39,10 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $prenom_utilisateur = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $droits_a_toutes_les_fonctions = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $administrateur_central = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $administrateur_central = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?bool $etat_utilisateur = null;
@@ -62,7 +62,23 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Calendar::class)]
     private Collection $calendars;
-
+    
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isAdmin = false;
+    
+    // ...
+    
+    public function getIsAdmin(): ?bool
+    {
+        return $this->isAdmin;
+    }
+    
+    public function setIsAdmin(?bool $isAdmin): self
+    {
+        $this->isAdmin = $isAdmin;
+    
+        return $this;
+    }
     public function __construct()
     {
         $this->droitsDAcces = new ArrayCollection();
@@ -104,8 +120,12 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
+    if ($this->isAdmin) {
+        $roles[] = 'ROLE_ADMIN';
+    }
+    if ($this->administrateur_central) {
+        $roles[] = 'ROLE_SUPER_ADMIN';
+    }
         return array_unique($roles);
     }
 
@@ -165,17 +185,6 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getDroitsAToutesLesFonctions(): ?bool
-    {
-        return $this->droits_a_toutes_les_fonctions;
-    }
-
-    public function setDroitsAToutesLesFonctions(?bool $droits_a_toutes_les_fonctions): self
-    {
-        $this->droits_a_toutes_les_fonctions = $droits_a_toutes_les_fonctions;
-
-        return $this;
-    }
 
     public function getAdministrateurCentral(): ?bool
     {
@@ -328,5 +337,8 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
       {
           return (string) $this->nom_connexion;
       }
-    
+      public function hashPassword(UserPasswordHasherInterface $hasher): void
+      {
+          $this->password = $hasher->hashPassword($this, $this->password);
+      }
 }

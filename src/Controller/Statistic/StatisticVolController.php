@@ -4,6 +4,7 @@ namespace App\Controller\Statistic;
 
 // ...
 
+use Dompdf\Dompdf;
 use App\Form\StatisticType;
 use App\Form\CreateExcelType;
 use App\Repository\AchatRepository;
@@ -13,7 +14,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 //La méthode showStat de la classe, qui est associée à la route '/statistic',
@@ -41,7 +44,7 @@ class StatisticVolController extends AbstractController
     }
 
     #[Route('/statistic/vol', name: 'app_statistic_vol')]
-    public function showStat(Request $request): Response
+    public function showStat(Request $request, SessionInterface $session): Response
     {
 
         $form = $this->createForm(StatisticType::class, null, []);
@@ -67,7 +70,24 @@ class StatisticVolController extends AbstractController
             $datasets2 = $chartData['datasets2'];
             $datasets3 = $chartData2['datasets'];
             $datasets4 = $chartData2['datasets2'];
-            if ($form->get('recherche')->isClicked()) {
+            
+            $toPDF=[
+                'criteria'=>[
+                'Date' =>  $form["date"]->getData(),
+                'Fournisseur' =>  ($form["num_siret"]->getData() !== null) ? $form["num_siret"]->getData()->getNomFournisseur() : null,
+                'Utilisateur' =>  ($form["utilisateurs"]->getData() !== null) ? $form["utilisateurs"]->getData()->getNomConnexion() : null,
+                'Unité organique' =>  ($form["code_uo"]->getData() !== null) ? $form["code_uo"]->getData()->getLibelleUo() : null,
+                'CPV' =>  ($form["code_cpv"]->getData() !== null) ? $form["code_cpv"]->getData()->getLibelleCPV() : null,
+                'Formation ' =>  ($form["code_formation"]->getData() !== null) ? $form["code_formation"]->getData()->getLibelleFormation() : null,
+                'Taxe' =>  $form["tax"]->getData(),
+                ],
+                'counts1' => $counts1,
+                'counts2' => $counts2,
+                'purchaseCountByMonth' => $purchaseCountByMonth,
+                'purchaseTotalAmountByMonth' => $purchaseTotalAmountByMonth,
+                'delayVolVal'=>$delayVolVal,
+            ];
+            $session->set('toPDF', $toPDF);
 
 
                 return $this->render('statistic/index.html.twig', [
@@ -82,14 +102,36 @@ class StatisticVolController extends AbstractController
                     'datasets2' => $datasets2,
                     'datasets3' => $datasets3,
                     'datasets4' => $datasets4,
+                    'toPDF' => $toPDF,
                 ]);
-            } 
         }
 
         return $this->render('statistic/index.html.twig', [
             'form' => $form->createView(),
             'excelForm' => $excelForm->createView(),
 
+        ]);
+    }
+    #[Route('/pdf/generator/stat_vol', name: 'pdf_generator_stat_vol')]
+    public function pdf(SessionInterface $session): Response
+    {
+        
+        $html =  $this->renderView('statistic/stat_pdf.html.twig', [
+            'criteria' => $session->get('toPDF')["criteria"],
+            'counts1' => $session->get('toPDF')["counts1"],
+            'counts2' => $session->get('toPDF')["counts2"],
+            'purchaseCountByMonth' => $session->get('toPDF')["purchaseCountByMonth"],
+            'purchaseTotalAmountByMonth' => $session->get('toPDF')["purchaseTotalAmountByMonth"],
+            'delayVolVal'=>$session->get('toPDF')["delayVolVal"],
+
+        ]);
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->render();
+         
+        $dompdf->stream('cumul_cpv', array('Attachment' => 0));
+        return new Response('', 200, [
+            'Content-Type' => 'application/pdf',
         ]);
     }
 

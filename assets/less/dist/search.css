@@ -1,8 +1,12 @@
-a {
+body a {
   color: inherit ;
   /* Enlève la couleur bleue et utilise la couleur du texte parent */
-  text-decoration: none ;
+  text-decoration: none !important;
   /* Enlève le soulignement */
+  background-image: none !important;
+}
+.searchcrud {
+  border: 1px solid #000091;
 }
 .header {
   display: flex;
@@ -12,6 +16,7 @@ a {
   display: inline-block !important;
   /* ou display: inline; selon le contexte */
   white-space: nowrap !important;
+  margin-bottom: 0 !important;
 }
 .h4 {
   display: flex;
@@ -214,7 +219,6 @@ td {
   display: block;
 }
 .title-page {
-  height: 28px;
   font-family: Marianne;
   font-size: 36px;
   font-weight: 500;

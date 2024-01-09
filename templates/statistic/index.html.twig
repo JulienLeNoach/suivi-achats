@@ -1,9 +1,9 @@
   {% extends 'base.html.twig' %}
 
-{% block title %}Activité annuelle en volume et valeur{% endblock %}
+  {% block title %}Activité annuelle en volume et valeur{% endblock %}
 
-{% block body %}
-<div class="stat-delay">
+  {% block body %}
+  <div class="stat-delay">
 
     <div class='align-items-center d-flex mt-3 bandeau-form-search'>
 
@@ -12,177 +12,75 @@
       </div>
     </div>
     {{ include('statistic/stat_form.html.twig') }}
-  {% if app.request.method == 'POST' %}
-  {% if counts1 is not empty %}
-      <div class=" font-weight-bold d-flex flex-row justify-content-between" >
-      <div class="d-flex" data-controller="pdf-generator" >
-<form action="{{ path('app_statistic_vol_export_excel') }}" method="post">
-    <input type="hidden" name="datasets1" value="{{ datasets1 | json_encode }}">
-    <input type="hidden" name="datasets2" value="{{ datasets2 | json_encode }}">
-    <input type="hidden" name="datasets3" value="{{ datasets3 | json_encode }}">
-    <input type="hidden" name="datasets4" value="{{ datasets4 | json_encode }}">
-    <button type="submit" class="print">Exporter vers Excel</button>
-</form>      <div class="ms-3" data-controller="pdf-generator-chartdelay">
-        <button class="print" id="pdf" data-action="click->pdf-generator#generatePDFTable">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
-    </button>
-      </div>
+    {% if app.request.method == 'POST' %}
+    {% if counts1 is not empty %}
+    <div class=" font-weight-bold d-flex flex-row justify-content-between">
+      <div class="d-flex" data-controller="pdf-generator">
+        <form action="{{ path('app_statistic_vol_export_excel') }}" method="post">
+          <input type="hidden" name="datasets1" value="{{ datasets1 | json_encode }}">
+          <input type="hidden" name="datasets2" value="{{ datasets2 | json_encode }}">
+          <input type="hidden" name="datasets3" value="{{ datasets3 | json_encode }}">
+          <input type="hidden" name="datasets4" value="{{ datasets4 | json_encode }}">
+          <button type="submit" class="print">Exporter vers Excel</button>
+        </form>
+        <div class="ms-3" data-controller="pdf-generator-chartdelay">
+          <form action="{{ path('pdf_generator_stat_vol') }}" method="post">
+
+
+            <button type="submit" class="print">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span></button>
+          </form>
+        </div>
       </div>
     </div>
-<div class="result-search-container mb-5"data-controller="chartvol">
+    <div class="result-search-container mb-5" data-controller="chartvol">
+      {{ include('statistic/stat_vol.html.twig') }}
 
-    <h6 class="blueF">Activité en volume</h6>
-    <table id='tableCheck'>
-      <tbody>
-        <tr>
-        <thead>
-          <th>Mois</th>
-          {% set totalmppa = 0 %}
-          {% set totalmabc = 0 %}
-          {% for month, data in purchaseCountByMonth %}
-          <td>{{ month }}</td>
-          {% set totalmppa = totalmppa + data['count1'] %}
-          {% set totalmabc = totalmabc + data['count2'] %}
-          {% endfor %}
-          <td>Total</td>
-          </thead>
-        </tr>
-        <tr>
-          <th>MPPA</th>
-          {% for month, data in purchaseCountByMonth %}
-          <td>{{ data['count1'] }}</td>
-          {% endfor %}
-          <td>{{ totalmppa }}</td>
-        </tr>
-        <tr>
-          <th>MABC</th>
-          {% for month, data in purchaseCountByMonth %}
-          <td>{{ data['count2'] }}</td>
-          {% endfor %}
-          <td>{{ totalmabc }}</td>
-        </tr>
-        <tr>
-          <th>TOTAL</th>
-          {% for month, data in purchaseCountByMonth %}
-          <td>{{ data['total'] }}</td>
-          {% endfor %}
-          <td>{{ totalmppa + totalmabc }}</td>
-        </tr>
-        <tr>
-          <th><=15jrs</th>
-          {% set total15 = 0 %}
-          {% for  data in delayVolVal %}
-          <td>{{ data['Achats <= 15 jours'] }}</td>
-          {% set total15 = total15 + data['Achats <= 15 jours'] %}
-          {% endfor %}
-          <td>{{ total15 }}</td>
-        </tr>
-                <tr>
-          <th>15< x <=30</th>
-          {% set total1530 = 0 %}
-          {% for data in delayVolVal %}
-          <td>{{ data['Achats 16-30 jours'] }}</td>
-          {% set total1530 = total1530 + data['Achats 16-30 jours'] %}
-          {% endfor %}
-          <td>{{ total1530 }}</td>
-        </tr>
-                <tr>
-          <th>> 30 jrs</th>
-          {% set total30 = 0 %}
-          {% for data in delayVolVal %}
-          <td>{{ data['Achats > 30 jours'] }}</td>
-          {% set total30 = total30 + data['Achats > 30 jours'] %}
-          {% endfor %}  
-          <td>{{ total30 }}</td>
-        </tr>
-      </tbody>
-    </table>
-    {% endif %}
-    <h6 class="blueF">Activité en valeur (HT)</h6>
-    <table id="volValTable">
-      <tbody>
-        <tr>
-          <thead>
-          <th>Mois</th>
-          {% set MtMppa = 0 %}
-          {% set MtMabc = 0 %}
-          {% set count = 0 %}
-          {% for month, count in counts1 %}
-          <td>{{ month }}</td>
-          {% endfor %}
-          <td>Total</td>
-          </thead>
-        </tr>
-        <tr>
-          <th>MPPA</th>
-          {% for month, data in counts1 %}
-          {% set MtMppa = MtMppa + data['totalmontant'] %}
-          <td>{{ data['totalmontant'] }}</td>
-          {% endfor %}
-          <td>{{MtMppa}}</td>
-        </tr>
-        <tr>
-          <th>MABC</th>
-          {% for month, data in counts2 %}
-          {% set MtMabc = MtMabc + data['totalmontant'] %}
-          <td>{{ data['totalmontant'] }}</td>
-          {% endfor %}
-          <td>{{MtMabc}}</td>
-        </tr>
-        <tr>
-          <th>TOTAL</th>
-          {% for month, data in purchaseTotalAmountByMonth %}
-          <td>{{ data['total'] }}</td>
-          {% endfor %}
-          <td>{{ MtMppa + MtMabc }}</td>
-        </tr>
-      </tbody>
-    </table>
-       <div data-controller="pdf-generator">
-      <button class="print" id="pdf" data-action="click->pdf-generator#download" >Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
-</button>
+      {% endif %}
+
+      <div data-controller="pdf-generator">
+        <button class="print" id="pdf" data-action="click->pdf-generator#download">Imprimer<span
+            class="fr-icon-printer-line" aria-hidden="true"></span>
+        </button>
 
       </div>
-<div class="d-flex w-100" >
-   <div class="chartval w-50" >
-       <h6 class="blueF">Activité en valeur (HT)</h6>
-  <canvas id="myChart2" data-chartvol-target="myChart"  ></canvas>
+      <div class="d-flex w-100">
+        <div class="chartval w-50">
+          <h6 class="blueF">Activité en valeur (HT)</h6>
+          <canvas id="myChart2" data-chartvol-target="myChart"></canvas>
+        </div>
+        <div class="chartval ms-5 w-50">
+          <h6 class="blueF">Activité en volume</h6>
+          <canvas id="myChart" data-chartvol-target="myChart"></canvas>
+        </div>
+
+      </div>
+    </div>
   </div>
-   <div class="chartval ms-5 w-50" >
-    <h6 class="blueF">Activité en volume</h6>
-  <canvas id="myChart" data-chartvol-target="myChart"  ></canvas>
-  </div>
+
 
   </div>
-  </div>
-</div>
+  <script>
+    let datasets1 = {{datasets1 | json_encode | raw}};
+    let datasets2 = {{datasets2 | json_encode | raw}};
+    let datasets3 = {{datasets3 | json_encode | raw}};
+    let datasets4 = {{datasets4 | json_encode | raw}};
+    let criteria = {{toPDF["criteria"] | json_encode | raw}};
+  </script>
 
+  {% endif  %}
 
-
-</div>
-<script>
-    let datasets1 = {{ datasets1|json_encode|raw }};
-    let datasets2 = {{ datasets2|json_encode|raw }};
-    let datasets3 = {{ datasets3|json_encode|raw }};
-    let datasets4 = {{ datasets4|json_encode|raw }};
-    
-</script>
-
-{% endif  %}
-
-    <script>
-
-
-// Show tooltips always even the stats are zero
+  <script>
+    // Show tooltips always even the stats are zero
     var tableCheck = document.getElementById('tableCheck');
-var hiddenElements = document.querySelectorAll('.hidden');
+    var hiddenElements = document.querySelectorAll('.hidden');
 
-  if(tableCheck){
+    if (tableCheck) {
 
-  hiddenElements.forEach(function(element) {
-    element.classList.remove('hidden');
-  });  }
+      hiddenElements.forEach(function (element) {
+        element.classList.remove('hidden');
+      });
+    }
+  </script>
+  </div>
 
-    </script>
-    </div>
-
-{% endblock %}
+  {% endblock %}

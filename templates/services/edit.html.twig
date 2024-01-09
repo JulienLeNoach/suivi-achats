@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un service{% endblock %}
+
+{% block body %}
+<div class="achat-container">
+    <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+        <h5 class="mt-4 ms-3 blueF">Modifier un service</h5>
+        <div class="bande ms-3">
+        </div>
+    </div>
+        <div class="form-container action-container">
+
+    {{ include('services/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+    <div class="d-flex align-items-center justify-content-center">
+    {{ include('services/_delete_form.html.twig') }}
+    <a href="{{ path('app_services_index') }}" class=" ms-3 fr-btn">Retour à la liste</a>
+    </div>
+    </div>
+</div>
+{% endblock %}

@@ -25,7 +25,7 @@ class DashboardController extends AbstractDashboardController
         private AdminUrlGenerator $adminUrlGenerator) 
         {
     }
-    #[Route('/fournisseurs', name: 'fournisseurs')]
+    #[Route('/fournisseursadmin', name: 'fournisseursadmin')]
     public function fournisseurs(): Response
 {
     $url = $this->adminUrlGenerator
@@ -35,7 +35,7 @@ class DashboardController extends AbstractDashboardController
     return $this->redirect($url);
 }
 
-#[Route('/cpv', name: 'cpv')]
+#[Route('/cpvadmin', name: 'cpvadmin')]
 public function cpv(): Response
 {
 $url = $this->adminUrlGenerator
@@ -45,7 +45,7 @@ $url = $this->adminUrlGenerator
 return $this->redirect($url);
 }
 
-#[Route('/UO', name: 'UO')]
+#[Route('/UOadmin', name: 'UOadmin')]
 public function UO(): Response
 {
 $url = $this->adminUrlGenerator
@@ -54,7 +54,7 @@ $url = $this->adminUrlGenerator
 
 return $this->redirect($url);
 }
-#[Route('/formations', name: 'formations')]
+#[Route('/formationsadmin', name: 'formationsadmin')]
 public function formations(): Response
 {
 $url = $this->adminUrlGenerator
@@ -63,7 +63,7 @@ $url = $this->adminUrlGenerator
 
 return $this->redirect($url);
 }
-#[Route('/service', name: 'service')]
+#[Route('/serviceadmin', name: 'serviceadmin')]
 public function service(): Response
 {
 $url = $this->adminUrlGenerator
@@ -72,7 +72,7 @@ $url = $this->adminUrlGenerator
 
 return $this->redirect($url);
 }
-#[Route('/utilisateurs', name: 'utilisateurs')]
+#[Route('/utilisateursadmin', name: 'utilisateursadmin')]
 public function utilisateurs(): Response
 {
 $url = $this->adminUrlGenerator

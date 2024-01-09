@@ -1,0 +1,118 @@
+    <h2>Activité annuelle en volume et valeur</h2>
+    <h5 class="blueF">Critères du formulaire : 
+{% for key, value in criteria %}
+  {% if value is not null %}
+    {{ key|capitalize }} : {{ value }},
+  {% endif %}
+{% endfor %}
+</h5>
+    <h6 class="blueF">Activité en volume</h6>
+    <table id='tableCheck' border=1>
+            <thead>
+        <tr>
+          <th>Mois</th>
+          {% set totalmppa = 0 %}
+          {% set totalmabc = 0 %}
+          {% for month, data in purchaseCountByMonth %}
+          <td>{{ month }}</td>
+          {% set totalmppa = totalmppa + data['count1'] %}
+          {% set totalmabc = totalmabc + data['count2'] %}
+          {% endfor %}
+          <td>Total</td>
+          </thead>
+                <tbody>
+        </tr>
+        <tr>
+          <th>MPPA</th>
+          {% for month, data in purchaseCountByMonth %}
+          <td>{{ data['count1'] }}</td>
+          {% endfor %}
+          <td>{{ totalmppa }}</td>
+        </tr>
+        <tr>
+          <th>MABC</th>
+          {% for month, data in purchaseCountByMonth %}
+          <td>{{ data['count2'] }}</td>
+          {% endfor %}
+          <td>{{ totalmabc }}</td>
+        </tr>
+        <tr>
+          <th>TOTAL</th>
+          {% for month, data in purchaseCountByMonth %}
+          <td>{{ data['total'] }}</td>
+          {% endfor %}
+          <td>{{ totalmppa + totalmabc }}</td>
+        </tr>
+        <tr>
+          <th><=15jrs</th>
+          {% set total15 = 0 %}
+          {% for  data in delayVolVal %}
+          <td>{{ data['Achats <= 15 jours'] }}</td>
+          {% set total15 = total15 + data['Achats <= 15 jours'] %}
+          {% endfor %}
+          <td>{{ total15 }}</td>
+        </tr>
+                <tr>
+          <th>15< x <=30</th>
+          {% set total1530 = 0 %}
+          {% for data in delayVolVal %}
+          <td>{{ data['Achats 16-30 jours'] }}</td>
+          {% set total1530 = total1530 + data['Achats 16-30 jours'] %}
+          {% endfor %}
+          <td>{{ total1530 }}</td>
+        </tr>
+                <tr>
+          <th>> 30 jrs</th>
+          {% set total30 = 0 %}
+          {% for data in delayVolVal %}
+          <td>{{ data['Achats > 30 jours'] }}</td>
+          {% set total30 = total30 + data['Achats > 30 jours'] %}
+          {% endfor %}  
+          <td>{{ total30 }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <h6 class="blueF">Activité en valeur (HT)</h6>
+    <table id="volValTable" border=1>
+              <thead>
+        <tr>
+          <th>Mois</th>
+          {% set MtMppa = 0 %}
+          {% set MtMabc = 0 %}
+          {% set count = 0 %}
+          {% for month, count in counts1 %}
+          <td>{{ month }}</td>
+          {% endfor %}
+          <td>Total</td>
+        </tr>
+                  </thead>
+
+              <tbody>
+
+        <tr>
+          <th>MPPA</th>
+          {% for month, data in counts1 %}
+          {% set MtMppa = MtMppa + data['totalmontant'] %}
+          <td>{{ data['totalmontant'] }}</td>
+          {% endfor %}
+          <td>{{MtMppa}}</td>
+        </tr>
+        <tr>
+          <th>MABC</th>
+          {% for month, data in counts2 %}
+          {% set MtMabc = MtMabc + data['totalmontant'] %}
+          <td>{{ data['totalmontant'] }}</td>
+          {% endfor %}
+          <td>{{MtMabc}}</td>
+        </tr>
+        <tr>
+          <th>TOTAL</th>
+          {% for month, data in purchaseTotalAmountByMonth %}
+          <td>{{ data['total'] }}</td>
+          {% endfor %}
+          <td>{{ MtMppa + MtMabc }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    

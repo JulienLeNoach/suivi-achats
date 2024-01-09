@@ -33,7 +33,6 @@ class StatisticType extends AbstractType
             'placeholder' => 'Choisir une année',
             'label'=>'Année',
             'data' =>  date('Y'),
-            // 'row_attr' => ['class' => 'fr-input-stat']
 
         ])
         ->add('jourcalendar', ChoiceType::class, [

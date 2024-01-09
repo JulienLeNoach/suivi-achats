@@ -19,13 +19,14 @@
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"> #}
     </script>
     <title>{% block title %}Bienvenue{% endblock %}</title>
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+
+
     {% block stylesheets %}
     {% endblock %}
 
     {{ encore_entry_link_tags('app') }}
     {{ encore_entry_script_tags('app') }}
+<link rel="icon" href="/images/favicon.ico">
 
     <header role="banner" class="fr-header">
         <div class="fr-header__body">
@@ -57,15 +58,15 @@
                                 <div class="fr-collapse fr-menu" id="menu-776">
                                     <ul class="fr-menu__list">
                                         <li>{% if is_granted ('ROLE_OPT_FOURNISSEURS') %}
-                                            <a class="fr-nav__link" href="{{ path('fournisseurs') }}"
+                                            <a class="fr-nav__link" href="{{ path('app_fournisseurs_index') }}"
                                                 target="_self">Gérer les fournisseurs</a>{% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_UO') %}
-                                            <a class="fr-nav__link" href="{{path('UO')}}" target="_self">Gérer les
+                                            <a class="fr-nav__link" href="{{path('app_u_o_index')}}" target="_self">Gérer les
                                                 unités organiques</a>{% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_FORMATIONS') %}
-                                            <a class="fr-nav__link" href="{{path('formations') }}" target="_self">Gérer
+                                            <a class="fr-nav__link" href="{{path('app_formations_index') }}" target="_self">Gérer
                                                 les formations</a>{% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_CPV') %}
@@ -123,12 +124,12 @@
                                 <div class="fr-collapse fr-menu" id="menu-778">
                                     <ul class="fr-menu__list">
                                         <li>{% if is_granted ('ROLE_OPT_SERVICES') %}
-                                            <a class="fr-nav__link" href="{{ path('service') }}" target="_self">Gérer
+                                            <a class="fr-nav__link" href="{{ path('app_services_index') }}" target="_self">Gérer
                                                 les services</a>
                                             {% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_UTILISATEURS') %}
-                                            <a class="fr-nav__link" href="{{path('utilisateurs')}}" target="_self">Gérer
+                                            <a class="fr-nav__link" href="{{path('app_utilisateurs_index')}}" target="_self">Gérer
                                                 les utilisateurs</a>
                                             {% endif %}
                                         </li>

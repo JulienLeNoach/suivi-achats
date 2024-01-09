@@ -66,6 +66,8 @@ class UtilisateursCrudController extends AbstractCrudController
             TextField::new('prenom_utilisateur'),
             TextField::new('nom_connexion'),
             TextField::new('trigram'),
+            BooleanField::new('administrateur_central'),
+
         ];
     }
     if ($pageName === Crud::PAGE_EDIT) {
@@ -81,6 +83,7 @@ class UtilisateursCrudController extends AbstractCrudController
             TextField::new('prenom_utilisateur'),
             TextField::new('nom_connexion'),
             TextField::new('trigram'),
+            BooleanField::new('administrateur_central'),
             TextField::new('password')
             ->setFormType(RepeatedType::class)
             ->setFormTypeOptions([
@@ -105,7 +108,7 @@ class UtilisateursCrudController extends AbstractCrudController
             TextField::new('prenom_utilisateur'),
             TextField::new('nom_connexion'),
             TextField::new('trigram'),
-            
+            BooleanField::new('administrateur_central'),
             TextField::new('password')
             ->setFormType(RepeatedType::class)
             ->setFormTypeOptions([

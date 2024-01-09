@@ -7,10 +7,10 @@
     <div class="title-page mt-2 w-100 text-center">
         <h2><span style="border-bottom: 4px solid #000091;">Achats</span></h2>
     </div>
-    <div class='addAchat mt-5'>
+    <div class='addAchat p-3'>
         <span class="fr-icon-arrow-right-line ms-5" aria-hidden="true"></span>
 
-        <h5 class="mt-4 ms-5 blueF">Saisir un nouvel achat</h5>
+        <div class=" ms-5 blueF">Saisir un nouvel achat</div>
         <button class="fr-btn btn-achat ms-5"> {% if is_granted ('ROLE_OPT_SAISIR_ACHATS') %}
             <a href="{{path('ajout_achat')}}" class="text-center">Nouvel achat</a>
             {% endif %}

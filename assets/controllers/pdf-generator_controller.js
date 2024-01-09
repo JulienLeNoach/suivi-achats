@@ -3,68 +3,44 @@ import jsPDF from 'jspdf'; // Importez jsPDF
 import html2canvas from 'html2canvas';
 
 export default class extends Controller {
+  connect(){
+
+  }
   download() {
     const canvas = document.getElementById('myChart');
     const canvas2 = document.getElementById('myChart2');
+
+    const criteriaForm = criteria; 
+
     canvas.fillStyle = "white";
     const canvasImage = canvas.toDataURL('image/png', 1.0);
     const canvasImage2 = canvas2.toDataURL('image/png', 1.0);
+
+    const values = Object.entries(criteriaForm)
+    .filter(([key, value]) => value !== null && value !== undefined)
+    .map(([key, value]) => `${key}: ${value}`);
+    const criteriaText = values.join(', ');
+     
     let pdf = new jsPDF('p', 'mm', [360, 350]);
-    pdf.setFontSize(20);
-    pdf.text('Activité en volume', 15, 10);
-    pdf.addImage(canvasImage, 'png', 15, 15, 280, 150);
-    pdf.text('Activité en valeur (HT)', 15, 185);
-    pdf.addImage(canvasImage2, 'png', 15, 200, 280, 150);
+    pdf.setFontSize(8);
+    pdf.text("Critères de sélection : " + criteriaText, 15, 10);
+    pdf.setFontSize(12);
+    pdf.text('Activité en volume', 15, 25);
+    pdf.addImage(canvasImage, 'png', 15, 25, 160, 95);
+    pdf.text('Activité en valeur ('+criteria.Taxe+')', 175, 25);
+    pdf.addImage(canvasImage2, 'png', 175, 25, 160, 95);
+    pdf.setFontSize(8);
     pdf.setFillColor(106, 106, 244, 1);
     const dateEdited = `édité le ${new Date().toLocaleDateString()}`;
     const pageCount = pdf.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
         pdf.setPage(i);
-        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
+        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 10);
     }
     pdf.save('Graphique.pdf');
   }
 
-  generatePDFTable() {
-    // Create a jsPDF instance with landscape orientation
-    const pdf =  new jsPDF('l', 'mm', 'a3');
-  
-    // Select the first table HTML element
-    const table1 = document.getElementById('volValTable');
-  
-    // Add a title for the first table
-    pdf.text('Activité en valeur (HT)', 20, 20);
-  
-    // Use html2canvas to render the first table as an image
-    html2canvas(table1,{ scale: 0.65 }).then(canvas1 => {
-      const imgData1 = canvas1.toDataURL('image/png');
-  
-      // Add the first table image to the PDF
-      pdf.addImage(imgData1, 'PNG', 5, 30);
-  
-      // Add a title for the second table
-      pdf.text('Activité en volume', 20, 90);
-  
-      // Select the second table HTML element
-      const table2 = document.getElementById('tableCheck');
-  
-      // Use html2canvas to render the second table as an image
-      html2canvas(table2,{ scale: 0.65 }).then(canvas2 => {
-        const imgData2 = canvas2.toDataURL('image/png');
-  
-        // Add the second table image to the same page
-        pdf.addImage(imgData2, 'PNG', 5, 100);
-        const dateEdited = `édité le ${new Date().toLocaleDateString()}`;
-        const pageCount = pdf.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-            pdf.setPage(i);
-            pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 50, 10);
-        }
-        // Save the PDF file
-        pdf.save('Activité Volume et valeur.pdf');
-      });
-    });
-  }
+
   exportTableToExcel(){
     // const table = document.getElementById("volValTable");
     const table1 = document.getElementById("tableCheck");

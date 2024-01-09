@@ -47,10 +47,10 @@
 
  </div>
         <form action="{{ path('pdf_generator_cpv') }}" method="post">
-    <input type="hidden" name="date" value="{{ form.date | json_encode }}">
-    <input type="hidden" name="alertValue" value="{{ form.alertValue | json_encode }}">
+    {# <input type="hidden" name="date" value="{{ form.date | json_encode }}">
+    <input type="hidden" name="alertValue" value="{{ form.alertValue | json_encode }}"> #}
 
-    <button type="submit" class="fr-btn align-item-center mt-5">Exporter vers Excel</button>
+    <button type="submit" class="fr-btn align-item-center mt-5">Imprimer</button>
 </form> 
 </div>
     {% endif %}

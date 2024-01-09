@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fournisseur{% endblock %}
+
+{% block body %}
+<div class="achat-container">
+    <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+        <h5 class="mt-4 ms-3 blueF">Fournisseur N°{{fournisseur.numSiret}}</h5>
+        <div class="bande ms-3">
+        </div>
+    </div>
+    <div class="action-container p-3">
+
+    <table class="">
+        <tbody>
+            <tr>
+                <th>Num_siret</th>
+                <td>{{ fournisseur.numSiret }}</td>
+            </tr>
+            <tr>
+                <th>Nom_fournisseur</th>
+                <td>{{ fournisseur.nomFournisseur }}</td>
+            </tr>
+            <tr>
+                <th>Ville</th>
+                <td>{{ fournisseur.ville }}</td>
+            </tr>
+            <tr>
+                <th>Code_postal</th>
+                <td>{{ fournisseur.codePostal }}</td>
+            </tr>
+            <tr>
+                <th>Pme</th>
+                <td>{{ fournisseur.pme ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Code_client</th>
+                <td>{{ fournisseur.codeClient }}</td>
+            </tr>
+            <tr>
+                <th>Num_chorus_fournisseur</th>
+                <td>{{ fournisseur.numChorusFournisseur }}</td>
+            </tr>
+            <tr>
+                <th>Tel</th>
+                <td>{{ fournisseur.tel }}</td>
+            </tr>
+            <tr>
+                <th>FAX</th>
+                <td>{{ fournisseur.FAX }}</td>
+            </tr>
+            <tr>
+                <th>Mail</th>
+                <td>{{ fournisseur.mail }}</td>
+            </tr>
+            <tr>
+                <th>Etat_fournisseur</th>
+                <td>{{ fournisseur.etatFournisseur ? 'Actif' : 'Inactif' }}</td>
+            </tr>
+            <tr>
+                <th>Date_maj_fournisseur</th>
+                <td>{{ fournisseur.dateMajFournisseur }}</td>
+            </tr>
+            <tr>
+                <th>Mobile</th>
+                <td>{{ fournisseur.mobile }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="align-items-center justify-content-center d-flex mt-3">
+
+    <a class="fr-btn me-3" href="{{ path('app_fournisseurs_edit', {'id': fournisseur.id}) }}">Modifier</a>
+
+    {{ include('fournisseurs/_delete_form.html.twig') }}
+    </div>
+    <div class="align-items-center justify-content-center d-flex mt-3">
+        <a class="fr-btn" href="{{ path('app_fournisseurs_index') }}">Retour à la liste</a>
+</div>
+    </div>
+    </div>
+
+</div>
+{% endblock %}

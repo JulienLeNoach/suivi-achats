@@ -15,6 +15,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -43,69 +51,50 @@ function (_Controller) {
   }
 
   _createClass(_default, [{
+    key: "connect",
+    value: function connect() {}
+  }, {
     key: "download",
     value: function download() {
       var canvas = document.getElementById('myChart');
       var canvas2 = document.getElementById('myChart2');
+      var criteriaForm = criteria;
       canvas.fillStyle = "white";
       var canvasImage = canvas.toDataURL('image/png', 1.0);
       var canvasImage2 = canvas2.toDataURL('image/png', 1.0);
+      var values = Object.entries(criteriaForm).filter(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            key = _ref2[0],
+            value = _ref2[1];
+
+        return value !== null && value !== undefined;
+      }).map(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            key = _ref4[0],
+            value = _ref4[1];
+
+        return "".concat(key, ": ").concat(value);
+      });
+      var criteriaText = values.join(', ');
       var pdf = new _jspdf["default"]('p', 'mm', [360, 350]);
-      pdf.setFontSize(20);
-      pdf.text('Activité en volume', 15, 10);
-      pdf.addImage(canvasImage, 'png', 15, 15, 280, 150);
-      pdf.text('Activité en valeur (HT)', 15, 185);
-      pdf.addImage(canvasImage2, 'png', 15, 200, 280, 150);
+      pdf.setFontSize(8);
+      pdf.text("Critères de sélection : " + criteriaText, 15, 10);
+      pdf.setFontSize(12);
+      pdf.text('Activité en volume', 15, 25);
+      pdf.addImage(canvasImage, 'png', 15, 25, 160, 95);
+      pdf.text('Activité en valeur (' + criteria.Taxe + ')', 175, 25);
+      pdf.addImage(canvasImage2, 'png', 175, 25, 160, 95);
+      pdf.setFontSize(8);
       pdf.setFillColor(106, 106, 244, 1);
       var dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
       var pageCount = pdf.internal.getNumberOfPages();
 
       for (var i = 1; i <= pageCount; i++) {
         pdf.setPage(i);
-        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
+        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 10);
       }
 
       pdf.save('Graphique.pdf');
-    }
-  }, {
-    key: "generatePDFTable",
-    value: function generatePDFTable() {
-      // Create a jsPDF instance with landscape orientation
-      var pdf = new _jspdf["default"]('l', 'mm', 'a3'); // Select the first table HTML element
-
-      var table1 = document.getElementById('volValTable'); // Add a title for the first table
-
-      pdf.text('Activité en valeur (HT)', 20, 20); // Use html2canvas to render the first table as an image
-
-      (0, _html2canvas["default"])(table1, {
-        scale: 0.65
-      }).then(function (canvas1) {
-        var imgData1 = canvas1.toDataURL('image/png'); // Add the first table image to the PDF
-
-        pdf.addImage(imgData1, 'PNG', 5, 30); // Add a title for the second table
-
-        pdf.text('Activité en volume', 20, 90); // Select the second table HTML element
-
-        var table2 = document.getElementById('tableCheck'); // Use html2canvas to render the second table as an image
-
-        (0, _html2canvas["default"])(table2, {
-          scale: 0.65
-        }).then(function (canvas2) {
-          var imgData2 = canvas2.toDataURL('image/png'); // Add the second table image to the same page
-
-          pdf.addImage(imgData2, 'PNG', 5, 100);
-          var dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
-          var pageCount = pdf.internal.getNumberOfPages();
-
-          for (var i = 1; i <= pageCount; i++) {
-            pdf.setPage(i);
-            pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 50, 10);
-          } // Save the PDF file
-
-
-          pdf.save('Activité Volume et valeur.pdf');
-        });
-      });
     }
   }, {
     key: "exportTableToExcel",

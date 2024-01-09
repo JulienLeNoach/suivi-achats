@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un CPV{% endblock %}
+
+{% block body %}
+<div class="achat-container">
+    <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+        <h5 class="mt-4 ms-3 blueF">Ajouter un CPV</h5>
+        <div class="bande ms-3">
+        </div>
+    </div>
+            <div class="form-container action-container">
+
+    {{ include('cpv/_form.html.twig') }}
+    <div class="align-items-center justify-content-center d-flex mb-3">
+    <a href="{{ path('cpv') }}" class="fr-btn ">Retour à la liste</a>
+    </div>
+</div>
+</div>
+{% endblock %}
