@@ -3,12 +3,15 @@
 namespace App\Service;
 
 
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Chart\Chart;
 use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Chart\Layout;
 use PhpOffice\PhpSpreadsheet\Chart\Legend;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
@@ -23,7 +26,54 @@ class StatisticTypeMarcheService  extends AbstractController
         foreach (range('A', 'T') as $columnID) {
             $sheet->getColumnDimension($columnID)->setWidth(15); // Définir la largeur à 15 pour chaque colonne
         }
-        // dd($parameters['parameter2']);
+        $sheet->setCellValue('H1', 'Statistiques MPPA/MABC')
+        ->getStyle('H1')
+        ->getFont()
+        ->setBold(true)
+        ->setSize(18)
+        ->setColor(new Color(Color::COLOR_RED));
+        $cellRangesByColor = [
+            'c0504d' => [ // red
+                'H3', 'H4', 'M3', 'M4', 'R3', 'R4'
+            ],
+            '4f81bd' => [ //bleu
+                'G3', 'G4', 'L3', 'L4', 'Q3', 'Q4'
+            ],
+            '9bbb59' => [ // vert
+                'I3', 'I4', 'N3', 'N4', 'S3', 'S4'
+            ],
+            '8064a2' => [ // violet
+                'J3', 'J4', 'O3', 'O4', 'T3', 'T4'
+            ],
+            '4bacc6' => [ // bleu cyan
+    
+            ],
+            // Ajoutez ici d'autres plages de cellules par couleur
+        ];
+    
+        foreach ($cellRangesByColor as $color => $cellRanges) {
+            $style = ['fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => $color]]];
+            foreach ($cellRanges as $cellRange) {
+                $sheet->getStyle($cellRange)->applyFromArray($style);
+            }
+        }
+    
+        $cellBorder = [
+            'A2:D7','H2:I2','M2:N2','R2:S2','G3:J4','L3:O4','Q3:T4'
+        ];
+    
+        $styleBorderB = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN, // Style de bordure pour toutes les bordures
+                ],
+            ],
+        ];
+    
+        foreach ($cellBorder as $cellRange) {
+            $sheet->getStyle($cellRange)->applyFromArray($styleBorderB);
+        }
+
         //------------------------------ Tab % vol/val_type --------------------------//
             $sheet->setCellValue('B2', "MPPA"); 
             $sheet->setCellValue('C2', "MABC"); 

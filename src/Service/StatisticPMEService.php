@@ -4,12 +4,15 @@ namespace App\Service;
 
 
 
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Chart\Chart;
 use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Chart\Layout;
 use PhpOffice\PhpSpreadsheet\Chart\Legend;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -30,7 +33,53 @@ class StatisticPMEService  extends AbstractController
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-
+        $sheet->setCellValue('H1', 'Statistic sur les PME (marché MPPA)')
+        ->getStyle('H1')
+        ->getFont()
+        ->setBold(true)
+        ->setSize(18)
+        ->setColor(new Color(Color::COLOR_RED));
+        $cellRangesByColor = [
+            'c0504d' => [ // red
+                'K3','K4','T3','T4',
+            ],
+            '4f81bd' => [ //bleu
+            'J3','J4','S3','S4','B23:O23'
+            ],
+            '9bbb59' => [ // vert
+                'L3','L4','U3','U4',
+            ],
+            '8064a2' => [ // violet
+                'M3','M4','V3','V4',
+            ],
+            '4bacc6' => [ // bleu cyan
+                'N3','N4','W3','W4',
+            ],
+            // Ajoutez ici d'autres plages de cellules par couleur
+        ];
+    
+        foreach ($cellRangesByColor as $color => $cellRanges) {
+            $style = ['fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => $color]]];
+            foreach ($cellRanges as $cellRange) {
+                $sheet->getStyle($cellRange)->applyFromArray($style);
+            }
+        }
+    
+        $cellBorder = [
+            'B2:E4', 'G2:H2','I3:N4','P2:Q2','R3:W4','B22:O24'
+        ];
+    
+        $styleBorderB = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN, // Style de bordure pour toutes les bordures
+                ],
+            ],
+        ];
+    
+        foreach ($cellBorder as $cellRange) {
+            $sheet->getStyle($cellRange)->applyFromArray($styleBorderB);
+        }
         $topValCol="J";
         $topVolCol="S";
 
@@ -212,7 +261,7 @@ class StatisticPMEService  extends AbstractController
                 );
                 
                 $approPmeChart->setTopLeftPosition('B25');
-                $approPmeChart->setBottomRightPosition('O38');
+                $approPmeChart->setBottomRightPosition('P38');
                 $sheet->addChart($approPmeChart);
 
         $filePath = $this->projectDir . '/public/nom_de_fichier.xlsx';
