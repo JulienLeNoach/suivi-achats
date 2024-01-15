@@ -44,10 +44,12 @@ class FournisseursType extends AbstractType
             'label'=>'Nom du fournisseur'])
             ->add('ville',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Ville'])
+            'label'=>'Ville',
+            'required'=>false])
             ->add('code_postal',IntegerType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Code postal'])
+            'label'=>'Code postal',
+            'required'=>false])
             ->add('pme', ChoiceType::class, [
                 'choices'  => [
                     'Oui' => 1,
@@ -56,24 +58,30 @@ class FournisseursType extends AbstractType
                 'label' => "PME ?",
                 'row_attr' => ['class' => 'radio-search'],
                 'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']
+                'label_attr' => ['class' => 'fr-label'],
+                'required'=>false
 
             ])
             ->add('code_client',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Code client'])
+            'label'=>'Code client',
+            'required'=>false])
             ->add('num_chorus_fournisseur',IntegerType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Numéro Chorus Fournisseur'])
+            'label'=>'Numéro Chorus Fournisseur',
+            'required'=>false])
             ->add('tel',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Téléphone'])
+            'label'=>'Téléphone',
+            'required'=>false])
             ->add('FAX',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
-            'label'=>'FAX'])
+            'label'=>'FAX',
+            'required'=>false])
             ->add('mail',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Mail'])
+            'label'=>'Mail',
+            'required'=>false])
             ->add('etat_fournisseur',ChoiceType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Etat du fournisseur',
@@ -83,7 +91,10 @@ class FournisseursType extends AbstractType
             ],])
             ->add('mobile',IntegerType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Mobile'])
+            'label'=>'Mobile',
+            'required'=>false]
+        )
+            
 
         ;
     }

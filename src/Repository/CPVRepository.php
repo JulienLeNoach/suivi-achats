@@ -42,7 +42,6 @@ class CPVRepository extends ServiceEntityRepository
             ->orderBy('somme_montants', 'DESC');
     
         $query = $queryBuilder->getQuery();
-        $result = $query->getResult();
     
         return $query;
     }

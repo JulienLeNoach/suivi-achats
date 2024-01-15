@@ -525,6 +525,10 @@ $stmt = $conn->prepare($sql);
             ->Where('b.utilisateurs = :utilisateurs')
             ->setParameter('utilisateurs', $user);
         }
+        $queryBuilder->leftJoin('b.code_formation', 'f');
+        $queryBuilder->leftJoin('b.utilisateurs', 'u');
+        $queryBuilder->leftJoin('b.num_siret', 'n');
+
             // if ($form["objet_achat"]->getData()){
             //     $queryBuilder
             //         ->andWhere('b.objet_achat LIKE :objet_achat')
@@ -641,9 +645,9 @@ $stmt = $conn->prepare($sql);
                     ->setParameter('id_demande_achat', $form["id_demande_achat"]->getData());
             }
         // ... Votre logique de construction de la requête ici ...
-        $queryBuilder->orderBy('b.id', 'DESC');
+        // $queryBuilder->orderBy('b.id', 'DESC');
 
-        $query = $queryBuilder->getQuery();
+        $query = $queryBuilder;
     
         return $query;
     }

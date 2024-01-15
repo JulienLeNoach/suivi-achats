@@ -4,7 +4,7 @@
     <tbody id="achat-list-tbody" class="achat-list-tbody" data-controller="search-achat">
         {% for achat in achats  %}
             <tr class="clickable-row" data-id="{{ achat.id }}" data-action="click->search-achat#attachEventListeners">
-                <td>{{achat.id}}</td>
+                <td>{{achat.numeroAchat}}</td>
                 <td>{{achat.dateSaisie|date('d-m-Y')}}</td>
                 <td>{{ achat.utilisateurs.trigram }}</td>
                 <td>{{ achat.codeFormation.libelleFormation }}</td>

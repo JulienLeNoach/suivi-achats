@@ -37,7 +37,6 @@ class CPVController extends AbstractController
         $queryBuilder->orderBy("cpv.$sortField", $sortDirection); // Ajout du tri
     
         $query = $queryBuilder->getQuery();
-    
         $pagination = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),

@@ -63,7 +63,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
                 $session->set('criteriaCPV', $criteriaCPV);
 
                 $result_cpv = $this->entityManager->getRepository(CPV::class)->showCPV($criteriaCPV);
-                $result_cpv = $result_cpv->setMaxResults($limit)->setFirstResult($offset)->getResult();
+                $result_cpv = $result_cpv->setFirstResult($offset)->getResult();
 
                 $alertValue = $form["alertValue"]->getData();
 
@@ -75,20 +75,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
                 ]);
             }
-                if ($request->isXmlHttpRequest()) {
-
-
-            $offset = $request->query->getInt('offset', 7);
-                $result_cpv = $this->entityManager->getRepository(CPV::class)->showCPV($form);
-
-            $result_cpv = $result_cpv->setMaxResults($limit)->setFirstResult($offset)->getResult();
-            
-            return $this->render('cumul_cpv/partial_results.html.twig', [
-                'result_cpv' => $result_cpv,
-                'alertValue' => $alertValue,
-
-                ]);
-            }
+               
             return $this->render('cumul_cpv/index.html.twig', [
                 'form' => $form->createView(),
                 'result_cpv' => $result_cpv,

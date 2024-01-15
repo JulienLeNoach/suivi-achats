@@ -105,6 +105,7 @@
 
                     {{ form_row(form.type_marche)}}
       </div>
+      
         {{ form_row(form.recherche)}}
         {{ form_end(form) }}
     </div>
@@ -120,7 +121,6 @@
         {{ flash_message }}
     </div>
     {% endfor %}
-    {# {{dump(pagination)}} #}
     {% if achats is  defined  %}
 
     {% if app.request.method == 'GET' %}
@@ -152,22 +152,35 @@
                 achat</button>
         </a>
     </div>
+    {# <div class="d-flex">
+    <div class="w-25">
+     <form method="get" action="{{ path('app_search') }}" >
+        <label for="perPage" class="align-items-center vertical-align-middle justify-content-center d-inline-flex" >Nombre par page:</label>
+        <select name="perPage" id="perPage" onchange="this.form.submit()">
+            <option value="5" {% if perPage == 5 %}selected{% endif %}>5</option>
+            <option value="10" {% if perPage == 10 %}selected{% endif %}>10</option>
+            <option value="20" {% if perPage == 20 %}selected{% endif %}>20</option>
+        </select>
+    </form>
+    </div>
+</div> #}
     <div class="result-search-container">
         <div class="table-container search">
-            <div id="achat-list">
+            <div id="">
                 <table border="1" id="tab-result" class="mb-5">
                     <thead>
                         <tr>
-                            <th>N°Chrono</th>
-                            <th>Date de saisie</th>
-                            <th>Utilisateurs</th>
-                            <th>Formation</th>
-                            <th>Objet de l'achat</th>
-                            <th>Fournisseur</th>
+                            <th> {{ knp_pagination_sortable(achats, 'N° Chrono', 'b.numero_achat') }}<span class="fr-icon-filter-line" aria-hidden="true"></span>
+</th>
+                            <th>{{ knp_pagination_sortable(achats, 'Date de saisie', 'b.date_saisie') }}<span class="fr-icon-filter-line" aria-hidden="true"></span></th>
+                            <th>{{ knp_pagination_sortable(achats, 'Utilisateur', 'u.trigram') }}<span class="fr-icon-filter-line" aria-hidden="true"></span></th>
+                            <th>{{ knp_pagination_sortable(achats, 'Formation', 'f.libelle_formation') }}<span class="fr-icon-filter-line" aria-hidden="true"></span></th>
+                            <th>{{ knp_pagination_sortable(achats, "Objet de l'achat", 'b.objet_achat') }}<span class="fr-icon-filter-line" aria-hidden="true"></span></th>
+                            <th>{{ knp_pagination_sortable(achats, 'Fournisseur', 'n.nom_fournisseur') }}<span class="fr-icon-filter-line" aria-hidden="true"></span></th>
                             {% if tax == 'ttc' %}
-                            <th>Montant TTC</th>
+                            <th>{{ knp_pagination_sortable(achats, 'Montant TTC', 'b.montant_achat') }}<span class="fr-icon-filter-line" aria-hidden="true"></span></th>
                             {% else %}
-                            <th>Montant HT</th>
+                            <th>{{ knp_pagination_sortable(achats, 'Montant HT', 'b.montant_achat') }}<span class="fr-icon-filter-line" aria-hidden="true"></span></th>
                             {% endif %}
                             <th>Etat</th>
                         </tr>
@@ -175,7 +188,9 @@
                         {{ include('search/partial_results.html.twig') }}
 
                 </table>
-
+    <div class="pagination">
+        {{ knp_pagination_render(achats,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig' ) }}
+    </div>
             </div>
 
 
@@ -192,7 +207,7 @@
 
 
 </div>
-<script>
+{# <script>
 document.addEventListener('DOMContentLoaded', function() {
     let offset = 7; // Commencer après les premiers résultats initialement chargés
     const limit = 7;
@@ -214,5 +229,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-</script>
+</script> #}
 {% endblock %}

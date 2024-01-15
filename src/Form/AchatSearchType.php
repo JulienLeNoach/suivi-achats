@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -235,6 +236,20 @@ class AchatSearchType extends AbstractType
                 'mapped'=>false,
                 'data'  => 'ht',
     
+            ])
+            ->add('sortField', HiddenType::class, [
+                'mapped' => false,
+                'attr' => ['class' => 'hidden'], // Ajoutez une classe cachée si nécessaire
+            ])
+            
+            ->add('sortDirection', HiddenType::class, [
+                'mapped' => false,
+                'attr' => ['class' => 'hidden'],
+            ])
+            
+            ->add('perPage', HiddenType::class, [
+                'mapped' => false,
+                'attr' => ['class' => 'hidden'],
             ])
             ->add('recherche', SubmitType::class, [
                 'attr' => [

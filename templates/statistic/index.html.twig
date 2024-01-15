@@ -35,7 +35,7 @@
     <div class="result-search-container mb-5" data-controller="chartvol">
       {{ include('statistic/stat_vol.html.twig') }}
 
-      {% endif %}
+      
 
       <div data-controller="pdf-generator">
         <button class="print" id="pdf" data-action="click->pdf-generator#download">Imprimer<span
@@ -66,6 +66,9 @@
     let datasets4 = {{datasets4 | json_encode | raw}};
     let criteria = {{toPDF["criteria"] | json_encode | raw}};
   </script>
+{% else %}
+    <h4 id="noResult">Aucun résultat pour votre recherche.</h4>
+{% endif %}
 
   {% endif  %}
 

@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Achat{% endblock %}
+
+{% block body %}
+    <h1>Achat</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ achat.id }}</td>
+            </tr>
+            <tr>
+                <th>Date_saisie</th>
+                <td>{{ achat.dateSaisie ? achat.dateSaisie|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Numero_achat</th>
+                <td>{{ achat.numeroAchat }}</td>
+            </tr>
+            <tr>
+                <th>Id_demande_achat</th>
+                <td>{{ achat.idDemandeAchat }}</td>
+            </tr>
+            <tr>
+                <th>Date_sillage</th>
+                <td>{{ achat.dateSillage ? achat.dateSillage|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date_commande_chorus</th>
+                <td>{{ achat.dateCommandeChorus ? achat.dateCommandeChorus|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date_valid_inter</th>
+                <td>{{ achat.dateValidInter ? achat.dateValidInter|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date_validation</th>
+                <td>{{ achat.dateValidation ? achat.dateValidation|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date_notification</th>
+                <td>{{ achat.dateNotification }}</td>
+            </tr>
+            <tr>
+                <th>Date_annulation</th>
+                <td>{{ achat.dateAnnulation }}</td>
+            </tr>
+            <tr>
+                <th>Numero_ej</th>
+                <td>{{ achat.numeroEj }}</td>
+            </tr>
+            <tr>
+                <th>Objet_achat</th>
+                <td>{{ achat.objetAchat }}</td>
+            </tr>
+            <tr>
+                <th>Type_marche</th>
+                <td>{{ achat.typeMarche }}</td>
+            </tr>
+            <tr>
+                <th>Montant_achat</th>
+                <td>{{ achat.montantAchat }}</td>
+            </tr>
+            <tr>
+                <th>Observations</th>
+                <td>{{ achat.observations }}</td>
+            </tr>
+            <tr>
+                <th>Etat_achat</th>
+                <td>{{ achat.etatAchat }}</td>
+            </tr>
+            <tr>
+                <th>Place</th>
+                <td>{{ achat.place }}</td>
+            </tr>
+            <tr>
+                <th>Devis</th>
+                <td>{{ achat.devis }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_achat_index') }}">back to list</a>
+
+    <a href="{{ path('app_achat_edit', {'id': achat.id}) }}">edit</a>
+
+    {{ include('achat/_delete_form.html.twig') }}
+{% endblock %}

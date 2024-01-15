@@ -59,7 +59,7 @@
 
 </div>
 </div>
-<script>
+{# <script>
 document.addEventListener('DOMContentLoaded', function() {
     let offset = 7; // Commencer après les premiers résultats initialement chargés
     const limit = 7;
@@ -67,7 +67,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const tableContainer = document.getElementById('achat-list');
 
     tableContainer.addEventListener('scroll', function() {
-                    console.log("test");
+                   console.log(tableContainer.scrollTop + tableContainer.clientHeight );
+                   console.log(tableContainer.scrollHeight);
         if (tableContainer.scrollTop + tableContainer.clientHeight+1 >= tableContainer.scrollHeight) {
             fetch(`/cumulcpv?offset=${offset}&limit=${limit}`, { 
                 headers: { 'X-Requested-With': 'XMLHttpRequest' } 
@@ -76,10 +77,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(html => {
                 tbody.insertAdjacentHTML('beforeend', html);
                 offset += limit; // Augmenter l'offset pour la prochaine requête
+                            console.log("test");
             })
             .catch(error => console.error('Erreur:', error));
         }
     });
 });
-</script>
+</script> #}
 {% endblock %}

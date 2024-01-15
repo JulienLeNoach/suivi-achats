@@ -44,15 +44,18 @@ class SearchController extends AbstractController
     // avec les données du formulaire et les résultats de la recherche.
 
     #[Route('/search', name: 'app_search')]
-    public function index(Request $request,SessionInterface $session): Response
+    public function index(Request $request,SessionInterface $session, PaginatorInterface $paginator): Response
     {
         $form = $this->createForm(AchatSearchType::class);
         $form->handleRequest($request);
     
-        $limit = 7; // Limite pour le nombre d'achats à charger
         $offset = $request->query->getInt('offset', 0); // Décalage pour le chargement infini
+        $perPage = $request->query->get('perPage', 5);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $sortField = $request->query->get('sortField', 'id');
+            $sortDirection = $request->query->get('sortDirection', 'asc');
 
             $currentUrl = $request->getUri(); // Récupérer l'URL actuelle
             $session->set('current_url', $currentUrl);
@@ -73,14 +76,22 @@ class SearchController extends AbstractController
             ];            
             $session->set('criteria', $criteria);
 
-            $query = $this->entityManager->getRepository(Achat::class)->searchAchat($form);
+            $querybuilder = $this->entityManager->getRepository(Achat::class)->searchAchat($form);
+            $querybuilder->orderBy("b.$sortField", $sortDirection);
+            
+            $query = $querybuilder->getQuery();
 
+            $pagination = $paginator->paginate(
+                $query,
+                $request->query->getInt('page', 1),
+                $perPage
+            );
 
                 $tax = $form["tax"]->getData(); // Récupérer la taxe si elle est définie
 
             // Récupérer les achats avec la limite et le décalage
-            $achats = $query->setMaxResults($limit)->setFirstResult($offset)->getResult();
-    
+            $achats = $pagination->getItems();
+            
             if ($tax == "ttc") {
                 foreach ($achats as $achat) {
                     $achat->setMontantAchat($achat->getMontantAchat() * ($achat->getTvaIdent()->getTvaTaux()/100) + $achat->getMontantAchat());
@@ -92,33 +103,42 @@ class SearchController extends AbstractController
             // Réponse pour la recherche initiale
             return $this->render('search/index.html.twig', [
                 'form' => $form->createView(),
-                'achats' => $achats,
+                'achats' => $pagination,
                 'tax' => $tax,
+                'perPage' => $perPage,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection
             ]);
         }
-            if ($request->isXmlHttpRequest()) {
-                $crit=  $session->get('criteria');
+        else{
+            // dd("test");
+            // dd($form->getData());
 
-        $offset = $request->query->getInt('offset', 7);
-        $query = $this->entityManager->getRepository(Achat::class)->searchAchatwithAjax($crit);
-        // dd($query);
+    //         if ($request->isXmlHttpRequest()) {
+    //             $crit=  $session->get('criteria');
 
-        $achats = $query->setMaxResults($limit)->setFirstResult($offset)->getResult();
-        // ... traitement des achats ...
-        if ($crit["tax"] == "ttc") {
-            foreach ($achats as $achat) {
-                $achat->setMontantAchat($achat->getMontantAchat() * ($achat->getTvaIdent()->getTvaTaux()/100) + $achat->getMontantAchat());
-            }
-        }
-        return $this->render('search/partial_results.html.twig', [
-            'achats' => $achats,
-        ]);
-    }
+    //     $offset = $request->query->getInt('offset', 7);
+    //     $query = $this->entityManager->getRepository(Achat::class)->searchAchatwithAjax($crit);
+    //     // dd($query);
+
+    //     $achats = $query->setMaxResults($limit)->setFirstResult($offset)->getResult();
+    //     // ... traitement des achats ...
+    //     if ($crit["tax"] == "ttc") {
+    //         foreach ($achats as $achat) {
+    //             $achat->setMontantAchat($achat->getMontantAchat() * ($achat->getTvaIdent()->getTvaTaux()/100) + $achat->getMontantAchat());
+    //         }
+    //     }
+    //     return $this->render('search/partial_results.html.twig', [
+    //         'achats' => $achats,
+    //     ]);
+    // }
     
         // Réponse pour une requête GET initiale (sans soumission de formulaire)
         return $this->render('search/index.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
     }
     
 // 

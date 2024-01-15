@@ -91,6 +91,6 @@
 
 </div>
     <div class="pagination">
-        {{ knp_pagination_render(pagination,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig') }}
+        {{ knp_pagination_render(pagination,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{'pageParameterName': 'page', 'sortFieldParameterName': 'sortField', 'sortDirectionParameterName': 'sortDirection', 'routeParams': {'perPage': perPage, 'sortField': sortField, 'sortDirection': sortDirection}}) }}
     </div>
 {% endblock %}
