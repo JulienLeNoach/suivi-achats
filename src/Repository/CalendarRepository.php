@@ -48,7 +48,6 @@ class CalendarRepository extends ServiceEntityRepository
            ->andWhere('c.user_id = :val')
            ->setParameter('val', $value)
            ->orderBy('c.user_id', 'ASC')
-           ->setMaxResults(10)
            ->getQuery()
            ->getResult()
        ;

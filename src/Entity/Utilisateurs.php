@@ -113,21 +113,27 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->nom_connexion;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+/**
+ * @see UserInterface
+ */
+public function getRoles(): array
+{
+    $roles = $this->roles;
+
+    // guarantee every user at least has ROLE_USER
+    if (!in_array('ROLE_USER', $roles, true)) {
+        $roles[] = 'ROLE_USER';
+    }
+
     if ($this->isAdmin) {
         $roles[] = 'ROLE_ADMIN';
     }
     if ($this->administrateur_central) {
         $roles[] = 'ROLE_SUPER_ADMIN';
     }
-        return array_unique($roles);
-    }
+
+    return array_unique($roles);
+}
 
     public function setRoles(array $roles): self
     {
@@ -135,7 +141,35 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    /**
+     * Ajoute un rôle à l'utilisateur s'il n'est pas déjà présent.
+     *
+     * @param string $role Le rôle à ajouter
+     * @return self
+     */
+    public function addRole(string $role): self
+    {
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
 
+        return $this;
+    }
+    /**
+ * Supprime un rôle de l'utilisateur.
+ *
+ * @param string $role Le rôle à supprimer
+ * @return self
+ */
+public function removeRole(string $role): self
+{
+    $key = array_search($role, $this->roles);
+    if ($key !== false) {
+        unset($this->roles[$key]);
+    }
+
+    return $this;
+}
     /**
      * @see PasswordAuthenticatedUserInterface
      */

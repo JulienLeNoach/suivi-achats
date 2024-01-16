@@ -58,11 +58,11 @@ class UtilisateursController extends AbstractController
         $utilisateur = new Utilisateurs();
         $form = $this->createForm(UtilisateursType::class, $utilisateur);
         $form->handleRequest($request);
-
+        // dd($utilisateur);
+ 
         if ($form->isSubmitted() && $form->isValid()) {
             $utilisateur->hashPassword($passwordEncoder);
             $this->processUserRoles($utilisateur, $form->get('isAdmin')->getData());
-
             $entityManager->persist($utilisateur);
             $entityManager->flush();
 
@@ -82,27 +82,46 @@ class UtilisateursController extends AbstractController
             'utilisateur' => $utilisateur,
         ]);
     }
-
     #[Route('/{id}/edit', name: 'app_utilisateurs_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Utilisateurs $utilisateur, EntityManagerInterface $entityManager,UserPasswordHasherInterface $passwordEncoder): Response
+    public function edit(Request $request, Utilisateurs $utilisateur, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordEncoder): Response
     {
         $form = $this->createForm(UtilisateursType::class, $utilisateur);
         $form->handleRequest($request);
-
+        $currentPassword = $utilisateur->getPassword();
+        // dd($currentPassword);
         if ($form->isSubmitted() && $form->isValid()) {
-            $utilisateur->hashPassword($passwordEncoder);
+            // Vérifiez si le champ de mot de passe est rempli
+            $newPasswordData = $form->get('password')->getData();
+            // $newPassword = !empty($newPasswordData['first']) ? $newPasswordData['first'] : null;
+    
+            if ($newPasswordData !== null && !empty($newPasswordData['first'])) {
+                // Générer un nouveau hachage pour le nouveau mot de passe
+                $hashedPassword = $passwordEncoder->hashPassword($utilisateur, $newPasswordData);
+    
+                // dd($hashedPassword);
+                $utilisateur->setPassword($hashedPassword);
+            }else {
+                // Si aucun nouveau mot de passe n'est fourni, restaurer le mot de passe actuel
+                $utilisateur->setPassword($currentPassword);
+            }
+    
             $this->processUserRoles($utilisateur, $form->get('isAdmin')->getData());
+            $entityManager->persist($utilisateur);
 
             $entityManager->flush();
-
+            
             return $this->redirectToRoute('app_utilisateurs_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->renderForm('utilisateurs/edit.html.twig', [
             'utilisateur' => $utilisateur,
             'form' => $form,
         ]);
     }
+    
+    
+    
+    
 
     #[Route('/{id}', name: 'app_utilisateurs_delete', methods: ['POST'])]
     public function delete(Request $request, Utilisateurs $utilisateur, EntityManagerInterface $entityManager): Response
@@ -117,19 +136,11 @@ class UtilisateursController extends AbstractController
 
     private function processUserRoles(Utilisateurs $utilisateur, bool $isAdmin): void
     {
-        $roles = $utilisateur->getRoles();
-    
-        // Gérer les rôles selon la valeur de $isAdmin
         if ($isAdmin) {
-            $roles[] = 'ROLE_ADMIN';
+            $utilisateur->addRole('ROLE_ADMIN');
         } else {
-            // Retirer le rôle 'ROLE_ADMIN' si $isAdmin est faux
-            $key = array_search('ROLE_ADMIN', $roles);
-            if ($key !== false) {
-                unset($roles[$key]);
-            }
+            $utilisateur->removeRole('ROLE_ADMIN');
         }
-    
-        $utilisateur->setRoles(array_unique($roles));
     }
+    
 }

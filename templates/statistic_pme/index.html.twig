@@ -76,7 +76,7 @@
             <div class="title-container justify-content-center align-items-center d-flex">
                 <h6 class="blueF">Activité APPRO PME</h6>
             </div>
-            <div class="appro-stat d-flex flex-row ">          
+            <div class="appro-stat d-flex flex-row ">
                 <table border="1" id="actApproTable" class="w-25">
                     <tr>
                         <thead>
@@ -87,24 +87,42 @@
                         <th>Total</th> 
                         </thead>
                     </tr>
+<tr>
+    <td>NB PME</td>
+    {% set totalNombreAchats = 0 %}
+    {% for month in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'] %}
+        {% set achatsPMEFound = false %}
+        {% for achats in result_achatsSum %}
+            {% if achats["mois"] == month %}
+                <td>{{ achats["nombre_total_achats_pme"] }}</td>
+                {% set totalNombreAchats = totalNombreAchats + achats["nombre_total_achats_pme"] %}
+                {% set achatsPMEFound = true %}
+            {% endif %}
+        {% endfor %}
+        {% if not achatsPMEFound %}
+            <td>0</td>
+        {% endif %}
+    {% endfor %}
+    <td>{{ totalNombreAchats }}</td> 
+</tr>
                     <tr>
-                        <td>NB PME</td>
-                        {% set totalNombreAchats = 0 %}
-                        {% for achats in result_achatsSum %}
-                        <td>{{ achats["nombre_total_achats_pme"] }}</td>
-                        {% set totalNombreAchats = totalNombreAchats + achats["nombre_total_achats_pme"] %}
-                        {% endfor %}
-                        <td>{{ totalNombreAchats }}</td> 
-                    </tr>
-                    <tr>
-                        <td>% MPPA</td>
-                        {% set totalPourcentage = 0 %}
-                        {% for achats in result_achatsSum %}
-                        <td>{{ achats["pourcentage_achats_type_marche_1"] }}</td>
-                        {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_type_marche_1"] %}
-                        {% endfor %}
-<td>{{ (totalPourcentage / result_achatsSum|length)| round }}</td>
-                    </tr>
+    <td>% MPPA</td>
+    {% set totalPourcentage = 0 %}
+    {% for month in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'] %}
+        {% set achatsMPPAFound = false %}
+        {% for achats in result_achatsSum %}
+            {% if achats["mois"] == month %}
+                <td>{{ achats["pourcentage_achats_type_marche_1"] }}</td>
+                {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_type_marche_1"] %}
+                {% set achatsMPPAFound = true %}
+            {% endif %}
+        {% endfor %}
+        {% if not achatsMPPAFound %}
+            <td>0</td>
+        {% endif %}
+    {% endfor %}
+    <td>{{ (totalPourcentage / result_achatsSum|length)| round }}</td>
+</tr>
                 </table>
                 <div class="chartActContainer" style="width: 75%; max-height: 200px;">
                     <canvas id="actAppro" data-chartpme-target="actAppro" style="width: 100%; height: 100%;"></canvas>
@@ -118,7 +136,7 @@
     let result_achatsSum = {{result_achatsSum | json_encode | raw}};
     let result_achatsSumVol = {{result_achatsSumVol | json_encode | raw}};
     let result_achatsSumVal = {{result_achatsSumVal | json_encode | raw}};
-    let criteria = {{toPDF["criteria"] | json_encode | raw}};x
+    let criteria = {{toPDF["criteria"] | json_encode | raw}};
 </script>
 
 {% endif %}

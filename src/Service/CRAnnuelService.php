@@ -835,7 +835,7 @@ class CRAnnuelService  extends AbstractController
         $sheet->setCellValue('C166','VALEUR');
         $sheet->setCellValue('C167', 'DEPARTEMENT');
 
-        for($i=0;$i<5;$i++){
+        for($i=0;$i<count($result_achatsSumVal);$i++){
 
             $sheet->setCellValue($topValCol . 166, $result_achatsSumVal[$i]["somme_montant_achat"]);
             $sheet->setCellValue($topValCol . 167, $result_achatsSumVal[$i]["departement"]);
@@ -847,7 +847,7 @@ class CRAnnuelService  extends AbstractController
         $sheet->setCellValue('J166','VOLUME');
         $sheet->setCellValue('J167', 'DEPARTEMENT');
 
-        for($i=0;$i<5;$i++){
+        for($i=0;$i<count($result_achatsSumVol);$i++){
 
             $sheet->setCellValue($topVolCol . 166, $result_achatsSumVol[$i]["total_nombre_achats"]);
             $sheet->setCellValue($topVolCol . 167, $result_achatsSumVol[$i]["departement"]);
@@ -955,7 +955,7 @@ class CRAnnuelService  extends AbstractController
         $sheet->setCellValue('B187', '% MPPA');
         $approCol='C';
 
-        for($i=0;$i<12;$i++){
+        for($i=0;$i<count($result_achatsSum);$i++){
 
             $sheet->setCellValue($approCol . 185, $mois[$i]);
             $sheet->setCellValue($approCol . 186, $result_achatsSum[$i]["nombre_total_achats_pme"]);

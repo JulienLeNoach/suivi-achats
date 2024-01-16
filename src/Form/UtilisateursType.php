@@ -27,7 +27,7 @@ class UtilisateursType extends AbstractType
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $isEdit = $options['data']->getId() !== null;
+        $isEdit = $options['data']->getId() !== null; // Vérifie si le formulaire correspond à l'édition ou la création d'un utilisateur en vérifiant si son ID existe déjà
 
         $builder
         ->add('code_service', EntityType::class, ['label' => "Code service",
@@ -48,9 +48,7 @@ class UtilisateursType extends AbstractType
             ->add('roles', CollectionType::class, [
                 'attr' => ['class' => 'hidden'],
                 'label_attr' => ['class' => 'hidden'],
-                'data'=>["ROLE_USER"],
-                // 'multiple' => true, // Permet la sélection multiple
-                // 'expanded' => true, // Affiche les options sous forme de cases à cocher
+
             ])
             ->add('isAdmin', ChoiceType::class, [
                 'label' => 'Fonctions administrateur',
@@ -64,19 +62,12 @@ class UtilisateursType extends AbstractType
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'first_options' => [
-                    'label' => 'Mot de passe',
-                    'attr' => ['class' => 'fr-input'],
-                    'label_attr' => ['class' => 'fr-label'] // Ajout de la classe fr-input
-                ],
-                'second_options' => [
-                    'label' => 'Confirmer le mot de passe',
-                    'attr' => ['class' => 'fr-input'],
-                    'label_attr' => ['class' => 'fr-label']
-                     // Ajout de la classe fr-input
-                ],
-                'label'=>'Mot de passe',
-                'required' => !$isEdit
+                'invalid_message' => 'Les champs du nouveau mot de passe doivent correspondre.',
+                'options' => ['attr' => ['class' => 'password-field']],
+                'required' => false,
+                'first_options' => ['label' => 'Mot de passe'],
+                'second_options' => ['label' => 'Répéter le mot de passe'],
+                 'mapped'=> !$isEdit
             ])
             ->add('nom_utilisateur',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],

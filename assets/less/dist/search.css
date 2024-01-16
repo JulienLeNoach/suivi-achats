@@ -5,6 +5,9 @@ body a {
   /* Enlève le soulignement */
   background-image: none !important;
 }
+ul {
+  padding-left: 0  !important;
+}
 .searchcrud {
   border: 1px solid #000091;
 }

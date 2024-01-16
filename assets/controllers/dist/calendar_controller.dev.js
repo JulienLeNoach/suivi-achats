@@ -63,7 +63,8 @@ function (_Controller) {
         events: events,
         // Assurez-vous que 'events' est défini quelque part dans votre code
         eventContent: function eventContent(info) {
-          // Votre logique personnalisée pour eventContent
+          console.log(events); // Votre logique personnalisée pour eventContent
+
           var dateStr = info.event.start.toISOString().slice(0, 10);
           var tdElts = document.querySelectorAll('td[data-date="' + dateStr + '"]');
 

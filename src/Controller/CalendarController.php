@@ -42,7 +42,6 @@ class CalendarController extends AbstractController
             ->findByExampleField($user);
         // Transformation des événements pour les adapter à FullCalendar
         $events = $calendarService->formatEventsForFullCalendar($calendarEvents);
-
         $calendar = $this->calendarFactory->create();
         $form = $this->createForm(CalendarType::class, $calendar, [
          ]);

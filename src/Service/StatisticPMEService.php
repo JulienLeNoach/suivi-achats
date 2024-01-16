@@ -97,7 +97,7 @@ class StatisticPMEService  extends AbstractController
         $sheet->setCellValue('I3','VALEUR');
         $sheet->setCellValue('I4', 'DEPARTEMENT');
 
-        for($i=0;$i<5;$i++){
+        for($i=0;$i<count($result_achatsSumVal);$i++){
 
             $sheet->setCellValue($topValCol . 3, $result_achatsSumVal[$i]["somme_montant_achat"]);
             $sheet->setCellValue($topValCol . 4, $result_achatsSumVal[$i]["departement"]);
@@ -109,7 +109,7 @@ class StatisticPMEService  extends AbstractController
         $sheet->setCellValue('R3','VOLUME');
         $sheet->setCellValue('R4', 'DEPARTEMENT');
 
-        for($i=0;$i<5;$i++){
+        for($i=0;$i<count($result_achatsSumVol);$i++){
 
             $sheet->setCellValue($topVolCol . 3, $result_achatsSumVol[$i]["total_nombre_achats"]);
             $sheet->setCellValue($topVolCol . 4, $result_achatsSumVol[$i]["departement"]);
@@ -217,7 +217,7 @@ class StatisticPMEService  extends AbstractController
         $sheet->setCellValue('B24', '% MPPA');
         $approCol='C';
 
-        for($i=0;$i<12;$i++){
+        for($i=0;$i<count($result_achatsSum);$i++){
 
             $sheet->setCellValue($approCol . 22, $mois[$i]);
             $sheet->setCellValue($approCol . 23, $result_achatsSum[$i]["nombre_total_achats_pme"]);

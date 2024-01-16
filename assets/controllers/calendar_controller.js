@@ -22,6 +22,7 @@ export default class extends Controller {
             },
             events: events, // Assurez-vous que 'events' est défini quelque part dans votre code
             eventContent: function (info) {
+                console.log(events);
                 // Votre logique personnalisée pour eventContent
                 const dateStr = info.event.start.toISOString().slice(0, 10);
                 const tdElts = document.querySelectorAll('td[data-date="' + dateStr + '"]');
