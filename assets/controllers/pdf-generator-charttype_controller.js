@@ -68,53 +68,8 @@ export default class extends Controller {
         pdf.setPage(i);
         pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 10);
     }
-    pdf.save('Graphique.pdf');
+    pdf.save(`Graphique type marché ${dateEdited} .pdf`);
   }
-
-  exportTableToExcel() {
-    const tableTotaux = document.getElementById("tableTotaux");
-    const mppaTable = document.getElementById("mppaTable");
-    const mabcTable = document.getElementById("mabcTable");
-    const allMountTable = document.getElementById("allMountTable");
-    
-    // Supposons que cette table contient les données pour le graphique en barres
-    const barChartData = document.getElementById("barChartData");
-
-    // Extract the HTML content of the tables with captions
-    const html = '<table border=1>' + tableTotaux.innerHTML + '</table>';
-    const html2 = '<table border=1><caption>Montant des MPPA</caption>' + mppaTable.innerHTML + '</table>';
-    const html3 = '<table border=1><caption>Montant des MABC</caption>' + mabcTable.innerHTML + '</table>';
-    const html4 = '<table border=1><caption>Montant des MPPA + MABC</caption>' + allMountTable.innerHTML + '</table>';
-
-    // Ajout de la table pour les données du graphique
-    const html5 = '<table border=1><caption>Données pour Graphique en Barres</caption>' + barChartData.innerHTML + '</table>';
-
-    // Combine tables with page breaks
-    const combinedHtml = html + '<br clear="all" style="page-break-before:always;" />' + 
-                          html2 + '<br clear="all" style="page-break-before:always;" />' + 
-                          html3 + '<br clear="all" style="page-break-before:always;" />' + 
-                          html4 + '<br clear="all" style="page-break-before:always;" />' +
-                          html5;
-
-    // Create a Blob containing the HTML data with Excel MIME type
-    const blob = new Blob([combinedHtml], { type: 'application/vnd.ms-excel' });
-
-    // Create a URL for the Blob
-    const url = URL.createObjectURL(blob);
-
-    // Create a temporary anchor element for downloading
-    const a = document.createElement('a');
-    a.href = url;
-
-    // Set the desired filename for the downloaded file
-    a.download = 'delai_activite_tableau.xls';
-
-    // Simulate a click on the anchor to trigger download
-    a.click();
-
-    // Release the URL object to free up resources
-    URL.revokeObjectURL(url);
-}
 
 
 

@@ -2,11 +2,14 @@ import { Controller } from '@hotwired/stimulus';
 import { Calendar } from 'fullcalendar'
 
 export default class extends Controller {
+
+
     initialize() {
       this.initCustomCalendar();
     }
      initCustomCalendar() {
         const calendarEl = document.getElementById('calendar')
+
         // const calendar = new Calendar(calendarEl, {
         //   initialView: 'dayGridMonth'
         // })
@@ -22,7 +25,6 @@ export default class extends Controller {
             },
             events: events, // Assurez-vous que 'events' est défini quelque part dans votre code
             eventContent: function (info) {
-                console.log(events);
                 // Votre logique personnalisée pour eventContent
                 const dateStr = info.event.start.toISOString().slice(0, 10);
                 const tdElts = document.querySelectorAll('td[data-date="' + dateStr + '"]');

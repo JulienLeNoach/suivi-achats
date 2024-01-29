@@ -50,7 +50,7 @@
                         </tr>
                         <tr>
                             <td>VALEUR</td>
-                            <td>{{ result_achats[0]["ValeurPME"] }}</td>
+                            <td>{{ result_achats[0]["ValeurPME"] | number_format(2, '.', ' ')}}</td>
                             <td>{{ result_achats[0]["ValeurPercentPME"] | round }}%</td>
                         </tr>
                         <tr>
@@ -94,8 +94,8 @@
         {% set achatsPMEFound = false %}
         {% for achats in result_achatsSum %}
             {% if achats["mois"] == month %}
-                <td>{{ achats["nombre_total_achats_pme"] }}</td>
-                {% set totalNombreAchats = totalNombreAchats + achats["nombre_total_achats_pme"] %}
+                <td>{{ achats["nombre_achats_pme_type_marche_1"] }}</td>
+                {% set totalNombreAchats = totalNombreAchats + achats["nombre_achats_pme_type_marche_1"] %}
                 {% set achatsPMEFound = true %}
             {% endif %}
         {% endfor %}
@@ -112,16 +112,18 @@
         {% set achatsMPPAFound = false %}
         {% for achats in result_achatsSum %}
             {% if achats["mois"] == month %}
-                <td>{{ achats["pourcentage_achats_type_marche_1"] }}</td>
-                {% set totalPourcentage = totalPourcentage + achats["pourcentage_achats_type_marche_1"] %}
+                <td>{{ achats["pourcentage_achats_type_marche_1"] |number_format(0, '.', '') }}</td>
+                {% set totalPourcentage = totalPourcentage + achats["nombre_achats_pme"] %}
                 {% set achatsMPPAFound = true %}
+                
             {% endif %}
         {% endfor %}
         {% if not achatsMPPAFound %}
             <td>0</td>
         {% endif %}
     {% endfor %}
-    <td>{{ (totalPourcentage / result_achatsSum|length)| round }}</td>
+    {# {{dump(result_achatsSum)}} #}
+    <td>{{ ((totalNombreAchats  / totalPourcentage )* 100) |number_format(0, '.', '')}}</td>
 </tr>
                 </table>
                 <div class="chartActContainer" style="width: 75%; max-height: 200px;">

@@ -7,7 +7,6 @@ use App\Form\StatisticType;
 use App\Form\CreateExcelType;
 use App\Repository\AchatRepository;
 use App\Repository\ParametresRepository;
-
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\StatisticTypeMarcheService;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,6 +42,7 @@ class StatisticTypeMarcheController extends AbstractController
         $form->handleRequest($request);
         $result_achats = $this->achatRepository->searchAchatToStat($form);
         $result_achats_mounts = $this->achatRepository->searchAchatToStatMount($form);
+        
         $parameter = $this->parametresRepository->findById(1);
         $excelForm = $this->createForm(CreateExcelType::class); 
         $excelForm->handleRequest($request);

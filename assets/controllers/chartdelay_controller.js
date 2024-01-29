@@ -19,7 +19,6 @@ export default class extends Controller {
       ctxdelayChart.width = 1200; // Définit la largeur du premier canvas
       ctxdelayChart.height = 800; // Définit la hauteur du premier canvas
 
-      console.log(notStat);
 
       
         new Chart(ctxdelayChart, {

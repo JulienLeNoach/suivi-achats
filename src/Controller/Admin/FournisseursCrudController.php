@@ -4,8 +4,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\Fournisseurs;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;

@@ -4,7 +4,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\UO;
 use App\Entity\CPV;
-use App\Entity\Achat;
 use App\Entity\Services;
 use App\Entity\Formations;
 use App\Entity\Fournisseurs;
@@ -90,41 +89,9 @@ return $this->redirect($url);
         ->setController(UtilisateursCrudController::class)
         ->generateUrl();
         return $this->redirect($url);
-        //return parent::index();
-
-        // Option 1. You can make your dashboard redirect to some common page of your backend
-        //
-/*          $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class)
-                     ->setController(UtilisateursCrudController::class)
-                     ->generateUrl();
-                     return $this->redirect($adminUrlGenerator) */
-
-        // Option 2. You can make your dashboard redirect to different pages depending on the user
-        //
-        // if ('jane' === $this->getUser()->getUsername()) {
-        //     return $this->redirect('...');
-        // }
-
-        // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
-        // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
-        //
-        // return $this->render('some/path/my-dashboard.html.twig');
+        
     }
-    // #[Route('/achat', name: 'achat')]
-    // public function achat(): Response
-    // {
-
-    //     $url = $this->adminUrlGenerator
-    //     ->setController(UtilisateursCrudController::class)
-    //     ->setController(ServicesCrudController::class)
-    //     ->setController(FournisseursCrudController::class)
-    //     ->setController(UOCrudController::class)
-    //     ->setController(FormationsCrudController::class)
-    //     ->setController(CPVCrudController::class)
-    //     ->generateUrl();
-    //     return $this->redirect($url);
-
-    // }
+    
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()

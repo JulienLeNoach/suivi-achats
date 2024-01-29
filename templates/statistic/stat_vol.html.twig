@@ -89,7 +89,7 @@
           <th>MPPA</th>
           {% for month, data in counts1 %}
           {% set MtMppa = MtMppa + data['totalmontant'] %}
-          <td>{{ data['totalmontant'] }}</td>
+          <td>{{ data['totalmontant'] | number_format(2, '.', ' ')}}</td>
           {% endfor %}
           <td>{{MtMppa}}</td>
         </tr>
@@ -97,14 +97,14 @@
           <th>MABC</th>
           {% for month, data in counts2 %}
           {% set MtMabc = MtMabc + data['totalmontant'] %}
-          <td>{{ data['totalmontant'] }}</td>
+          <td>{{ data['totalmontant'] | number_format(2, '.', ' ')}}</td>
           {% endfor %}
           <td>{{MtMabc}}</td>
         </tr>
         <tr>
           <th>TOTAL</th>
           {% for month, data in purchaseTotalAmountByMonth %}
-          <td>{{ data['total'] }}</td>
+          <td>{{ data['total'] | number_format(2, '.', ' ')}}</td>
           {% endfor %}
           <td>{{ MtMppa + MtMabc }}</td>
         </tr>

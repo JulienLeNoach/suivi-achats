@@ -124,7 +124,7 @@ function (_Controller) {
                 pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 10);
               }
 
-              pdf.save('Graphique.pdf');
+              pdf.save("Graphique statistique PME ".concat(dateEdited, " .pdf"));
 
             case 40:
             case "end":
@@ -132,32 +132,6 @@ function (_Controller) {
           }
         }
       });
-    }
-  }, {
-    key: "exportTableToExcel",
-    value: function exportTableToExcel() {
-      var volvalTable = document.getElementById("volvalTable");
-      var actApproTable = document.getElementById("actApproTable"); // Extract the HTML content of the tables with captions
-
-      var html = '<table border=1>' + volvalTable.innerHTML + '</table>';
-      var html2 = '<table border=1><caption>Activité appro PME</caption>' + actApproTable.innerHTML + '</table>'; // Combine tables with page breaks
-
-      var combinedHtml = html + '<br clear="all" style="page-break-before:always;" />' + html2 + '<br clear="all" style="page-break-before:always;" />'; // Create a Blob containing the HTML data with Excel MIME type
-
-      var blob = new Blob([combinedHtml], {
-        type: 'application/vnd.ms-excel'
-      }); // Create a URL for the Blob
-
-      var url = URL.createObjectURL(blob); // Create a temporary anchor element for downloading
-
-      var a = document.createElement('a');
-      a.href = url; // Set the desired filename for the downloaded file
-
-      a.download = 'delai_activite_tableau.xls'; // Simulate a click on the anchor to trigger download
-
-      a.click(); // Release the URL object to free up resources
-
-      URL.revokeObjectURL(url);
     }
   }]);
 

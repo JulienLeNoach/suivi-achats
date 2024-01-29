@@ -52,10 +52,6 @@ export default class extends Controller {
     pdf.text("Activité appro PME en valeur", 110, 70);
     pdf.addImage(canvasImage3, 'png',10, 75, 260, 35);
 
-
-
-
-
     pdf.setFillColor(106, 106, 244, 1);
     pdf.setFontSize(10);
     const dateEdited = `édité le ${new Date().toLocaleDateString()}`;
@@ -64,41 +60,9 @@ export default class extends Controller {
         pdf.setPage(i);
         pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 10);
     }
-    pdf.save('Graphique.pdf');
+    pdf.save(`Graphique statistique PME ${dateEdited} .pdf`);
   }
 
-  exportTableToExcel() {
-    const volvalTable = document.getElementById("volvalTable");
-    const actApproTable = document.getElementById("actApproTable");
 
-
-
-    // Extract the HTML content of the tables with captions
-    const html = '<table border=1>' + volvalTable.innerHTML + '</table>';
-    const html2 = '<table border=1><caption>Activité appro PME</caption>' + actApproTable.innerHTML + '</table>';
-
-
-    // Combine tables with page breaks
-    const combinedHtml = html + '<br clear="all" style="page-break-before:always;" />' + html2 + '<br clear="all" style="page-break-before:always;" />' 
-
-    // Create a Blob containing the HTML data with Excel MIME type
-    const blob = new Blob([combinedHtml], { type: 'application/vnd.ms-excel' });
-
-    // Create a URL for the Blob
-    const url = URL.createObjectURL(blob);
-
-    // Create a temporary anchor element for downloading
-    const a = document.createElement('a');
-    a.href = url;
-
-    // Set the desired filename for the downloaded file
-    a.download = 'delai_activite_tableau.xls';
-
-    // Simulate a click on the anchor to trigger download
-    a.click();
-
-    // Release the URL object to free up resources
-    URL.revokeObjectURL(url);
-}
 
 }

@@ -3,7 +3,6 @@
 namespace App\Controller\Statistic;
 
 use Dompdf\Dompdf;
-use Dompdf\Options;
 use App\Form\StatisticType;
 use App\Form\CreateExcelType;
 use App\Repository\AchatRepository;
@@ -126,5 +125,4 @@ public function exportExcel(Request $request, StatisticDelayService $statisticDe
     return new BinaryFileResponse($filePath);
 
 }
-
 }

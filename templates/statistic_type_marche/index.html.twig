@@ -68,9 +68,9 @@
                 </tr>
                 <tr>
                     <td>MOYENNE</td>
-                    <td>{{result_achats[0]["moyenne_montant_type_1"]}}</td>
-                    <td>{{result_achats[1]["moyenne_montant_type_0"]}}</td>
-                    <td>{{result_achats[0]["moyenne_montant_type_1"] + result_achats[1]["moyenne_montant_type_0"]}}</td>
+                    <td>{{result_achats[0]["moyenne_montant_type_1"] | number_format(2, '.', ' ')}}</td>
+                    <td>{{result_achats[1]["moyenne_montant_type_0"] | number_format(2, '.', ' ')}}</td>
+<td>{{ ((result_achats[0]["somme_montant_type_1"] + result_achats[1]["somme_montant_type_0"]) / (result_achats[0]["nombre_achats_type_1"] + result_achats[1]["nombre_achats_type_0"])) | number_format(2, '.', ' ') }}</td>
                 </tr>
                 <tr>
                     <td>% VALEUR</td>
@@ -150,6 +150,7 @@
 </div>
 <script>
     let result_achats_mounts = {{result_achats_mounts | json_encode | raw}};
+    let result_achats = {{result_achats | json_encode | raw}};
     let parameter1 = {{parameter[0].four2 | json_encode | raw}};
     let parameter2 = {{parameter[0].four3 | json_encode | raw}};
     let parameter3 = {{parameter[0].four4 | json_encode | raw}};

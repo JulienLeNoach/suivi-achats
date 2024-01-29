@@ -9,11 +9,8 @@ use Doctrine\ORM\Query\Expr\Join;
 use App\Service\AchatNumberService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
@@ -41,419 +38,221 @@ class AchatRepository extends ServiceEntityRepository
 
 
     }
-    public function searchAchatToStat($form)
-    {
-        $userId = null;
-        $numSiretId = null;
-        $cpvId = null;
-        $uOId = null;
-        $formationId = null;
+    private function extractCriteriaFromForm($form)
+{
+    $criteria = [
+        'date' => $form['date']->getData(),
+        'parameters' => [],
+        'conditions' => ''
+    ];
 
-        $date = $form["date"]->getData();
-        $user = $form["utilisateurs"]->getData();
-        $numSiret = $form["num_siret"]->getData();
-        $cpv = $form["code_cpv"]->getData();
-        $uO = $form["code_uo"]->getData();
-        $formation = $form["code_formation"]->getData();
-        if ($user) {
-            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
-            $userId = $user->getId();
+    $fields = ['utilisateurs', 'num_siret', 'code_cpv', 'code_uo', 'code_formation'];
+
+    foreach ($fields as $field) {
+        $value = $form[$field]->getData();
+        $idName = $field . '_id';
+
+        if ($value) {
+            $criteria[$idName] = $value->getId();
+            $criteria['parameters'][$idName] = $criteria[$idName];
+            $criteria['conditions'] .= " AND {$idName} = :{$idName}";
         }
-        if ($numSiret) {
-            $numSiretId = $numSiret->getId();
-        }
-        if ($cpv) {
-            $cpvId = $cpv->getId();
-        }
-        if ($uO) {
-            $uOId = $uO->getId();
-        }
-        if ($formation) {
-            $formationId = $formation->getId();
-        }
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = "
+    }
+
+    return $criteria;
+}
+ public function searchAchatToStat($form)
+{
+    $criteria = $this->extractCriteriaFromForm($form);
+
+    $conn = $this->getEntityManager()->getConnection();
+    $sql = "
         SELECT
             type_marche,
             COUNT(*) AS nombre_achats,
             COUNT(CASE WHEN type_marche = 0 THEN 1 END) AS nombre_achats_type_0,
             COUNT(CASE WHEN type_marche = 1 THEN 1 END) AS nombre_achats_type_1,
-            ROUND((COUNT(CASE WHEN type_marche = 0 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100, 2) AS pourcentage_type_0,
-            ROUND((COUNT(CASE WHEN type_marche = 1 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100, 2) AS pourcentage_type_1,
+            ROUND((COUNT(CASE WHEN type_marche = 0 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}), 0)) * 100, 2) AS pourcentage_type_0,
+            ROUND((COUNT(CASE WHEN type_marche = 1 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}), 0)) * 100, 2) AS pourcentage_type_1,
             ROUND(SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END), 2) AS somme_montant_type_0,
             ROUND(AVG(CASE WHEN type_marche = 0 THEN montant_achat ELSE NULL END), 2) AS moyenne_montant_type_0,
             ROUND(SUM(CASE WHEN type_marche = 1 THEN montant_achat ELSE 0 END), 2) AS somme_montant_type_1,
             ROUND(AVG(CASE WHEN type_marche = 1 THEN montant_achat ELSE NULL END), 2) AS moyenne_montant_type_1,
-            ROUND((SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100, 2) AS pourcentage_type_0_total,
-            ROUND((SUM(CASE WHEN type_marche = 1 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "), 0)) * 100, 2) AS pourcentage_type_1_total,
-            (SELECT COUNT(*) FROM achat WHERE YEAR(date_saisie) = :year AND etat_achat = 2 " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . " ) AS nombre_total_achats
+            ROUND((SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}), 0)) * 100, 2) AS pourcentage_type_0_total,
+            ROUND((SUM(CASE WHEN type_marche = 1 THEN  montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}), 0)) * 100, 2) AS pourcentage_type_1_total,
+            (SELECT COUNT(*) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']} ) AS nombre_total_achats
         FROM
             achat
         WHERE
-            type_marche IN (0, 1) AND YEAR(date_saisie) = :year AND etat_achat = 2 
-            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-            " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-            " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-            " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-            " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+            type_marche IN (0, 1) AND YEAR(date_notification) = :year AND etat_achat = 2 
+            {$criteria['conditions']}
         GROUP BY
             type_marche
         LIMIT 0, 100;";
-    
-    
 
-$stmt = $conn->prepare($sql);
-      
-                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
-                $achats=$resultSet->fetchAllAssociative();
-               
-                return $achats;
-    }
-    public function searchAchatToStatMount($form)
-    {
-        $userId = null;
-        $numSiretId = null;
-        $cpvId = null;
-        $uOId = null;
-        $formationId = null;
+    $stmt = $conn->prepare($sql);
+    $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
+    $achats = $resultSet->fetchAllAssociative();
+    return $achats;
+}
 
-        $date = $form["date"]->getData();
-        $user = $form["utilisateurs"]->getData();
-        $numSiret = $form["num_siret"]->getData();
-        $cpv = $form["code_cpv"]->getData();
-        $uO = $form["code_uo"]->getData();
-        $formation = $form["code_formation"]->getData();
-        if ($user) {
-            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
-            $userId = $user->getId();
-        }
-        if ($numSiret) {
-            $numSiretId = $numSiret->getId();
-        }
-        if ($cpv) {
-            $cpvId = $cpv->getId();
-        }
-        if ($uO) {
-            $uOId = $uO->getId();
-        }
-        if ($formation) {
-            $formationId = $formation->getId();
-        }
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = "
+
+public function searchAchatToStatMount($form)
+{
+    $criteria = $this->extractCriteriaFromForm($form);
+
+    $conn = $this->getEntityManager()->getConnection();
+    $sql = "
         SELECT
-        type_marche,
-        COUNT(CASE WHEN montant_achat <= p.four2 THEN 1 END) AS nombre_achats_inf_four1,
-        COUNT(CASE WHEN montant_achat > p.four2 AND montant_achat <= p.four3 THEN 1 END) AS nombre_achats_four1_four2,
-        COUNT(CASE WHEN montant_achat > p.four3 AND montant_achat <= p.four4 THEN 1 END) AS nombre_achats_four2_four3,
-        COUNT(CASE WHEN montant_achat > p.four4 THEN 1 END) AS nombre_achats_sup_four3,
-        COUNT(*) AS nombre_total_achats
-    FROM
-        achat a
-    JOIN
-        parametres p ON a.code_service_id = p.code_service_id 
-WHERE
-    type_marche IN (0, 1) AND YEAR(date_saisie) = :year AND etat_achat = 2 
-    " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-    GROUP BY
-    type_marche;";
-    
-    
+            type_marche,
+            COUNT(CASE WHEN montant_achat <= p.four2 THEN 1 END) AS nombre_achats_inf_four1,
+            COUNT(CASE WHEN montant_achat > p.four2 AND montant_achat <= p.four3 THEN 1 END) AS nombre_achats_four1_four2,
+            COUNT(CASE WHEN montant_achat > p.four3 AND montant_achat <= p.four4 THEN 1 END) AS nombre_achats_four2_four3,
+            COUNT(CASE WHEN montant_achat > p.four4 THEN 1 END) AS nombre_achats_sup_four3,
+            COUNT(*) AS nombre_total_achats
+        FROM
+            achat a
+        JOIN
+            parametres p ON a.code_service_id = p.code_service_id 
+        WHERE
+            type_marche IN (0, 1) AND YEAR(date_notification) = :year AND etat_achat = 2 
+            {$criteria['conditions']}
+        GROUP BY
+            type_marche;";
 
-$stmt = $conn->prepare($sql);
-      
-                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
-                $achats=$resultSet->fetchAllAssociative();
-                return $achats;
-    }
-    public function statisticPMESum($form)
-    {
-        $userId = null;
-        $numSiretId = null;
-        $cpvId = null;
-        $uOId = null;
-        $formationId = null;
+    $stmt = $conn->prepare($sql);
+    $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
+    $achats = $resultSet->fetchAllAssociative();
 
-        $date = $form["date"]->getData();
-        $user = $form["utilisateurs"]->getData();
-        $numSiret = $form["num_siret"]->getData();
-        $cpv = $form["code_cpv"]->getData();
-        $uO = $form["code_uo"]->getData();
-        $formation = $form["code_formation"]->getData();
-        if ($user) {
-            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
-            $userId = $user->getId();
-        }
-        if ($numSiret) {
-            $numSiretId = $numSiret->getId();
-        }
-        if ($cpv) {
-            $cpvId = $cpv->getId();
-        }
-        if ($uO) {
-            $uOId = $uO->getId();
-        }
-        if ($formation) {
-            $formationId = $formation->getId();
-        }
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = "
+    return $achats;
+}
+public function statisticPMESum($form)
+{
+    $criteria = $this->extractCriteriaFromForm($form);
+
+    $conn = $this->getEntityManager()->getConnection();
+    $sql = "
         SELECT
             ROUND(COUNT(achat.id), 2) AS VolumePME,
             ROUND(SUM(achat.montant_achat), 2) AS ValeurPME,
             ROUND((COUNT(achat.id) / (
                 SELECT COUNT(id)
                 FROM achat
-                WHERE type_marche = 1  AND fournisseurs.pme = 1 AND YEAR(date_saisie) = :year
-                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                WHERE type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(date_notification) = :year AND etat_achat = 2 
+                {$criteria['conditions']}
             )) * 100, 2) AS VolumePercentPME,
             ROUND((SUM(achat.montant_achat) / (
                 SELECT SUM(montant_achat)
                 FROM achat
-                WHERE type_marche = 1  AND fournisseurs.pme = 1 AND YEAR(date_saisie) = :year
-                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-            )) * 100, 2) AS  ValeurPercentPME
+                WHERE type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(date_notification) = :year AND etat_achat = 2 
+                {$criteria['conditions']}
+            )) * 100, 2) AS ValeurPercentPME
         FROM    
             achat
         JOIN
             fournisseurs ON achat.num_siret_id = fournisseurs.id
         WHERE
-            achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(date_saisie) = :year
-            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+            achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(date_notification) = :year AND etat_achat = 2 
+            {$criteria['conditions']}
         LIMIT 0, 100;";
-        
-    
-    
 
-$stmt = $conn->prepare($sql);
-      
-                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
-                $achats=$resultSet->fetchAllAssociative();
-                return $achats;
-    }
-    public function statisticPMEMonth($form)
-    {
-        $userId = null;
-        $numSiretId = null;
-        $cpvId = null;
-        $uOId = null;
-        $formationId = null;
+    $stmt = $conn->prepare($sql);
+    $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
+    $achats = $resultSet->fetchAllAssociative();
 
-        $date = $form["date"]->getData();
-        $user = $form["utilisateurs"]->getData();
-        $numSiret = $form["num_siret"]->getData();
-        $cpv = $form["code_cpv"]->getData();
-        $uO = $form["code_uo"]->getData();
-        $formation = $form["code_formation"]->getData();
-        if ($user) {
-            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
-            $userId = $user->getId();
-        }
-        if ($numSiret) {
-            $numSiretId = $numSiret->getId();
-        }
-        if ($cpv) {
-            $cpvId = $cpv->getId();
-        }
-        if ($uO) {
-            $uOId = $uO->getId();
-        }
-        if ($formation) {
-            $formationId = $formation->getId();
-        }
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = "
-        SELECT
-        MONTH(achat.date_saisie) AS mois,
-        SUM(CASE WHEN achat.type_marche = 1 THEN 1 ELSE 0 END) AS nombre_achats_type_marche_1,
-        COUNT(*) AS nombre_total_achats_pme,
-        ROUND(
-            SUM(CASE WHEN achat.type_marche = 1 THEN 1 ELSE 0 END) / COUNT(*) * 100, 0
-        ) AS pourcentage_achats_type_marche_1
+    return $achats;
+}
+public function statisticPMEMonth($form)
+{
+    $criteria = $this->extractCriteriaFromForm($form);
+
+    $conn = $this->getEntityManager()->getConnection();
+    $sql = "
+    SELECT
+        MONTH(achat.date_notification) AS mois,
+        COUNT(CASE WHEN fournisseurs.pme = 1 AND achat.type_marche = 1 AND etat_achat = 2 THEN 1 ELSE NULL END) AS nombre_achats_pme_type_marche_1,
+        COUNT(CASE WHEN fournisseurs.pme = 1 AND etat_achat = 2 THEN 1 ELSE NULL END) AS nombre_achats_pme,
+        COUNT(CASE WHEN fournisseurs.pme = 1 AND achat.type_marche = 1 AND etat_achat = 2 THEN 1 ELSE NULL END) / COUNT(CASE WHEN fournisseurs.pme = 1 AND etat_achat = 2 THEN 1 ELSE NULL END) * 100 AS pourcentage_achats_type_marche_1
     FROM
         achat
     JOIN
         fournisseurs ON achat.num_siret_id = fournisseurs.id
     WHERE
-    fournisseurs.pme = 1 AND YEAR(achat.date_saisie) = :year
-        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+        YEAR(achat.date_notification) = :year
+        {$criteria['conditions']}
     GROUP BY
         mois
     ORDER BY
-        FIELD(mois, '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12')
+        mois
     LIMIT 0, 100";
 
-$stmt = $conn->prepare($sql);
-                
-                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
-                $achats=$resultSet->fetchAllAssociative();
-                return $achats;
-    }
-    public function statisticPMETopVol($form)
-    {
-        $userId = null;
-        $numSiretId = null;
-        $cpvId = null;
-        $uOId = null;
-        $formationId = null;
 
-        $date = $form["date"]->getData();
-        $user = $form["utilisateurs"]->getData();
-        $numSiret = $form["num_siret"]->getData();
-        $cpv = $form["code_cpv"]->getData();
-        $uO = $form["code_uo"]->getData();
-        $formation = $form["code_formation"]->getData();
-        if ($user) {
-            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
-            $userId = $user->getId();
-        }
-        if ($numSiret) {
-            $numSiretId = $numSiret->getId();
-        }
-        if ($cpv) {
-            $cpvId = $cpv->getId();
-        }
-        if ($uO) {
-            $uOId = $uO->getId();
-        }
-        if ($formation) {
-            $formationId = $formation->getId();
-        }
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = "
+
+    $stmt = $conn->prepare($sql);
+    $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
+    $achats = $resultSet->fetchAllAssociative();
+
+    return $achats;
+}
+public function statisticPMETopVol($form)
+{
+    $criteria = $this->extractCriteriaFromForm($form);
+
+    $conn = $this->getEntityManager()->getConnection();
+    $sql = "
         SELECT
-        SUBSTRING(fournisseurs.code_postal, 1, 2) AS departement,
-        COUNT(achat.id) AS total_nombre_achats
-    FROM
-        achat
-    JOIN
-        fournisseurs ON achat.num_siret_id = fournisseurs.id
-    WHERE
-        achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(achat.date_saisie) = :year
-        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-    GROUP BY
-        departement
-    ORDER BY
-        total_nombre_achats DESC
-    LIMIT 5;
+            SUBSTRING(fournisseurs.code_postal, 1, 2) AS departement,
+            COUNT(achat.id) AS total_nombre_achats
+        FROM
+            achat
+        JOIN
+            fournisseurs ON achat.num_siret_id = fournisseurs.id
+        WHERE
+            achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(achat.date_notification) = :year AND etat_achat = 2 
+            {$criteria['conditions']}
+        GROUP BY
+            departement
+        ORDER BY
+            total_nombre_achats DESC
+        LIMIT 5;
     ";
-        
-    
-    
 
-$stmt = $conn->prepare($sql);
-                
-                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
-                $achats=$resultSet->fetchAllAssociative();
-                
-                return $achats;
-    }
-    public function statisticPMETopVal($form)
-    {
-        $userId = null;
-        $numSiretId = null;
-        $cpvId = null;
-        $uOId = null;
-        $formationId = null;
+    $stmt = $conn->prepare($sql);
+    $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
+    $achats = $resultSet->fetchAllAssociative();
 
-        $date = $form["date"]->getData();
-        $user = $form["utilisateurs"]->getData();
-        $numSiret = $form["num_siret"]->getData();
-        $cpv = $form["code_cpv"]->getData();
-        $uO = $form["code_uo"]->getData();
-        $formation = $form["code_formation"]->getData();
-        if ($user) {
-            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
-            $userId = $user->getId();
-        }
-        if ($numSiret) {
-            $numSiretId = $numSiret->getId();
-        }
-        if ($cpv) {
-            $cpvId = $cpv->getId();
-        }
-        if ($uO) {
-            $uOId = $uO->getId();
-        }
-        if ($formation) {
-            $formationId = $formation->getId();
-        }
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = "
+    return $achats;
+}
+public function statisticPMETopVal($form)
+{
+    $criteria = $this->extractCriteriaFromForm($form);
+
+    $conn = $this->getEntityManager()->getConnection();
+    $sql = "
         SELECT
-        SUBSTRING(fournisseurs.code_postal, 1, 2) AS departement,
-        ROUND(SUM(achat.montant_achat), 0) AS somme_montant_achat
-    FROM
-        achat
-    JOIN
-        fournisseurs ON achat.num_siret_id = fournisseurs.id
-    WHERE
-        achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(achat.date_saisie) = :year
-        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-    GROUP BY
-        departement
-    ORDER BY
-        somme_montant_achat DESC
-    LIMIT 5;
+            SUBSTRING(fournisseurs.code_postal, 1, 2) AS departement,
+            ROUND(SUM(achat.montant_achat), 0) AS somme_montant_achat
+        FROM
+            achat
+        JOIN
+            fournisseurs ON achat.num_siret_id = fournisseurs.id
+        WHERE
+            achat.type_marche = 1 AND fournisseurs.pme = 1 AND YEAR(achat.date_notification) = :year AND etat_achat = 2 
+            {$criteria['conditions']}
+        GROUP BY
+            departement
+        ORDER BY
+            somme_montant_achat DESC
+        LIMIT 5;
     ";
-        
-    
-    
 
-$stmt = $conn->prepare($sql);
-                
-                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
-                $achats=$resultSet->fetchAllAssociative();
-                return $achats;
-    }
+    $stmt = $conn->prepare($sql);
+    $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
+    $achats = $resultSet->fetchAllAssociative();
+
+    return $achats;
+}
+
     //getCountsByDateAndType est une méthode qui récupère et compte les données
     //dans une base de données selon le mois de la date de saisie,
     //tout en regroupant les résultats par mois. Elle prend en compte plusieurs
@@ -653,193 +452,7 @@ $stmt = $conn->prepare($sql);
     }
 
 
-    public function searchAchatwithAjax($form)
-    {
-        // dd($form["zipcode"]);
-        $queryBuilder = $this->createQueryBuilder('b');
-        $montantAchatMin = $form["montant_achat_min"];
-        $montantAchatMax = $form["mappedData"]->getMontantAchat();
-        $user = $this->security->getUser();   
-        // dd($form);
-        
-        switch ($form["mappedData"]->getEtatAchat()) {
-            case 'EC':
-                $etat = 0;
-                break;
-            case 'V':
-                $etat = 2;
-                break;
-            case 'A':
-                $etat = 1;
-                break;
-            default:
-                // Gérer le cas par défaut ici, si nécessaire
-                break;
-        }
     
-    switch ($form['mappedData']->getTypeMarche()) {
-        case 'MABC':
-            $type = 0;
-            break;
-        case 'MPPA':
-            $type = 1;
-            break;
-        default:
-            // Gérer le cas par défaut ici, si nécessaire
-            break;
-    }
-    switch ($form['mappedData']->getDevis()) {
-        case 'Pr':
-            $devis = 0;
-            break;
-        case 'Gs':
-            $devis = 1;
-            break;
-        default:
-            // Gérer le cas par défaut ici, si nécessaire
-            break;
-    }
-    switch ($form['mappedData']->getPlace()) {
-        case 'Oui':
-            $place = 1;
-            break;
-        case 'Non':
-            $place = 0;
-            break;
-        default:
-            // Gérer le cas par défaut ici, si nécessaire
-            break;
-    }
-        $queryBuilder
-            ->select('b');
-            if($form['all_user']==false){
-                $queryBuilder
-            ->Where('b.utilisateurs = :utilisateurs')
-            ->setParameter('utilisateurs', $user);
-        }
-            // if ($form["objet_achat"]->getData()){
-            //     $queryBuilder
-            //         ->andWhere('b.objet_achat LIKE :objet_achat')
-            //         ->setParameter('objet_achat', '%' . $data->getObjetAchat() . '%');
-            // }
-
-            if ($form["mappedData"]->getNumSiret()) {
-                $queryBuilder
-                    ->andWhere('b.num_siret = :num_siret')
-                    ->setParameter('num_siret', $form["mappedData"]->getNumSiret());
-            }
-            if ($form["mappedData"]->getUtilisateurs()) {
-                $queryBuilder 
-                    ->andWhere('b.utilisateurs = :utilisateurs')
-                    ->setParameter('utilisateurs', $form["mappedData"]->getUtilisateurs());
-            }
-            if ($form["mappedData"]->getCodeUo()) {
-                $queryBuilder
-                    ->andWhere('b.code_uo = :code_uo')
-                    ->setParameter('code_uo', $form["mappedData"]->getCodeUo());
-            }
-            if ($form["mappedData"]->getCodeCpv()) {
-                $queryBuilder
-                    ->andWhere('b.code_cpv = :code_cpv')
-                    ->setParameter('code_cpv', $form["mappedData"]->getCodeCpv());
-            }
-
-            if ($form["mappedData"]->getCodeFormation()) {
-                $queryBuilder
-                    ->andWhere('b.code_formation = :code_formation')
-                    ->setParameter('code_formation', $form["mappedData"]->getCodeFormation());
-            }
-            if ($form["mappedData"]->getEtatAchat()) {
-                $queryBuilder
-                    ->andWhere('b.etat_achat = :etat_achat')
-                    ->setParameter('etat_achat',$etat);
-            }
-            if ($form["mappedData"]->getDevis()) {
-                $queryBuilder
-                    ->andWhere('b.devis = :devis')
-                    ->setParameter('devis', $devis);
-            }
-            if ($form["mappedData"]->getNumeroAchat()) {
-                $queryBuilder
-                    ->andWhere("SUBSTRING(b.numero_achat, LENGTH(b.numero_achat) - 3) = :numero_achat")
-                    ->setParameter('numero_achat',$form["mappedData"]->getNumeroAchat());
-            }
-            if ($form["mappedData"]->getTypeMarche()) {
-                $queryBuilder
-                    ->andWhere('b.type_marche = :type_marche')
-                    ->setParameter('type_marche', $type);
-            }
-            if ($form["mappedData"]->getPlace()) {
-                $queryBuilder
-                    ->andWhere('b.place = :place')
-                    ->setParameter('place', $place);
-            }
-
-            if ($montantAchatMin && $montantAchatMax) {
-                // Cas où les deux valeurs sont fournies
-                $queryBuilder
-                    ->andWhere('b.montant_achat > :montant_achat_min')
-                    ->andWhere('b.montant_achat < :montant_achat_max')
-                    ->setParameter('montant_achat_min', $montantAchatMin)
-                    ->setParameter('montant_achat_max', $montantAchatMax);
-            } elseif ($montantAchatMin) {
-                // Cas où seulement montant_achat_min est fourni
-                $queryBuilder
-                    ->andWhere('b.montant_achat > :montant_achat_min')
-                    ->setParameter('montant_achat_min', $montantAchatMin);
-            } elseif ($montantAchatMax) {
-                // Cas où seulement montant_achat_max est fourni
-                $queryBuilder
-                    ->andWhere('b.montant_achat < :montant_achat_max')
-                    ->setParameter('montant_achat_max', $montantAchatMax);
-            }
-            if ($form["date"]) {
-                $queryBuilder
-                    ->andWhere('b.date_saisie LIKE :date_saisie')
-                    ->setParameter('date_saisie', '%' . $form["date"] . '%');
-            }
-            if ($form["mappedData"]->getNumeroEj()) {
-                $queryBuilder
-                    ->andWhere('b.numero_ej LIKE :numero_ej')
-                    ->setParameter('numero_ej', '%' . $form["mappedData"]->getNumeroEj() . '%');
-            }
-            if ($form["debut_rec"] && $form["fin_rec"] ) {
-                $queryBuilder
-                    ->andWhere('b.date_saisie > :debut_rec')
-                    ->andWhere('b.date_saisie < :fin_rec')
-                    ->setParameter('debut_rec',  $form["debut_rec"]->format('Y-m-d') )
-                    ->setParameter('fin_rec',   $form["fin_rec"]->format('Y-m-d') );
-            }
-            elseif($form["debut_rec"]){
-                $queryBuilder
-                ->andWhere('b.date_saisie > :debut_rec')
-                ->setParameter('debut_rec',  $form["debut_rec"]->format('Y-m-d') );
-            }
-            elseif($form["fin_rec"]){
-                $queryBuilder
-                ->andWhere('b.date_saisie > :fin_rec')
-                ->setParameter('fin_rec',  $form["fin_rec"]->format('Y-m-d') );
-            }
-            if ($form["zipcode"]) {
-                // Add a join with the 'fournisseurs' table to filter by 'zipcode'
-                $queryBuilder
-                    ->join('b.num_siret', 'f') // Assuming 'numSiret' is the association to 'fournisseurs' in your 'achat' entity
-                    ->andWhere('f.code_postal = :zipcode')
-                    ->setParameter('zipcode', $form["zipcode"]);
-            }
-            if ($form["mappedData"]->getIdDemandeAchat()) {
-                // Add a join with the 'fournisseurs' table to filter by 'zipcode'
-                $queryBuilder
-                    ->andWhere('b.id_demande_achat = :id_demande_achat')
-                    ->setParameter('id_demande_achat', $form["mappedData"]->getIdDemandeAchat());
-            }
-        // ... Votre logique de construction de la requête ici ...
-        $queryBuilder->orderBy('b.id', 'DESC');
-
-        $query = $queryBuilder->getQuery();
-    
-        return $query;
-    }
     public function extractSearchAchat($form)
     {
         $data = $form->getData();
@@ -914,8 +527,7 @@ $stmt = $conn->prepare($sql);
 
         $queryBuilder
             ->select($selectFields);
-            // ->Where('b.utilisateurs = :utilisateurs')
-            // ->setParameter('utilisateurs', $user);
+
 
            
             $form['code_acheteur_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.utilisateurs) as utilisateurs_id') : null;
@@ -930,7 +542,6 @@ $stmt = $conn->prepare($sql);
             $form['code_cpv_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.code_cpv) as code_cpv_id') : null;
             $form['libelle_cpv_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_cpv', 'c')->addSelect('c.libelle_cpv') : null;
 
-            // $form['tva_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.tva_ident) as tva_ident_id') : null;
             if ($form['tva_attr']->getData() == true ||  $form['montant_ttc_attr'] == true) {
 
                 $queryBuilder->leftJoin('b.tva_ident', 't'); // Jointure avec la table 'service'
@@ -1048,8 +659,8 @@ $stmt = $conn->prepare($sql);
         $tax = $form["tax"]->getData();
         $qb = $this->createQueryBuilder('a');
         if($tax=='ht'){
-            $result = $qb->select('MONTH(a.date_saisie) AS month, COUNT(a) AS count,SUM(a.montant_achat) AS totalmontant')
-                ->andWhere('YEAR(a.date_saisie) = :year')
+            $result = $qb->select('MONTH(a.date_notification) AS month, COUNT(a) AS count,SUM(a.montant_achat) AS totalmontant')
+                ->andWhere('YEAR(a.date_notification) = :year')
                 ->andWhere('a.type_marche = :type_marche')
                 ->andWhere('a.etat_achat = (:etat_achats)')
                 ->setParameter('year', $date)
@@ -1057,9 +668,9 @@ $stmt = $conn->prepare($sql);
                 ->setParameter('etat_achats', 2);
         }
         elseif($tax=='ttc'){
-            $result = $qb->select('MONTH(a.date_saisie) AS month, COUNT(a) AS count,SUM(a.montant_achat * (1 + t.tva_taux / 100)) AS totalmontant')
+            $result = $qb->select('MONTH(a.date_notification) AS month, COUNT(a) AS count,SUM(a.montant_achat * (1 + t.tva_taux / 100)) AS totalmontant')
                 ->innerJoin('\App\Entity\TVA', 't', Join::WITH, 'a.tva_ident = t.id') 
-                ->andWhere('YEAR(a.date_saisie) = :year')
+                ->andWhere('YEAR(a.date_notification) = :year')
                 ->andWhere('a.type_marche = :type_marche')
                 ->andWhere('a.etat_achat = (:etat_achats)')
                 ->setParameter('year', $date)
@@ -1100,35 +711,10 @@ $stmt = $conn->prepare($sql);
    
     public function yearDelayDiff($form)
     {
-        $userId = null;
-        $numSiretId = null;
-        $cpvId = null;
-        $uOId = null;
-        $formationId = null;
+        $criteria = $this->extractCriteriaFromForm($form);
 
-        $date = $form["date"]->getData();
-        $user = $form["utilisateurs"]->getData();
-        $numSiret = $form["num_siret"]->getData();
-        $cpv = $form["code_cpv"]->getData();
-        $uO = $form["code_uo"]->getData();
-        $formation = $form["code_formation"]->getData();
         $jourcalendar = $form["jourcalendar"]->getData();
-        if ($user) {
-            // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
-            $userId = $user->getId();
-        }
-        if ($numSiret) {
-            $numSiretId = $numSiret->getId();
-        }
-        if ($cpv) {
-            $cpvId = $cpv->getId();
-        }
-        if ($uO) {
-            $uOId = $uO->getId();
-        }
-        if ($formation) {
-            $formationId = $formation->getId();
-        }
+
         $conn = $this->getEntityManager()->getConnection();
         if($jourcalendar=="jO"){
 
@@ -1136,95 +722,71 @@ $stmt = $conn->prepare($sql);
         $sql = "
         SELECT
         source,
-        ROUND(AVG(CASE WHEN MONTH(date_saisie) = 1 THEN difference END), 1) AS Mois_1,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 2 THEN difference END), 1) AS Mois_2,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 3 THEN difference END), 1) AS Mois_3,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 4 THEN difference END), 1) AS Mois_4,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 5 THEN difference END), 1) AS Mois_5,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 6 THEN difference END), 1) AS Mois_6,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 7 THEN difference END), 1) AS Mois_7,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 8 THEN difference END), 1) AS Mois_8,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 9 THEN difference END), 1) AS Mois_9,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 10 THEN difference END), 1) AS Mois_10,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 11 THEN difference END), 1) AS Mois_11,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 12 THEN difference END), 1) AS Mois_12
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 1 THEN difference END), 2) AS Mois_1,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 2 THEN difference END), 2) AS Mois_2,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 3 THEN difference END), 2) AS Mois_3,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 4 THEN difference END), 2) AS Mois_4,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 5 THEN difference END), 2) AS Mois_5,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 6 THEN difference END), 2) AS Mois_6,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 7 THEN difference END), 2) AS Mois_7,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 8 THEN difference END), 2) AS Mois_8,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 9 THEN difference END), 2) AS Mois_9,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 10 THEN difference END), 2) AS Mois_10,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 11 THEN difference END), 2) AS Mois_11,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 12 THEN difference END), 2) AS Mois_12
       FROM (
         SELECT
           'ANT GSBDD' AS source,
-          (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-          date_saisie
+          (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus )) AS difference,
+          date_notification
         FROM achat
-        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+        {$criteria['conditions']}      
         UNION ALL
       
         SELECT
           'BUDGET' AS source,
-          (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-          date_saisie
+          (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter)) AS difference,
+          date_notification
         FROM achat
-        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+        {$criteria['conditions']}    
         UNION ALL
       
         SELECT
           'APPRO' AS source,
-          (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-          date_saisie
+          (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation )) AS difference,
+          date_notification
         FROM achat
-        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+        {$criteria['conditions']}     
         UNION ALL
       
         SELECT
           'FIN' AS source,
-          (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-          date_saisie
+          (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification)) AS difference,
+          date_notification
         FROM achat
-        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+        {$criteria['conditions']}     
         UNION ALL
       
         SELECT
           'PFAF' AS source,
-          (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-          date_saisie
+          (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification )) AS difference,
+          date_notification
         FROM achat
-        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+        {$criteria['conditions']}     
         UNION ALL
       
         SELECT
           'Chorus formul.' AS source,
-          (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-          date_saisie
+          (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_notification )) AS difference,
+          date_notification
         FROM achat
-        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-    " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-    " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-    " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-    " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+        {$criteria['conditions']}     
     ) AS combined_data
       GROUP BY source
       ORDER BY
@@ -1240,95 +802,71 @@ $stmt = $conn->prepare($sql);
         else{
             $sql = "SELECT
             source,
-            ROUND(AVG(CASE WHEN MONTH(date_saisie) = 1 THEN difference END), 1) AS Mois_1,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 2 THEN difference END), 1) AS Mois_2,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 3 THEN difference END), 1) AS Mois_3,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 4 THEN difference END), 1) AS Mois_4,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 5 THEN difference END), 1) AS Mois_5,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 6 THEN difference END), 1) AS Mois_6,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 7 THEN difference END), 1) AS Mois_7,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 8 THEN difference END), 1) AS Mois_8,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 9 THEN difference END), 1) AS Mois_9,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 10 THEN difference END), 1) AS Mois_10,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 11 THEN difference END), 1) AS Mois_11,
-    ROUND(AVG(CASE WHEN MONTH(date_saisie) = 12 THEN difference END), 1) AS Mois_12
+            ROUND(AVG(CASE WHEN MONTH(date_notification) = 1 THEN difference END), 2) AS Mois_1,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 2 THEN difference END), 2) AS Mois_2,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 3 THEN difference END), 2) AS Mois_3,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 4 THEN difference END), 2) AS Mois_4,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 5 THEN difference END), 2) AS Mois_5,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 6 THEN difference END), 2) AS Mois_6,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 7 THEN difference END), 2) AS Mois_7,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 8 THEN difference END), 2) AS Mois_8,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 9 THEN difference END), 2) AS Mois_9,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 10 THEN difference END), 2) AS Mois_10,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 11 THEN difference END), 2) AS Mois_11,
+    ROUND(AVG(CASE WHEN MONTH(date_notification) = 12 THEN difference END), 2) AS Mois_12
           FROM (
             SELECT
               'ANT GSBDD' AS source,
               (DATEDIFF(date_commande_chorus, date_sillage)) AS difference,
-              date_saisie
+              date_notification
             FROM achat
-            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}      
             UNION ALL 
             
             SELECT
               'BUDGET' AS source,
               (DATEDIFF(date_valid_inter, date_commande_chorus)) AS difference,
-              date_saisie
+              date_notification
             FROM achat
-            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}      
             UNION ALL
           
             SELECT
               'APPRO' AS source,
               (DATEDIFF(date_validation, date_valid_inter))  AS difference,
-              date_saisie
+              date_notification
             FROM achat
-            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}      
             UNION ALL
           
             SELECT
               'FIN' AS source,
               (DATEDIFF(date_notification, date_validation))  AS difference,
-              date_saisie
+              date_notification
             FROM achat
-            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}      
             UNION ALL
           
             SELECT
               'PFAF' AS source,
               (DATEDIFF(date_notification, date_valid_inter)) AS difference,
-              date_saisie
+              date_notification
             FROM achat
-            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}     
             UNION ALL
           
             SELECT
               'Chorus formul.' AS source,
               (DATEDIFF(date_notification, date_commande_chorus)) AS difference,
-              date_saisie
+              date_notification
             FROM achat
-            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-            " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "      
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}      
         ) AS combined_data
           GROUP BY source
           ORDER BY
@@ -1343,7 +881,7 @@ $stmt = $conn->prepare($sql);
         }
             $stmt = $conn->prepare($sql);
   
-            $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+            $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
             $achats=$resultSet->fetchAllAssociative();
            
             // dd($achats);
@@ -1351,35 +889,10 @@ $stmt = $conn->prepare($sql);
         }
         public function yearDelayCount($form)
         {
-            $userId = null;
-            $numSiretId = null;
-            $cpvId = null;
-            $uOId = null;
-            $formationId = null;
-            $date = $form["date"]->getData();
-            $user = $form["utilisateurs"]->getData();
-            $numSiret = $form["num_siret"]->getData();
-            $cpv = $form["code_cpv"]->getData();
-            $uO = $form["code_uo"]->getData();
-            $formation = $form["code_formation"]->getData();
+            $criteria = $this->extractCriteriaFromForm($form);
+
             $jourcalendar = $form["jourcalendar"]->getData();
 
-            if ($user) {
-                // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
-                $userId = $user->getId();
-            }
-            if ($numSiret) {
-                $numSiretId = $numSiret->getId();
-            }
-            if ($cpv) {
-                $cpvId = $cpv->getId();
-            }
-            if ($uO) {
-                $uOId = $uO->getId();
-            }
-            if ($formation) {
-                $formationId = $formation->getId();
-            }
             $conn = $this->getEntityManager()->getConnection();
             if($jourcalendar=="jO"){
 
@@ -1417,98 +930,70 @@ $stmt = $conn->prepare($sql);
                     (
                         SELECT
                             'ANT GSBDD' AS source,
-                            (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-                            date_saisie
+                            (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus )) AS difference,
+                            date_notification
                         FROM achat
-                        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                        {$criteria['conditions']}
         
                 UNION ALL
 
                 SELECT
                 'BUDGET' AS source,
-                (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-                date_saisie
+                (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter )) AS difference,
+                date_notification
             FROM achat
-            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
         
                 UNION ALL
             
                 SELECT
                     'APPRO' AS source,
-                    (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-                    date_saisie
+                    (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation )) AS difference,
+                    date_notification
                 FROM achat
-                WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                {$criteria['conditions']}
         
                 UNION ALL
                 SELECT
                 'FIN' AS source,
-                (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-                date_saisie
+                (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification  )) AS difference,
+                date_notification
             FROM achat
-            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
         
                 UNION ALL
             
                 SELECT
                     'PFAF' AS source,
-                    (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-                    date_saisie
+                    (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_notification  )) AS difference,
+                    date_notification
                 FROM achat
-                WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                {$criteria['conditions']}
         
                 UNION ALL
             
                 SELECT
                 'Chorus formul.' AS source,
-                (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-                date_saisie
+                (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification )) AS difference,
+                date_notification
             FROM achat
-            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
 
                 UNION ALL
             
                 SELECT
                 'Délai total' AS source,
-                (DATEDIFF(date_validation, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_validation AND DAYOFWEEK(start) NOT IN (1, 7))) AS difference,
-                date_saisie
+                (DATEDIFF(date_validation, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_validation )) AS difference,
+                date_notification
             FROM achat
-            WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
                 
         
                 ) AS combined_data
@@ -1560,98 +1045,70 @@ $stmt = $conn->prepare($sql);
                         SELECT
                           'ANT GSBDD' AS source,
                           DATEDIFF(date_commande_chorus, date_sillage) AS difference,
-                          date_saisie
+                          date_notification
                         FROM achat
-                        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                        {$criteria['conditions']}
                 
                         UNION ALL
                       
                         SELECT
                           'BUDGET' AS source,
                           DATEDIFF(date_valid_inter, date_commande_chorus) AS difference,
-                          date_saisie
+                          date_notification
                         FROM achat
-                        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                        {$criteria['conditions']}
                 
                         UNION ALL
                       
                         SELECT
                           'APPRO' AS source,
                           DATEDIFF(date_validation, date_valid_inter) AS difference,
-                          date_saisie
+                          date_notification
                         FROM achat
-                        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                        {$criteria['conditions']}
                 
                         UNION ALL
                       
                         SELECT
                           'FIN' AS source,
                           DATEDIFF(date_notification, date_validation) AS difference,
-                          date_saisie
+                          date_notification
                         FROM achat
-                        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                        {$criteria['conditions']}
                 
                         UNION ALL
                       
                         SELECT
                           'PFAF' AS source,
                           DATEDIFF(date_notification, date_valid_inter) AS difference,
-                          date_saisie
+                          date_notification
                         FROM achat
-                        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                        {$criteria['conditions']}
                 
                         UNION ALL
                       
                         SELECT
                           'Chorus formul.' AS source,
                           DATEDIFF(date_notification, date_commande_chorus) AS difference,
-                          date_saisie
+                          date_notification
                         FROM achat
-                        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                        {$criteria['conditions']}
 
                         UNION ALL
             
                         SELECT
                         'Délai total' AS source,
                         (DATEDIFF(date_validation, date_sillage)) AS difference,
-                        date_saisie
+                        date_notification
                     FROM achat
-                    WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
+                    WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                    {$criteria['conditions']}
                       ) AS combined_data
                       WHERE source IN ('ANT GSBDD', 'BUDGET', 'APPRO', 'FIN','Chorus formul.', 'PFAF', 'Délai total')
             
@@ -1669,87 +1126,58 @@ $stmt = $conn->prepare($sql);
                     }
                 $stmt = $conn->prepare($sql);
       
-                $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
+                $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
+           
                 $achats=$resultSet->fetchAllAssociative();
                
                 // dd($achats);
                 return $achats;
             }
 
-
-
-            public function volValDelay($form){
-
-                $userId = null;
-                $numSiretId = null;
-                $cpvId = null;
-                $uOId = null;
-                $formationId = null;
-        
-                $date = $form["date"]->getData();
-                $user = $form["utilisateurs"]->getData();
-                $numSiret = $form["num_siret"]->getData();
-                $cpv = $form["code_cpv"]->getData();
-                $uO = $form["code_uo"]->getData();
-                $formation = $form["code_formation"]->getData();
-                if ($user) {
-                    // Si une valeur a été saisie, vous pouvez obtenir l'ID de l'utilisateur
-                    $userId = $user->getId();
-                }
-                if ($numSiret) {
-                    $numSiretId = $numSiret->getId();
-                }
-                if ($cpv) {
-                    $cpvId = $cpv->getId();
-                }
-                if ($uO) {
-                    $uOId = $uO->getId();
-                }
-                if ($formation) {
-                    $formationId = $formation->getId();
-                }
+            public function volValDelay($form)
+            {
+                $criteria = $this->extractCriteriaFromForm($form);
+            
                 $conn = $this->getEntityManager()->getConnection();
-                $sql = "WITH Mois AS (
-                    SELECT 1 AS Mois UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL 
-                    SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL 
-                    SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL 
-                    SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12
-                ), 
-                Calculs AS (
-                    SELECT 
-                        MONTH(a.date_saisie) AS MoisNotif, 
-                        DATEDIFF(a.date_notification, a.date_valid_inter) AS DiffJours
-                    FROM 
-                        achat a
-                        WHERE YEAR(date_saisie) = :year AND etat_achat = 2
-                        " . ($userId !== null ? "AND utilisateurs_id = :userId" : "") . "
-                        " . ($numSiretId !== null ? "AND num_siret_id = :numSiretId" : "") . "
-                        " . ($cpvId !== null ? "AND code_cpv_id = :cpvId" : "") . "
-                        " . ($uOId !== null ? "AND code_uo_id = :uOId" : "") . "
-                        " . ($formationId !== null ? "AND code_formation_id = :formationId" : "") . "
-                )
-                SELECT
-                    m.Mois,
-                    SUM(CASE WHEN c.DiffJours <= 15 THEN 1 ELSE 0 END) AS 'Achats <= 15 jours',
-                    SUM(CASE WHEN c.DiffJours BETWEEN 16 AND 30 THEN 1 ELSE 0 END) AS 'Achats 16-30 jours',
-                    SUM(CASE WHEN c.DiffJours > 30 THEN 1 ELSE 0 END) AS 'Achats > 30 jours'
-                FROM
-                    Mois m
-                LEFT JOIN
-                    Calculs c ON m.Mois = c.MoisNotif
-                GROUP BY
-                    m.Mois
-                LIMIT 100";
-        
-        $stmt = $conn->prepare($sql);
-                        
-                        $resultSet = $conn->executeQuery($sql, ['year' => $date, 'userId' => $userId,'numSiretId'=>$numSiretId,'cpvId'=>$cpvId,'uOId'=>$uOId,'formationId'=>$formationId]);
-                        $achats=$resultSet->fetchAllAssociative();
-                        // dd($achats);
-                        return $achats;
-        }
-
-
+            
+                $sql = "
+                    WITH Mois AS (
+                        SELECT 1 AS Mois UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL 
+                        SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL 
+                        SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL 
+                        SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12
+                    ), 
+                    Calculs AS (
+                        SELECT 
+                            MONTH(a.date_notification) AS MoisNotif, 
+                            DATEDIFF(a.date_notification, a.date_valid_inter) AS DiffJours
+                        FROM 
+                            achat a
+                        WHERE 
+                            YEAR(date_notification) = :year AND etat_achat = 2
+                            {$criteria['conditions']}
+                    )
+                    SELECT
+                        m.Mois,
+                        SUM(CASE WHEN c.DiffJours <= 15 THEN 1 ELSE 0 END) AS 'Achats <= 15 jours',
+                        SUM(CASE WHEN c.DiffJours BETWEEN 16 AND 30 THEN 1 ELSE 0 END) AS 'Achats 16-30 jours',
+                        SUM(CASE WHEN c.DiffJours > 30 THEN 1 ELSE 0 END) AS 'Achats > 30 jours'
+                    FROM
+                        Mois m
+                    LEFT JOIN
+                        Calculs c ON m.Mois = c.MoisNotif
+                    GROUP BY
+                        m.Mois
+                    LIMIT 100";
+            
+                $stmt = $conn->prepare($sql);
+            
+                $parameters = array_merge(['year' => $criteria['date']], $criteria['parameters']);
+                $resultSet = $conn->executeQuery($sql, $parameters);
+            
+                $achats = $resultSet->fetchAllAssociative();
+                return $achats;
+            }
 
 
     public function edit(Achat $achat, bool $flush = false): void

@@ -56,18 +56,18 @@
       {% for achat in achats %}
       <tr>
         <th>{{ achat.source }}</th>
-        <td>{{ achat.Janvier }}</td>
-        <td>{{ achat.Février }}</td>
-        <td>{{ achat.Mars }}</td>
-        <td>{{ achat.Avril }}</td>
-        <td>{{ achat.Mai }}</td>
-        <td>{{ achat.Juin }}</td>
-        <td>{{ achat.Juillet }}</td>
-        <td>{{ achat.Aout }}</td>
-        <td>{{ achat.Septembre }}</td>
-        <td>{{ achat.Octobre }}</td>
-        <td>{{ achat.Novembre }}</td>
-        <td>{{ achat.Decembre }}</td>
+        <td>{{ achat.Janvier|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Février|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Mars|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Avril|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Mai|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Juin|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Juillet|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Aout|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Septembre|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Octobre|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Novembre|number_format(2, '.', '') }}</td>
+        <td>{{ achat.Decembre|number_format(2, '.', '') }}</td>
         <td>
 {{ ((achat.Janvier + achat.Février + achat.Mars + achat.Avril + achat.Mai + achat.Juin + achat.Juillet + achat.Aout + achat.Septembre + achat.Octobre + achat.Novembre + achat.Decembre) / 12)|number_format(2, '.', '') }}
         </td>

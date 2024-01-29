@@ -3,7 +3,6 @@
 
 use App\Entity\Calendar;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Repository\CalendarRepository;
 
 class CalendarService  extends AbstractController
 {

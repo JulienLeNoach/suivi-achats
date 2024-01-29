@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Fournisseurs;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

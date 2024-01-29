@@ -30,8 +30,18 @@ export default class extends Controller {
                   'rgb(128, 174, 190)',
                   'rgb(238 222 182)'
                 ],
-                hoverOffset: 4
+                hoverOffset: 4,
+                datalabels: {
+                  formatter: (value, context) => {
+                      return ((value/ result_achats[0]["nombre_achats_type_1"] )* 100).toFixed(1) + '%';
+                  },
+                  color: 'black',  // Couleur du texte du pourcentage
+                  align: 'start',   // Alignement du texte
+                  offset: -10      // Décalage du texte par rapport au point
+              }
+
               }],
+              
             options: {
                 responsive: true,
         
@@ -65,7 +75,15 @@ export default class extends Controller {
                   'rgb(128, 174, 190)',
                   'rgb(238 222 182)'
                 ],
-                hoverOffset: 4
+                hoverOffset: 4,
+                datalabels: {
+                  formatter: (value, context) => {
+                      return ((value/result_achats[1]["nombre_achats_type_0"])* 100).toFixed(1) + '%';
+                  },
+                  color: 'black',  // Couleur du texte du pourcentage
+                  align: 'start',   // Alignement du texte
+                  offset: -10      // Décalage du texte par rapport au point
+              }
               }],
             options: {
                 responsive: true,
@@ -100,7 +118,15 @@ export default class extends Controller {
                   'rgb(128, 174, 190)',
                   'rgb(238 222 182)'
                 ],
-                hoverOffset: 4
+                hoverOffset: 4,
+                datalabels: {
+                  formatter: (value, context) => {
+                      return ((value/ (result_achats[0]["nombre_achats_type_1"] + result_achats[1]["nombre_achats_type_0"])  )* 100).toFixed(1) + '%';
+                  },
+                  color: 'black',  // Couleur du texte du pourcentage
+                  align: 'start',   // Alignement du texte
+                  offset: -10      // Décalage du texte par rapport au point
+              }
               }],
             options: {
                 responsive: true,

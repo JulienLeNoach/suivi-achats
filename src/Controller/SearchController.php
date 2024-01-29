@@ -10,15 +10,12 @@ use App\Form\EditAchatType;
 use App\Factory\AchatFactory;
 use App\Form\AchatSearchType;
 use App\Repository\AchatRepository;
-use App\Service\AchatNumberService;
 use App\Service\StatisticVolValService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -110,34 +107,13 @@ class SearchController extends AbstractController
                 'sortDirection' => $sortDirection
             ]);
         }
-        else{
-            // dd("test");
-            // dd($form->getData());
 
-    //         if ($request->isXmlHttpRequest()) {
-    //             $crit=  $session->get('criteria');
-
-    //     $offset = $request->query->getInt('offset', 7);
-    //     $query = $this->entityManager->getRepository(Achat::class)->searchAchatwithAjax($crit);
-    //     // dd($query);
-
-    //     $achats = $query->setMaxResults($limit)->setFirstResult($offset)->getResult();
-    //     // ... traitement des achats ...
-    //     if ($crit["tax"] == "ttc") {
-    //         foreach ($achats as $achat) {
-    //             $achat->setMontantAchat($achat->getMontantAchat() * ($achat->getTvaIdent()->getTvaTaux()/100) + $achat->getMontantAchat());
-    //         }
-    //     }
-    //     return $this->render('search/partial_results.html.twig', [
-    //         'achats' => $achats,
-    //     ]);
-    // }
     
         // Réponse pour une requête GET initiale (sans soumission de formulaire)
         return $this->render('search/index.html.twig', [
             'form' => $form->createView(),
         ]);
-    }
+    
 
     }
     

@@ -87,7 +87,7 @@ function (_Controller) {
         pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 5);
       }
 
-      pdf.save('Graphique.pdf');
+      pdf.save("Graphique en bar d'activit\xE9 annuelle ".concat(dateEdited, " .pdf"));
     }
   }, {
     key: "downloadgraphPie",
@@ -176,70 +176,7 @@ function (_Controller) {
         pdf.addImage(images[index], 'png', positions[index].x, positions[index].y, 70, 70);
       });
       pdf.setFillColor(106, 106, 244, 1);
-      pdf.save('GraphPieDelay.pdf');
-    }
-  }, {
-    key: "generatePDFTable",
-    value: function generatePDFTable() {
-      // Créez un objet jsPDF
-      var pdf = new _jspdf["default"]('l', 'mm', 'a3'); // Select the table HTML element
-
-      var table = document.getElementById('delayTable'); // Use html2canvas to render the table as an image
-
-      (0, _html2canvas["default"])(table).then(function (canvas) {
-        // Réduction de la taille de l'image
-        var scale = 0.2;
-        var imgWidth = canvas.width * scale;
-        var imgHeight = canvas.height * scale; // Conversion du canvas en image PNG
-
-        var imgData = canvas.toDataURL('image/png');
-        var yearOption = document.querySelector('#statistic_date option:checked').text;
-        var checkedElement = document.querySelector('#statistic_jourcalendar input:checked');
-        console.log(checkedElement); // Ajout d'un titre au-dessus du tableau
-
-        var title = 'Délai Activité Annuelle';
-        pdf.setFontSize(16);
-        pdf.text(title, 60, 60); // Position du titre
-
-        pdf.text(yearOption, 120, 60); // Position du titre
-        // Si vous voulez ajouter le texte sélectionné à côté de l'année
-
-        pdf.setFontSize(12); // Ajout de l'image redimensionnée au PDF
-
-        pdf.addImage(imgData, 'PNG', 30, 80, imgWidth, imgHeight);
-        var dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
-        var pageCount = pdf.internal.getNumberOfPages();
-
-        for (var i = 1; i <= pageCount; i++) {
-          pdf.setPage(i);
-          pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
-        } // Enregistrement du PDF
-
-
-        pdf.save('table.pdf');
-      });
-    }
-  }, {
-    key: "exportTableToExcel",
-    value: function exportTableToExcel() {
-      var table = document.getElementById("delayTable"); // Extract the HTML content of the table
-
-      var html = table.outerHTML; // Create a Blob containing the HTML data with Excel MIME type
-
-      var blob = new Blob([html], {
-        type: 'application/vnd.ms-excel'
-      }); // Create a URL for the Blob
-
-      var url = URL.createObjectURL(blob); // Create a temporary anchor element for downloading
-
-      var a = document.createElement('a');
-      a.href = url; // Set the desired filename for the downloaded file
-
-      a.download = 'delai_activite_tableau.xls'; // Simulate a click on the anchor to trigger download
-
-      a.click(); // Release the URL object to free up resources
-
-      URL.revokeObjectURL(url);
+      pdf.save("Graphique en pie d'activit\xE9 annuelle ".concat(dateEdited, " .pdf"));
     }
   }]);
 

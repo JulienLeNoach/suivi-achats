@@ -7,13 +7,14 @@
     <div class="title-page mt-2 w-100 text-center">
         <h2><span style="border-bottom: 4px solid #000091;">Achats</span></h2>
     </div>
+    {% if is_granted ('ROLE_OPT_SAISIR_ACHATS') %}
     <div class='addAchat p-3'>
         <span class="fr-icon-arrow-right-line ms-5" aria-hidden="true"></span>
 
         <div class=" ms-5 blueF">Saisir un nouvel achat</div>
-        <button class="fr-btn btn-achat ms-5"> {% if is_granted ('ROLE_OPT_SAISIR_ACHATS') %}
+        <button class="fr-btn btn-achat ms-5"> 
             <a href="{{path('ajout_achat')}}" class="text-center">Nouvel achat</a>
-            {% endif %}
+            
         </button>
         {% for flash_message in app.session.flashbag.get('valid') %}
         <div class="alert alert-success">
@@ -21,6 +22,7 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
     <!-- Création du formulaire de recherche d'achat -->
     <!-- Le formulaire de recherche est créé à l'aide de la fonction form_start(), 
     qui génère le code HTML nécessaire pour le formulaire, 
@@ -140,16 +142,25 @@
         <p class="mt-4 ms-5 blueF">Sélectionner un achat pour appliquer une action</p>
 
         <a id="detail" class="form-btn-search ms-auto">
+        
             <button class="fr-btn result" id="btn" data-link="result_achat" data-action="visualiser">Détail de
                 l'achat</button>
+        {% if is_granted ('ROLE_OPT_VALIDER_ACHATS') %}
             <button class="fr-btn valid" id="btn" data-link="valid_achat" data-action="valider">Valider un
                 achat</button>
+        {% endif %}
+        {% if is_granted ('ROLE_OPT_ANNULER_ACHATS') %}
             <button class="fr-btn annul" id="btn" data-link="annul_achat" data-action="annuler">Annuler un
                 achat</button>
+        {% endif %}
+        {% if is_granted ('ROLE_OPT_REINT_ACHATS') %}
             <button class="fr-btn reint" id="btn" data-link="reint_achat" data-action="reintégrer">Réintégrer un
                 achat</button>
+        {% endif %}
+        {% if is_granted ('ROLE_OPT_MODIFIER_ACHATS') %}
             <button class="fr-btn edit" id="btn" data-link="edit_achat" data-action="modifier">Modifier un
                 achat</button>
+        {% endif %}
         </a>
     </div>
     {# <div class="d-flex">

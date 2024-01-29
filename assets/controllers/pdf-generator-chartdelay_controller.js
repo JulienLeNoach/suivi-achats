@@ -31,7 +31,7 @@ export default class extends Controller {
         pdf.setPage(i);
         pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 5);
     }
-    pdf.save('Graphique.pdf');
+    pdf.save(`Graphique en bar d'activité annuelle ${dateEdited} .pdf`);
   }
   downloadgraphPie() {
     const ctxAntenne = document.getElementById('ctxAntenne');
@@ -101,72 +101,7 @@ export default class extends Controller {
     });
 
     pdf.setFillColor(106, 106, 244, 1);
-    pdf.save('GraphPieDelay.pdf');
+    pdf.save(`Graphique en pie d'activité annuelle ${dateEdited} .pdf`);
     
   }
-   generatePDFTable() {
-    // Créez un objet jsPDF
-    const pdf = new jsPDF('l', 'mm', 'a3');
-
-    // Select the table HTML element
-    const table = document.getElementById('delayTable');
-
-    // Use html2canvas to render the table as an image
-    html2canvas(table).then(canvas => {
-      // Réduction de la taille de l'image
-      const scale = 0.2;
-      const imgWidth = canvas.width * scale;
-      const imgHeight = canvas.height * scale;
-
-      // Conversion du canvas en image PNG
-      const imgData = canvas.toDataURL('image/png');
-      const yearOption = document.querySelector('#statistic_date option:checked').text;
-      const checkedElement = document.querySelector('#statistic_jourcalendar input:checked');
-      console.log(checkedElement);
-      // Ajout d'un titre au-dessus du tableau
-      const title = 'Délai Activité Annuelle';
-      pdf.setFontSize(16);
-      pdf.text(title, 60, 60); // Position du titre
-      pdf.text(yearOption, 120, 60); // Position du titre
-
-      // Si vous voulez ajouter le texte sélectionné à côté de l'année
-      pdf.setFontSize(12);
-
-      // Ajout de l'image redimensionnée au PDF
-      pdf.addImage(imgData, 'PNG', 30, 80, imgWidth, imgHeight);
-      const dateEdited = `édité le ${new Date().toLocaleDateString()}`;
-      const pageCount = pdf.internal.getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-          pdf.setPage(i);
-          pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 60, 10);
-      }
-      // Enregistrement du PDF
-      pdf.save('table.pdf');
-  });
-}
-exportTableToExcel(){
-  const table = document.getElementById("delayTable");
-
-  // Extract the HTML content of the table
-  const html = table.outerHTML;
-
-  // Create a Blob containing the HTML data with Excel MIME type
-  const blob = new Blob([html], {type: 'application/vnd.ms-excel'});
-
-  // Create a URL for the Blob
-  const url = URL.createObjectURL(blob);
-
-  // Create a temporary anchor element for downloading
-  const a = document.createElement('a');
-  a.href = url;
-
-  // Set the desired filename for the downloaded file
-  a.download = 'delai_activite_tableau.xls';
-
-  // Simulate a click on the anchor to trigger download
-  a.click();
-
-  // Release the URL object to free up resources
-  URL.revokeObjectURL(url);
-}
 }

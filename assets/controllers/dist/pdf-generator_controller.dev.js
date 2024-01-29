@@ -9,8 +9,6 @@ var _stimulus = require("@hotwired/stimulus");
 
 var _jspdf = _interopRequireDefault(require("jspdf"));
 
-var _html2canvas = _interopRequireDefault(require("html2canvas"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -39,6 +37,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+// Importez jsPDF
 var _default =
 /*#__PURE__*/
 function (_Controller) {
@@ -94,34 +93,7 @@ function (_Controller) {
         pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 10);
       }
 
-      pdf.save('Graphique.pdf');
-    }
-  }, {
-    key: "exportTableToExcel",
-    value: function exportTableToExcel() {
-      // const table = document.getElementById("volValTable");
-      var table1 = document.getElementById("tableCheck");
-      var table2 = document.getElementById("volValTable"); // Extraire le contenu HTML des deux tables
-
-      var html1 = table1.outerHTML;
-      var html2 = table2.outerHTML; // Concaténer le HTML des deux tables
-
-      var combinedHtml = html1 + html2; // Créer un Blob contenant les données HTML avec le type MIME Excel
-
-      var blob = new Blob([combinedHtml], {
-        type: 'application/vnd.ms-excel'
-      }); // Créer une URL pour le Blob
-
-      var url = URL.createObjectURL(blob); // Créer un élément d'ancre temporaire pour le téléchargement
-
-      var a = document.createElement('a');
-      a.href = url; // Définir le nom de fichier souhaité pour le fichier téléchargé
-
-      a.download = 'delai_activite_tableau.xls'; // Simuler un clic sur l'ancre pour déclencher le téléchargement
-
-      a.click(); // Libérer l'objet URL pour libérer des ressources
-
-      URL.revokeObjectURL(url);
+      pdf.save("Graphique activit\xE9 annuelle ".concat(dateEdited, " .pdf"));
     }
   }]);
 
