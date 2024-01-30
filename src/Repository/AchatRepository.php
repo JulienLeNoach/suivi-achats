@@ -172,7 +172,7 @@ public function statisticPMEMonth($form)
         MONTH(achat.date_notification) AS mois,
         COUNT(CASE WHEN fournisseurs.pme = 1 AND achat.type_marche = 1 AND etat_achat = 2 THEN 1 ELSE NULL END) AS nombre_achats_pme_type_marche_1,
         COUNT(CASE WHEN fournisseurs.pme = 1 AND etat_achat = 2 THEN 1 ELSE NULL END) AS nombre_achats_pme,
-        COUNT(CASE WHEN fournisseurs.pme = 1 AND achat.type_marche = 1 AND etat_achat = 2 THEN 1 ELSE NULL END) / COUNT(CASE WHEN fournisseurs.pme = 1 AND etat_achat = 2 THEN 1 ELSE NULL END) * 100 AS pourcentage_achats_type_marche_1
+        COUNT(CASE WHEN fournisseurs.pme = 1 AND etat_achat = 2 AND achat.type_marche = 1 THEN 1 ELSE NULL END) / COUNT(CASE WHEN achat.type_marche = 1 THEN 1 ELSE NULL END) * 100 AS pourcentage_achats_type_marche_1
     FROM
         achat
     JOIN

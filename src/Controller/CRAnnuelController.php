@@ -43,11 +43,12 @@ class CRAnnuelController extends AbstractController
     #[Route('/crannuel', name: 'cr_annuel')]
     public function index(Request $request): Response
     {
-
+        $errorMessage = null;
         $form = $this->createForm(CRAnnuelType::class);
         $form->handleRequest($request);
-
+        $result_achatsSumVal[]=null;
         if ($form->isSubmitted()) {
+
             $mpttaEtat = 1;
             $mabcEtat = 0;
             $counts1 = [];
@@ -75,13 +76,24 @@ class CRAnnuelController extends AbstractController
             $result_achatsSum = $this->achatRepository->statisticPMEMonth($form);
             $result_achatsSumVol = $this->achatRepository->statisticPMETopVol($form);
             $result_achatsSumVal = $this->achatRepository->statisticPMETopVal($form);
+            $errorMessage = null;
 
+            if (empty($result_achatsSumVal)) {
+                $errorMessage = 'Aucun résultat pour cette recherche.';
+                return $this->render('cr_annuel/index.html.twig', [
+                    'form' => $form->createView(),
+                    'result_achatsSumVal' => $result_achatsSumVal,
+                    'errorMessage' => $errorMessage,
+                ]);
+            }
             $filePath = $this->crAnnuelService->generateExcelFile($datasets1, $datasets2, $datasets3, $datasets4, $this->projectDir, $achats, $achats_delay_all,$result_achats,
                                                                 $result_achats_mounts, $parameter,$result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
             return new BinaryFileResponse($filePath);
         }
         return $this->render('cr_annuel/index.html.twig', [
             'form' => $form->createView(),
+            'errorMessage' => $errorMessage,
+
         ]);
     }
 }

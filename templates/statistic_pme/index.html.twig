@@ -17,7 +17,8 @@
         <button id="toggleFormBtn" class="toggle-button" data-action="click->search-achat#collapse"><span
                 class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
     </div>
-    {% if app.request.method == 'POST' %}
+{% if app.request.method == 'POST' %}
+{% if result_achats[0]["ValeurPME"]  != 0 %}
     <div class="p-3 font-weight-bold d-flex flex-row ">
 <form action="{{ path('app_statistic_pme_export_excel') }}" method="post">
     <input type="hidden" name="result_achats" value="{{ result_achats | json_encode }}">
@@ -123,7 +124,7 @@
         {% endif %}
     {% endfor %}
     {# {{dump(result_achatsSum)}} #}
-    <td>{{ ((totalNombreAchats  / totalPourcentage )* 100) |number_format(0, '.', '')}}</td>
+    <td>{{ result_achats[0]["VolumePercentPME"]  | round}}</td>
 </tr>
                 </table>
                 <div class="chartActContainer" style="width: 75%; max-height: 200px;">
@@ -141,6 +142,11 @@
     let criteria = {{toPDF["criteria"] | json_encode | raw}};
 </script>
 
+{% else %}
+        <div class="alert alert-warning" role="alert">
+            Aucun résultat pour cette recherche.
+        </div>
+    {% endif %}
 {% endif %}
 </div>
 

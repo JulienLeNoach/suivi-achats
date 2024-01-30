@@ -13,7 +13,7 @@
     </div>
     {{ include('statistic/stat_form.html.twig') }}
     {% if app.request.method == 'POST' %}
-    {% if counts1 is not empty %}
+    {% if delayVolVal[0]["Achats <= 15 jours"] != 0 %}
     <div class=" font-weight-bold d-flex flex-row justify-content-between">
       <div class="d-flex" data-controller="pdf-generator">
         <form action="{{ path('app_statistic_vol_export_excel') }}" method="post">
@@ -67,7 +67,9 @@
     let criteria = {{toPDF["criteria"] | json_encode | raw}};
   </script>
 {% else %}
-    <h4 id="noResult">Aucun résultat pour votre recherche.</h4>
+            <div class="alert alert-warning" role="alert">
+            Aucun résultat pour cette recherche.
+        </div>
 {% endif %}
 
   {% endif  %}

@@ -18,8 +18,9 @@
         <button id="toggleFormBtn" class="toggle-button" data-action="click->search-achat#collapse"><span
                 class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
     </div>
-    {% if app.request.method == 'POST' %}
-        {# {{parameter[0]}} #}
+{% if app.request.method == 'POST' %}
+{% if result_achats is not empty %}
+{% if result_achats[0]["nombre_achats_type_1"] != 0 %}
         <div class="p-3 font-weight-bold d-flex flex-row ">
 <form action="{{ path('app_statistic_typemarche_excel') }}" method="post">
     <input type="hidden" name="result_achats" value="{{ result_achats | json_encode }}">
@@ -156,7 +157,19 @@
     let parameter3 = {{parameter[0].four4 | json_encode | raw}};
     let criteria = {{toPDF["criteria"] | json_encode | raw}};
 </script>
+
+{% else %}
+            <div class="alert alert-warning" role="alert">
+                {{ errorMessage }}
+            </div>
+    {% endif %}
+    {% else %}
+            <div class="alert alert-warning" role="alert">
+                {{ errorMessage }}
+            </div>
 {% endif %}
+{% endif %}
+
 </div>
 
 {% endblock %}

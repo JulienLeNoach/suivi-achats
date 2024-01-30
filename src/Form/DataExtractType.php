@@ -87,15 +87,18 @@ class DataExtractType extends AbstractType
                 'label_attr' => ['class' => 'fr-label']
 
             ])
-            ->add('date', IntegerType::class, [
+            ->add('date', ChoiceType::class, [
                 'required' => false,
                 'label' => false,
                 'mapped' => false,
-                'attr' => ['class' => 'fr-input'],  
-                'label_attr' => ['class' => 'fr-label']
-
-
-            ])
+                'attr' => ['class' => 'fr-input'],
+                'label_attr' => ['class' => 'fr-label'],
+                'choices' => $this->getYearChoices(),
+                'placeholder' => 'Choisir une année',
+                'data' => date('Y'),
+                'row_attr' => ['class' => 'me-3'],
+    
+            ])   
             ->add('num_siret', FournisseursAutocompleteField::class, [  
                 'required' => false,
                 'label' => false,
@@ -500,5 +503,17 @@ class DataExtractType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Achat::class,
         ]);
+    }
+    private function getYearChoices()
+    {
+        $currentYear = date('Y');
+        $endYear = $currentYear - 20; // par exemple, 10 ans en arrière
+        $years = [];
+    
+        for ($year = $currentYear; $year >= $endYear; $year--) {
+            $years[$year] = $year;
+        }
+    
+        return $years;
     }
 }

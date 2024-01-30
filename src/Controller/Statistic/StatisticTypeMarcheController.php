@@ -37,6 +37,8 @@ class StatisticTypeMarcheController extends AbstractController
     #[Route('/statistic/typemarche', name: 'app_statistic_typemarche')]
     public function index(Request $request, SessionInterface $session): Response
     {
+        $errorMessage = 'Aucun résultat pour cette recherche.';
+
         $form = $this->createForm(StatisticType::class, null, []);
 
         $form->handleRequest($request);
@@ -70,14 +72,26 @@ class StatisticTypeMarcheController extends AbstractController
             $session->set('toPDF', $toPDF);
 
             $excelForm = $this->createForm(CreateExcelType::class); 
-
+            if (empty($result_achats_mounts)) {
+                return $this->render('statistic_type_marche/index.html.twig', [
+                    'excelForm' => $excelForm->createView(),
+                    'form' => $form->createView(),
+                    'result_achats' => $result_achats,
+                    'result_achats_mounts' => $result_achats_mounts,
+                    'parameter' => $parameter,
+                    'toPDF' => $toPDF,
+                    'errorMessage' => $errorMessage,
+                ]);
+            }
             return $this->render('statistic_type_marche/index.html.twig', [
                 'excelForm' => $excelForm->createView(),
                 'form' => $form->createView(),
                 'result_achats' => $result_achats,
                 'result_achats_mounts' => $result_achats_mounts,
                 'parameter' => $parameter,
-                'toPDF' => $toPDF
+                'toPDF' => $toPDF,
+                'errorMessage' => $errorMessage,
+
     ]);
 
         }
@@ -87,7 +101,9 @@ class StatisticTypeMarcheController extends AbstractController
             'form' => $form->createView(),
             'result_achats' => $result_achats,
             'result_achats_mounts' => $result_achats_mounts,
-            'parameter' => $parameter
+            'parameter' => $parameter,
+            'errorMessage' => $errorMessage,
+
                     
         ]);
     }

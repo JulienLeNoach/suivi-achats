@@ -39,11 +39,20 @@ class DataExtractController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        
+        $achats = [];
+        $errorMessage = null;
+
         if($form->isSubmitted() && $form->isValid()){
             $achats = $this->entityManager->getRepository(Achat::class)->extractSearchAchat($form)->getResult();
 
-            //   dd($achats);
+            if (empty($achats)) {
+                $errorMessage = 'Aucun résultat pour cette recherche.';
+                return $this->render('data_extract/index.html.twig', [
+                    'form' => $form->createView(),
+                    'achats' => $achats,
+                    'errorMessage' => $errorMessage,
+                ]);
+            }
              $spreadsheet = new Spreadsheet();
              $sheet = $spreadsheet->getActiveSheet();
              $row = 1; // Ligne de départ pour le premier tableau
@@ -107,8 +116,12 @@ class DataExtractController extends AbstractController
             return new BinaryFileResponse($filePath);
 
         }
+
+
         return $this->render('data_extract/index.html.twig', [
             'form' => $form->createView(),
+            'achats' => $achats,
+            'errorMessage' => $errorMessage,
         ]);
     }
 }

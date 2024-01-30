@@ -127,8 +127,9 @@
 
     {% if app.request.method == 'GET' %}
     {% if achats | length == null %}
-    <h4 id="noResult">Aucun résultat pour votre recherche.</h4>
-    {% else %}
+        <div class="alert alert-warning" role="alert">
+            Aucun résultat pour cette recherche.
+        </div>    {% else %}
 
     <div class='align-items-center d-flex mt-3 bandeau-form-search'>
 

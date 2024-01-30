@@ -59,29 +59,10 @@
 
 </div>
 </div>
-{# <script>
-document.addEventListener('DOMContentLoaded', function() {
-    let offset = 7; // Commencer après les premiers résultats initialement chargés
-    const limit = 7;
-    const tbody = document.getElementById('achat-list-tbody');
-    const tableContainer = document.getElementById('achat-list');
+        {% if errorMessage is not null %}
+            <div class="alert alert-warning" role="alert">
+                {{ errorMessage }}
+            </div>
+        {% endif %}
 
-    tableContainer.addEventListener('scroll', function() {
-                   console.log(tableContainer.scrollTop + tableContainer.clientHeight );
-                   console.log(tableContainer.scrollHeight);
-        if (tableContainer.scrollTop + tableContainer.clientHeight+1 >= tableContainer.scrollHeight) {
-            fetch(`/cumulcpv?offset=${offset}&limit=${limit}`, { 
-                headers: { 'X-Requested-With': 'XMLHttpRequest' } 
-            })
-            .then(response => response.text())
-            .then(html => {
-                tbody.insertAdjacentHTML('beforeend', html);
-                offset += limit; // Augmenter l'offset pour la prochaine requête
-                            console.log("test");
-            })
-            .catch(error => console.error('Erreur:', error));
-        }
-    });
-});
-</script> #}
 {% endblock %}

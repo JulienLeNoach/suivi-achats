@@ -955,7 +955,7 @@ class CRAnnuelService  extends AbstractController
         for($i=0;$i<count($result_achatsSum);$i++){
 
             $sheet->setCellValue($approCol . 185, $mois[$i]);
-            $sheet->setCellValue($approCol . 186, $result_achatsSum[$i]["nombre_total_achats_pme"]);
+            $sheet->setCellValue($approCol . 186, $result_achatsSum[$i]["nombre_achats_pme"]);
             $sheet->setCellValue($approCol . 187, $result_achatsSum[$i]["pourcentage_achats_type_marche_1"]);
             $approCol++;
         }

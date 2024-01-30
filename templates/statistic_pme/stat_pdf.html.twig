@@ -41,8 +41,8 @@
                         <td>NB PME</td>
                         {% set totalNombreAchats = 0 %}
                         {% for achats in result_achatsSum %}
-                        <td>{{ achats["nombre_total_achats_pme"] }}</td>
-                        {% set totalNombreAchats = totalNombreAchats + achats["nombre_total_achats_pme"] %}
+                        <td>{{ achats["nombre_achats_pme"] }}</td>
+                        {% set totalNombreAchats = totalNombreAchats + achats["nombre_achats_pme"] %}
                         {% endfor %}
                         <td>{{ totalNombreAchats }}</td> 
                     </tr>

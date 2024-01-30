@@ -79,9 +79,14 @@
                 {{ form_row(form.devis)}}
                 {{ form_row(form.type_marche)}}
             </div>
+                    {% if errorMessage is not null %}
+            <div class="alert alert-warning" role="alert">
+                {{ errorMessage }}
+            </div>
+        {% endif %} 
         </div>
-                <!--  Partie choix des attribut à exporter -->
-        <h6 class="mt-4 ms-3 blueF">Sélection des informations à extraire</h6>
+       <h6 class="mt-4 ms-3 blueF">Sélection des informations à extraire</h6>
+
         <div class="input-condi-form d-flex flex-wrap" style="flex-basis:100%">
             <div class="input-grp" style="flex-basis:25%;">
             {{ form_row(form.chrono_attr) }}
@@ -131,8 +136,10 @@
             {{ form_row(form.mail_fournisseur_attr) }}
             {{ form_row(form.excel)}}
             {{ form_end(form) }}
+            
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

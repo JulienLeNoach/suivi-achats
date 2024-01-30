@@ -16,7 +16,7 @@
       class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
 </div>
 {% if app.request.method == 'POST' %}
-{% if achats is not empty %}
+{% if notStat is not empty %}
     <div class="p-3 font-weight-bold d-flex flex-row ">
 <form action="{{ path('app_statistic_delay_export_excel') }}" method="post">
     <input type="hidden" name="achats" value="{{ achats | json_encode }}">
@@ -138,7 +138,11 @@
     let criteria = {{toPDF["criteria"] | json_encode | raw}};
     let achats_delay_all = {{achats_delay_all | json_encode | raw}}
 </script>
-{% endif %}
+{% else %}
+        <div class="alert alert-warning" role="alert">
+            Aucun résultat pour cette recherche.
+        </div>
+    {% endif %}
 {% endif %}
   </div>
 

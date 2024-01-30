@@ -14,6 +14,7 @@
 
             <p class="blueF mt-3">Extraction du compte rendu annuel vers Excel</p>
         </div>
+
         {{ form_start(form, {'attr': {'class': 'search-form-all align-items-center justify-content-around flex-column d-flex flex-wrap'}})
         }}<div class="input-grp d-flex  p-3">
             {{ form_row(form.date) }}
@@ -22,7 +23,11 @@
                     {{ form_row(form.excel) }}
 
         {{ form_end(form) }}
-
+                {% if errorMessage is not null %}
+            <div class="alert alert-warning" role="alert">
+                {{ errorMessage }}
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

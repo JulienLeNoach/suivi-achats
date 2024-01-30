@@ -45,8 +45,16 @@ class StatisticDelayController extends AbstractController
             $achats_delay_all = $this->achatRepository->yearDelayCount($form);
             
         $transStat = array_filter(array_values($achats[2]), 'is_numeric');
-        $notStat = array_filter(array_values($achats[5]), 'is_numeric');
-        $toPDF=[
+        if (isset($achats[5]) && is_array($achats[5])) {
+            $notStat = array_filter(array_values($achats[5]), 'is_numeric');
+        } else {
+            // La clé 5 n'existe pas ou n'est pas un tableau, gérer l'erreur ici
+            // Par exemple, vous pouvez définir $notStat comme un tableau vide ou lancer une exception
+            $notStat = [];
+            // ou
+            // throw new \Exception("La clé 5 n'existe pas ou n'est pas un tableau.");
+        }
+                $toPDF=[
             'criteria'=>[
             'Date' =>  $form["date"]->getData(),
             'Fournisseur' =>  ($form["num_siret"]->getData() !== null) ? $form["num_siret"]->getData()->getNomFournisseur() : null,

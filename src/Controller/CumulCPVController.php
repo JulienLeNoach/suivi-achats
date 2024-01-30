@@ -51,6 +51,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
             $form->handleRequest($request);
             $result_cpv= null;
             $page = $request->query->get('page', 1); 
+            $errorMessage = null;
 
             $limit = 7; // Limite pour le nombre d'achats à charger
             $offset = $request->query->getInt('offset', 0); // Décalage pour le chargement infini
@@ -68,10 +69,23 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
                 $alertValue = $form["alertValue"]->getData();
 
 
+                if (empty($result_cpv)) {
+                    $errorMessage = 'Aucun résultat pour cette recherche.';
+                    return $this->render('cumul_cpv/index.html.twig', [
+                        'form' => $form->createView(),
+                        'result_cpv' => $result_cpv,
+                        'errorMessage' => $errorMessage,
+                        'alertValue' => $alertValue,
+
+                    ]);
+                }
+
                 return $this->render('cumul_cpv/index.html.twig', [
                     'form' => $form->createView(),
                     'result_cpv' => $result_cpv,
                     'alertValue' => $alertValue,
+                    'errorMessage' => $errorMessage,
+
 
                 ]);
             }
@@ -79,6 +93,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
             return $this->render('cumul_cpv/index.html.twig', [
                 'form' => $form->createView(),
                 'result_cpv' => $result_cpv,
+                'errorMessage' => $errorMessage,
+
                 
             ]);
         }
