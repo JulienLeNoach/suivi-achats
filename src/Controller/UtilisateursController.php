@@ -92,12 +92,10 @@ class UtilisateursController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Vérifiez si le champ de mot de passe est rempli
             $newPasswordData = $form->get('password')->getData();
-            // $newPassword = !empty($newPasswordData['first']) ? $newPasswordData['first'] : null;
-    
-            if ($newPasswordData !== null && !empty($newPasswordData['first'])) {
+            if ($newPasswordData !== null ) {
                 // Générer un nouveau hachage pour le nouveau mot de passe
                 $hashedPassword = $passwordEncoder->hashPassword($utilisateur, $newPasswordData);
-    
+
                 // dd($hashedPassword);
                 $utilisateur->setPassword($hashedPassword);
             }else {

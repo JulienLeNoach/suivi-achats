@@ -444,7 +444,7 @@ public function statisticPMETopVal($form)
                     ->setParameter('id_demande_achat', $form["id_demande_achat"]->getData());
             }
         // ... Votre logique de construction de la requête ici ...
-        // $queryBuilder->orderBy('b.id', 'DESC');
+         $queryBuilder->orderBy('b.date_saisie', 'DESC');
 
         $query = $queryBuilder;
     
@@ -530,26 +530,26 @@ public function statisticPMETopVal($form)
 
 
            
-            $form['code_acheteur_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.utilisateurs) as utilisateurs_id') : null;
+            $form['code_acheteur_attr']->getData() == true ? $queryBuilder->leftJoin('b.utilisateurs', 'x')->addSelect('x.trigram') : null;
             $form['nom_acheteur_attr']->getData() == true ? $queryBuilder->leftJoin('b.utilisateurs', 'u')->addSelect('u.nom_utilisateur') : null;
 
-            $form['code_formation_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.code_formation) as code_formation_id') : null;
+            $form['code_formation_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_formation', 'w')->addSelect('w.code_formation') : null;
             $form['libelle_formation_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_formation', 'g')->addSelect('g.libelle_formation') : null;
 
-            $form['code_uo_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.code_uo) as code_uo_id') : null;
+            $form['code_uo_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_uo', 'y')->addSelect('y.code_uo') : null;
             $form['libelle_uo_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_uo', 'o')->addSelect('o.libelle_uo') : null;
 
-            $form['code_cpv_attr']->getData() == true ? $queryBuilder->addSelect('IDENTITY(b.code_cpv) as code_cpv_id') : null;
+            $form['code_cpv_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_cpv', 'v')->addSelect('v.code_cpv') : null;
             $form['libelle_cpv_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_cpv', 'c')->addSelect('c.libelle_cpv') : null;
 
             if ($form['tva_attr']->getData() == true ||  $form['montant_ttc_attr'] == true) {
 
                 $queryBuilder->leftJoin('b.tva_ident', 't'); // Jointure avec la table 'service'
-                $selectFields[] = $form['tva_attr']->getData() == true ? $queryBuilder->addSelect('t.tva_ident') : null;
+                $selectFields[] = $form['tva_attr']->getData() == true ? $queryBuilder->addSelect('t.tva_taux') : null;
                 $selectFields[] = $form['montant_ttc_attr']->getData() == true ?  $queryBuilder->addSelect('(b.montant_achat * (t.tva_taux / 100) + b.montant_achat) montant_ttc') : null;
             }
 
-            if ($form['chorus_fournisseur_attr']->getData() == true ||  $form['code_client_fournisseur_attr']->getData() == true ||  $form['ville_fournisseur_attr']->getData() == true 
+            if ($form['chorus_fournisseur_attr']->getData() == true || $form['chorus_fournisseur_attr']->getData() == true ||  $form['code_client_fournisseur_attr']->getData() == true ||  $form['ville_fournisseur_attr']->getData() == true 
             ||  $form['cp_fournisseur_attr']->getData() == true||  $form['pme_fournisseurs_attr']->getData() == true ||  $form['tel_fournisseur_attr']->getData() == true 
             ||  $form['fax_fournisseur_attr']->getData() == true||  $form['mail_fournisseur_attr']->getData() == true||  $form['siret_fournisseur_attr']->getData() == true||  $form['nom_fournisseur_attr']->getData() == true ) {
 
@@ -557,6 +557,7 @@ public function statisticPMETopVal($form)
     
                
                 $form['ville_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.ville') : null;
+                $form['code_client_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.code_client') : null;
                 $form['cp_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.code_postal') : null;
                 $form['pme_fournisseurs_attr']->getData() == true ? $queryBuilder->addSelect('f.pme') : null;
                 $form['tel_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.tel') : null;
@@ -564,6 +565,8 @@ public function statisticPMETopVal($form)
                 $form['mail_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.mail') : null;
                 $form['siret_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.num_siret') : null;
                 $form['nom_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.nom_fournisseur') : null;
+                $form['chorus_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.num_chorus_fournisseur') : null;
+
                 
             }
             if ($form['nom_service_attr']->getData() == true ||  $form['code_service_attr'] == true) {
@@ -646,7 +649,7 @@ public function statisticPMETopVal($form)
                     ->setParameter('fin_rec',   $form["fin_rec"]->getData()->format('Y-m-d') );
             }
         // ... Votre logique de construction de la requête ici ...
-        $queryBuilder->orderBy('b.date_saisie', 'DESC');
+        $queryBuilder->orderBy('b.date_saisie', 'DESC')->addOrderBy('s.code_service', 'ASC')->addOrderBy('s.nom_service', 'ASC');
 
         $query = $queryBuilder->getQuery();
     

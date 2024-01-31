@@ -89,6 +89,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
                 'result_achatsSumVal' => $session->get('toPDF')["result_achatsSumVal"],
             ]);
             $dompdf = new Dompdf();
+            $dompdf->setPaper('A4', 'landscape');
             $dompdf->loadHtml($html);
             $dompdf->render();
              

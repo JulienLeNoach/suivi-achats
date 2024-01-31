@@ -51,8 +51,8 @@ class SearchController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $sortField = $request->query->get('sortField', 'id');
-            $sortDirection = $request->query->get('sortDirection', 'asc');
+            $sortField = $request->query->get('sortField', 'date_saisie');
+            $sortDirection = $request->query->get('sortDirection', 'desc');
 
             $currentUrl = $request->getUri(); // Récupérer l'URL actuelle
             $session->set('current_url', $currentUrl);

@@ -75,7 +75,7 @@ function (_Controller) {
         return "".concat(key, ": ").concat(value);
       });
       var criteriaText = values.join(', ');
-      var pdf = new _jspdf["default"]('p', 'mm', [360, 350]);
+      var pdf = new _jspdf["default"]('p', 'mm', [360, 200]);
       pdf.setFontSize(8);
       pdf.text("Critères de sélection : " + criteriaText, 15, 10);
       pdf.setFontSize(12);

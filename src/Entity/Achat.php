@@ -61,11 +61,11 @@ class Achat
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['achat:list', 'achat:item'])]
-    private ?string $date_notification = null;
+    private ?\DateTime $date_notification = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['achat:list', 'achat:item'])]
-    private ?string $date_annulation = null;
+    private ?\DateTime $date_annulation = null;
 
 
 /**

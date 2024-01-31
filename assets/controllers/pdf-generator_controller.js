@@ -20,7 +20,7 @@ export default class extends Controller {
     .map(([key, value]) => `${key}: ${value}`);
     const criteriaText = values.join(', ');
      
-    let pdf = new jsPDF('p', 'mm', [360, 350]);
+    let pdf = new jsPDF('p', 'mm', [360, 200]);
     pdf.setFontSize(8);
     pdf.text("Critères de sélection : " + criteriaText, 15, 10);
     pdf.setFontSize(12);

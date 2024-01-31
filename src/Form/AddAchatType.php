@@ -79,6 +79,7 @@ public function __construct(Security $security)
                 'row_attr' => ['class' => 'radio-search mt-5'],
                 'label_attr' => ['class' => 'fr-label'],
                 'attr' => ['class' => 'fr-input'],
+                'data' => '1'
 
             ])
             ->add('montant_achat', IntegerType::class, [
@@ -105,6 +106,7 @@ public function __construct(Security $security)
                 'row_attr' => ['class' => 'radio-search'],
                 'label_attr' => ['class' => 'fr-label'],
                 'attr' => ['class' => 'fr-input'],
+                'data' => '0'
 
 
             ])
@@ -119,6 +121,7 @@ public function __construct(Security $security)
                 'row_attr' => ['class' => 'radio-search mt-5'],
                 'label_attr' => ['class' => 'fr-label'],
                 'attr' => ['class' => 'fr-input'],
+                'data' => '0'
 
             ])
             

@@ -85,7 +85,8 @@ class AchatSearchType extends AbstractType
                 'label' => "Devis",
                 'row_attr' => ['class' => 'radio-search'],
                 'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']
+                'label_attr' => ['class' => 'fr-label'],
+                
 
             ])
             ->add('type_marche', ChoiceType::class, [

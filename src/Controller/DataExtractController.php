@@ -7,6 +7,7 @@ use App\Form\DataExtractType;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,7 +45,6 @@ class DataExtractController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()){
             $achats = $this->entityManager->getRepository(Achat::class)->extractSearchAchat($form)->getResult();
-
             if (empty($achats)) {
                 $errorMessage = 'Aucun résultat pour cette recherche.';
                 return $this->render('data_extract/index.html.twig', [
@@ -63,12 +63,7 @@ class DataExtractController extends AbstractController
                 $column = 'B'; // Colonne de départ pour les titres
             
                 // Afficher les titres des colonnes
-                foreach (array_keys($achats[0]) as $key) {
-                    $cell = $column . '1'; // Construisez la référence de cellule pour les titres, ex: B1, C1, etc.
-                    $sheet->setCellValue($cell, $key);
-            
-                    $column++; // Passez à la colonne suivante pour le prochain titre
-                }
+
             
                 // Afficher les données de chaque achat
                 $row = 2; // Ligne de départ pour les données
@@ -87,12 +82,70 @@ class DataExtractController extends AbstractController
                 if (isset($achat["place"])){
                     $achat["place"] = $achat["place"] == 0 ? "Non" : "Oui";
                 }
-
-                    foreach ($achat as $value) {
-                        $cell = $column . $row; // Construisez la référence de cellule pour les données, ex: B2, C2, etc.
-                        $sheet->setCellValue($cell, $value);
-                        $column++; // Passez à la colonne suivante pour la prochaine valeur
+                foreach ($achat as $key => $value) {
+                    if (strpos($key, "date_") === 0 && $achat[$key] !== null && $achat[$key] instanceof \DateTime) {
+                        $achat[$key] = $achat[$key]->format('d/m/Y');
                     }
+                }
+                $reorderedAchat = [
+                    'N° CHRONO' => $achat['numero_achat'],
+                    'Code service' => $achat['code_service'],
+                    'Nom service' => $achat['nom_service'],
+                    'Code acheteur' => $achat['trigram'],
+                    'Nom acheteur' => $achat['nom_utilisateur'],
+                    'Code Formation' => $achat['code_formation'],
+                    'Libellé formation' => $achat['libelle_formation'],
+                    'N° SIRET' => $achat['num_siret'],
+                    'Nom fournisseur' => $achat['nom_fournisseur'],
+                    'Ville fournisseur' => $achat['ville'],
+                    'CP' => $achat['code_postal'],
+                    'PME ?' => $achat['pme'],
+                    'Code client' => $achat['code_client'],
+                    'N° CHORUS' => $achat['num_chorus_fournisseur'],
+                    'N° Tel fournisseur' => $achat['tel'],
+                    'N° fax fournisseur' => $achat['FAX'],
+                    'Adresse mail' => $achat['mail'],
+                    'Code UO' => $achat['code_uo'],
+                    'Libellé UO' => $achat['libelle_uo'],
+                    'Code CPV' => $achat['code_cpv'],
+                    'Libellé CPV' => $achat['libelle_cpv'],
+                    'ID Demande achat' => $achat['id_demande_achat'],
+                    'Date sillage' => $achat['date_sillage'],
+                    'Date commande CHORUS' => $achat['date_commande_chorus'],
+                    'Date RUO' => $achat['date_valid_inter'],
+                    'Date validation' => $achat['date_validation'],
+                    'Date notification' => $achat['date_notification'],
+                    'Date annulation' => $achat['date_annulation'],
+                    'N° EJ' => $achat['numero_ej'],
+                    'Objet de l achat' => $achat['objet_achat'],
+                    'Type de marché' => $achat['type_marche'],
+                    'Montant HT' => $achat['montant_ht'],
+                    'TVA' => $achat['tva_taux'],
+                    'Montant TTC' => $achat['montant_ttc'],
+                    'Observations' => $achat['observations'],
+                    'Etat de l achat' => $achat['etat_achat'],
+                    'Marché avec pub' => $achat['place'],
+                    'Devis' => $achat['devis'],
+                    // ... autres champs dans l'ordre souhaité ...
+                ];
+
+                foreach ($reorderedAchat as $key => $value) {
+                    $cell = $column . $row; // Construisez la référence de cellule pour les données, ex: B2, C2, etc.
+                
+                    if ($key === 'N° SIRET' ) {
+                        $cellObject = $sheet->getCell($cell);
+                        $cellObject->setValueExplicit($value, DataType::TYPE_STRING);
+                
+                        // Accéder à l'objet Style et définir le format comptabilité
+                        $style = $cellObject->getStyle();
+                        $numberFormat = $style->getNumberFormat();
+                        $numberFormat->setFormatCode('0'); // Format comptabilité avec 0 chiffres après la virgule et pas de symbole
+                    } else {
+                        $sheet->setCellValue($cell, $value);
+                    }
+                
+                    $column++; // Passez à la colonne suivante pour la prochaine valeur
+                }
             
                     $row++; // Après avoir terminé avec un tableau achat, passez à la ligne suivante
                 }
@@ -104,7 +157,14 @@ class DataExtractController extends AbstractController
                 $sheet->getColumnDimension($column)->setAutoSize(true);
                 $column++; // Passez à la colonne suivante
             }
-            
+            $column = 'B'; // Colonne de départ pour les titres
+
+// Afficher les titres des colonnes
+foreach ($reorderedAchat as $key => $value) {
+    $cell = $column . '1'; // Construisez la référence de cellule pour les titres, ex: B1, C1, etc.
+    $sheet->setCellValue($cell, $key);
+    $column++; // Passez à la colonne suivante pour le prochain titre
+}
             // Assurez-vous de traiter également la dernière colonne
             $sheet->getColumnDimension($highestColumn)->setAutoSize(true);
             $sheet->calculateColumnWidths();

@@ -125,6 +125,8 @@ class StatisticVolController extends AbstractController
 
         ]);
         $dompdf = new Dompdf();
+        $dompdf->setPaper('A3', 'landscape');
+
         $dompdf->loadHtml($html);
         $dompdf->render();
          
