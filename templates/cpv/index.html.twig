@@ -51,7 +51,7 @@
                 <th>Code CPV <a href="{{ path('cpv', {'sortField': 'code_cpv', 'sortDirection': sortField == 'code_cpv' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></span>
 </a></th>
                 <th>Libellé CPV <a href="{{ path('cpv', {'sortField': 'libelle_cpv', 'sortDirection': sortField == 'libelle_cpv' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
-                <th>Montant CPV <a href="{{ path('cpv', {'sortField': 'mt_cpv', 'sortDirection': sortField == 'mt_cpv' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
+                <th>Montant CPV autorisé <a href="{{ path('cpv', {'sortField': 'mt_cpv_auto', 'sortDirection': sortField == 'mt_cpv_auto' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
                 <th>Etat</th>
                 <th>Actions</th>
             </tr>
@@ -61,7 +61,7 @@
             <tr>
                 <td>{{ c_p_v.codeCpv }}</td>
                 <td>{{ c_p_v.libelleCpv }}</td>
-                <td>{{ c_p_v.mtCpv }}</td>
+                <td>{{ c_p_v.mtCpvAuto }}</td>
 <td>
     {% if c_p_v.etatCpv == 1 %}
         Actif

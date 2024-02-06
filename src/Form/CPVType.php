@@ -43,9 +43,7 @@ class CPVType extends AbstractType
             ->add('libelle_cpv',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Libellé CPV'])
-            ->add('mt_cpv',IntegerType::class,['attr' => ['class' => 'fr-input'], 
-            'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Montant du CPV'])
+
             ->add('etat_cpv',ChoiceType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Etat du CPV',
@@ -53,9 +51,9 @@ class CPVType extends AbstractType
                 'Actif' => '1',
                 'Inactif' => '0',
             ],])
-            ->add('mt_cpv_auto',IntegerType::class,['attr' => ['class' => 'hidden'], 
-            'label_attr' => ['class' => 'hidden'],
-            'data'=>'90000'])
+            ->add('mt_cpv_auto',IntegerType::class,['attr' => ['class' => 'fr-input'], 
+            'label_attr' => ['class' => 'fr-label'],
+            'label'=>'Montant du CPV autorisé'])
 
         ;
     }

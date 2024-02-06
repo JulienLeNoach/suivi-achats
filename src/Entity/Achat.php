@@ -264,12 +264,12 @@ private ?float $montant_achat = null;
         return $this;
     }
 
-    public function getDateNotification(): ?string
+    public function getDateNotification(): ?\DateTime
     {
         return $this->date_notification;
     }
 
-    public function setDateNotification(?string $date_notification): self
+    public function setDateNotification(?\DateTime $date_notification): self
     {
         $this->date_notification = $date_notification;
 

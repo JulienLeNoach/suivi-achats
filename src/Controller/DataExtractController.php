@@ -56,7 +56,16 @@ class DataExtractController extends AbstractController
              $spreadsheet = new Spreadsheet();
              $sheet = $spreadsheet->getActiveSheet();
              $row = 1; // Ligne de départ pour le premier tableau
+             $style = $sheet->getStyle('B1:E1');
+$font = $style->getFont();
 
+// Mettre en gras
+$font->setBold(true);
+
+// Agrandir la police
+$font->setSize(14); 
+             $sheet->mergeCells('B1:G1');
+$sheet->setCellValue('B1', "EXTRACTION DES DONNEES BASE SUIVI DES ACHATS POUR L'ANNEE ");
              // Supposons que $achats est un tableau contenant tous vos tableaux achat
              if (!empty($achats)) {
                 
@@ -66,7 +75,7 @@ class DataExtractController extends AbstractController
 
             
                 // Afficher les données de chaque achat
-                $row = 2; // Ligne de départ pour les données
+                $row = 3; // Ligne de départ pour les données
             
                 foreach ($achats as $achat) {
                     $column = 'B'; // Réinitialiser la colonne pour chaque nouveau tableau achat
@@ -87,47 +96,123 @@ class DataExtractController extends AbstractController
                         $achat[$key] = $achat[$key]->format('d/m/Y');
                     }
                 }
-                $reorderedAchat = [
-                    'N° CHRONO' => $achat['numero_achat'],
-                    'Code service' => $achat['code_service'],
-                    'Nom service' => $achat['nom_service'],
-                    'Code acheteur' => $achat['trigram'],
-                    'Nom acheteur' => $achat['nom_utilisateur'],
-                    'Code Formation' => $achat['code_formation'],
-                    'Libellé formation' => $achat['libelle_formation'],
-                    'N° SIRET' => $achat['num_siret'],
-                    'Nom fournisseur' => $achat['nom_fournisseur'],
-                    'Ville fournisseur' => $achat['ville'],
-                    'CP' => $achat['code_postal'],
-                    'PME ?' => $achat['pme'],
-                    'Code client' => $achat['code_client'],
-                    'N° CHORUS' => $achat['num_chorus_fournisseur'],
-                    'N° Tel fournisseur' => $achat['tel'],
-                    'N° fax fournisseur' => $achat['FAX'],
-                    'Adresse mail' => $achat['mail'],
-                    'Code UO' => $achat['code_uo'],
-                    'Libellé UO' => $achat['libelle_uo'],
-                    'Code CPV' => $achat['code_cpv'],
-                    'Libellé CPV' => $achat['libelle_cpv'],
-                    'ID Demande achat' => $achat['id_demande_achat'],
-                    'Date sillage' => $achat['date_sillage'],
-                    'Date commande CHORUS' => $achat['date_commande_chorus'],
-                    'Date RUO' => $achat['date_valid_inter'],
-                    'Date validation' => $achat['date_validation'],
-                    'Date notification' => $achat['date_notification'],
-                    'Date annulation' => $achat['date_annulation'],
-                    'N° EJ' => $achat['numero_ej'],
-                    'Objet de l achat' => $achat['objet_achat'],
-                    'Type de marché' => $achat['type_marche'],
-                    'Montant HT' => $achat['montant_ht'],
-                    'TVA' => $achat['tva_taux'],
-                    'Montant TTC' => $achat['montant_ttc'],
-                    'Observations' => $achat['observations'],
-                    'Etat de l achat' => $achat['etat_achat'],
-                    'Marché avec pub' => $achat['place'],
-                    'Devis' => $achat['devis'],
-                    // ... autres champs dans l'ordre souhaité ...
-                ];
+                $reorderedAchat = [];
+
+                if (array_key_exists('numero_achat', $achat)) {
+                    $reorderedAchat['N° CHRONO'] = $achat['numero_achat'];
+                }
+                if (array_key_exists('code_service', $achat)) {
+                    $reorderedAchat['Code service'] = $achat['code_service'];
+                }
+                if (array_key_exists('nom_service', $achat)) {
+                    $reorderedAchat['Nom service'] = $achat['nom_service'];
+                }
+                if (array_key_exists('trigram', $achat)) {
+                    $reorderedAchat['Code acheteur'] = $achat['trigram'];
+                }
+                if (array_key_exists('nom_utilisateur', $achat)) {
+                    $reorderedAchat['Nom acheteur'] = $achat['nom_utilisateur'];
+                }
+                if (array_key_exists('code_formation', $achat)) {
+                    $reorderedAchat['Code Formation'] = $achat['code_formation'];
+                }
+                if (array_key_exists('libelle_formation', $achat)) {
+                    $reorderedAchat['Libellé formation'] = $achat['libelle_formation'];
+                }
+                if (array_key_exists('num_siret', $achat)) {
+                    $reorderedAchat['N° SIRET'] = $achat['num_siret'];
+                }
+                if (array_key_exists('nom_fournisseur', $achat)) {
+                    $reorderedAchat['Nom fournisseur'] = $achat['nom_fournisseur'];
+                }
+                if (array_key_exists('ville', $achat)) {
+                    $reorderedAchat['Ville fournisseur'] = $achat['ville'];
+                }
+                if (array_key_exists('code_postal', $achat)) {
+                    $reorderedAchat['CP'] = $achat['code_postal'];
+                }
+                if (array_key_exists('pme', $achat)) {
+                    $reorderedAchat['PME ?'] = $achat['pme'];
+                }
+                if (array_key_exists('code_client', $achat)) {
+                    $reorderedAchat['Code client'] = $achat['code_client'];
+                }
+                if (array_key_exists('num_chorus_fournisseur', $achat)) {
+                    $reorderedAchat['N° CHORUS'] = $achat['num_chorus_fournisseur'];
+                }
+                if (array_key_exists('tel', $achat)) {
+                    $reorderedAchat['N° Tel fournisseur'] = $achat['tel'];
+                }
+                if (array_key_exists('FAX', $achat)) {
+                    $reorderedAchat['N° fax fournisseur'] = $achat['FAX'];
+                }
+                if (array_key_exists('mail', $achat)) {
+                    $reorderedAchat['Adresse mail'] = $achat['mail'];
+                }
+                if (array_key_exists('code_uo', $achat)) {
+                    $reorderedAchat['Code UO'] = $achat['code_uo'];
+                }
+                if (array_key_exists('libelle_uo', $achat)) {
+                    $reorderedAchat['Libellé UO'] = $achat['libelle_uo'];
+                }
+                if (array_key_exists('code_cpv', $achat)) {
+                    $reorderedAchat['Code CPV'] = $achat['code_cpv'];
+                }
+                if (array_key_exists('libelle_cpv', $achat)) {
+                    $reorderedAchat['Libellé CPV'] = $achat['libelle_cpv'];
+                }
+                if (array_key_exists('id_demande_achat', $achat)) {
+                    $reorderedAchat['ID Demande achat'] = $achat['id_demande_achat'];
+                }
+                if (array_key_exists('date_sillage', $achat)) {
+                    $reorderedAchat['Date sillage'] = $achat['date_sillage'];
+                }
+                if (array_key_exists('date_commande_chorus', $achat)) {
+                    $reorderedAchat['Date commande CHORUS'] = $achat['date_commande_chorus'];
+                }
+                if (array_key_exists('date_valid_inter', $achat)) {
+                    $reorderedAchat['Date RUO'] = $achat['date_valid_inter'];
+                }
+                if (array_key_exists('date_validation', $achat)) {
+                    $reorderedAchat['Date validation'] = $achat['date_validation'];
+                }
+                if (array_key_exists('date_notification', $achat)) {
+                    $reorderedAchat['Date notification'] = $achat['date_notification'];
+                }
+                if (array_key_exists('date_annulation', $achat)) {
+                    $reorderedAchat['Date annulation'] = $achat['date_annulation'];
+                }
+                if (array_key_exists('numero_ej', $achat)) {
+                    $reorderedAchat['N° EJ'] = $achat['numero_ej'];
+                }
+                if (array_key_exists('objet_achat', $achat)) {
+                    $reorderedAchat['Objet de l achat'] = $achat['objet_achat'];
+                }
+                if (array_key_exists('type_marche', $achat)) {
+                    $reorderedAchat['Type de marché'] = $achat['type_marche'];
+                }
+                if (array_key_exists('montant_ht', $achat)) {
+                    $reorderedAchat['Montant HT'] = $achat['montant_ht'];
+                }
+                if (array_key_exists('tva_taux', $achat)) {
+                    $reorderedAchat['TVA'] = $achat['tva_taux'];
+                }
+                if (array_key_exists('montant_ttc', $achat)) {
+                    $reorderedAchat['Montant TTC'] = $achat['montant_ttc'];
+                }
+                if (array_key_exists('observations', $achat)) {
+                    $reorderedAchat['Observations'] = $achat['observations'];
+                }
+                if (array_key_exists('etat_achat', $achat)) {
+                    $reorderedAchat['Etat de l achat'] = $achat['etat_achat'];
+                }
+                if (array_key_exists('place', $achat)) {
+                    $reorderedAchat['Marché avec pub'] = $achat['place'];
+                }
+                if (array_key_exists('devis', $achat)) {
+                    $reorderedAchat['Devis'] = $achat['devis'];
+                }
+                
 
                 foreach ($reorderedAchat as $key => $value) {
                     $cell = $column . $row; // Construisez la référence de cellule pour les données, ex: B2, C2, etc.
@@ -161,7 +246,7 @@ class DataExtractController extends AbstractController
 
 // Afficher les titres des colonnes
 foreach ($reorderedAchat as $key => $value) {
-    $cell = $column . '1'; // Construisez la référence de cellule pour les titres, ex: B1, C1, etc.
+    $cell = $column . '2'; // Construisez la référence de cellule pour les titres, ex: B1, C1, etc.
     $sheet->setCellValue($cell, $key);
     $column++; // Passez à la colonne suivante pour le prochain titre
 }

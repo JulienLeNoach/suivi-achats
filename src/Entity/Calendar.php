@@ -39,6 +39,9 @@ class Calendar
     #[ORM\ManyToOne(inversedBy: 'calendars')]
     private ?Utilisateurs $user_id = null;
 
+    #[ORM\Column]
+    private ?int $code_service = null;
+
 
     public function getId(): ?int
     {
@@ -139,6 +142,18 @@ class Calendar
     public function setUserId(?Utilisateurs $user_id): self
     {
         $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getCodeService(): ?int
+    {
+        return $this->code_service;
+    }
+
+    public function setCodeService(int $code_service): static
+    {
+        $this->code_service = $code_service;
 
         return $this;
     }

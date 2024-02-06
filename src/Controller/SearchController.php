@@ -176,12 +176,11 @@ public function valid(Request $request,$id,SessionInterface $session): Response
 
         $query = $this->entityManager->getRepository(Achat::class)->valid($request, $id);
         $cpvSold = $this->entityManager->getRepository(CPV::class)->find($cpvId);
-        // dd($cpvSold);
+        
         $cpvSold->setMtCpv($cpvSold->getMtCpv() - $result_achat->getMontantAchat());
-        // $result_achat->getCodeCpv()->setMtCpv($cpvSold->getMtCpv() - $result_achat->getMontantAchat());
         $this->entityManager->flush();
         $this->entityManager->persist($cpvSold);
-        $this->addFlash('valid', "L'achat n° $id est validé");
+        $this->addFlash('valid', "L'achat n°" .$result_achat->getNumeroAchat(). "est validé");
 
         return $this->redirect("/search");
         }
@@ -198,8 +197,9 @@ public function cancel($id, Request $request,SessionInterface $session): Respons
 {
     $currentUrl = $session->get('current_url');
     $query = $this->entityManager->getRepository(Achat::class)->cancel($id);
+    $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
 
-    $this->addFlash('success', 'Achat n° ' . $id . " annulé");
+    $this->addFlash('success', 'Achat n° ' . $result_achat->getNumeroAchat() . " annulé");
 
     return $this->redirect($currentUrl);
 }

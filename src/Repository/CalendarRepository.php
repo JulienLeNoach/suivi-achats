@@ -45,9 +45,9 @@ class CalendarRepository extends ServiceEntityRepository
    public function findByExampleField($value): array
    {
        return $this->createQueryBuilder('c')
-           ->andWhere('c.user_id = :val')
+           ->andWhere('c.code_service = :val')
            ->setParameter('val', $value)
-           ->orderBy('c.user_id', 'ASC')
+           ->orderBy('c.code_service', 'ASC')
            ->getQuery()
            ->getResult()
        ;

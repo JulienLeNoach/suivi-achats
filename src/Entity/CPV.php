@@ -34,15 +34,7 @@ class CPV
  */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $libelle_cpv = null;
-/**
- * @ORM\Column(length=255, nullable=true)
- * @Assert\Regex(
- *     pattern="/^\d{1,10}([.,]\d+)?$/",
- *     message="Le champ doit contenir uniquement des chiffres positifs et peut inclure un point ou une virgule pour les décimales, avec un maximum de 10 chiffres."
- * )
- */
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?float $mt_cpv = null;
+
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $etat_cpv = null;
@@ -96,17 +88,7 @@ class CPV
         return $this;
     }
 
-    public function getMtCpv(): ?float
-    {
-        return $this->mt_cpv;
-    }
 
-    public function setMtCpv(?float $mt_cpv): self
-    {
-        $this->mt_cpv = $mt_cpv;
-
-        return $this;
-    }
 
     public function getEtatCpv(): ?bool
     {

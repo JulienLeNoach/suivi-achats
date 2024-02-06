@@ -79,25 +79,26 @@
     </table>
 
 
-    <div class="align-items-center justify-content-center w-100 mw-75 d-flex" data-controller="chartdelay">
+    <div class=" justify-content-center w-100 mw-75 d-flex" data-controller="chartdelay">
       <div class="delay-bar w-50">
         <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
           <h4 class=" blueF">Délai d'activié annuelle graphe</h4>
           <div class="" data-controller="pdf-generator-chartdelay">
-            <button class="print" id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphBar">Impression<span class="fr-icon-printer-line" aria-hidden="true"></span>
+            <button class="print" id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphBar">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
     </button>
           </div>
         </div>
         <canvas id="delayChart" data-chartdelay-target="delayChart" > </canvas></div>
       <div class="delay-pie w-50">
-        <div data-controller="pdf-generator-chartdelay" id="chartPie">
-          <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
+      <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
             <h4 class="blueF">Délai d'activié anuelle détaillé par traitement</h4>
             <div class="">
-              <button id="pdf" class="print" data-action="click->pdf-generator-chartdelay#downloadgraphPie">Impression<span class="fr-icon-printer-line" aria-hidden="true"></span>
+              <button id="pdf" class="print" data-action="click->pdf-generator-chartdelay#downloadgraphPie">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
     </button>
             </div>
           </div>
+        <div data-controller="pdf-generator-chartdelay" id="chartPie">
+          
           <div class="d-flex flex-wrap w-100 align-items-center justify-content-center">
             <div class="w-25 ">
               <p class="text-center">{{achats_delay_all[0]["source"]}}</p>

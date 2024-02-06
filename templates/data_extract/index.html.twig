@@ -79,11 +79,11 @@
                 {{ form_row(form.devis)}}
                 {{ form_row(form.type_marche)}}
             </div>
-                    {% if errorMessage is not null %}
+                    {# {% if errorMessage is not null %}
             <div class="alert alert-warning" role="alert">
                 {{ errorMessage }}
             </div>
-        {% endif %} 
+        {% endif %}  #}
         </div>
        <h6 class="mt-4 ms-3 blueF">Sélection des informations à extraire</h6>
 
@@ -140,6 +140,11 @@
             </div>
         </div>
     </div>
+                        {% if errorMessage is not null %}
+            <div class="alert alert-warning" role="alert">
+                {{ errorMessage }}
+            </div>
+        {% endif %} 
 </div>
 
 {% endblock %}

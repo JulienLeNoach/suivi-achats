@@ -36,10 +36,10 @@ class CalendarController extends AbstractController
     public function index(EntityManagerInterface $entityManager, CalendarRepository $calendarRepository,Request $request,Security $security,CalendarService $calendarService): Response
     {
         $user = $security->getUser();
-        // Récupération des événements de la table "Calendar"
+        $service=$user->getCodeService();
         $calendarEvents = 
         $this->entityManager->getRepository(Calendar::class)
-            ->findByExampleField($user);
+            ->findByExampleField($service);
         // Transformation des événements pour les adapter à FullCalendar
         $events = $calendarService->formatEventsForFullCalendar($calendarEvents);
         $calendar = $this->calendarFactory->create();
@@ -49,7 +49,9 @@ class CalendarController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $calendar->setUserId($user);
-            // dd($calendar);
+            $codeService = (int) $service->getCodeService();
+            $calendar->setCodeService($codeService);
+
             $existingEvent = $calendarRepository->findOneBy(['start' => $calendar->getStart()]);
 
             if ($existingEvent) {

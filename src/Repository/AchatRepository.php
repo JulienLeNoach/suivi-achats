@@ -641,12 +641,22 @@ public function statisticPMETopVal($form)
                     ->andWhere('b.numero_ej LIKE :numero_ej')
                     ->setParameter('numero_ej', '%' . $form["numero_ej"]->getData() . '%');
             }
-            if ($form["debut_rec"]->getData() ) {
+            if ($form["debut_rec"]->getData() && $form["fin_rec"]->getData()) {
                 $queryBuilder
                     ->andWhere('b.date_saisie > :debut_rec')
                     ->andWhere('b.date_saisie < :fin_rec')
                     ->setParameter('debut_rec',  $form["debut_rec"]->getData()->format('Y-m-d') )
                     ->setParameter('fin_rec',   $form["fin_rec"]->getData()->format('Y-m-d') );
+            }
+            elseif($form["debut_rec"]->getData()){
+                $queryBuilder
+                ->andWhere('b.date_saisie > :debut_rec')
+                ->setParameter('debut_rec',  $form["debut_rec"]->getData()->format('Y-m-d') );
+            }
+            elseif($form["fin_rec"]->getData()){
+                $queryBuilder
+                ->andWhere('b.date_saisie > :fin_rec')
+                ->setParameter('fin_rec',  $form["fin_rec"]->getData()->format('Y-m-d') );
             }
         // ... Votre logique de construction de la requête ici ...
         $queryBuilder->orderBy('b.date_saisie', 'DESC')->addOrderBy('s.code_service', 'ASC')->addOrderBy('s.nom_service', 'ASC');
@@ -992,7 +1002,7 @@ public function statisticPMETopVal($form)
             
                 SELECT
                 'Délai total' AS source,
-                (DATEDIFF(date_validation, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_validation )) AS difference,
+                (DATEDIFF(date_notification, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_notification )) AS difference,
                 date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
@@ -1107,7 +1117,7 @@ public function statisticPMETopVal($form)
             
                         SELECT
                         'Délai total' AS source,
-                        (DATEDIFF(date_validation, date_sillage)) AS difference,
+                        (DATEDIFF(date_notification, date_sillage)) AS difference,
                         date_notification
                     FROM achat
                     WHERE YEAR(date_notification) = :year AND etat_achat = 2

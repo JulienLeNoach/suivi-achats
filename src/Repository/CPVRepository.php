@@ -27,7 +27,6 @@ class CPVRepository extends ServiceEntityRepository
         $queryBuilder
             ->select('cpv.libelle_cpv')
             ->addSelect('SUM(achat.montant_achat) AS somme_montants')
-            ->addSelect('cpv.mt_cpv')
             ->addSelect('cpv.mt_cpv_auto')
             ->addSelect('(cpv.mt_cpv_auto - SUM(achat.montant_achat)) AS reliquat')
             ->from('App\Entity\Achat', 'achat')
@@ -37,7 +36,7 @@ class CPVRepository extends ServiceEntityRepository
             ->setParameter('date',$date)
             ->andWhere("cpv.etat_cpv = :etat")
             ->setParameter('etat', 1)
-            ->groupBy('cpv.libelle_cpv, cpv.mt_cpv, cpv.mt_cpv_auto')
+            ->groupBy('cpv.libelle_cpv, cpv.mt_cpv_auto')
             ->orderBy('somme_montants', 'DESC');
     
         $query = $queryBuilder->getQuery();
