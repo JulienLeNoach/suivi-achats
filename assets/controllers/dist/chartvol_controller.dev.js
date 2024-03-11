@@ -57,13 +57,13 @@ function (_Controller) {
           labels: labels,
           datasets: [{
             label: 'MPPA',
-            data: datasets1,
+            data: chartDataCountMppa,
             borderWidth: 1,
             backgroundColor: 'rgb(77 104 188)',
             borderColor: 'rgb(77 104 188)'
           }, {
             label: 'MABC',
-            data: datasets2,
+            data: chartDataCountMabc,
             borderWidth: 1,
             backgroundColor: 'rgb(162 225 228)',
             borderColor: 'rgb(162 225 228)'
@@ -85,13 +85,13 @@ function (_Controller) {
           labels: labels,
           datasets: [{
             label: 'MPPA',
-            data: datasets3,
+            data: chartDataTotalMppa,
             borderWidth: 1,
             backgroundColor: 'rgb(77 104 188)',
             borderColor: 'rgb(77 104 188)'
           }, {
             label: 'MABC',
-            data: datasets4,
+            data: chartDataTotalMabc,
             borderWidth: 1,
             backgroundColor: 'rgb(162 225 228)',
             borderColor: 'rgb(162 225 228)'

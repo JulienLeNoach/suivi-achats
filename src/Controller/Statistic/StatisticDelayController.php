@@ -117,7 +117,6 @@ class StatisticDelayController extends AbstractController
  */
 public function exportExcel(Request $request, StatisticDelayService $statisticDelayService): Response
 {
-    // Traitez la requête pour obtenir les données nécessaires à l'export Excel
     // Supposons que les données sont passées via une requête GET ou POST
     $achats = $request->get('achats');
     $achats_delay_all = $request->get('achats_delay_all');

@@ -32,12 +32,7 @@ class StatisticVolValService  extends AbstractController
 
     }
 
-    // public function getCountsByDateAndType($data)
-    // {
-    //     // ... Logique de récupération des données depuis le repository ...
-    //     return $counts;
-    // }
-    public function totalPerMonth(array $result): array
+    public function purchaseStatisticsByMonth(array $result1, array $result2): array
     {
         $months = [
             1 => 'Janvier',
@@ -53,78 +48,69 @@ class StatisticVolValService  extends AbstractController
             11 => 'Novembre',
             12 => 'Décembre',
         ];
-
-        $counts = [];
-
+    
+        $purchaseData = [];
+    
         foreach ($months as $month) {
-            $counts[$month] = ['count' => 0, 'totalmontant' => 0];
+            $purchaseData[$month] = [
+                'countmppa' => 0,
+                'totalmontantmppa' => 0,
+                'countmabc' => 0,
+                'totalmontantmabc' => 0,
+                'totalcount' => 0
+            ];
         }
-
-        foreach ($result as $row) {
+    
+        foreach ($result1 as $row) {
             $month = intval($row['month']);
             $totalmontant = $row['totalmontant'];
             $count = intval($row['count']);
-            $counts[$months[$month]]['count'] += $count;
-            $counts[$months[$month]]['totalmontant'] += $totalmontant;
+            $purchaseData[$months[$month]]['countmppa'] += $count;
+            $purchaseData[$months[$month]]['totalmontantmppa'] += $totalmontant;
         }
-
-        return $counts;
+    
+        foreach ($result2 as $row) {
+            $month = intval($row['month']);
+            $totalmontant = $row['totalmontant'];
+            $count = intval($row['count']);
+            $purchaseData[$months[$month]]['countmabc'] += $count;
+            $purchaseData[$months[$month]]['totalmontantmabc'] += $totalmontant;
+        }
+    
+        foreach ($purchaseData as &$data) {
+            $data['totalcount'] = $data['countmppa'] + $data['countmabc'];
+            $data['totalmotant'] = $data['totalmontantmabc'] + $data['totalmontantmppa'];
+        }
+    
+        return $purchaseData;
     }
 
-
-    public function purchaseCountByMonth($counts1,$counts2)
+    public function arrayMapChart($counts, $dataKey,$dataKey2)
     {
-        foreach ($counts1 as $month => $data1) {
-            $data2 = $counts2[$month] ?? null;
-
-            $purchaseCountByMonth[$month] = [
-                'count1' => $data1['count'],
-                'count2' => $data2 ? $data2['count'] : 0,
-                'total'  => $data1['count'] + ($data2 ? $data2['count'] : 0)
-            ];
+        foreach ($counts as $count1) {
+            $mppa[] = $count1[$dataKey];
         }
-                return $purchaseCountByMonth;
-    }
-
-    public function purchaseTotalAmountByMonth($counts1,$counts2)
-    {
-        foreach($counts1 as $month => $data1) {
-            $data2 = $counts2[$month] ?? null;
-
-            $purchaseTotalAmountByMonth[$month] = [
-                'totalmontant1' => $data1['totalmontant'],
-                'totalmontant2' => $data2 ? $data2['totalmontant'] : 0,
-                'total' => $data1['totalmontant'] + ($data2 ? $data2['totalmontant'] : 0)
-            ];
-        }
-                return $purchaseTotalAmountByMonth;
-    }
-    public function arrayMapChart($counts1, $counts2, $dataKey)
-    {
-        foreach ($counts1 as $count1) {
-            $datasets[] = $count1[$dataKey];
-        }
-        foreach ($counts2 as $count2) {
-            $datasets2[] = $count2[$dataKey];
+        foreach ($counts as $count2) {
+            $mabc[] = $count2[$dataKey2];
         }
 
-        foreach ($counts1 as $count1) {
-            $datasetst[] = $count1[$dataKey];
+        foreach ($counts as $count1) {
+            $mppa[] = $count1[$dataKey];
         }
-        foreach ($counts2 as $count2) {
-            $datasetst2[] = $count2[$dataKey];
+        foreach ($counts as $count2) {
+            $mabc[] = $count2[$dataKey2];
         }
-        $datasets = array_map(function($value) {
+        $mppa = array_map(function($value) {
             return round($value, 2);
-        }, $datasets);
-        $datasets2 = array_map(function($value) {
+        }, $mppa);
+        $mabc = array_map(function($value) {
             return round($value, 2);
-        }, $datasets2);
+        }, $mabc);
         
-        return ['datasets' => $datasets, 'datasets2' => $datasets2];
+        return ['mppa' => $mppa, 'mabc' => $mabc];
     }
 
-    public function generateExcelFile($datasets1, $datasets2, $datasets3, $datasets4, $projectDir)
+    public function generateExcelFile($chartDataCountMppa, $chartDataCountMabc, $chartDataTotalMppa, $chartDataTotalMabc, $projectDir)
 {
     $mois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
@@ -195,15 +181,15 @@ class StatisticVolValService  extends AbstractController
     $sheet->setCellValue('O23', 'TOTAL');
 
     // Insérer les mois en première ligne
-    foreach ($mois as $index => $moi) {
+    foreach ($mois as $index => $moi) { 
         $sheet->setCellValue($col . '3', $moi);
-        $sheet->setCellValue($col . '4', $datasets1[$index % count($datasets1)]);
-        $sheet->setCellValue($col . '5', $datasets2[$index % count($datasets2)]);
-        $sheet->setCellValue($col . '6', $datasets1[$index % count($datasets1)] + $datasets2[$index % count($datasets2)]);
+        $sheet->setCellValue($col . '4', $chartDataCountMppa[$index % count($chartDataCountMppa)]);
+        $sheet->setCellValue($col . '5', $chartDataCountMabc[$index % count($chartDataCountMabc)]);
+        $sheet->setCellValue($col . '6', $chartDataCountMppa[$index % count($chartDataCountMppa)] + $chartDataCountMabc[$index % count($chartDataCountMabc)]);
         $sheet->setCellValue($col . '23', $moi); // Insérer le mois
-        $sheet->setCellValue($col . '24', $datasets3[$index % count($datasets3)]); // Valeur de datasets1
-        $sheet->setCellValue($col . '25', $datasets4[$index % count($datasets4)]); // Valeur de datasets2
-        $sheet->setCellValue($col . '26', $datasets3[$index % count($datasets3)] + $datasets4[$index % count($datasets4)]); // Valeur de datasets2
+        $sheet->setCellValue($col . '24', $chartDataTotalMppa[$index % count($chartDataTotalMppa)]); // Valeur de datasets1
+        $sheet->setCellValue($col . '25', $chartDataTotalMabc[$index % count($chartDataTotalMabc)]); // Valeur de datasets2
+        $sheet->setCellValue($col . '26', $chartDataTotalMppa[$index % count($chartDataTotalMppa)] + $chartDataTotalMabc[$index % count($chartDataTotalMabc)]); // Valeur de datasets2
         $col++; // Passer à la colonne suivante pour le mois suivant
     }
     $sheet->setCellValue('O4', '=SUM(C4:N4)');

@@ -164,18 +164,7 @@
         {% endif %}
         </a>
     </div>
-    {# <div class="d-flex">
-    <div class="w-25">
-     <form method="get" action="{{ path('app_search') }}" >
-        <label for="perPage" class="align-items-center vertical-align-middle justify-content-center d-inline-flex" >Nombre par page:</label>
-        <select name="perPage" id="perPage" onchange="this.form.submit()">
-            <option value="5" {% if perPage == 5 %}selected{% endif %}>5</option>
-            <option value="10" {% if perPage == 10 %}selected{% endif %}>10</option>
-            <option value="20" {% if perPage == 20 %}selected{% endif %}>20</option>
-        </select>
-    </form>
-    </div>
-</div> #}
+
     <div class="result-search-container">
         <div class="table-container search">
             <div id="">
@@ -219,27 +208,5 @@
 
 
 </div>
-{# <script>
-document.addEventListener('DOMContentLoaded', function() {
-    let offset = 7; // Commencer après les premiers résultats initialement chargés
-    const limit = 7;
-    const tbody = document.getElementById('achat-list-tbody');
-    const tableContainer = document.getElementById('achat-list');
 
-    tableContainer.addEventListener('scroll', function() {
-        if (tableContainer.scrollTop + tableContainer.clientHeight+1 >= tableContainer.scrollHeight) {
-
-            fetch(`/search?offset=${offset}&limit=${limit}`, { 
-                headers: { 'X-Requested-With': 'XMLHttpRequest' } 
-            })
-            .then(response => response.text())
-            .then(html => {
-                tbody.insertAdjacentHTML('beforeend', html);
-                offset += limit; // Augmenter l'offset pour la prochaine requête
-            })
-            .catch(error => console.error('Erreur:', error));
-        }
-    });
-});
-</script> #}
 {% endblock %}

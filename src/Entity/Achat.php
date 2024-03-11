@@ -272,7 +272,7 @@ private ?float $montant_achat = null;
     public function setDateNotification(?\DateTime $date_notification): self
     {
         $this->date_notification = $date_notification;
-
+        
         return $this;
     }
 

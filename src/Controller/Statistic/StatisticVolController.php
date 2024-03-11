@@ -48,27 +48,27 @@ class StatisticVolController extends AbstractController
 
         $form = $this->createForm(StatisticType::class, null, []);
         $excelForm = $this->createForm(CreateExcelType::class); 
-
+        $mppaEtat = 1;
+        $mabcEtat = 0;
+        $mppaMtTotal = [];
+        $mabcMtTotal = [];
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $mpttaEtat = 1;
-            $mabcEtat = 0;
-            $counts1 = [];
-            $counts2 = [];
-            $counts1 = $this->achatRepository->getPurchaseCountAndTotalAmount($mpttaEtat,$form);
-            $counts1 = $this->statisticService->totalPerMonth($counts1);
-            $counts2 = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat,$form);
-            $counts2 = $this->statisticService->totalPerMonth($counts2);
-            $purchaseCountByMonth = $this->statisticService->purchaseCountByMonth($counts1,$counts2);
-            $purchaseTotalAmountByMonth = $this->statisticService->purchaseTotalAmountByMonth($counts1,$counts2);
+            
+
+            $mppaMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mppaEtat,$form);
+            $mabcMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat,$form);
+            $VolValStat = $this->statisticService->purchaseStatisticsByMonth($mppaMtTotal,$mabcMtTotal);
+
             $delayVolVal = $this->achatRepository->volValDelay($form);
-            $chartData = $this->statisticService->arrayMapChart( $counts1, $counts2, 'count');
-            $chartData2 = $this->statisticService->arrayMapChart($counts1, $counts2, 'totalmontant');
-            $datasets1 = $chartData['datasets'];
-            $datasets2 = $chartData['datasets2'];
-            $datasets3 = $chartData2['datasets'];
-            $datasets4 = $chartData2['datasets2'];
+
+            $chartDataCount = $this->statisticService->arrayMapChart( $VolValStat, 'countmppa','countmabc');
+            $chartDataTotal = $this->statisticService->arrayMapChart($VolValStat, 'totalmontantmppa','totalmontantmabc');
+            $chartDataCountMppa = $chartDataCount['mppa'];
+            $chartDataCountMabc = $chartDataCount['mabc'];
+            $chartDataTotalMppa = $chartDataTotal['mppa'];
+            $chartDataTotalMabc = $chartDataTotal['mabc'];
             
             $toPDF=[
                 'criteria'=>[
@@ -80,11 +80,9 @@ class StatisticVolController extends AbstractController
                 'Formation ' =>  ($form["code_formation"]->getData() !== null) ? $form["code_formation"]->getData()->getLibelleFormation() : null,
                 'Taxe' =>  $form["tax"]->getData(),
                 ],
-                'counts1' => $counts1,
-                'counts2' => $counts2,
-                'purchaseCountByMonth' => $purchaseCountByMonth,
-                'purchaseTotalAmountByMonth' => $purchaseTotalAmountByMonth,
                 'delayVolVal'=>$delayVolVal,
+                'VolValStat' => $VolValStat,
+
             ];
             $session->set('toPDF', $toPDF);
 
@@ -92,16 +90,13 @@ class StatisticVolController extends AbstractController
                 return $this->render('statistic/index.html.twig', [
                     'form' => $form->createView(),
                     'excelForm' => $excelForm->createView(),
-                    'counts1' => $counts1,
-                    'counts2' => $counts2,
-                    'purchaseCountByMonth' => $purchaseCountByMonth,
-                    'purchaseTotalAmountByMonth' => $purchaseTotalAmountByMonth,
                     'delayVolVal'=>$delayVolVal,
-                    'datasets1' => $datasets1,
-                    'datasets2' => $datasets2,
-                    'datasets3' => $datasets3,
-                    'datasets4' => $datasets4,
+                    'chartDataCountMppa' => $chartDataCountMppa,
+                    'chartDataCountMabc' => $chartDataCountMabc,
+                    'chartDataTotalMppa' => $chartDataTotalMppa,
+                    'chartDataTotalMabc' => $chartDataTotalMabc,
                     'toPDF' => $toPDF,
+                    'VolValStat' => $VolValStat,
                 ]);
         }
 
@@ -117,11 +112,9 @@ class StatisticVolController extends AbstractController
         
         $html =  $this->renderView('statistic/stat_pdf.html.twig', [
             'criteria' => $session->get('toPDF')["criteria"],
-            'counts1' => $session->get('toPDF')["counts1"],
-            'counts2' => $session->get('toPDF')["counts2"],
-            'purchaseCountByMonth' => $session->get('toPDF')["purchaseCountByMonth"],
-            'purchaseTotalAmountByMonth' => $session->get('toPDF')["purchaseTotalAmountByMonth"],
             'delayVolVal'=>$session->get('toPDF')["delayVolVal"],
+            'VolValStat'=>$session->get('toPDF')["VolValStat"],
+
 
         ]);
         $dompdf = new Dompdf();
@@ -143,19 +136,19 @@ public function exportExcel(Request $request, StatisticVolValService $statisticS
 {
     // Traitez la requête pour obtenir les données nécessaires à l'export Excel
     // Supposons que les données sont passées via une requête GET ou POST
-    $datasets1 = $request->get('datasets1');
-    $datasets2 = $request->get('datasets2');
-    $datasets3 = $request->get('datasets3');
-    $datasets4 = $request->get('datasets4');
+    $chartDataCountMppa = $request->get('chartDataCountMppa');
+    $chartDataCountMabc = $request->get('chartDataCountMabc');
+    $chartDataTotalMppa = $request->get('chartDataTotalMppa');
+    $chartDataTotalMabc = $request->get('chartDataTotalMabc');
 
     // Convertir les données JSON en tableau PHP
-    $datasets1 = json_decode($datasets1, true);
-    $datasets2 = json_decode($datasets2, true);
-    $datasets3 = json_decode($datasets3, true);
-    $datasets4 = json_decode($datasets4, true);
+    $chartDataCountMppa = json_decode($chartDataCountMppa, true);
+    $chartDataCountMabc = json_decode($chartDataCountMabc, true);
+    $chartDataTotalMppa = json_decode($chartDataTotalMppa, true);
+    $chartDataTotalMabc = json_decode($chartDataTotalMabc, true);
 
     // Générer le fichier Excel
-    $filePath = $statisticService->generateExcelFile($datasets1, $datasets2, $datasets3, $datasets4, $this->projectDir);
+    $filePath = $statisticService->generateExcelFile($chartDataCountMppa, $chartDataCountMabc, $chartDataTotalMppa, $chartDataTotalMabc, $this->projectDir);
     return new BinaryFileResponse($filePath);
 }
 }

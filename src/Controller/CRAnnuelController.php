@@ -49,20 +49,19 @@ class CRAnnuelController extends AbstractController
         $result_achatsSumVal[]=null;
         if ($form->isSubmitted()) {
 
-            $mpttaEtat = 1;
+            $mppaEtat = 1;
             $mabcEtat = 0;
-            $counts1 = [];
-            $counts2 = [];
-            $counts1 = $this->achatRepository->getPurchaseCountAndTotalAmount($mpttaEtat,$form);
-            $counts1 = $this->statisticService->totalPerMonth($counts1);
-            $counts2 = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat,$form);
-            $counts2 = $this->statisticService->totalPerMonth($counts2);
-            $chartData = $this->statisticService->arrayMapChart( $counts1, $counts2, 'count');
-            $chartData2 = $this->statisticService->arrayMapChart($counts1, $counts2, 'totalmontant');
-            $datasets1 = $chartData['datasets'];
-            $datasets2 = $chartData['datasets2'];
-            $datasets3 = $chartData2['datasets'];
-            $datasets4 = $chartData2['datasets2'];
+            $mppaMtTotal = [];
+            $mabcMtTotal = [];
+            $mppaMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mppaEtat,$form);
+            $mabcMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat,$form);
+            $VolValStat = $this->statisticService->purchaseStatisticsByMonth($mppaMtTotal,$mabcMtTotal);
+            $chartData = $this->statisticService->arrayMapChart( $VolValStat, 'countmppa','countmabc');
+            $chartData2 = $this->statisticService->arrayMapChart($VolValStat, 'totalmontantmppa','totalmontantmabc');
+            $chartDataCountMppa = $chartData['datasets'];
+            $chartDataCountMabc = $chartData['datasets2'];
+            $chartDataTotalMppa = $chartData2['datasets'];
+            $chartDataTotalMabc = $chartData2['datasets2'];
 
             $achats_delay = $this->achatRepository->yearDelayDiff($form);
             $achats = $this->statisticDelayService->totalDelayPerMonth($achats_delay);
@@ -86,7 +85,7 @@ class CRAnnuelController extends AbstractController
                     'errorMessage' => $errorMessage,
                 ]);
             }
-            $filePath = $this->crAnnuelService->generateExcelFile($datasets1, $datasets2, $datasets3, $datasets4, $this->projectDir, $achats, $achats_delay_all,$result_achats,
+            $filePath = $this->crAnnuelService->generateExcelFile($chartDataCountMppa, $chartDataCountMabc, $chartDataTotalMppa, $chartDataTotalMabc, $this->projectDir, $achats, $achats_delay_all,$result_achats,
                                                                 $result_achats_mounts, $parameter,$result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
             return new BinaryFileResponse($filePath);
         }

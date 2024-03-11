@@ -36,27 +36,26 @@ class CPVCrudController extends AbstractCrudController
         if ($pageName === Crud::PAGE_INDEX) {
             return [
                 TextField::new('code_cpv')
-                ->setLabel('Code du CPV'),            
+                    ->setLabel('Code du CPV'),
                 TextField::new('libelle_cpv')->setLabel('Libellé du CPV'),
                 IntegerField::new('mt_cpv')->setLabel('Montant du CPV'),
             ];
         }
         if ($pageName === Crud::PAGE_NEW) {
 
-        return [
-            BooleanField::new('etat_cpv')->setLabel('Etat du CPV'),
-            TextField::new('libelle_cpv')->setLabel('Libellé du CPV'),
-            IntegerField::new('mt_cpv')->setLabel('Montant du CPV'),
-        ];
-    }
-    if ($pageName === Crud::PAGE_EDIT) {
+            return [
+                BooleanField::new('etat_cpv')->setLabel('Etat du CPV'),
+                TextField::new('libelle_cpv')->setLabel('Libellé du CPV'),
+                IntegerField::new('mt_cpv')->setLabel('Montant du CPV'),
+            ];
+        }
+        if ($pageName === Crud::PAGE_EDIT) {
 
-        return [
-            BooleanField::new('etat_cpv')->setLabel('Etat du CPV'),
-            TextField::new('libelle_cpv')->setLabel('Libellé du CPV'),
-            IntegerField    ::new('mt_cpv')->setLabel('Montant du CPV'),
-        ];
+            return [
+                BooleanField::new('etat_cpv')->setLabel('Etat du CPV'),
+                TextField::new('libelle_cpv')->setLabel('Libellé du CPV'),
+                IntegerField::new('mt_cpv')->setLabel('Montant du CPV'),
+            ];
+        }
     }
-    }
-    
 }
