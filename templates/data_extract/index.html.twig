@@ -124,7 +124,8 @@
             {{ form_row(form.etat_achat_attr) }}
             {{ form_row(form.place_attr) }}
             </div>
-            <div class="input-grp" style="flex-basis:25%;">
+            <div class="input-grp d-flex justify-content-center align-items-center" style="flex-basis:25%;">
+            {# 
             <h6 class="mt-4 ms-3 blueF">Détail fournisseur</h6>
             {{ form_row(form.ville_fournisseur_attr) }}
             {{ form_row(form.cp_fournisseur_attr) }}
@@ -134,10 +135,11 @@
             {{ form_row(form.tel_fournisseur_attr) }}
             {{ form_row(form.fax_fournisseur_attr) }}
             {{ form_row(form.mail_fournisseur_attr) }}
-            {{ form_row(form.excel)}}
-            {{ form_end(form) }}
+            {# {{ form_end(form) }} #}
             
-            </div>
+            {#  #}
+                        {{ form_row(form.excel)}} 
+</div>
         </div>
     </div>
                         {% if errorMessage is not null %}

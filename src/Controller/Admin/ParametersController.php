@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Parametres;
 use App\Form\ParametersType;
@@ -28,7 +28,6 @@ class ParametersController extends AbstractController
     public function index(Request $request,ParametresRepository $parametresRepository): Response
     {
         $parametres = $this->entityManager->getRepository(Parametres::class)->find(1);
-        // var_dump($parametres);
         $form = $this->createForm(ParametersType::class,$parametres);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

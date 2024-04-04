@@ -17,7 +17,11 @@
         <button class="fr-btn btn-achat ms-5"> 
             <a href="{{ path('app_c_p_v_new') }}" class="text-center">Ajouter un CPV</a>
         </button>
-        {% for flash_message in app.session.flashbag.get('valid') %}
+{{ form_start(form, {'attr': {'class': '', 'enctype': 'multipart/form-data'}}) }}
+        {{ form_row(form.excel_file) }}
+        <button type="submit" class="btn btn-primary">Importer</button>
+    {{ form_end(form) }}
+        {% for flash_message in app.session.flashbag.get('success') %}
         <div class="alert alert-success">
             {{ flash_message }}
         </div>

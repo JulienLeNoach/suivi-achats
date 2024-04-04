@@ -4,7 +4,7 @@ controllers:
 save_calendar_selection:
     path: /save-calendar-selection
     methods: [POST]
-    controller: App\Controller\CalendarController::saveSelection
+    controller: App\Controller\Environnement\CalendarController::saveSelection
 easyadmin:
     resource: '@EasyAdminBundle/Controller/'
     prefix: /admin
@@ -12,4 +12,4 @@ easyadmin:
 save_roles:
     path: /save_roles
     methods: [POST]
-    controller: App\Controller\RoleController::saveRoles
+    controller: App\Controller\Admin\RoleController::saveRoles

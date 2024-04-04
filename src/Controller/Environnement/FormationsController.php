@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Environnement;
 
 use App\Entity\Formations;
 use App\Form\FormationsType;
@@ -34,7 +34,7 @@ class FormationsController extends AbstractController
         }
     
         $queryBuilder->orderBy("formations.$sortField", $sortDirection); // Ajout du tri
-    
+        $queryBuilder->andWhere("formations.etat_formation = 1");
         $query = $queryBuilder->getQuery();
     
         $pagination = $paginator->paginate(

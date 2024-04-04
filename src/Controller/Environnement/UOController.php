@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Environnement;
 
 use App\Entity\UO;
 use App\Form\UOType;
@@ -32,7 +32,7 @@ class UOController extends AbstractController
             $queryBuilder->andWhere('uo.code_uo LIKE :searchTerm OR uo.libelle_uo LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
-    
+        $queryBuilder->andWhere("uo.etat_uo = 1");
         $queryBuilder->orderBy("uo.$sortField", $sortDirection); // Ajout du tri
     
         $query = $queryBuilder->getQuery();

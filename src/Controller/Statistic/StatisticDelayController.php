@@ -6,13 +6,14 @@ use Dompdf\Dompdf;
 use App\Form\StatisticType;
 use App\Form\CreateExcelType;
 use App\Repository\AchatRepository;
-use App\Service\StatisticDelayService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Service\Statistic\StatisticDelay\CreateExcelDelay;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use App\Service\Statistic\StatisticDelay\StatisticDelayService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class StatisticDelayController extends AbstractController
@@ -40,9 +41,9 @@ class StatisticDelayController extends AbstractController
         $achats[]=null;
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $achats_delay = $this->achatRepository->yearDelayDiff($form);
-            $achats = $this->statisticDelayService->totalDelayPerMonth($achats_delay);
-            $achats_delay_all = $this->achatRepository->yearDelayCount($form);
+            $achats_delay = $this->achatRepository->getYearDelayDiff($form);
+            $achats = $this->statisticDelayService->getDelayPerMonth($achats_delay);
+            $achats_delay_all = $this->achatRepository->getYearDelayCount($form);
             
         $transStat = array_filter(array_values($achats[2]), 'is_numeric');
         if (isset($achats[5]) && is_array($achats[5])) {
@@ -115,7 +116,7 @@ class StatisticDelayController extends AbstractController
 /**
  * @Route("/statistic/delay/export_excel", name="app_statistic_delay_export_excel")
  */
-public function exportExcel(Request $request, StatisticDelayService $statisticDelayService): Response
+public function exportExcel(Request $request, CreateExcelDelay $createExcelDelay): Response
 {
     // Supposons que les données sont passées via une requête GET ou POST
     $achats = $request->get('achats');
@@ -128,7 +129,7 @@ public function exportExcel(Request $request, StatisticDelayService $statisticDe
 
 
     // Générer le fichier Excel
-    $filePath = $statisticDelayService->createExcelFile($achats, $achats_delay_all);
+    $filePath = $createExcelDelay->createExcelFile($achats, $achats_delay_all);
     return new BinaryFileResponse($filePath);
 
 }

@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Statistic;
 
 use App\Form\CRAnnuelType;
 use App\Service\CRAnnuelService;
 use App\Repository\AchatRepository;
-use App\Service\StatisticDelayService;
-use App\Service\StatisticVolValService;
 use App\Repository\ParametresRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\KernelInterface;
+use App\Service\Statistic\VolVal\StatisticVolValService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Service\Statistic\StatisticDelay\StatisticDelayService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CRAnnuelController extends AbstractController
@@ -58,23 +58,23 @@ class CRAnnuelController extends AbstractController
             $VolValStat = $this->statisticService->purchaseStatisticsByMonth($mppaMtTotal,$mabcMtTotal);
             $chartData = $this->statisticService->arrayMapChart( $VolValStat, 'countmppa','countmabc');
             $chartData2 = $this->statisticService->arrayMapChart($VolValStat, 'totalmontantmppa','totalmontantmabc');
-            $chartDataCountMppa = $chartData['datasets'];
-            $chartDataCountMabc = $chartData['datasets2'];
-            $chartDataTotalMppa = $chartData2['datasets'];
-            $chartDataTotalMabc = $chartData2['datasets2'];
+            $chartDataCountMppa = $chartData['mppa'];
+            $chartDataCountMabc = $chartData['mabc'];
+            $chartDataTotalMppa = $chartData2['mppa'];
+            $chartDataTotalMabc = $chartData2['mabc'];
 
-            $achats_delay = $this->achatRepository->yearDelayDiff($form);
-            $achats = $this->statisticDelayService->totalDelayPerMonth($achats_delay);
-            $achats_delay_all = $this->achatRepository->yearDelayCount($form);
+            $achats_delay = $this->achatRepository->getYearDelayDiff($form);
+            $achats = $this->statisticDelayService->getDelayPerMonth($achats_delay);
+            $achats_delay_all = $this->achatRepository->getYearDelayCount($form);
 
-            $result_achats = $this->achatRepository->searchAchatToStat($form);
-            $result_achats_mounts = $this->achatRepository->searchAchatToStatMount($form);
+            $result_achats = $this->achatRepository->getPurchaseByType($form);
+            $result_achats_mounts = $this->achatRepository->getPurchaseByTypeMount($form);
             $parameter = $this->parametresRepository->findById(1);
 
-            $result_achatsPME = $this->achatRepository->statisticPMESum($form);
-            $result_achatsSum = $this->achatRepository->statisticPMEMonth($form);
-            $result_achatsSumVol = $this->achatRepository->statisticPMETopVol($form);
-            $result_achatsSumVal = $this->achatRepository->statisticPMETopVal($form);
+            $result_achatsPME = $this->achatRepository->getPMESum($form);
+            $result_achatsSum = $this->achatRepository->getPMEMonthSum($form);
+            $result_achatsSumVol = $this->achatRepository->getPMETopVol($form);
+            $result_achatsSumVal = $this->achatRepository->getPMETopVal($form);
             $errorMessage = null;
 
             if (empty($result_achatsSumVal)) {

@@ -5,7 +5,7 @@ use Dompdf\Dompdf;
 use App\Form\StatisticType;
 use App\Form\CreateExcelType;
 use App\Repository\AchatRepository;
-use App\Service\StatisticPMEService;
+use App\Service\Statistic\PME\CreateExcelPME;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -37,10 +37,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $result_achats = $this->achatRepository->statisticPMESum($form);
-                $result_achatsSum = $this->achatRepository->statisticPMEMonth($form);
-                $result_achatsSumVol = $this->achatRepository->statisticPMETopVol($form);
-                $result_achatsSumVal = $this->achatRepository->statisticPMETopVal($form);
+                $result_achats = $this->achatRepository->getPMESum($form);
+                $result_achatsSum = $this->achatRepository->getPMEMonthSum($form);
+                $result_achatsSumVol = $this->achatRepository->getPMETopVol($form);
+                $result_achatsSumVal = $this->achatRepository->getPMETopVal($form);
                 $toPDF=[
                     'criteria'=>[
                     'Date' =>  $form["date"]->getData(),
@@ -101,7 +101,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
         /**
  * @Route("/statistic/pme/export_excel", name="app_statistic_pme_export_excel")
  */
-public function exportExcel(Request $request, StatisticPMEService $statisticPMEService): Response
+public function exportExcel(Request $request, CreateExcelPME $createExcelPME): Response
 {
     // Traitez la requête pour obtenir les données nécessaires à l'export Excel
     // Supposons que les données sont passées via une requête GET ou POST
@@ -117,7 +117,7 @@ public function exportExcel(Request $request, StatisticPMEService $statisticPMES
     $result_achatsSumVal = json_decode($result_achatsSumVal, true);
 
     // Générer le fichier Excel
-    $filePath = $statisticPMEService->createExcelFile($result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
+    $filePath = $createExcelPME->createExcelFile($result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
     return new BinaryFileResponse($filePath);
 }
     }

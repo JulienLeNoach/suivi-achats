@@ -1,17 +1,21 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Environnement;
 
 use App\Entity\CPV;
 use App\Form\CPVType;
+use App\Service\ImportCPV;
+use App\Form\ImportExcelType;
 use App\Repository\CPVRepository;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
 #[Route('/cpv')]
@@ -19,8 +23,21 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class CPVController extends AbstractController
 {
-    #[Route('/', name: 'cpv', methods: ['GET'])]
-    public function index(CPVRepository $cPVRepository, Request $request, PaginatorInterface $paginator): Response
+
+
+    private $entityManager;
+    private $importCPV;
+
+    public function __construct(EntityManagerInterface $entityManager,ImportCPV $importCPV)
+    {
+
+        $this->entityManager = $entityManager;
+        $this->importCPV = $importCPV;
+
+    }
+
+    #[Route('/', name: 'cpv', methods: ['GET','POST'])]
+    public function index(CPVRepository $cPVRepository, Request $request,Security $security, PaginatorInterface $paginator): Response
     {
         $searchTerm = $request->query->get('search', '');
         $perPage = $request->query->get('perPage', 5);
@@ -28,12 +45,12 @@ class CPVController extends AbstractController
         $sortDirection = $request->query->get('sortDirection', 'asc');
     
         $queryBuilder = $cPVRepository->createQueryBuilder('cpv');
-    
+
         if (!empty($searchTerm)) {
             $queryBuilder->andWhere('cpv.code_cpv LIKE :searchTerm OR cpv.libelle_cpv LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
-    
+        $queryBuilder->andWhere("cpv.etat_cpv = 1");
         $queryBuilder->orderBy("cpv.$sortField", $sortDirection); // Ajout du tri
     
         $query = $queryBuilder->getQuery();
@@ -42,15 +59,23 @@ class CPVController extends AbstractController
             $request->query->getInt('page', 1),
             $perPage
         );
-    
-        return $this->render('cpv/index.html.twig', [
-            'pagination' => $pagination,
-            'searchTerm' => $searchTerm,
-            'perPage' => $perPage,
-            'sortField' => $sortField,
-            'sortDirection' => $sortDirection,
-        ]);
+        $form = $this->createForm(ImportExcelType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form->get('excel_file')->getData();
+            $this->importCPV->importDataFromExcel($request,$file);
+
     }
+    return $this->render('cpv/index.html.twig', [
+        'pagination' => $pagination,
+        'searchTerm' => $searchTerm,
+        'perPage' => $perPage,
+        'sortField' => $sortField,
+        'sortDirection' => $sortDirection,
+        'form' => $form->createView(),
+    ]);
+}
 
     #[Route('/new', name: 'app_c_p_v_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -108,4 +133,14 @@ class CPVController extends AbstractController
 
         return $this->redirectToRoute('cpv', [], Response::HTTP_SEE_OTHER);
     }
+    // /**
+    //  * @Route("/import-excel", name="import_excel")
+    //  */
+    // public function importExcel(Request $request): Response
+    // {
+       
+
+    //     return $this->render('import_excel.html.twig', [
+    //     ]);
+    // }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Achat;
 
 use App\Entity\CPV;
 use App\Entity\Achat;
@@ -10,12 +10,12 @@ use App\Form\EditAchatType;
 use App\Factory\AchatFactory;
 use App\Form\AchatSearchType;
 use App\Repository\AchatRepository;
-use App\Service\StatisticVolValService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\Statistic\VolVal\StatisticVolValService;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -46,7 +46,6 @@ class SearchController extends AbstractController
         $form = $this->createForm(AchatSearchType::class);
         $form->handleRequest($request);
     
-        $offset = $request->query->getInt('offset', 0); // Décalage pour le chargement infini
         $perPage = $request->query->get('perPage', 5);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -56,7 +55,7 @@ class SearchController extends AbstractController
 
             $currentUrl = $request->getUri(); // Récupérer l'URL actuelle
             $session->set('current_url', $currentUrl);
-            $session->set('form', $form->getData());
+            // $session->set('form', $form->getData());
             $criteria = [
                 // Les champs mappés à l'entité
                 'mappedData' => $form->getData(),
@@ -145,12 +144,19 @@ public function add(Request $request,SessionInterface $session,): Response
 
     if ($form->isSubmitted() && $form->isValid()) {
 
-        // dd($numeroAchat);
 
+        $montantAchat = $achat->getMontantAchat();
+    
+        // Formater le montant avec deux chiffres après la virgule et ",00" si nécessaire
+        $montantAchatFormatted = number_format($montantAchat, 2, '.', '');
+        
+        // Ajouter ",00" si le montant ne contient pas de décimales
+        if (strpos($montantAchatFormatted, '.') === false) {
+            $montantAchatFormatted .= ',00';
+        }        dd($achat);
         $this->entityManager->getRepository(Achat::class)->add($achat);
-        // dd($numeroAchat);
 
-        $this->addFlash('success', 'Nouvel achat n° ' . $achat->getId() . " sauvegardé");
+        $this->addFlash('success', 'Nouvel achat n° ' . $achat->getNumeroAchat() . " modifié \n\n Computation actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : ".  $achat->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : " . $achat->getCodeCpv()->getMtCpvAuto() - $achat->getMontantAchat(). "€");
         return $this->redirect("/search");
 
 
@@ -174,13 +180,13 @@ public function valid(Request $request,$id,SessionInterface $session): Response
 
         if ($form->get('Valider')->isClicked()) {
 
-        $query = $this->entityManager->getRepository(Achat::class)->valid($request, $id);
+        $this->entityManager->getRepository(Achat::class)->valid($request, $id);
         $cpvSold = $this->entityManager->getRepository(CPV::class)->find($cpvId);
         
-        $cpvSold->setMtCpv($cpvSold->getMtCpv() - $result_achat->getMontantAchat());
+        $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() - $result_achat->getMontantAchat());
         $this->entityManager->flush();
         $this->entityManager->persist($cpvSold);
-        $this->addFlash('valid', "L'achat n°" .$result_achat->getNumeroAchat(). "est validé");
+        $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé \n\n Computation actuel du CPV  '". $result_achat->getCodeCpv()->getLibelleCpv() ."' : ".  $result_achat->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $result_achat->getCodeCpv()->getLibelleCpv() ."' : " . $result_achat->getCodeCpv()->getMtCpvAuto() - $result_achat->getMontantAchat(). "€");
 
         return $this->redirect("/search");
         }
@@ -210,7 +216,7 @@ public function reint($id, Request $request,SessionInterface $session): Response
     $currentUrl = $session->get('current_url');
     $query = $this->entityManager->getRepository(Achat::class)->reint($id);
 
-            $this->addFlash('success', 'Achat n° ' . $id . " réintégré");
+            $this->addFlash('success', 'Achat n° ' . $query->getNumeroAchat() . " réintégré \n\n Computation actuel du CPV  '". $query->getCodeCpv()->getLibelleCpv() ."' : ".  $query->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $query->getCodeCpv()->getLibelleCpv() ."' : " . $query->getCodeCpv()->getMtCpvAuto() - $query->getMontantAchat(). "€");
 
 
     return $this->redirect($currentUrl);
@@ -226,10 +232,9 @@ public function edit(Request $request, $id, Achat $achat,  AchatRepository $acha
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-        dump($achat);
         $achatRepository->edit($achat, true);
 
-        $this->addFlash('success', 'Achat n° ' . $id . " modifié");
+        $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . " modifié \n\n Computation actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : ".  $achat->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : " . $achat->getCodeCpv()->getMtCpvAuto() - $achat->getMontantAchat(). "€");
         return $this->redirect($currentUrl);
     }
     return $this->render('achat/edit_achat_id.html.twig', [

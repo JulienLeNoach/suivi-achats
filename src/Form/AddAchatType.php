@@ -16,6 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -82,9 +83,11 @@ public function __construct(Security $security)
                 'data' => '1'
 
             ])
-            ->add('montant_achat', IntegerType::class, [
+            ->add('montant_achat', NumberType::class, [
                 'required' => true,
                 'label' => false,
+                // 'scale' => 2, // Définit le nombre de chiffres après la virgule
+                // 'html5' => true, // Utilise les fonctionnalités HTML5 pour le champ
                 'attr' => ['class' => 'fr-input'], 
                 'label_attr' => ['class' => 'fr-label']
             ])
@@ -195,6 +198,7 @@ public function __construct(Security $security)
     {
         $resolver->setDefaults([
             'data_class' => Achat::class    ,
+            'attr' => ['class' => 'fr-form'],
         ]);
     }
 }

@@ -18,6 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -97,7 +98,7 @@ class EditAchatType extends AbstractType
                 'attr' => ['class' => 'fr-input'], 
 
             ])
-            ->add('montant_achat', IntegerType::class, [
+            ->add('montant_achat', NumberType::class, [
                 'required' => true,
                 'label' => "Montant de l'achat",
                 'attr' => ['class' => 'fr-input'], 

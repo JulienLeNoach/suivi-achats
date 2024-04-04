@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Statistic;
 
 use App\Entity\Achat;
 use App\Form\DataExtractType;
@@ -43,9 +43,11 @@ class DataExtractController extends AbstractController
         $achats = [];
         $errorMessage = null;
 
-        if($form->isSubmitted() && $form->isValid()){
+        if($form->isSubmitted()  ){
+            dump("test");
             $achats = $this->entityManager->getRepository(Achat::class)->extractSearchAchat($form)->getResult();
             if (empty($achats)) {
+                dump("test");
                 $errorMessage = 'Aucun résultat pour cette recherche.';
                 return $this->render('data_extract/index.html.twig', [
                     'form' => $form->createView(),

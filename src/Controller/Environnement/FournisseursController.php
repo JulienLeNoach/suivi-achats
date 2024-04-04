@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Environnement;
 
 use App\Entity\Fournisseurs;
 use App\Form\FournisseursType;
@@ -32,7 +32,7 @@ class FournisseursController extends AbstractController
             $queryBuilder->andWhere('fournisseurs.num_siret LIKE :searchTerm OR fournisseurs.nom_fournisseur LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
-    
+        $queryBuilder->andWhere("fournisseurs.etat_fournisseur = 1");
         $queryBuilder->orderBy("fournisseurs.$sortField", $sortDirection); // Ajout du tri
     
         $query = $queryBuilder->getQuery();

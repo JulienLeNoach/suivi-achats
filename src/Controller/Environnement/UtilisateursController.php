@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Environnement;
 
 use App\Entity\Utilisateurs;
 use App\Form\UtilisateursType;
@@ -32,7 +32,7 @@ class UtilisateursController extends AbstractController
             $queryBuilder->andWhere('utilisateurs.nom_utilisateur LIKE :searchTerm OR utilisateurs.trigram LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
-    
+        $queryBuilder->andWhere("utilisateurs.etat_utilisateur = 1"); // Ajout du tri
         $queryBuilder->orderBy("utilisateurs.$sortField", $sortDirection); // Ajout du tri
     
         $query = $queryBuilder->getQuery();

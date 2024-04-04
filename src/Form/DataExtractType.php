@@ -419,70 +419,70 @@ class DataExtractType extends AbstractType
                 'mapped' => false,
                 'data' => true,
             ])
-            ->add('ville_fournisseur_attr', CheckboxType::class, [
-                'label'    => 'Ville Fournisseur',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'],
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
-            ->add('cp_fournisseur_attr', CheckboxType::class, [
-                'label'    => 'CP Fournisseur',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'], 
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
-            ->add('pme_fournisseurs_attr', CheckboxType::class, [
-                'label'    => 'PME (O/N) ?',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'], 
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
-            ->add('code_client_fournisseur_attr', CheckboxType::class, [
-                'label'    => 'Code client fournisseur',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'],
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
-            ->add('chorus_fournisseur_attr', CheckboxType::class, [
-                'label'    => 'N° Chorus fournisseur',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'],
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
-            ->add('tel_fournisseur_attr', CheckboxType::class, [
-                'label'    => 'Tel. fournisseur',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'],
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
-            ->add('fax_fournisseur_attr', CheckboxType::class, [
-                'label'    => 'Fax fournisseur',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'],
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
-            ->add('mail_fournisseur_attr', CheckboxType::class, [
-                'label'    => 'Mail fournisseur',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'],
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
+            // ->add('ville_fournisseur_attr', CheckboxType::class, [
+            //     'label'    => 'Ville Fournisseur',
+            //     'required' => false,
+            //     'attr' => ['class' => 'ms-3'],
+            //     'row_attr' => ['class' => 'p-3'],
+            //     'mapped' => false,
+            //     'data' => true,
+            // ])
+            // ->add('cp_fournisseur_attr', CheckboxType::class, [
+            //     'label'    => 'CP Fournisseur',
+            //     'required' => false,
+            //     'attr' => ['class' => 'ms-3'], 
+            //     'row_attr' => ['class' => 'p-3'],
+            //     'mapped' => false,
+            //     'data' => true,
+            // ])
+            // ->add('pme_fournisseurs_attr', CheckboxType::class, [
+            //     'label'    => 'PME (O/N) ?',
+            //     'required' => false,
+            //     'attr' => ['class' => 'ms-3'], 
+            //     'row_attr' => ['class' => 'p-3'],
+            //     'mapped' => false,
+            //     'data' => true,
+            // ])
+            // ->add('code_client_fournisseur_attr', CheckboxType::class, [
+            //     'label'    => 'Code client fournisseur',
+            //     'required' => false,
+            //     'attr' => ['class' => 'ms-3'],
+            //     'row_attr' => ['class' => 'p-3'],
+            //     'mapped' => false,
+            //     'data' => true,
+            // ])
+            // ->add('chorus_fournisseur_attr', CheckboxType::class, [
+            //     'label'    => 'N° Chorus fournisseur',
+            //     'required' => false,
+            //     'attr' => ['class' => 'ms-3'],
+            //     'row_attr' => ['class' => 'p-3'],
+            //     'mapped' => false,
+            //     'data' => true,
+            // ])
+            // ->add('tel_fournisseur_attr', CheckboxType::class, [
+            //     'label'    => 'Tel. fournisseur',
+            //     'required' => false,
+            //     'attr' => ['class' => 'ms-3'],
+            //     'row_attr' => ['class' => 'p-3'],
+            //     'mapped' => false,
+            //     'data' => true,
+            // ])
+            // ->add('fax_fournisseur_attr', CheckboxType::class, [
+            //     'label'    => 'Fax fournisseur',
+            //     'required' => false,
+            //     'attr' => ['class' => 'ms-3'],
+            //     'row_attr' => ['class' => 'p-3'],
+            //     'mapped' => false,
+            //     'data' => true,
+            // ])
+            // ->add('mail_fournisseur_attr', CheckboxType::class, [
+            //     'label'    => 'Mail fournisseur',
+            //     'required' => false,
+            //     'attr' => ['class' => 'ms-3'],
+            //     'row_attr' => ['class' => 'p-3'],
+            //     'mapped' => false,
+            //     'data' => true,
+            // ])
             ->add('excel', SubmitType::class, [
                 'attr' => [
                     'class' => 'fr-btn '

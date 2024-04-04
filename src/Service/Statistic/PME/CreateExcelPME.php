@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Service;
+namespace App\Service\Statistic\PME;
 
 
 
@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class StatisticPMEService  extends AbstractController
+class CreateExcelPME  extends AbstractController
 {
     private $projectDir;
 

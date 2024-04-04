@@ -8,12 +8,12 @@ use App\Form\CreateExcelType;
 use App\Repository\AchatRepository;
 use App\Repository\ParametresRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Service\StatisticTypeMarcheService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Service\Statistic\Type\StatisticTypeMarcheService;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -42,8 +42,8 @@ class StatisticTypeMarcheController extends AbstractController
         $form = $this->createForm(StatisticType::class, null, []);
 
         $form->handleRequest($request);
-        $result_achats = $this->achatRepository->searchAchatToStat($form);
-        $result_achats_mounts = $this->achatRepository->searchAchatToStatMount($form);
+        $result_achats = $this->achatRepository->getPurchaseByType($form);
+        $result_achats_mounts = $this->achatRepository->getPurchaseByTypeMount($form);
         
         $parameter = $this->parametresRepository->findById(1);
         $excelForm = $this->createForm(CreateExcelType::class); 
@@ -51,8 +51,8 @@ class StatisticTypeMarcheController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $result_achats = $this->achatRepository->searchAchatToStat($form);
-            $result_achats_mounts = $this->achatRepository->searchAchatToStatMount($form);
+            $result_achats = $this->achatRepository->getPurchaseByType($form);
+            $result_achats_mounts = $this->achatRepository->getPurchaseByTypeMount($form);
             $parameter = $this->parametresRepository->findById(1);
             $toPDF=[
                 'criteria'=>[

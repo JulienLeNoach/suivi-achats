@@ -109,12 +109,12 @@ class Achat
  * @ORM\Column(type="float", nullable=true)
  * @Groups({"achat:list", "achat:item"})
  * @Assert\Regex(
- *     pattern="/^\d+(\.\d+)?$/",
+ *     pattern="/^\d+(?:[\.,]\d+)?$/",
  *     message="Le champ doit contenir uniquement des chiffres positifs et peut inclure un point pour les décimales."
  * )
  * @Assert\Length(
- *     max=10,
- *     maxMessage="Le champ ne peut pas dépasser 10 caractères."
+ *     max=13,
+ *     maxMessage="Le champ ne peut pas dépasser 13 caractères au total."
  * )
  */
 #[ORM\Column]
@@ -131,7 +131,7 @@ private ?float $montant_achat = null;
  * @Assert\Length(
  *     max=400,
  *     maxMessage="L'observation ne doit pas dépasser 400 caractères."
- * )
+ * )    
  */
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['achat:list', 'achat:item'])]

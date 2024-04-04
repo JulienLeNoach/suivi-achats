@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Service;
+namespace App\Service\Statistic\Type;
 
 
 use PhpOffice\PhpSpreadsheet\Style\Fill;

@@ -15,12 +15,13 @@ class RoleType extends AbstractType
         $builder
         ->add('nom_connexion', EntityType::class, [
             'class' => Utilisateurs::class,
+            'placeholder'=>'Veuillez séléctionnez un utilisateur',
             'required' => false,
-            'label' => "Nom d'utilisateur",
+            'label' => false,
             // 'autocomplete' => true,
             'attr' => ['data-action' => 'change->role#getRoles',
-            'class' => 'fr-input '],
-                'label_attr' => ['class' => 'fr-label'],
+            'class' => 'fr-input mb-3'],
+                'label_attr' => ['class' => 'fr-label '],
                     ])
         ;
     }

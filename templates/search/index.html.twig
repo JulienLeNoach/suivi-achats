@@ -120,7 +120,7 @@
 
     {% for flash_message in app.session.flashbag.get('success') %}
     <div class="alert alert-success">
-        {{ flash_message }}
+        {{ flash_message |nl2br}}
     </div>
     {% endfor %}
     {% if achats is  defined  %}

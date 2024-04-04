@@ -8,12 +8,13 @@ use Dompdf\Dompdf;
 use App\Form\StatisticType;
 use App\Form\CreateExcelType;
 use App\Repository\AchatRepository;
-use App\Service\StatisticVolValService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\KernelInterface;
+use App\Service\Statistic\VolVal\CreateExcelVolVal;
+use App\Service\Statistic\VolVal\StatisticVolValService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -61,7 +62,7 @@ class StatisticVolController extends AbstractController
             $mabcMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat,$form);
             $VolValStat = $this->statisticService->purchaseStatisticsByMonth($mppaMtTotal,$mabcMtTotal);
 
-            $delayVolVal = $this->achatRepository->volValDelay($form);
+            $delayVolVal = $this->achatRepository->getVolValDelay($form);
 
             $chartDataCount = $this->statisticService->arrayMapChart( $VolValStat, 'countmppa','countmabc');
             $chartDataTotal = $this->statisticService->arrayMapChart($VolValStat, 'totalmontantmppa','totalmontantmabc');
@@ -132,7 +133,7 @@ class StatisticVolController extends AbstractController
 /**
  * @Route("/statistic/vol/export_excel", name="app_statistic_vol_export_excel")
  */
-public function exportExcel(Request $request, StatisticVolValService $statisticService): Response
+public function exportExcel(Request $request,CreateExcelVolVal $createExcelVolVal): Response
 {
     // Traitez la requête pour obtenir les données nécessaires à l'export Excel
     // Supposons que les données sont passées via une requête GET ou POST
@@ -148,7 +149,7 @@ public function exportExcel(Request $request, StatisticVolValService $statisticS
     $chartDataTotalMabc = json_decode($chartDataTotalMabc, true);
 
     // Générer le fichier Excel
-    $filePath = $statisticService->generateExcelFile($chartDataCountMppa, $chartDataCountMabc, $chartDataTotalMppa, $chartDataTotalMabc, $this->projectDir);
+    $filePath = $createExcelVolVal->generateExcelFile($chartDataCountMppa, $chartDataCountMabc, $chartDataTotalMppa, $chartDataTotalMabc, $this->projectDir);
     return new BinaryFileResponse($filePath);
 }
 }

@@ -61,7 +61,7 @@ class AchatRepository extends ServiceEntityRepository
 
     return $criteria;
 }
- public function searchAchatToStat($form)
+ public function getPurchaseByType($form)
 {
     $criteria = $this->extractCriteriaFromForm($form);
 
@@ -97,7 +97,7 @@ class AchatRepository extends ServiceEntityRepository
 }
 
 
-public function searchAchatToStatMount($form)
+public function getPurchaseByTypeMount($form)
 {
     $criteria = $this->extractCriteriaFromForm($form);
 
@@ -126,7 +126,7 @@ public function searchAchatToStatMount($form)
 
     return $achats;
 }
-public function statisticPMESum($form)
+public function getPMESum($form)
 {
     $criteria = $this->extractCriteriaFromForm($form);
 
@@ -162,7 +162,7 @@ public function statisticPMESum($form)
 
     return $achats;
 }
-public function statisticPMEMonth($form)
+public function getPMEMonthSum($form)
 {
     $criteria = $this->extractCriteriaFromForm($form);
 
@@ -194,7 +194,7 @@ public function statisticPMEMonth($form)
 
     return $achats;
 }
-public function statisticPMETopVol($form)
+public function getPMETopVol($form)
 {
     $criteria = $this->extractCriteriaFromForm($form);
 
@@ -223,7 +223,7 @@ public function statisticPMETopVol($form)
 
     return $achats;
 }
-public function statisticPMETopVal($form)
+public function getPMETopVal($form)
 {
     $criteria = $this->extractCriteriaFromForm($form);
 
@@ -549,23 +549,14 @@ public function statisticPMETopVal($form)
                 $selectFields[] = $form['montant_ttc_attr']->getData() == true ?  $queryBuilder->addSelect('(b.montant_achat * (t.tva_taux / 100) + b.montant_achat) montant_ttc') : null;
             }
 
-            if ($form['chorus_fournisseur_attr']->getData() == true || $form['chorus_fournisseur_attr']->getData() == true ||  $form['code_client_fournisseur_attr']->getData() == true ||  $form['ville_fournisseur_attr']->getData() == true 
-            ||  $form['cp_fournisseur_attr']->getData() == true||  $form['pme_fournisseurs_attr']->getData() == true ||  $form['tel_fournisseur_attr']->getData() == true 
-            ||  $form['fax_fournisseur_attr']->getData() == true||  $form['mail_fournisseur_attr']->getData() == true||  $form['siret_fournisseur_attr']->getData() == true||  $form['nom_fournisseur_attr']->getData() == true ) {
+            if (  $form['siret_fournisseur_attr']->getData() == true||  $form['nom_fournisseur_attr']->getData() == true ) {
 
                 $queryBuilder->leftJoin('b.num_siret', 'f'); // Jointure avec la table 'fournisseurs'
     
                
-                $form['ville_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.ville') : null;
-                $form['code_client_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.code_client') : null;
-                $form['cp_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.code_postal') : null;
-                $form['pme_fournisseurs_attr']->getData() == true ? $queryBuilder->addSelect('f.pme') : null;
-                $form['tel_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.tel') : null;
-                $form['fax_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.FAX') : null;
-                $form['mail_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.mail') : null;
+
                 $form['siret_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.num_siret') : null;
                 $form['nom_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.nom_fournisseur') : null;
-                $form['chorus_fournisseur_attr']->getData() == true ? $queryBuilder->addSelect('f.num_chorus_fournisseur') : null;
 
                 
             }
@@ -722,7 +713,7 @@ public function statisticPMETopVal($form)
         return $result;
     }
    
-    public function yearDelayDiff($form)
+    public function getYearDelayDiff($form)
     {
         $criteria = $this->extractCriteriaFromForm($form);
 
@@ -897,10 +888,9 @@ public function statisticPMETopVal($form)
             $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
             $achats=$resultSet->fetchAllAssociative();
            
-            // dd($achats);
             return $achats;
         }
-        public function yearDelayCount($form)
+        public function getYearDelayCount($form)
         {
             $criteria = $this->extractCriteriaFromForm($form);
 
@@ -1147,7 +1137,7 @@ public function statisticPMETopVal($form)
                 return $achats;
             }
 
-            public function volValDelay($form)
+            public function getVolValDelay($form)
             {
                 $criteria = $this->extractCriteriaFromForm($form);
             

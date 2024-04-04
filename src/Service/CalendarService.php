@@ -21,7 +21,7 @@ class CalendarService  extends AbstractController
             'user_id' => $calendarEvent->getUserId(),
             'start' => $calendarEvent->getStart()->format('Y-m-d\TH:i:s'),
             'backgroundColor' => $calendarEvent->getBackgroundColor(),
-        ];
+        ]; 
     }, $calendarEvents);
 }
 }

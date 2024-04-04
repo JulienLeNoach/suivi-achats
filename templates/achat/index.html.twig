@@ -18,11 +18,11 @@
             <a href="{{ path('app_u_o_new') }}" class="text-center">Ajouter a</a>
             
         </button>
-        {% for flash_message in app.session.flashbag.get('valid') %}
+        {# {% for flash_message in app.session.flashbag.get('valid') %}
         <div class="alert alert-success">
-            {{ flash_message }}
+            {{ flash_message|nl2br }}
         </div>
-        {% endfor %}
+        {% endfor %} #}
     </div>
     <div class="d-flex">
     <div class="w-75">
@@ -47,7 +47,7 @@
     </div>
 </div>
     <table >
-        <thead>            {{dump(pagination)}}
+        <thead>            
 
             <tr>
                 <th>N° Chrono <a href="{{ path('app_achat_index', {'sortField': 'numero_achat', 'sortDirection': sortField == 'numero_achat' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></span></a></th>
@@ -70,7 +70,7 @@
                 <td>{{ achat.codeFormation.libelleFormation }}</td>
                 <td>{{ achat.objetAchat }}</td>
                 <td>{{ achat.numSiret.nomFournisseur }}</td>
-                <td>{{ achat.montantAchat|round(2  , 'floor') }}</td>
+                <td>{{ achat.montantAchat }}</td>
 <td>
    {% if achat.etatAchat == 0 %}En cours{% elseif achat.etatAchat == 1 %}Annulé{% elseif achat.etatAchat == 2 %}Validé{% endif %}
 </td>                

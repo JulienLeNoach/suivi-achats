@@ -10,8 +10,13 @@
                 <td>{{ achat.codeFormation.libelleFormation }}</td>
                 <td>{{ achat.objetAchat}}</td>
                 <td>{{ achat.numSiret.nomFournisseur }}</td>
-                    <td >{{ achat.montantAchat|round(2  , 'floor') }}</td>
-                <td class="etat">
+            {% set montant = achat.montantAchat|replace({'.' : ','}) %}
+            {% set parts = montant|split(',') %}
+            {% if parts|length > 1 and parts[1]|length == 1 %}
+                {% set montant = montant ~ '0' %}
+            {% endif %}
+            <td>{{ montant ~ (parts|length == 1 ? ',00' : '') }}</td>
+            </td>                <td class="etat">
                     {% if achat.etatAchat == 0 %}En cours{% elseif achat.etatAchat == 1 %}Annulé{% elseif achat.etatAchat == 2 %}Validé{% endif %}
                 </td>
             </tr>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Statistic;
 
 use Dompdf\Dompdf;
 use App\Entity\CPV;
@@ -50,16 +50,14 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
             $form = $this->createForm(CumulCPVType::class);
             $form->handleRequest($request);
             $result_cpv= null;
-            $page = $request->query->get('page', 1); 
             $errorMessage = null;
 
-            $limit = 7; // Limite pour le nombre d'achats à charger
             $offset = $request->query->getInt('offset', 0); // Décalage pour le chargement infini
             $alertValue = $form["alertValue"]->getData();
             if ($form->isSubmitted() && $form->isValid()) {
                 $criteriaCPV=[
                     'alertValue' =>  $form["alertValue"]->getData(),
-                'date' => $form->get('date')->getData(),
+                    'date' => $form->get('date')->getData(),
                 ];
                 $session->set('criteriaCPV', $criteriaCPV);
 
