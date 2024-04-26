@@ -44,10 +44,8 @@ class DataExtractController extends AbstractController
         $errorMessage = null;
 
         if($form->isSubmitted()  ){
-            dump("test");
             $achats = $this->entityManager->getRepository(Achat::class)->extractSearchAchat($form)->getResult();
             if (empty($achats)) {
-                dump("test");
                 $errorMessage = 'Aucun résultat pour cette recherche.';
                 return $this->render('data_extract/index.html.twig', [
                     'form' => $form->createView(),

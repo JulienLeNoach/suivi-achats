@@ -43,9 +43,6 @@ class ImportCPV  extends AbstractController
             // Récupérer les données et les enregistrer en base de données
             for ($rowIndex; $rowIndex <= $highestRow; $rowIndex++) {
                 $rowData = $worksheet->rangeToArray('B' . $rowIndex . ':' . 'Z' . $rowIndex, NULL, TRUE, FALSE)[0];
-
-
-
                 $entity = new CPV();
                 $entity->setCodeCpv($rowData[0]);
                 $entity->setLibelleCpv($rowData[1]);

@@ -33,11 +33,11 @@
             <div class="d-flex">
         <div class="d-flex flex-column me-3 w-50">
             <label for="val" class="fr-label">Date de validation</label>
-            <input class="fr-input" size="15" type="text" id="valbox" name="val" value="{{result_achat.dateValidation | join ('') | date('Y/m/d')}}">
+            <input class="fr-input" size="15" type="text" id="valbox" name="val" value="{{result_achat.dateValidation | join ('') | date('d/m/y')}}">
         </div>
         <div class="d-flex flex-column me-3 w-50" >
             <label for="val" class="fr-label">Date de notification</label>
-            <input class="fr-input" size="15" type="text" id="notbox" name="not" value="{{result_achat.dateNotification | join ('') | date('Y/m/d')}}">
+            <input class="fr-input" size="15" type="text" id="notbox" name="not" value="{{result_achat.dateNotification | join ('') | date('d/m/y')}}">
         </div>
         </div>
         <div class="d-flex flex-column">

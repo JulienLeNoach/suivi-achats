@@ -65,7 +65,6 @@ class CPVController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $form->get('excel_file')->getData();
             $this->importCPV->importDataFromExcel($request,$file);
-
     }
     return $this->render('cpv/index.html.twig', [
         'pagination' => $pagination,

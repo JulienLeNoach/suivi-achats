@@ -1,3 +1,4 @@
+
     
     <h6 class="blueF">Activité en volume</h6>
     <table id='tableCheck'>
@@ -84,28 +85,31 @@
 
               <tbody>
 
-        <tr>
-          <th>MPPA</th>
-          {% for month, data in VolValStat %}
-          {% set MtMppa = MtMppa + data['totalmontantmppa'] %}
-          <td>{{ data['totalmontantmppa'] | number_format(2, '.', ' ')}}</td>
-          {% endfor %}
-          <td>{{MtMppa}}</td>
-        </tr>
-        <tr>
-          <th>MABC</th>
-          {% for month, data in VolValStat %}
-          {% set MtMabc = MtMabc + data['totalmontantmabc'] %}
-          <td>{{ data['totalmontantmabc'] | number_format(2, '.', ' ')}}</td>
-          {% endfor %}
-          <td>{{MtMabc}}</td>
-        </tr>
-        <tr>
-          <th>TOTAL</th>
-          {% for month, data in VolValStat %}
-          <td>{{ data['totalmotant'] | number_format(2, '.', ' ')}}</td>
-          {% endfor %}
-          <td>{{ MtMppa + MtMabc }}</td>
-        </tr>
+<tr>
+    <th>MPPA</th>
+    {% set totalMtMppa = 0 %}
+    {% for month, data in VolValStat %}
+        {% set totalMtMppa = totalMtMppa + data['totalmontantmppa'] %}
+        <td>{{ data['totalmontantmppa']|number_format(2, '.', ' ') }}</td>
+    {% endfor %}
+    <td>{{ totalMtMppa|number_format(2, '.', ' ') }}</td>
+</tr>
+<tr>
+    <th>MABC</th>
+    {% set totalMtMabc = 0 %}
+    {% for month, data in VolValStat %}
+        {% set totalMtMabc = totalMtMabc + data['totalmontantmabc'] %}
+        <td>{{ data['totalmontantmabc']|number_format(2, '.', ' ') }}</td>
+    {% endfor %}
+    <td>{{ totalMtMabc|number_format(2, '.', ' ') }}</td>
+</tr>
+<tr>
+    <th>TOTAL</th>
+    {% for month, data in VolValStat %}
+        <td>{{ data['totalmotant']|number_format(2, '.', ' ') }}</td>
+    {% endfor %}
+    <td>{{ (totalMtMppa + totalMtMabc)|number_format(2, '.', ' ') }}</td>
+</tr>
+
       </tbody>
     </table>

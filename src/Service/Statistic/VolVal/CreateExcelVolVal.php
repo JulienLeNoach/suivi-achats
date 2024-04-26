@@ -15,6 +15,7 @@ use PhpOffice\PhpSpreadsheet\Chart\Legend;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Symfony\Component\HttpKernel\KernelInterface;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
@@ -47,7 +48,12 @@ class CreateExcelVolVal  extends AbstractController
     ->setBold(true)
     ->setSize(18)
     ->setColor(new Color(Color::COLOR_RED));
-
+    $spreadsheet->getActiveSheet()->getStyle('C4:O6')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+    $spreadsheet->getActiveSheet()->getStyle('C24:O26')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+    
+    // Définir le style de format de nombre pour les cellules du total
+    $spreadsheet->getActiveSheet()->getStyle('O4:O6')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+    $spreadsheet->getActiveSheet()->getStyle('O24:O26')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
     $col = 'C'; // Commencez à partir de la colonne E pour les données
     foreach (range('B', 'Q') as $columnID) {
         $sheet->getColumnDimension($columnID)->setWidth(15); // Définir la largeur à 15 pour chaque colonne

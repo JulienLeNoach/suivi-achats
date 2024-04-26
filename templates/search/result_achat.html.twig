@@ -36,7 +36,7 @@
                 </div>
                 <div class="d-flex flex-column">
                     <label for="mtn" class="fr-label">Montant achat HT</label>
-                    <input type="text" id="mtn" class="fr-input" value="{{result_achat.montantAchat|round(2  , 'floor') }}" disabled>
+                    <input type="text" id="mtn" class="fr-input" value="{{result_achat.montantAchat|number_format(2, '.', '') }}" disabled>
                 </div>
 
 
@@ -49,17 +49,17 @@
                 <div class="d-flex flex-column">
                     <label for="sil" class="fr-label">Date sillage</label>
                     <input type="text" id="sil" class="fr-input"
-                        value="{{result_achat.dateSillage | join ('') | date('Y/m/d')}}" disabled>
+                        value="{{result_achat.dateSillage | join ('') | date('d/m/y')}}" disabled>
                 </div>
                 <div class="d-flex flex-column">
                     <label for="chor" class="fr-label">Date commande CHORUS</label>
                     <input type="text" id="chor" class="fr-input"
-                        value="{{result_achat.dateCommandeChorus | join ('') | date('Y/m/d')}}" disabled>
+                        value="{{result_achat.dateCommandeChorus | join ('') | date('d/m/y')}}" disabled>
                 </div>
                 <div class="d-flex flex-column">
                     <label for="val" class="fr-label">Date de validation de l'achat</label>
                     <input type="text" id="val" class="fr-input"
-                        value="{{result_achat.dateValidation | join ('') | date('Y/m/d')}}" disabled>
+                        value="{{result_achat.dateValidation | join ('') | date('d/m/y')}}" disabled>
                 </div>
                 <div class="d-flex flex-column">
                     <label for="tva" class="fr-label">TVA</label>

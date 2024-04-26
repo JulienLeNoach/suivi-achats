@@ -153,10 +153,10 @@ public function add(Request $request,SessionInterface $session,): Response
         // Ajouter ",00" si le montant ne contient pas de décimales
         if (strpos($montantAchatFormatted, '.') === false) {
             $montantAchatFormatted .= ',00';
-        }        dd($achat);
+        }       
         $this->entityManager->getRepository(Achat::class)->add($achat);
 
-        $this->addFlash('success', 'Nouvel achat n° ' . $achat->getNumeroAchat() . " modifié \n\n Computation actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : ".  $achat->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : " . $achat->getCodeCpv()->getMtCpvAuto() - $achat->getMontantAchat(). "€");
+        $this->addFlash('success', 'Nouvel achat n° ' . $achat->getNumeroAchat() . " ajouté \n\n Computation actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : ".  $achat->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : " . $achat->getCodeCpv()->getMtCpvAuto() - $achat->getMontantAchat(). "€");
         return $this->redirect("/search");
 
 

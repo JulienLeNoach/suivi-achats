@@ -153,7 +153,9 @@ class DataExtractType extends AbstractType
                 'label' => false,
                 'mapped' => false,
                 'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']
+                'label_attr' => ['class' => 'fr-label'],
+                'empty_data' => '0'
+
             ])
             ->add('debut_rec', DateType::class, [
                 'required' => false,
