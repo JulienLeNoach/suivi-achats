@@ -33,13 +33,13 @@ Saisir un achat
                     {{ form_row(form.date_sillage) }}
                 </div>
                 <div class="w-50 me-3">
-                    <label for="add_achat_date_commande_chorus">Date de commande de CF</label>
+                    <label for="add_achat_date_commande_chorus">Date de création CF</label>
                     {{ form_row(form.date_commande_chorus) }}
                 </div>
             </div>
             <div class="d-flex">
                 <div class="w-50 me-3">
-                    <label for="add_achat_date_valid_inter">Date validation par le RUO</label>
+                    <label for="add_achat_date_valid_inter">Date de dernier validateur</label>
                     {{ form_row(form.date_valid_inter) }}
                 </div>
                 <div class="w-50 me-3">
@@ -66,10 +66,10 @@ Saisir un achat
             {{ form_row(form.code_formation) }}
             <label for="add_achat_tva_ident">TVA</label>
             {{ form_row(form.tva_ident)}}
+            {{ form_errors(form.tva_ident) }}
         </div>
         <div class="input-grp" style="flex-basis:33%;">
-            {{ form_row(form.place) }}
-            {{ form_row(form.devis)}}
+
             {{ form_row(form.type_marche)}}
 
         </div>

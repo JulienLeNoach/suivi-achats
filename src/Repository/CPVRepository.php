@@ -43,5 +43,38 @@ class CPVRepository extends ServiceEntityRepository
     
         return $query;
     }
+    public function getTotalMontantCPV($cpvId,$id)
+    {
+        $entityManager = $this->getEntityManager();
+        
+        // Extraire l'année de la date_saisie pour le cpvId spécifique
+        $yearQuery = $entityManager->createQueryBuilder()
+            ->select('YEAR(achat.date_saisie) AS year')
+            ->from('App\Entity\Achat', 'achat')
+            ->where('achat.code_cpv = :cpvId')
+            ->andWhere('achat.id = :achatId')
+            ->setParameter('cpvId', $cpvId)
+            ->setParameter('achatId', $id)
+            ->setMaxResults(1)
+            ->getQuery();
+    
+        // Obtenir l'année de la date_saisie
+        $year = $yearQuery->getSingleScalarResult();
+        // Construire la requête principale avec l'année extraite
+        $queryBuilder = $entityManager->createQueryBuilder();
+        $queryBuilder
+            ->select('SUM(achat.montant_achat) AS computation, cpv.mt_cpv_auto AS mt_cpv, cpv.mt_cpv_auto - SUM(achat.montant_achat) AS reliquat')
+            ->from('App\Entity\Achat', 'achat')
+            ->join('achat.code_cpv', 'cpv')
+            ->where('cpv.id = :cpvId')
+            ->andWhere('YEAR(achat.date_saisie) = :year')
+            ->setParameter('cpvId', $cpvId)
+            ->setParameter('year', $year);
+    
+        // Obtenir le résultat final
+        return $queryBuilder->getQuery()->getSingleResult();
+    }
+    
+    
 
 }

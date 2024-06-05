@@ -14,19 +14,28 @@ use PhpOffice\PhpSpreadsheet\Chart\Legend;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
+use Symfony\Component\HttpFoundation\RequestStack;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class StatisticTypeMarcheService  extends AbstractController
 {
-    public function generateExcelFile($result_achats, $result_achats_mounts, $parameters, $projectDir)
+    public function __construct(private RequestStack $requestStack)
+    {
+
+
+    }
+
+    public function generateExcelFile($result_achats, $result_achats_mounts, $parameters, $projectDir,)
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         foreach (range('A', 'T') as $columnID) {
             $sheet->getColumnDimension($columnID)->setWidth(15); // Définir la largeur à 15 pour chaque colonne
         }
-        $sheet->setCellValue('H1', 'Statistiques MPPA/MABC')
+        $session = $this->requestStack->getSession()->get('toPDF');
+
+        $sheet->setCellValue('H1', 'Statistiques MPPA/MABC ' . $session['criteria']['Date'])
         ->getStyle('H1')
         ->getFont()
         ->setBold(true)

@@ -74,21 +74,7 @@ class AchatSearchType extends AbstractType
                 'label_attr' => ['class' => 'fr-label']
 
             ])
-            ->add('devis', ChoiceType::class, [
-                'choices'  => [
-                    'Prescripteur' => 'Pr',
-                    'GSBdD/PFAF' => 'Gs'
-                ],
-                'required' => false,
-                'placeholder' => 'Tous',
-                'expanded' => true,
-                'label' => "Devis",
-                'row_attr' => ['class' => 'radio-search'],
-                'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label'],
-                
 
-            ])
             ->add('type_marche', ChoiceType::class, [
                 'choices'  => [
                     'MABC' => 'MABC',
@@ -103,20 +89,7 @@ class AchatSearchType extends AbstractType
                 'label_attr' => ['class' => 'fr-label']
 
             ])
-            ->add('place', ChoiceType::class, [
-                'choices'  => [
-                    'Oui' => 'Oui',
-                    'Non' => 'Non'
-                ],
-                'required' => false,
-                'placeholder' => 'Tous',
-                'expanded' => true,
-                'label' => "Marché avec publicité ?",
-                'row_attr' => ['class' => 'radio-search'],
-                'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']
 
-            ])
             ->add('date', ChoiceType::class, [
                 'required' => false,
                 'label' => false,

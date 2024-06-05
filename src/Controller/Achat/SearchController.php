@@ -168,33 +168,35 @@ public function add(Request $request,SessionInterface $session,): Response
     ]);
 }
 #[Route('/valid_achat/{id}', name: 'valid_achat')]
-public function valid(Request $request,$id,SessionInterface $session): Response
+public function valid(Request $request, $id, SessionInterface $session): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-    $cpvId = $result_achat->getCodeCpv();
+    $cpvId = $result_achat->getCodeCpv()->getId();
     $form = $this->createForm(ValidType::class, null, []);
-
+    $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId,$id);
+    // dd($result_achat);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
 
         if ($form->get('Valider')->isClicked()) {
 
-        $this->entityManager->getRepository(Achat::class)->valid($request, $id);
-        $cpvSold = $this->entityManager->getRepository(CPV::class)->find($cpvId);
+            $this->entityManager->getRepository(Achat::class)->valid($request, $id);
+            $cpvSold = $this->entityManager->getRepository(CPV::class)->find($cpvId);
         
-        $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() - $result_achat->getMontantAchat());
-        $this->entityManager->flush();
-        $this->entityManager->persist($cpvSold);
-        $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé \n\n Computation actuel du CPV  '". $result_achat->getCodeCpv()->getLibelleCpv() ."' : ".  $result_achat->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $result_achat->getCodeCpv()->getLibelleCpv() ."' : " . $result_achat->getCodeCpv()->getMtCpvAuto() - $result_achat->getMontantAchat(). "€");
+            $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() - $result_achat->getMontantAchat());
+            $this->entityManager->persist($cpvSold);
+            $this->entityManager->flush();
+            $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé \n\n Computation actuel du CPV '" . $result_achat->getCodeCpv()->getLibelleCpv() . "' : " . $cpvMt['computation'] . "€ \n\n Reliquat actuel du CPV '" . $result_achat->getCodeCpv()->getLibelleCpv() . "' : " . $cpvMt['reliquat'] . "€");
 
-        return $this->redirect("/search");
+            return $this->redirect("/search");
         }
-}
+    }
+
     return $this->render('achat/valid_achat.html.twig', [
         'result_achat' => $result_achat,
+        'cpvMt' => $cpvMt,
         'form' => $form->createView(),
-
     ]);
 }
 
@@ -204,8 +206,12 @@ public function cancel($id, Request $request,SessionInterface $session): Respons
     $currentUrl = $session->get('current_url');
     $query = $this->entityManager->getRepository(Achat::class)->cancel($id);
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-
-    $this->addFlash('success', 'Achat n° ' . $result_achat->getNumeroAchat() . " annulé");
+    $cpvId = $result_achat->getCodeCpv()->getId();
+    $cpvSold = $this->entityManager->getRepository(CPV::class)->find($cpvId);
+    $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() + $result_achat->getMontantAchat());
+    $this->entityManager->persist($cpvSold);
+    $this->entityManager->flush();
+    $this->addFlash('success', 'Achat n° ' . $result_achat->getNumeroAchat() . " annulé.");
 
     return $this->redirect($currentUrl);
 }
@@ -215,14 +221,14 @@ public function reint($id, Request $request,SessionInterface $session): Response
 {
     $currentUrl = $session->get('current_url');
     $query = $this->entityManager->getRepository(Achat::class)->reint($id);
-
-            $this->addFlash('success', 'Achat n° ' . $query->getNumeroAchat() . " réintégré \n\n Computation actuel du CPV  '". $query->getCodeCpv()->getLibelleCpv() ."' : ".  $query->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $query->getCodeCpv()->getLibelleCpv() ."' : " . $query->getCodeCpv()->getMtCpvAuto() - $query->getMontantAchat(). "€");
+    $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
+            $this->addFlash('success', 'Achat n° ' .  $result_achat->getNumeroAchat() . " réintégré.");
 
 
     return $this->redirect($currentUrl);
 }
 
-#[Route('/edit_achat/{id}', name: 'edit_achat', methods: ['GET', 'POST'])]
+#[Route('/edit_achat/{id}', name: 'edit_achat')]
 public function edit(Request $request, $id, Achat $achat,  AchatRepository $achatRepository,SessionInterface $session): Response
 {
     $currentUrl = $session->get('current_url');
@@ -230,10 +236,10 @@ public function edit(Request $request, $id, Achat $achat,  AchatRepository $acha
     $form = $this->createForm(EditAchatType::class, $achat);
 
     $form->handleRequest($request);
+    // dd($achat);
 
     if ($form->isSubmitted() && $form->isValid()) {
         $achatRepository->edit($achat, true);
-
         $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . " modifié \n\n Computation actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : ".  $achat->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : " . $achat->getCodeCpv()->getMtCpvAuto() - $achat->getMontantAchat(). "€");
         return $this->redirect($currentUrl);
     }

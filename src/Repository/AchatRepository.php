@@ -295,28 +295,7 @@ public function getPMETopVal($form)
             // Gérer le cas par défaut ici, si nécessaire
             break;
     }
-    switch ($form['devis']->getData()) {
-        case 'Pr':
-            $devis = 0;
-            break;
-        case 'Gs':
-            $devis = 1;
-            break;
-        default:
-            // Gérer le cas par défaut ici, si nécessaire
-            break;
-    }
-    switch ($form['place']->getData()) {
-        case 'Oui':
-            $place = 1;
-            break;
-        case 'Non':
-            $place = 0;
-            break;
-        default:
-            // Gérer le cas par défaut ici, si nécessaire
-            break;
-    }
+
         $queryBuilder
             ->select('b');
             if($form['all_user']->getData()==false){
@@ -369,21 +348,13 @@ public function getPMETopVal($form)
                     ->andWhere('b.etat_achat = :etat_achat')
                     ->setParameter('etat_achat',$etat);
             }
-            if ($form["devis"]->getData()) {
-                $queryBuilder
-                    ->andWhere('b.devis = :devis')
-                    ->setParameter('devis', $devis);
-            }
+
             if ($form["type_marche"]->getData()) {
                 $queryBuilder
                     ->andWhere('b.type_marche = :type_marche')
                     ->setParameter('type_marche', $type);
             }
-            if ($form["place"]->getData()) {
-                $queryBuilder
-                    ->andWhere('b.place = :place')
-                    ->setParameter('place', $place);
-            }
+
 
             if ($montantAchatMin && $montantAchatMax) {
                 // Cas où les deux valeurs sont fournies
@@ -489,17 +460,7 @@ public function getPMETopVal($form)
             // Gérer le cas par défaut ici, si nécessaire
             break;
     }
-    switch ($form['devis']->getData()) {
-        case 'Pr':
-            $devis = 0;
-            break;
-        case 'Gs':
-            $devis = 1;
-            break;
-        default:
-            // Gérer le cas par défaut ici, si nécessaire
-            break;
-    }
+    
         //    dd($form['date_valid_inter_attr']->getData() == true);
             // Vérifier si la case 'objet_achat_attr' est cochée
             
@@ -519,10 +480,8 @@ public function getPMETopVal($form)
             $selectFields[] = $form['objet_achat_attr']->getData() == true ? 'b.objet_achat' : null;
             $selectFields[] = $form['type_marche_attr']->getData() == true ? 'b.type_marche' : null;
             $selectFields[] = $form['montant_ht_attr']->getData() == true ? 'b.montant_achat montant_ht' : null;
-            $selectFields[] = $form['devis_attr']->getData() == true ? 'b.devis' : null;
             $selectFields[] = $form['obs_attr']->getData() == true ? 'b.observations' : null;
             $selectFields[] = $form['etat_achat_attr']->getData() == true ? 'b.etat_achat' : null;
-            $selectFields[] = $form['place_attr']->getData() == true ? 'b.place' : null;
             $selectFields = array_filter($selectFields);
 
         $queryBuilder
@@ -605,11 +564,7 @@ public function getPMETopVal($form)
                     ->andWhere('b.etat_achat = :etat_achat')
                     ->setParameter('etat_achat',$etat);
             }
-            if ($form["devis"]->getData()) {
-                $queryBuilder
-                    ->andWhere('b.devis = :devis')
-                    ->setParameter('devis', $devis);
-            }
+
             if ($form["type_marche"]->getData()) {
                 $queryBuilder
                     ->andWhere('b.type_marche = :type_marche')

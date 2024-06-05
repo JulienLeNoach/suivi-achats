@@ -111,34 +111,7 @@ class EditAchatType extends AbstractType
                 'label_attr' => ['class' => 'fr-label']
             ])
 
-            ->add('place', ChoiceType::class, [
-                'choices'  => [
-                    'Non' => '0',
-                    'Oui' => '1'
-                ],
-                'required' => false,
-                'placeholder' => false,
-                'expanded' => true,
-                'label' => "Marché avec publicité ?",
-                'row_attr' => ['class' => 'radio-search'],
-                'label_attr' => ['class' => 'fr-label'],
-                'attr' => ['class' => 'fr-input'], 
 
-            ])
-            ->add('devis', ChoiceType::class, [
-                'choices'  => [
-                    'Prescripteur' => '0',
-                    'GSBdD/PFAF' => '1'
-                ],
-                'required' => false,
-                'placeholder' => false,
-                'expanded' => true,
-                'label' => "Devis",
-                'row_attr' => ['class' => 'radio-search'],
-                'label_attr' => ['class' => 'fr-label'],
-                'attr' => ['class' => 'fr-input'], 
-
-            ])
 
             ->add('code_cpv', LibelleCpv::class, [
                 'required' => false,
@@ -155,6 +128,12 @@ class EditAchatType extends AbstractType
             ->add('code_uo', UOAutocompleteField::class, [
                 'required' => false,
                 'label' => 'Unité organique',
+
+            ])
+            ->add('Valider', SubmitType::class, [
+                'attr' => [
+                    'class' => 'fr-btn'
+                ],
 
             ])
 ;

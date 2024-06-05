@@ -59,20 +59,7 @@ class DataExtractType extends AbstractType
                 'label_attr' => ['class' => 'fr-label']
 
             ])
-            ->add('devis', ChoiceType::class, [
-                'choices'  => [
-                    'Prescripteur' => 'Pr',
-                    'GSBdD/PFAF' => 'Gs'
-                ],
-                'required' => false,
-                'placeholder' => 'Tous',
-                'expanded' => true,
-                'label' => "Devis",
-                'row_attr' => ['class' => 'radio-search'],
-                'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']
 
-            ])
             ->add('type_marche', ChoiceType::class, [
                 'choices'  => [
                     'MABC' => 'MABC',
@@ -389,14 +376,7 @@ class DataExtractType extends AbstractType
                 'mapped' => false,
                 'data' => true,
             ])
-            ->add('devis_attr', CheckboxType::class, [
-                'label'    => 'Devis',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'],
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
+
             ->add('obs_attr', CheckboxType::class, [
                 'label'    => 'Observations',
                 'attr' => ['class' => 'ms-3'],
@@ -413,14 +393,7 @@ class DataExtractType extends AbstractType
                 'mapped' => false,
                 'data' => true,
             ])
-            ->add('place_attr', CheckboxType::class, [
-                'label'    => "Marché avec publicité",
-                'required' => false,
-                'attr' => ['class' => 'ms-3'],
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
+
             // ->add('ville_fournisseur_attr', CheckboxType::class, [
             //     'label'    => 'Ville Fournisseur',
             //     'required' => false,

@@ -26,19 +26,16 @@ class Achat
     #[ORM\Column(length: 255)]
     #[Groups(['achat:list', 'achat:item'])]
     private ?string $numero_achat = null;
-/**
- * @ORM\Column
- * @Groups({"achat:list", "achat:item"})
- * @Assert\Regex(
- *     pattern="/^\d+$/",
- *     message="L'ID de la demande d'achat doit contenir uniquement des chiffres."
- * )
- * @Assert\Length(
- *     max=10,
- *     maxMessage="L'ID de la demande d'achat ne doit pas dépasser 10 caractères."
- * )
- */
-    #[ORM\Column]
+
+    /**
+     * @ORM\Column(type="string", length=8)
+     * @Groups({"achat:list", "achat:item"})
+     * @Assert\Regex(
+     *     pattern="/^\d{8}$/",
+     *     message="L'ID de la demande d'achat doit contenir exactement 8 chiffres."
+     * )
+     */
+    #[ORM\Column(type: 'string', length: 8)]
     #[Groups(['achat:list', 'achat:item'])]
     private ?string $id_demande_achat = null;
 
@@ -88,7 +85,7 @@ class Achat
  * @ORM\Column(length=255, nullable=true)
  * @Groups({"achat:list", "achat:item"})
  * @Assert\Regex(
- *     pattern="/^[a-zA-Z0-9À-ÿ '\s]+$/u",
+ *     pattern="/^[a-zA-Z0-9À-ÿ '\s_\-]+$/u",
  *     message="L'objet d'achat ne doit contenir que des valeurs alphanumériques."
  * )
  * @Assert\Length(
@@ -125,7 +122,7 @@ private ?float $montant_achat = null;
  * @ORM\Column(length=255, nullable=true)
  * @Groups({"achat:list", "achat:item"})
  * @Assert\Regex(
- *     pattern="/^[a-zA-Z0-9À-ÿ '\s]+$/u",
+ *     pattern="/^[a-zA-Z0-9À-ÿ '\s_\-]+$/u",
  *     message="L'observation ne doit contenir que des valeurs alphanumériques, des espaces et des retours à la ligne."
  * )
  * @Assert\Length(
@@ -142,13 +139,7 @@ private ?float $montant_achat = null;
     private ?string $etat_achat = null;
     
 
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['achat:list', 'achat:item'])]
-    private ?string $place = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['achat:list', 'achat:item'])]
-    private ?string $devis = null;
 
     #[ORM\ManyToOne(inversedBy: 'achats')]
     private ?Utilisateurs $utilisateurs = null;
@@ -356,30 +347,6 @@ private ?float $montant_achat = null;
     public function setEtatAchat(?string $etat_achat): self
     {
         $this->etat_achat = $etat_achat;
-
-        return $this;
-    }
-
-    public function getPlace(): ?string
-    {
-        return $this->place;
-    }
-
-    public function setPlace(?string $place): self
-    {
-        $this->place = $place;
-
-        return $this;
-    }
-
-    public function getDevis(): ?string
-    {
-        return $this->devis;
-    }
-
-    public function setDevis(?string $devis): self
-    {
-        $this->devis = $devis;
 
         return $this;
     }

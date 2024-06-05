@@ -143,12 +143,21 @@ class CPV
 
         return $this;
     }
-
     public function __toString()
     {
-        return $this->code_cpv.' - '. $this->libelle_cpv ;
+        $formatted_string = $this->code_cpv . ' - ' . $this->libelle_cpv . ' - ' . $this->mt_cpv_auto . '€';
+        $style = '';
+    
+        if ($this->mt_cpv_auto > 45000) {
+            $style = 'style="color: red;"';
+        
+    
+        return "<div $style>" . $formatted_string . "</div>";
     }
-
+    else{
+        return $this->code_cpv . ' - ' . $this->libelle_cpv . ' - ' . $this->mt_cpv_auto . '€';
+    }
+    }
     public function getMtCpvAuto(): ?float
     {
         return $this->mt_cpv_auto;

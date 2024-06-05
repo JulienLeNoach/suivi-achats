@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -23,7 +24,7 @@ class CreateExcelPME  extends AbstractController
 {
     private $projectDir;
 
-    public function __construct(KernelInterface $kernel)
+    public function __construct(KernelInterface $kernel,private RequestStack $requestStack)
     {
 
         $this->projectDir = $kernel->getProjectDir();
@@ -33,7 +34,9 @@ class CreateExcelPME  extends AbstractController
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('H1', 'Statistic sur les PME (marché MPPA)')
+        $session = $this->requestStack->getSession()->get('toPDF');
+
+        $sheet->setCellValue('H1', 'Statistic sur les PME (marché MPPA) '  . $session['criteria']['Date'])
         ->getStyle('H1')
         ->getFont()
         ->setBold(true)

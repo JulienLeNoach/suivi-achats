@@ -12,6 +12,7 @@ use App\Form\FournisseursAutocompleteField;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -80,7 +81,7 @@ public function __construct(Security $security)
                 'row_attr' => ['class' => 'radio-search mt-5'],
                 'label_attr' => ['class' => 'fr-label'],
                 'attr' => ['class' => 'fr-input'],
-                'data' => '1'
+                'required' => true
 
             ])
             ->add('montant_achat', NumberType::class, [
@@ -98,35 +99,6 @@ public function __construct(Security $security)
                 'label_attr' => ['class' => 'fr-label']
             ])
 
-            ->add('place', ChoiceType::class, [
-                'choices'  => [
-                    'Non' => '0',
-                    'Oui' => '1'
-                ],
-                'placeholder' => false,
-                'expanded' => true,
-                'label' => "Marché avec publicité ?",
-                'row_attr' => ['class' => 'radio-search'],
-                'label_attr' => ['class' => 'fr-label'],
-                'attr' => ['class' => 'fr-input'],
-                'data' => '0'
-
-
-            ])
-            ->add('devis', ChoiceType::class, [
-                'choices'  => [
-                    'Prescripteur' => '0',
-                    'GSBdD/PFAF' => '1'
-                ],
-                'placeholder' => false,
-                'expanded' => true,
-                'label' => "Devis",
-                'row_attr' => ['class' => 'radio-search mt-5'],
-                'label_attr' => ['class' => 'fr-label'],
-                'attr' => ['class' => 'fr-input'],
-                'data' => '0'
-
-            ])
             
             ->add('code_cpv', LibelleCpv::class,[
                 'required' => true,
@@ -181,8 +153,13 @@ public function __construct(Security $security)
                 'autocomplete' => true,
                 'required' => true,
                 'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']
-
+                'label_attr' => ['class' => 'fr-label'],
+                'placeholder' => 'Sélectionnez une option',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez sélectionner une option.',
+                    ]),
+            ]
             ])
             ->add('Valider', SubmitType::class, [
                 'attr' => [

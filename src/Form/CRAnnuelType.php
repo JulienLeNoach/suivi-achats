@@ -133,16 +133,7 @@ class CRAnnuelType extends AbstractType
                 'label' => false,
                 'attr' => ['class' => 'hidden'],  
             ])
-            ->add('place', IntegerType::class, [  
-                'required' => false,
-                'label' => false,
-                'attr' => ['class' => 'hidden'],  
-            ])
-            ->add('devis', IntegerType::class, [  
-                'required' => false,
-                'label' => false,
-                'attr' => ['class' => 'hidden'],  
-            ])
+
             ->add('utilisateurs', IntegerType::class, [  
                 'required' => false,
                 'label' => false,

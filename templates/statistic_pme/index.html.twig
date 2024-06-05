@@ -77,8 +77,8 @@
             <div class="title-container justify-content-center align-items-center d-flex">
                 <h6 class="blueF">Activité APPRO PME</h6>
             </div>
-            <div class="appro-stat d-flex flex-row ">
-                <table border="1" id="actApproTable" class="w-25">
+            <div class="appro-stat d-flex flex-column align-items-center ">
+                <table border="1" id="actApproTable" class="">
                     <tr>
                         <thead>
                         <th></th>
@@ -127,7 +127,7 @@
     <td>{{ result_achats[0]["VolumePercentPME"]  | round}}</td>
 </tr>
                 </table>
-                <div class="chartActContainer" style="width: 75%; max-height: 200px;">
+                <div class="chartActContainer w-100" style=" max-height: 200px;">
                     <canvas id="actAppro" data-chartpme-target="actAppro" style="width: 100%; height: 100%;"></canvas>
                 </div>
             </div>  

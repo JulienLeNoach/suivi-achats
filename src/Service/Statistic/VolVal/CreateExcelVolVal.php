@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\BrowserKit\Request;
 use PhpOffice\PhpSpreadsheet\Chart\Layout;
 use PhpOffice\PhpSpreadsheet\Chart\Legend;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -17,21 +18,25 @@ use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CreateExcelVolVal  extends AbstractController
 {
     private $achatRepository;
     private $projectDir;
+    private $request;
 
     private $chartBuilder;
-    public function __construct(AchatRepository $achatRepository,ChartBuilderInterface $chartBuilder, KernelInterface $kernel)
+    public function __construct(AchatRepository $achatRepository,ChartBuilderInterface $chartBuilder, KernelInterface $kernel, private RequestStack $requestStack)
     {
         $this->achatRepository = $achatRepository;
         $this->chartBuilder = $chartBuilder;
         $this->projectDir = $kernel->getProjectDir();
+
 
     }
 
@@ -39,15 +44,16 @@ class CreateExcelVolVal  extends AbstractController
     public function generateExcelFile($chartDataCountMppa, $chartDataCountMabc, $chartDataTotalMppa, $chartDataTotalMabc, $projectDir)
 {
     $mois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-
+    $session = $this->requestStack->getSession()->get('toPDF');
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
-    $sheet->setCellValue('H1', 'Activités appro en volume/valeur')
+    $sheet->setCellValue('H1', 'Activités appro en volume/valeur ' . $session['criteria']['Date'])
     ->getStyle('H1')
     ->getFont()
     ->setBold(true)
     ->setSize(18)
     ->setColor(new Color(Color::COLOR_RED));
+
     $spreadsheet->getActiveSheet()->getStyle('C4:O6')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
     $spreadsheet->getActiveSheet()->getStyle('C24:O26')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
     

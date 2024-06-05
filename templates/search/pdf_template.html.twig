@@ -43,24 +43,6 @@
             </td>
         </tr>
         <tr>
-            <th>Marché avec publicité ?</th>
-            <td>
-                {% if result_achat.place == 0 %}
-                    Non
-                {% else %}
-                    Oui
-                {% endif %}
-            </td>
-            <th>Devis</th>
-            <td>
-                {% if result_achat.devis == 0 %}
-                    Prescripteur
-                {% else %}
-                    GSBdD/PFAF
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
             <th>TVA</th>
             <td>{{ result_achat.tvaIdent }}</td>
             <th>Objet de l'achat</th>

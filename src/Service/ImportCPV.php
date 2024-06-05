@@ -35,26 +35,33 @@ class ImportCPV  extends AbstractController
         if ($file) {
             // Lire le fichier Excel
             $spreadsheet = IOFactory::load($file);
-
+    
             // Récupérer la première feuille du classeur
-            $worksheet = $spreadsheet->getActiveSheet();
-            $rowIndex = 3; // Commencer à partir de la troisième ligne
+            $worksheet = $spreadsheet->getSheet(1);
+            $rowIndex = 7; // Commencer à partir de la troisième ligne
             $highestRow = $worksheet->getHighestRow();
             // Récupérer les données et les enregistrer en base de données
             for ($rowIndex; $rowIndex <= $highestRow; $rowIndex++) {
-                $rowData = $worksheet->rangeToArray('B' . $rowIndex . ':' . 'Z' . $rowIndex, NULL, TRUE, FALSE)[0];
-                $entity = new CPV();
-                $entity->setCodeCpv($rowData[0]);
-                $entity->setLibelleCpv($rowData[1]);
-                $entity->setEtatCpv($rowData[2]);
-                $entity->setCodeService($service);
-                $entity->setMtCpvAuto($rowData[4]);
-
-                // Enregistrement d'autres propriétés ...
-                $this->entityManager->persist($entity);
+                $rowData = $worksheet->rangeToArray('A' . $rowIndex . ':' . 'Z' . $rowIndex, NULL, TRUE, FALSE)[0];
+                
+                // Vérifier si la première colonne contient des caractères
+                if (!empty($rowData[0])) {
+                    $entity = new CPV();
+                    $entity->setCodeCpv($rowData[0]);
+                    $entity->setLibelleCpv($rowData[1]);
+                    $entity->setEtatCpv(1);
+                    $entity->setCodeService($service);
+                    $entity->setMtCpvAuto(90000);
+    
+                    // Enregistrement d'autres propriétés ...
+                    $this->entityManager->persist($entity);
+                } else {
+                    // Passez à la prochaine ligne si la première colonne est vide
+                    continue;
+                }
             }
             $this->entityManager->flush();
-
+    
             $this->addFlash('success', 'Importation réussie !');
             return $this->redirectToRoute('cpv');
         }

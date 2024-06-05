@@ -57,13 +57,11 @@
 
         <div class="input-grp" style="flex-basis:33%">
             {{ form_row(form.type_marche) }}
-            {{ form_row(form.place) }}
-            {{ form_row(form.devis) }}
 
         </div>
 
         <div class="sub-btn d-flex justify-content-between align-items-centers">
-            <button class="fr-btn">{{ button_label|default('Mettre à jour') }}</button>
+        {{ form_row(form.Valider) }}
         </div>
 
         {{ form_end(form) }}
