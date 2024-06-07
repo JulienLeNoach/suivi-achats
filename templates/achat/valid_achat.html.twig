@@ -28,7 +28,7 @@
     </div>
         <div class="d-flex flex-column">
             <label for="cpv" class="fr-label">CPV</label>
-            <input class="fr-input" type="text" id="cpv" value="{{result_achat.codeCPV}}" disabled>
+            <input class="fr-input" type="text" id="cpv" value="{{result_achat.codeCPV|striptags }}" disabled>
         </div>
             <div class="d-flex">
         <div class="d-flex flex-column me-3 w-50">
@@ -40,10 +40,16 @@
             <input class="fr-input" size="15" type="text" id="notbox" name="not" value="{{result_achat.dateNotification | join ('') | date('d/m/y')}}">
         </div>
         </div>
-        <div class="d-flex flex-column">
-            <label for="val" class="fr-label">Numero EJ</label>
-            <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="{{result_achat.numeroEj | join ('')}}" required>
-        </div>
+<div class="d-flex flex-column">
+    <label for="val" class="fr-label">Numero EJ</label>
+    {% if result_achat.typeMarche == 0 %}
+        <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="14{{ result_achat.numeroEj | slice(2) }}" required>
+    {% elseif result_achat.typeMarche == 1 %}
+        <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="15{{ result_achat.numeroEj | slice(2) }}" required>
+    {% else %}
+        <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="{{ result_achat.numeroEj }}" required>
+    {% endif %}
+</div>
     </div>
     <div class="input-grp" style="flex-basis:50%">
         <div class="d-flex flex-column">

@@ -25,15 +25,17 @@ class UtilisateursController extends AbstractController
         $perPage = $request->query->get('perPage', 5);
         $sortField = $request->query->get('sortField', 'id');
         $sortDirection = $request->query->get('sortDirection', 'asc');
-    
+        $activeUtilisateurs = $request->query->get('activeUtilisateurs');
+
         $queryBuilder = $utilisateursRepository->createQueryBuilder('utilisateurs');
     
         if (!empty($searchTerm)) {
             $queryBuilder->andWhere('utilisateurs.nom_utilisateur LIKE :searchTerm OR utilisateurs.trigram LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
-        $queryBuilder->andWhere("utilisateurs.etat_utilisateur = 1"); // Ajout du tri
-        $queryBuilder->orderBy("utilisateurs.$sortField", $sortDirection); // Ajout du tri
+        if ($activeUtilisateurs !== null && $activeUtilisateurs === 'on') {
+            $queryBuilder->andWhere("utilisateurs.etat_utilisateur = 1");
+        }        $queryBuilder->orderBy("utilisateurs.$sortField", $sortDirection); // Ajout du tri
     
         $query = $queryBuilder->getQuery();
     
@@ -49,6 +51,7 @@ class UtilisateursController extends AbstractController
             'perPage' => $perPage,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
+            'activeUtilisateurs' => $activeUtilisateurs,
         ]);
     }
 

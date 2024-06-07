@@ -59,7 +59,7 @@ Saisir un achat
             <label for="add_achat_code_uo_autocomplete">Unité organique</label>
             {{ form_row(form.code_uo) }}
             <label for="add_achat_code_cpv_autocomplete">CPV</label>
-            {{ form_row(form.code_cpv) }}
+{{ form_row(form.code_cpv, {'attr': {'style': form.getStyledCodeCpv()}}) }}
             {# <label for="add_achat_code_cpv_autocomplete">CPV</label>
         {{ form_row(form.code_cpv_id) }} #}
             <label for="add_achat_code_formation_autocomplete">Formation</label>

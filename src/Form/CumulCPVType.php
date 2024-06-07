@@ -33,7 +33,7 @@ class CumulCPVType extends AbstractType
             'attr' => ['class' => 'fr-input'],  
             'label_attr' => ['class' => 'fr-label'],
             
-            'data'=>'70000'
+            'data'=>'40000'
         ])
         ->add('recherche', SubmitType::class, [
             'attr' => [

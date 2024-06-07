@@ -43,6 +43,8 @@
             <option value="20" {% if perPage == 20 %}selected{% endif %}>20</option>
             <!-- Ajoutez d'autres options au besoin -->
         </select>
+        <label for="activeFournisseur" class="align-items-center vertical-align-middle justify-content-center d-inline-flex">Fournisseurs actifs uniquement :</label>
+    <input type="checkbox" id="activeFournisseur" name="activeFournisseur" {% if activeFournisseur %}checked{% endif %} onchange="this.form.submit()">
     </form>
     </div>
 </div>

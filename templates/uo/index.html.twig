@@ -43,6 +43,10 @@
             <option value="20" {% if perPage == 20 %}selected{% endif %}>20</option>
             <!-- Ajoutez d'autres options au besoin -->
         </select>
+        <label for="activeUOs" class="align-items-center vertical-align-middle justify-content-center d-inline-flex">
+                    Unités organiques actives uniquement :
+                </label>
+                <input type="checkbox" id="activeUOs" name="activeUOs" {% if activeUOs %}checked{% endif %} onchange="this.form.submit()">
     </form>
     </div>
 </div>

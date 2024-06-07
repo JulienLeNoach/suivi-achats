@@ -43,6 +43,11 @@
             <option value="20" {% if perPage == 20 %}selected{% endif %}>20</option>
             <!-- Ajoutez d'autres options au besoin -->
         </select>
+        <label for="activeUtilisateurs" class="align-items-center vertical-align-middle justify-content-center d-inline-flex">
+                    Utilisateurs actifs uniquement :
+                </label>
+                <input type="checkbox" id="activeUtilisateurs" name="activeUtilisateurs" {% if activeUtilisateurs %}checked{% endif %} onchange="this.form.submit()">
+            </form>
     </form>
     </div>
 </div>

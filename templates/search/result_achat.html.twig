@@ -81,7 +81,7 @@
                 </div>
                 <div class="d-flex flex-column">
                     <label for="cpv" class="fr-label">CPV</label>
-                    <input type="text" id="cpv" class="fr-input" value="{{result_achat.codeCPV}}" disabled>
+                    <input type="text" id="cpv" class="fr-input" value="{{result_achat.codeCPV|striptags}}" disabled>
                 </div>
             </div>
             <div class="input-grp" style="flex-basis:25%">

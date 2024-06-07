@@ -42,6 +42,10 @@
             <option value="20" {% if perPage == 20 %}selected{% endif %}>20</option>
             <!-- Ajoutez d'autres options au besoin -->
         </select>
+        <label for="activeFormations" class="align-items-center vertical-align-middle justify-content-center d-inline-flex">
+                    Formations actives uniquement :
+                </label>
+                <input type="checkbox" id="activeFormations" name="activeFormations" {% if activeFormations %}checked{% endif %} onchange="this.form.submit()">
     </form>
     </div>
 </div>

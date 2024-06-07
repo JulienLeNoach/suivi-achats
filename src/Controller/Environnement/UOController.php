@@ -25,15 +25,17 @@ class UOController extends AbstractController
         $perPage = $request->query->get('perPage', 5);
         $sortField = $request->query->get('sortField', 'id');
         $sortDirection = $request->query->get('sortDirection', 'asc');
-    
+        $activeUOs = $request->query->get('activeUOs');
+
         $queryBuilder = $uORepository->createQueryBuilder('uo');
     
         if (!empty($searchTerm)) {
             $queryBuilder->andWhere('uo.code_uo LIKE :searchTerm OR uo.libelle_uo LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
-        $queryBuilder->andWhere("uo.etat_uo = 1");
-        $queryBuilder->orderBy("uo.$sortField", $sortDirection); // Ajout du tri
+        if ($activeUOs !== null && $activeUOs === 'on') {
+            $queryBuilder->andWhere("uo.etat_uo = 1");
+        }        $queryBuilder->orderBy("uo.$sortField", $sortDirection); // Ajout du tri
     
         $query = $queryBuilder->getQuery();
     
@@ -49,6 +51,8 @@ class UOController extends AbstractController
             'perPage' => $perPage,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
+            'activeUOs' => $activeUOs, 
+
         ]);
     }
 

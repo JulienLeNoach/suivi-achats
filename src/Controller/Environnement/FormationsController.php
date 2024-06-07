@@ -25,7 +25,8 @@ class FormationsController extends AbstractController
         $perPage = $request->query->get('perPage', 5);
         $sortField = $request->query->get('sortField', 'id');
         $sortDirection = $request->query->get('sortDirection', 'asc');
-    
+        $activeFormations = $request->query->get('activeFormations');
+
         $queryBuilder = $formationsRepository->createQueryBuilder('formations');
     
         if (!empty($searchTerm)) {
@@ -34,8 +35,9 @@ class FormationsController extends AbstractController
         }
     
         $queryBuilder->orderBy("formations.$sortField", $sortDirection); // Ajout du tri
-        $queryBuilder->andWhere("formations.etat_formation = 1");
-        $query = $queryBuilder->getQuery();
+        if ($activeFormations !== null && $activeFormations === 'on') {
+            $queryBuilder->andWhere("formations.etat_formation = 1");
+        }        $query = $queryBuilder->getQuery();
     
         $pagination = $paginator->paginate(
             $query,
@@ -49,6 +51,8 @@ class FormationsController extends AbstractController
             'perPage' => $perPage,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
+            'activeFormations' => $activeFormations, // Passer la valeur de la case à cocher au template
+
         ]);
     }
 

@@ -43,15 +43,17 @@ class CPVController extends AbstractController
         $perPage = $request->query->get('perPage', 5);
         $sortField = $request->query->get('sortField', 'id');
         $sortDirection = $request->query->get('sortDirection', 'asc');
-    
+        $activeCpv = $request->query->get('activeCpv');
+
         $queryBuilder = $cPVRepository->createQueryBuilder('cpv');
 
         if (!empty($searchTerm)) {
             $queryBuilder->andWhere('cpv.code_cpv LIKE :searchTerm OR cpv.libelle_cpv LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
-        $queryBuilder->andWhere("cpv.etat_cpv = 1");
-        $queryBuilder->orderBy("cpv.$sortField", $sortDirection); // Ajout du tri
+        if ($activeCpv !== null && $activeCpv === 'on') {
+            $queryBuilder->andWhere("cpv.etat_cpv = 1");
+        }        $queryBuilder->orderBy("cpv.$sortField", $sortDirection); // Ajout du tri
     
         $query = $queryBuilder->getQuery();
         $pagination = $paginator->paginate(
@@ -73,6 +75,7 @@ class CPVController extends AbstractController
         'sortField' => $sortField,
         'sortDirection' => $sortDirection,
         'form' => $form->createView(),
+        'activeCpv' => $activeCpv
     ]);
 }
 

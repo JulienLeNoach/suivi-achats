@@ -73,6 +73,7 @@ class Achat
  *     message="Le numéro EJ doit contenir uniquement des caractères alphanumériques."
  * )
  * @Assert\Length(
+ *     min=10,
  *     max=10,
  *     maxMessage="Le numéro EJ ne doit pas dépasser 10 caractères."
  * )

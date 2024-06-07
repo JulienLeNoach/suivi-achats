@@ -4,7 +4,9 @@ namespace App\Form;
 
 use App\Entity\CPV;
 use App\Repository\CPVRepository;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -21,21 +23,26 @@ class LibelleCpv extends AbstractType
     {
         $this->security = $security;
     }
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+
+
+        
+    }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'placeholder' => 'Sélectionnez un CPV', 
+            'placeholder' => 'Sélectionnez un CPV',
             'class' => CPV::class,
-
             'query_builder' => function(CPVRepository $cPVRepository) {
                 $user = $this->security->getUser();
-
-                return $cPVRepository->createQueryBuilder('u')->andWhere('u.code_service = :val')
-                ->andWhere('u.etat_cpv = 1')
-                ->setParameter('val', $user->getCodeService()->getId());
-            },
-            //'security' => 'ROLE_SOMETHING',
+                
+                return $cPVRepository->createQueryBuilder('u')
+                    ->andWhere('u.code_service = :val')
+                    ->andWhere('u.etat_cpv = 1')
+                    ->setParameter('val', $user->getCodeService()->getId());
+            }
         ]);
     }
 

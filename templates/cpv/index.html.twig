@@ -45,7 +45,9 @@
             <option value="10" {% if perPage == 10 %}selected{% endif %}>10</option>
             <option value="20" {% if perPage == 20 %}selected{% endif %}>20</option>
             <!-- Ajoutez d'autres options au besoin -->
-        </select>
+        </select><br>
+        <label for="activeCpv" class="align-items-center vertical-align-middle justify-content-center d-inline-flex">CPV actifs uniquement :</label>
+    <input type="checkbox" id="activeCpv" name="activeCpv" {% if activeCpv %}checked{% endif %} onchange="this.form.submit()">
     </form>
     </div>
 </div>

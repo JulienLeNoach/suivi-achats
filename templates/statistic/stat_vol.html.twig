@@ -39,7 +39,9 @@
           {% endfor %}
           <td>{{ totalmppa + totalmabc }}</td>
         </tr>
-        <tr>
+        {# Mise en commentaire suite à la reunion précendent avec le client, en attente de confirmation
+        à la prochaine réunion
+         <tr>
           <th><=15jrs</th>
           {% set total15 = 0 %}
           {% for  data in delayVolVal %}
@@ -65,7 +67,7 @@
           {% set total30 = total30 + data['Achats > 30 jours'] %}
           {% endfor %}  
           <td>{{ total30 }}</td>
-        </tr>
+        </tr> #}
       </tbody>
     </table>
     <h6 class="blueF">Activité en valeur ({{ toPDF['criteria']['Taxe'] | upper }})</h6>
