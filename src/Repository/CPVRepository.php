@@ -10,7 +10,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  * @extends ServiceEntityRepository<CPV>
  *
  * @method CPV|null find($id, $lockMode = null, $lockVersion = null)
- * @method CPV|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CPV|null findOneBy(int $criteria, array $orderBy = null)
  * @method CPV[]    findAll()
  * @method CPV[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -20,6 +20,16 @@ class CPVRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, CPV::class);
     }
+
+    public function findOneByCodeCpv($codeCpv): ?CPV
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.code_cpv = :code_cpv')
+            ->setParameter('code_cpv', $codeCpv)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function showCPV($form)
     {
         $date = $form["date"];
@@ -43,7 +53,46 @@ class CPVRepository extends ServiceEntityRepository
     
         return $query;
     }
-    public function getTotalMontantCPV($cpvId,$id)
+    public function getTotalMontantCPV($cpvId, $id)
+{
+    $entityManager = $this->getEntityManager();
+    
+    // Extraire l'année de la date_saisie pour le cpvId spécifique
+    $yearQuery = $entityManager->createQueryBuilder()
+        ->select('YEAR(achat.date_saisie) AS year')
+        ->from('App\Entity\Achat', 'achat')
+        ->where('achat.code_cpv = :cpvId')
+        ->andWhere('achat.id = :achatId')
+        ->setParameter('cpvId', $cpvId)
+        ->setParameter('achatId', $id)
+        ->setMaxResults(1)
+        ->getQuery();
+    
+    // Obtenir l'année de la date_saisie
+    $year = $yearQuery->getSingleScalarResult();
+
+    // Construire la requête principale avec l'année extraite
+    $queryBuilder = $entityManager->createQueryBuilder();
+    $queryBuilder
+        ->select(
+            'SUM(achat.montant_achat) AS computation', 
+            'cpv.mt_cpv_auto AS mt_cpv', 
+            '(cpv.mt_cpv_auto) AS reliquat'
+        )
+        ->from('App\Entity\Achat', 'achat')
+        ->join('achat.code_cpv', 'cpv')
+        ->where('cpv.id = :cpvId')
+        ->andWhere('YEAR(achat.date_saisie) = :year')
+        ->setParameter('cpvId', $cpvId)
+        ->setParameter('year', $year);
+
+    // Déboguer le résultat
+            // dd($queryBuilder->getQuery()->getSingleResult());
+    return $queryBuilder->getQuery()->getSingleResult();
+}
+
+    
+    public function getTotalMontantCPVwithoutId($cpvId)
     {
         $entityManager = $this->getEntityManager();
         
@@ -52,12 +101,10 @@ class CPVRepository extends ServiceEntityRepository
             ->select('YEAR(achat.date_saisie) AS year')
             ->from('App\Entity\Achat', 'achat')
             ->where('achat.code_cpv = :cpvId')
-            ->andWhere('achat.id = :achatId')
             ->setParameter('cpvId', $cpvId)
-            ->setParameter('achatId', $id)
             ->setMaxResults(1)
             ->getQuery();
-    
+        dd($yearQuery->getSingleScalarResult());
         // Obtenir l'année de la date_saisie
         $year = $yearQuery->getSingleScalarResult();
         // Construire la requête principale avec l'année extraite
@@ -71,10 +118,16 @@ class CPVRepository extends ServiceEntityRepository
             ->setParameter('cpvId', $cpvId)
             ->setParameter('year', $year);
     
-        // Obtenir le résultat final
-        return $queryBuilder->getQuery()->getSingleResult();
+            dd($queryBuilder->getQuery()->getSingleResult());
+            return $queryBuilder->getQuery()->getSingleResult();
     }
-    
-    
+    public function edit(CPV $cpv, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($cpv);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
 
 }

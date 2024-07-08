@@ -61,6 +61,7 @@ class AchatRepository extends ServiceEntityRepository
 
     return $criteria;
 }
+
  public function getPurchaseByType($form)
 {
     $criteria = $this->extractCriteriaFromForm($form);
@@ -611,62 +612,84 @@ public function getPMETopVal($form)
     
         return $query;
     }
-    public function getPurchaseCountAndTotalAmount($type,$form)
-    {   
-        $data = $form->getData();
-        $date = $form["date"]->getData();
-        $tax = $form["tax"]->getData();
-        $qb = $this->createQueryBuilder('a');
-        if($tax=='ht'){
-            $result = $qb->select('MONTH(a.date_notification) AS month, COUNT(a) AS count,SUM(a.montant_achat) AS totalmontant')
-                ->andWhere('YEAR(a.date_notification) = :year')
-                ->andWhere('a.type_marche = :type_marche')
-                ->andWhere('a.etat_achat = (:etat_achats)')
-                ->setParameter('year', $date)
-                ->setParameter('type_marche', $type)
-                ->setParameter('etat_achats', 2);
-        }
-        elseif($tax=='ttc'){
-            $result = $qb->select('MONTH(a.date_notification) AS month, COUNT(a) AS count,SUM(a.montant_achat * (1 + t.tva_taux / 100)) AS totalmontant')
-                ->innerJoin('\App\Entity\TVA', 't', Join::WITH, 'a.tva_ident = t.id') 
-                ->andWhere('YEAR(a.date_notification) = :year')
-                ->andWhere('a.type_marche = :type_marche')
-                ->andWhere('a.etat_achat = (:etat_achats)')
-                ->setParameter('year', $date)
-                ->setParameter('type_marche', $type)
-                ->setParameter('etat_achats', 2);
-        }
-
-        if ($data->getUtilisateurs()) {
-            $qb->andWhere('a.utilisateurs = :utilisateurs')
-                ->setParameter('utilisateurs', $data->getUtilisateurs());
-        }
-        if ($data->getNumSiret()) {
-            $qb
-                ->andWhere('a.num_siret = :num_siret')
-                ->setParameter('num_siret', $data->getNumSiret());
-        }if ($data->getCodeUo()) {
-            $qb
-                ->andWhere('a.code_uo = :code_uo')
-                ->setParameter('code_uo', $data->getCodeUo());
-        }
-        if ($data->getCodeCpv()) {
-            $qb
-                ->andWhere('a.code_cpv = :code_cpv')
-                ->setParameter('code_cpv', $data->getCodeCpv());
-        }
-
-        if ($data->getCodeFormation()) {
-            $qb
-                ->andWhere('a.code_formation = :code_formation')
-                ->setParameter('code_formation', $data->getCodeFormation());
-        }
-        $result = $qb->groupBy('month')
-            ->getQuery()
-            ->getResult();
-
-        return $result;
+    public function getPurchaseCountAndTotalAmount($type, $form)
+{
+    $data = $form->getData();
+    $date = $form["date"]->getData();
+    $tax = $form["tax"]->getData();
+    $etat_achat = $form["etat_achat"]->getData();
+    $anne_precedente = $form["annee_precedente"]->getData();
+    
+    $qb = $this->createQueryBuilder('a');
+    
+    // Determine the date column to use
+    $dateColumn = ($etat_achat == 'valid') ? 'a.date_notification' : 'a.date_saisie';
+    
+    // Select statement based on tax type
+    if ($tax == 'ht') {
+        $qb->select('YEAR(' . $dateColumn . ') AS year, MONTH(' . $dateColumn . ') AS month, COUNT(a) AS count, SUM(a.montant_achat) AS totalmontant');
+    } elseif ($tax == 'ttc') {
+        $qb->select('YEAR(' . $dateColumn . ') AS year, MONTH(' . $dateColumn . ') AS month, COUNT(a) AS count, SUM(a.montant_achat * (1 + t.tva_taux / 100)) AS totalmontant')
+           ->innerJoin('\App\Entity\TVA', 't', Join::WITH, 'a.tva_ident = t.id');
     }
+    
+    // Basic conditions
+    $qb->andWhere('YEAR(' . $dateColumn . ') IN (:years)')
+       ->andWhere('a.type_marche = :type_marche')
+       ->setParameter('years', [$date, $anne_precedente == 'anneePrecedente' ? $date - 1 : $date])
+       ->setParameter('type_marche', $type);
+    
+    // Add etat_achat condition if it is 'valid'
+    if ($etat_achat == 'valid') {
+        $qb->andWhere('a.etat_achat = :etat_achats')
+           ->setParameter('etat_achats', 2);
+    }
+    
+    // Additional filters
+    if ($data->getUtilisateurs()) {
+        $qb->andWhere('a.utilisateurs = :utilisateurs')
+           ->setParameter('utilisateurs', $data->getUtilisateurs());
+    }
+    if ($data->getNumSiret()) {
+        $qb->andWhere('a.num_siret = :num_siret')
+           ->setParameter('num_siret', $data->getNumSiret());
+    }
+    if ($data->getCodeUo()) {
+        $qb->andWhere('a.code_uo = :code_uo')
+           ->setParameter('code_uo', $data->getCodeUo());
+    }
+    if ($data->getCodeCpv()) {
+        $qb->andWhere('a.code_cpv = :code_cpv')
+           ->setParameter('code_cpv', $data->getCodeCpv());
+    }
+    if ($data->getCodeFormation()) {
+        $qb->andWhere('a.code_formation = :code_formation')
+           ->setParameter('code_formation', $data->getCodeFormation());
+    }
+    
+    // Group by year and month
+    $result = $qb->groupBy('year, month')
+                 ->getQuery()
+                 ->getResult();
+    
+    // Organize results into a structured array
+    $organizedResults = [
+        'current_year' => [],
+        'previous_year' => []
+    ];
+
+    foreach ($result as $row) {
+        if ($row['year'] == $date) {
+            $organizedResults['current_year'][] = $row;
+        } elseif ($row['year'] == ($date - 1)) {
+            $organizedResults['previous_year'][] = $row;
+        }
+    }
+    // dd($organizedResults);
+    return $organizedResults;
+}
+
+    
    
     public function getYearDelayDiff($form)
     {
@@ -831,7 +854,7 @@ public function getPMETopVal($form)
           ORDER BY
             source = 'ANT GSBDD' DESC,
             source = 'BUDGET' DESC,
-            source = 'APPRO' DESC,
+            source = 'APPRO' DESC,s
             source = 'FIN' DESC,
             source = 'PFAF' DESC,
             source = 'Chorus formul.' DESC

@@ -18,12 +18,14 @@
             <a href="{{ path('app_fournisseurs_new') }}" class="text-center">Ajouter un fournisseur</a>
             
         </button>
-        {% for flash_message in app.session.flashbag.get('valid') %}
+
+        {% for flash_message in app.session.flashbag.get('success') %}
         <div class="alert alert-success">
             {{ flash_message }}
         </div>
         {% endfor %}
     </div>
+ 
     <div class="d-flex">
     <div class="w-75">
    <form method="get" action="{{ path('app_fournisseurs_index') }}"class="d-flex flex-column">
@@ -55,12 +57,8 @@
 </a></th>
                 <th>Nom du fournisseur <a href="{{ path('app_fournisseurs_index', {'sortField': 'nom_fournisseur', 'sortDirection': sortField == 'nom_fournisseur' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
                 <th>Code Client <a href="{{ path('app_fournisseurs_index', {'sortField': 'code_client', 'sortDirection': sortField == 'code_client' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
-                <th>Ville <a href="{{ path('app_fournisseurs_index', {'sortField': 'ville', 'sortDirection': sortField == 'ville' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
-                <th>Code Postal <a href="{{ path('app_fournisseurs_index', {'sortField': 'code_postal', 'sortDirection': sortField == 'code_postal' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
                 <th>Téléphone <a href="{{ path('app_fournisseurs_index', {'sortField': 'tel', 'sortDirection': sortField == 'tel' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
-                <th>FAX <a href="{{ path('app_fournisseurs_index', {'sortField': 'fax', 'sortDirection': sortField == 'fax' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
                 <th>Num Chorus fournisseur <a href="{{ path('app_fournisseurs_index', {'sortField': 'num_chorus_fournisseur', 'sortDirection': sortField == 'num_chorus_fournisseur' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
-                <th>Mail <a href="{{ path('app_fournisseurs_index', {'sortField': 'mail', 'sortDirection': sortField == 'mail' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
                 <th>Etat <a href="{{ path('app_fournisseurs_index', {'sortField': 'etat_fournisseur', 'sortDirection': sortField == 'etat_fournisseur' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
 
                 <th>Actions</th>
@@ -72,12 +70,8 @@
                 <td>{{ fournisseur.numSiret }}</td>
                 <td>{{ fournisseur.NomFournisseur }}</td>
                 <td>{{ fournisseur.codeClient }}</td>
-                <td>{{ fournisseur.ville }}</td>
-                <td>{{ fournisseur.codePostal }}</td>
                 <td>{{ fournisseur.tel }}</td>
-                <td>{{ fournisseur.fax }}</td>
                 <td>{{ fournisseur.numChorusFournisseur }}</td>
-                <td>{{ fournisseur.Mail }}</td>
 <td>
     {% if fournisseur.EtatFournisseur == 1 %}
         Actif

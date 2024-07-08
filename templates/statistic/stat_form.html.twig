@@ -17,13 +17,27 @@
               </div>
           </div>
       </div>
-
+                {% if app.request.attributes.get('_route') == 'app_statistic_vol' %}
+                  {{ form_row(form.etat_achat, {'attr': {'class': ""}}) }}
+                  <!-- Retire la classe 'hidden' si la condition est vraie -->
+                  {% else %}
+                  {{ form_row(form.etat_achat, {'attr': {'class': "hidden"}}) }}
+                  <!-- Ajoute la classe 'hidden' si la condition est fausse -->
+                  {% endif %}
+                  {% if app.request.attributes.get('_route') == 'app_statistic_vol' %}
+                  {{ form_row(form.annee_precedente, {'attr': {'class': ""}}) }}
+                  <!-- Retire la classe 'hidden' si la condition est vraie -->
+                  {% else %}
+                  {{ form_row(form.annee_precedente, {'attr': {'class': "hidden"}}) }}
+                  <!-- Ajoute la classe 'hidden' si la condition est fausse -->
+                  {% endif %}
       <div class="input-grp-tab d-flex flex-wrap justify-content-between" style="flex-basis:100%;">
           {{ form_row(form.code_cpv) }}
           {{ form_row(form.code_formation) }}
           {{ form_row(form.num_siret) }}
           {{ form_row(form.code_uo) }}
           {{ form_row(form.utilisateurs) }}
+          
       </div>
 
       <div class="btn-submit">

@@ -3,22 +3,41 @@
 namespace App\Controller\Environnement;
 
 use App\Entity\Fournisseurs;
+use App\Form\ImportExcelType;
 use App\Form\FournisseursType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\FournisseursRepository;
+use App\Service\ImportFournisseurs;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+
+
+
 
 #[Route('/fournisseurs')]
 #[IsGranted('ROLE_OPT_FOURNISSEURS')]
-
 class FournisseursController extends AbstractController
 {
-    #[Route('/', name: 'app_fournisseurs_index', methods: ['GET'])]
+
+    
+private $entityManager;
+private $importFournisseurs;
+
+public function __construct(EntityManagerInterface $entityManager,ImportFournisseurs $importFournisseurs)
+{
+
+    $this->entityManager = $entityManager;
+    $this->importFournisseurs = $importFournisseurs;
+
+}
+
+
+    #[Route('/', name: 'app_fournisseurs_index', methods: ['GET','POST'])]
 public function index(FournisseursRepository $fournisseursRepository, Request $request, PaginatorInterface $paginator): Response
 {
     $searchTerm = $request->query->get('search', '');
@@ -47,13 +66,20 @@ public function index(FournisseursRepository $fournisseursRepository, Request $r
         $request->query->getInt('page', 1),
         $perPage
     );
+    $form = $this->createForm(ImportExcelType::class);
+    $form->handleRequest($request);
 
+    if ($form->isSubmitted() && $form->isValid()) {
+        $file = $form->get('excel_file')->getData();
+        $this->importFournisseurs->importDataFromExcel($request,$file);
+}
     return $this->render('fournisseurs/index.html.twig', [
         'pagination' => $pagination,
         'searchTerm' => $searchTerm,
         'perPage' => $perPage,
         'sortField' => $sortField,
         'sortDirection' => $sortDirection,
+        'form' => $form->createView(),
         'activeFournisseur' => $activeFournisseur, // Passer la valeur de la case à cocher au template
     ]);
 }

@@ -1,117 +1,133 @@
-
-    
-    <h6 class="blueF">Activité en volume</h6>
-    <table id='tableCheck'>
-            <thead>
-
+<h6 class="blueF">Activité en volume</h6>
+<table id='tableCheck'>
+    <thead>
         <tr>
-          <th>Mois</th>
-          {% set totalmppa = 0 %}
-          {% set totalmabc = 0 %}
-          {% for month, data in VolValStat %}
-          <td>{{ month }}</td>
-          {% set totalmppa = totalmppa + data['countmppa'] %}
-          {% set totalmabc = totalmabc + data['countmabc'] %}
-          {% endfor %}
-          <td>Total</td>
-          </thead>
-                <tbody>
-
+            <th>Mois</th>
+            {% set totalmppa = 0 %}
+            {% set totalmabc = 0 %}
+            {% for month, data in toPDF.volValStat.current_year %}
+                <td>{{ month }}</td>
+            {% endfor %}
+            <td>Total</td>
         </tr>
+    </thead>
+    <tbody>
         <tr>
-          <th>MPPA</th>
-          {% for month, data in VolValStat %}
-          <td>{{ data['countmppa'] }}</td>
-          {% endfor %}
-          <td>{{ totalmppa }}</td>
+            <th>MPPA (Année en cours)</th>
+            {% for month, data in toPDF.volValStat.current_year %}
+                <td>{{ data['countmppa']|default(0) }}</td>
+                {% set totalmppa = totalmppa + (data['countmppa']|default(0)) %}
+            {% endfor %}
+            <td>{{ totalmppa }}</td>
         </tr>
         <tr>
-          <th>MABC</th>
-          {% for month, data in VolValStat %}
-          <td>{{ data['countmabc'] }}</td>
-          {% endfor %}
-          <td>{{ totalmabc }}</td>
+            <th>MABC (Année en cours)</th>
+            {% for month, data in toPDF.volValStat.current_year %}
+                <td>{{ data['countmabc']|default(0) }}</td>
+                {% set totalmabc = totalmabc + (data['countmabc']|default(0)) %}
+            {% endfor %}
+            <td>{{ totalmabc }}</td>
         </tr>
         <tr>
-          <th>TOTAL</th>
-          {% for month, data in VolValStat %}
-          <td>{{ data['countmppa'] + data['countmabc'] }}</td>
-          {% endfor %}
-          <td>{{ totalmppa + totalmabc }}</td>
+            <th>TOTAL (Année en cours)</th>
+            {% for month, data in toPDF.volValStat.current_year %}
+                <td>{{ (data['countmppa']|default(0) + data['countmabc']|default(0)) }}</td>
+            {% endfor %}
+            <td>{{ totalmppa + totalmabc }}</td>
         </tr>
-        {# Mise en commentaire suite à la reunion précendent avec le client, en attente de confirmation
-        à la prochaine réunion
-         <tr>
-          <th><=15jrs</th>
-          {% set total15 = 0 %}
-          {% for  data in delayVolVal %}
-          <td>{{ data['Achats <= 15 jours'] }}</td>
-          {% set total15 = total15 + data['Achats <= 15 jours'] %}
-          {% endfor %}
-          <td>{{ total15 }}</td>
-        </tr>
-                <tr>
-          <th>15< x <=30</th>
-          {% set total1530 = 0 %}
-          {% for data in delayVolVal %}
-          <td>{{ data['Achats 16-30 jours'] }}</td>
-          {% set total1530 = total1530 + data['Achats 16-30 jours'] %}
-          {% endfor %}
-          <td>{{ total1530 }}</td>
-        </tr>
-                <tr>
-          <th>> 30 jrs</th>
-          {% set total30 = 0 %}
-          {% for data in delayVolVal %}
-          <td>{{ data['Achats > 30 jours'] }}</td>
-          {% set total30 = total30 + data['Achats > 30 jours'] %}
-          {% endfor %}  
-          <td>{{ total30 }}</td>
-        </tr> #}
-      </tbody>
-    </table>
-    <h6 class="blueF">Activité en valeur ({{ toPDF['criteria']['Taxe'] | upper }})</h6>
-    <table id="volValTable">
-              <thead>
+        {% if annee_precedente == 'anneePrecedente' %}
+            <tr>
+                <th>MPPA (Année Précédente)</th>
+                {% set totalmppaPrev = 0 %}
+                {% for month, data in toPDF.volValStat.previous_year %}
+                    <td>{{ data['countmppa']|default(0) }}</td>
+                    {% set totalmppaPrev = totalmppaPrev + (data['countmppa']|default(0)) %}
+                {% endfor %}
+                <td>{{ totalmppaPrev }}</td>
+            </tr>
+            <tr>
+                <th>MABC (Année Précédente)</th>
+                {% set totalmabcPrev = 0 %}
+                {% for month, data in toPDF.volValStat.previous_year %}
+                    <td>{{ data['countmabc']|default(0) }}</td>
+                    {% set totalmabcPrev = totalmabcPrev + (data['countmabc']|default(0)) %}
+                {% endfor %}
+                <td>{{ totalmabcPrev }}</td>
+            </tr>
+            <tr>
+                <th>TOTAL (Année Précédente)</th>
+                {% for month, data in toPDF.volValStat.previous_year %}
+                    <td>{{ (data['countmppa']|default(0) + data['countmabc']|default(0)) }}</td>
+                {% endfor %}
+                <td>{{ totalmppaPrev + totalmabcPrev }}</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<h6 class="blueF">Activité en valeur ({{ toPDF['criteria']['Taxe'] | upper }})</h6>
+<table id="volValTable">
+    <thead>
         <tr>
-          <th>Mois</th>
-          {% set MtMppa = 0 %}
-          {% set MtMabc = 0 %}
-          {% set count = 0 %}
-          {% for month, count in VolValStat %}
-          <td>{{ month }}</td>
-          {% endfor %}
-          <td>Total</td>
+            <th>Mois</th>
+            {% for month, count in toPDF.volValStat.current_year %}
+                <td>{{ month }}</td>
+            {% endfor %}
+            <td>Total</td>
         </tr>
-                  </thead>
-
-              <tbody>
-
-<tr>
-    <th>MPPA</th>
-    {% set totalMtMppa = 0 %}
-    {% for month, data in VolValStat %}
-        {% set totalMtMppa = totalMtMppa + data['totalmontantmppa'] %}
-        <td>{{ data['totalmontantmppa']|number_format(2, '.', ' ') }}</td>
-    {% endfor %}
-    <td>{{ totalMtMppa|number_format(2, '.', ' ') }}</td>
-</tr>
-<tr>
-    <th>MABC</th>
-    {% set totalMtMabc = 0 %}
-    {% for month, data in VolValStat %}
-        {% set totalMtMabc = totalMtMabc + data['totalmontantmabc'] %}
-        <td>{{ data['totalmontantmabc']|number_format(2, '.', ' ') }}</td>
-    {% endfor %}
-    <td>{{ totalMtMabc|number_format(2, '.', ' ') }}</td>
-</tr>
-<tr>
-    <th>TOTAL</th>
-    {% for month, data in VolValStat %}
-        <td>{{ data['totalmotant']|number_format(2, '.', ' ') }}</td>
-    {% endfor %}
-    <td>{{ (totalMtMppa + totalMtMabc)|number_format(2, '.', ' ') }}</td>
-</tr>
-
-      </tbody>
-    </table>
+    </thead>
+    <tbody>
+        <tr>
+            <th>MPPA (Année en cours)</th>
+            {% set totalMtMppa = 0 %}
+            {% for month, data in toPDF.volValStat.current_year %}
+                {% set totalMtMppa = totalMtMppa + (data['totalmontantmppa']|default(0)) %}
+                <td>{{ data['totalmontantmppa']|default(0)|number_format(2, '.', ' ') }}</td>
+            {% endfor %}
+            <td>{{ totalMtMppa|number_format(2, '.', ' ') }}</td>
+        </tr>
+        <tr>
+            <th>MABC (Année en cours)</th>
+            {% set totalMtMabc = 0 %}
+            {% for month, data in toPDF.volValStat.current_year %}
+                {% set totalMtMabc = totalMtMabc + (data['totalmontantmabc']|default(0)) %}
+                <td>{{ data['totalmontantmabc']|default(0)|number_format(2, '.', ' ') }}</td>
+            {% endfor %}
+            <td>{{ totalMtMabc|number_format(2, '.', ' ') }}</td>
+        </tr>
+        <tr>
+            <th>TOTAL (Année en cours)</th>
+            {% for month, data in toPDF.volValStat.current_year %}
+                <td>{{ (data['totalmontantmppa']|default(0) + data['totalmontantmabc']|default(0))|number_format(2, '.', ' ') }}</td>
+            {% endfor %}
+            <td>{{ (totalMtMppa + totalMtMabc)|number_format(2, '.', ' ') }}</td>
+        </tr>
+        {% if annee_precedente == 'anneePrecedente' %}
+            <tr>
+                <th>MPPA (Année Précédente)</th>
+                {% set totalMtMppaPrev = 0 %}
+                {% for month, data in toPDF.volValStat.previous_year %}
+                    <td>{{ data['totalmontantmppa']|default(0)|number_format(2, '.', ' ') }}</td>
+                    {% set totalMtMppaPrev = totalMtMppaPrev + (data['totalmontantmppa']|default(0)) %}
+                {% endfor %}
+                <td>{{ totalMtMppaPrev|number_format(2, '.', ' ') }}</td>
+            </tr>
+            <tr>
+                <th>MABC (Année Précédente)</th>
+                {% set totalMtMabcPrev = 0 %}
+                {% for month, data in toPDF.volValStat.previous_year %}
+                    <td>{{ data['totalmontantmabc']|default(0)|number_format(2, '.', ' ') }}</td>
+                    {% set totalMtMabcPrev = totalMtMabcPrev + (data['totalmontantmabc']|default(0)) %}
+                {% endfor %}
+                <td>{{ totalMtMabcPrev|number_format(2, '.', ' ') }}</td>
+            </tr>
+            <tr>
+                <th>TOTAL (Année Précédente)</th>
+                {% for month, data in toPDF.volValStat.previous_year %}
+                    <td>{{ (data['totalmontantmppa']|default(0) + data['totalmontantmabc']|default(0))|number_format(2, '.', ' ') }}</td>
+                {% endfor %}
+                <td>{{ (totalMtMppaPrev + totalMtMabcPrev)|number_format(2, '.', ' ') }}</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>

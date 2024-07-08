@@ -48,20 +48,30 @@ class CRAnnuelController extends AbstractController
         $form->handleRequest($request);
         $result_achatsSumVal[]=null;
         if ($form->isSubmitted()) {
-
             $mppaEtat = 1;
             $mabcEtat = 0;
-            $mppaMtTotal = [];
-            $mabcMtTotal = [];
-            $mppaMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mppaEtat,$form);
-            $mabcMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat,$form);
-            $VolValStat = $this->statisticService->purchaseStatisticsByMonth($mppaMtTotal,$mabcMtTotal);
-            $chartData = $this->statisticService->arrayMapChart( $VolValStat, 'countmppa','countmabc');
-            $chartData2 = $this->statisticService->arrayMapChart($VolValStat, 'totalmontantmppa','totalmontantmabc');
-            $chartDataCountMppa = $chartData['mppa'];
-            $chartDataCountMabc = $chartData['mabc'];
-            $chartDataTotalMppa = $chartData2['mppa'];
-            $chartDataTotalMabc = $chartData2['mabc'];
+             $mppaMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mppaEtat, $form);
+                $mabcMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat, $form);
+        
+                $volValStat = $this->statisticService->purchaseStatisticsByMonth(
+                    $mppaMtTotal['current_year'], 
+                    $mppaMtTotal['previous_year'], 
+                    $mabcMtTotal['current_year'], 
+                    $mabcMtTotal['previous_year']
+                );
+        
+                $delayVolVal = $this->achatRepository->getVolValDelay($form);
+        
+                $chartDataCountCurrent = $this->statisticService->arrayMapChart($volValStat['current_year'], 'countmppa', 'countmabc');
+                $chartDataCountPrevious = $this->statisticService->arrayMapChart($volValStat['previous_year'], 'countmppa', 'countmabc');
+                $chartDataTotalCurrent = $this->statisticService->arrayMapChart($volValStat['current_year'], 'totalmontantmppa', 'totalmontantmabc');
+                $chartDataTotalPrevious = $this->statisticService->arrayMapChart($volValStat['previous_year'], 'totalmontantmppa', 'totalmontantmabc');
+            
+    
+            $delayVolVal = $this->achatRepository->getVolValDelay($form);
+    
+            $chartDataCountCurrent = $this->statisticService->arrayMapChart($volValStat['current_year'], 'countmppa', 'countmabc');
+            $chartDataTotalCurrent = $this->statisticService->arrayMapChart($volValStat['current_year'], 'totalmontantmppa', 'totalmontantmabc');
 
             $achats_delay = $this->achatRepository->getYearDelayDiff($form);
             $achats = $this->statisticDelayService->getDelayPerMonth($achats_delay);
@@ -85,7 +95,7 @@ class CRAnnuelController extends AbstractController
                     'errorMessage' => $errorMessage,
                 ]);
             }
-            $filePath = $this->crAnnuelService->generateExcelFile($chartDataCountMppa, $chartDataCountMabc, $chartDataTotalMppa, $chartDataTotalMabc, $this->projectDir, $achats, $achats_delay_all,$result_achats,
+            $filePath = $this->crAnnuelService->generateExcelFile($chartDataCountCurrent, $chartDataCountPrevious, $chartDataTotalCurrent, $chartDataTotalPrevious, $this->projectDir, $achats, $achats_delay_all,$result_achats,
                                                                 $result_achats_mounts, $parameter,$result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
             return new BinaryFileResponse($filePath);
         }

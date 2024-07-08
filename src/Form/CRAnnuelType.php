@@ -59,6 +59,22 @@ class CRAnnuelType extends AbstractType
             'data'  => 'ht',
 
         ])
+        ->add('annee_precedente', ChoiceType::class, [
+            'choices'  => [
+                'Année en cours seulement' => "anneeEnCours",
+                'Année en cours et année précédente' => "anneePrecedente",
+            ],
+            'required' => false,
+            'expanded' => true,
+            'label'=>false,
+            'row_attr' => ['class' => 'hidden'],
+            'attr' => ['class' => ''], 
+            'label_attr' => ['class' => 'fr-label'],
+            'placeholder' => false,
+            'mapped'=>false,
+            'data'  => 'anneePrecedente',
+
+        ])
         ->add('excel', SubmitType::class, [
             'attr' => [
                 'class' => 'fr-btn '

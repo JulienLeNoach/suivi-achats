@@ -29,6 +29,10 @@ Encore
       },
     ];
   })
+  Encore.configureBabel((config) => {
+    config.plugins.push('@babel/plugin-proposal-class-properties');
+});
+
   Encore
   // ...
   // Ajoutez le fichier .less à la configuration

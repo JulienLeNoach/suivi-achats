@@ -10,6 +10,7 @@
         "acseo/typesense-bundle": "dev-master",
         "api-platform/core": "^3.1",
         "beberlei/doctrineextensions": "dev-master",
+        "box/spout": "^3.3",
         "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.8",
         "doctrine/doctrine-migrations-bundle": "^3.2",

@@ -103,6 +103,36 @@ class StatisticType extends AbstractType
             'data'  => 'ht',
 
         ])
+        ->add('etat_achat', ChoiceType::class, [
+            'choices'  => [
+                'Achats validé seulement' => "valid",
+                'Tout les achats' => "all",
+            ],
+            'expanded' => true,
+            'label'=>false,
+            'row_attr' => ['class' => 'radio-search'],
+            'attr' => ['class' => ''], 
+            'label_attr' => ['class' => 'fr-label'],
+            'placeholder' => false,
+            'mapped'=>false,
+            'data'  => 'valid',
+
+        ])
+        ->add('annee_precedente', ChoiceType::class, [
+            'choices'  => [
+                'Année en cours seulement' => "anneeEnCours",
+                'Année en cours et année précédente' => "anneePrecedente",
+            ],
+            'expanded' => true,
+            'label'=>false,
+            'row_attr' => ['class' => 'radio-search'],
+            'attr' => ['class' => ''], 
+            'label_attr' => ['class' => 'fr-label'],
+            'placeholder' => false,
+            'mapped'=>false,
+            'data'  => 'anneeEnCours',
+
+        ])
         ->add('recherche', SubmitType::class, [
             'attr' => [
                 'class' => 'fr-btn search'

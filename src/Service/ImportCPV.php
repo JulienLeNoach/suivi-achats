@@ -46,15 +46,25 @@ class ImportCPV  extends AbstractController
                 
                 // Vérifier si la première colonne contient des caractères
                 if (!empty($rowData[0])) {
-                    $entity = new CPV();
-                    $entity->setCodeCpv($rowData[0]);
-                    $entity->setLibelleCpv($rowData[1]);
-                    $entity->setEtatCpv(1);
-                    $entity->setCodeService($service);
-                    $entity->setMtCpvAuto(90000);
+                    $codeCpv = $rowData[0];
+                    
+                    // Vérifier si le code_cpv existe déjà en base de données
+                    $existingCpv = $this->entityManager->getRepository(CPV::class)->findOneByCodeCpv($codeCpv);
+                    
+                    if (!$existingCpv) {
+                        $entity = new CPV();
+                        $entity->setCodeCpv($codeCpv);
+                        $entity->setLibelleCpv($rowData[1]);
+                        $entity->setEtatCpv(1);
+                        $entity->setCodeService($service);
+                        $entity->setMtCpvAuto(90000);
     
-                    // Enregistrement d'autres propriétés ...
-                    $this->entityManager->persist($entity);
+                        // Enregistrement d'autres propriétés ...
+                        $this->entityManager->persist($entity);
+                    } else {
+                        $existingCpv->setMtCpvAuto(90000);
+                        continue;
+                    }
                 } else {
                     // Passez à la prochaine ligne si la première colonne est vide
                     continue;
@@ -67,6 +77,6 @@ class ImportCPV  extends AbstractController
         }
         // Gérer le cas où aucun fichier n'est soumis
         $this->addFlash('error', 'Veuillez sélectionner un fichier Excel à importer.');
-        return $this->redirectToRoute('route_name');
+        return $this->redirectToRoute('cpv');
     }
 }

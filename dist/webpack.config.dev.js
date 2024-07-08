@@ -29,6 +29,9 @@ Encore.configureLoaderRule('less', function (rule) {
     }
   }];
 });
+Encore.configureBabel(function (config) {
+  config.plugins.push('@babel/plugin-proposal-class-properties');
+});
 Encore // ...
 // Ajoutez le fichier .less à la configuration
 .addStyleEntry('main', './assets/less/main.less');

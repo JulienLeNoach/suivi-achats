@@ -1,4 +1,3 @@
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Valider ou notifier un achat{% endblock %}
@@ -6,84 +5,84 @@
 {% block body %}
 <div class="achat-container">
 
-        <div class='align-items-center d-flex mt-3 bandeau-form-search'>
-            <span class="fr-icon-search-line" aria-hidden="true"></span>
-
-            <h5 class="mt-4 ms-3 blueF">Valider ou notifier un achat</h5>
-            <div class="bande ms-3">
+    <div class='align-items-center d-flex mt-3 bandeau-form-search'>
+        <span class="fr-icon-search-line" aria-hidden="true"></span>
+        <h5 class="mt-4 ms-3 blueF">Valider ou notifier un achat</h5>
+        <div class="bande ms-3"></div>
+    </div>
+    
+    <div class="form-container action-container">
+        {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around flex-wrap p-5'}}) }}
+        <div class="input-grp" style="flex-basis:50%">
+            <div class="d-flex">
+                <div class="d-flex flex-column  w-50 me-3">
+                    <label for="ser" class="fr-label">Service</label>
+                    <input class="fr-input" type="text" id="ser" value="{{ result_achat.codeService }}" disabled>
+                </div>
+                <div class="d-flex flex-column  w-50">
+                    <label for="ser" class="fr-label">N° Chrono</label>
+                    <input class="fr-input" type="text" id="ser" value="{{ result_achat.numeroAchat }}" disabled>
+                </div>
+            </div>
+            <div class="d-flex flex-column">
+                <label for="cpv" class="fr-label">CPV</label>
+                <input class="fr-input" type="text" id="cpv" value="{{ result_achat.codeCPV|striptags }}" disabled>
+            </div>
+            <div class="d-flex">
+                <div class="d-flex flex-column me-3 w-50">
+                    <label for="val" class="fr-label">Date de validation</label>
+                    <input class="fr-input" size="15" type="text" id="valbox" name="val" value="{{ result_achat.dateValidation | join('') | date('d/m/y') }}">
+                </div>
+                <div class="d-flex flex-column me-3 w-50">
+                    <label for="val" class="fr-label">Date de notification</label>
+                    <input class="fr-input" size="15" type="text" id="notbox" name="not" value="{{ result_achat.dateNotification | join('') | date('d/m/y') }}">
+                </div>
+            </div>
+            <div class="d-flex flex-column">
+                <label for="val" class="fr-label">Numero EJ</label>
+                {% if result_achat.typeMarche == 0 %}
+                    <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="14{{ result_achat.numeroEj | slice(2) }}" required>
+                {% elseif result_achat.typeMarche == 1 %}
+                    <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="15{{ result_achat.numeroEj | slice(2) }}" required>
+                {% else %}
+                    <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="{{ result_achat.numeroEj }}" required>
+                {% endif %}
             </div>
         </div>
-       <div class="form-container action-container">
-    {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-around flex-wrap p-5'}}) }}
-    <div class="input-grp" style="flex-basis:50%">
-    <div class="d-flex">
-        <div class="d-flex flex-column  w-50 me-3">
-            <label for="ser" class="fr-label">Service</label>
-            <input class="fr-input" type="text" id="ser" value="{{result_achat.codeService}}" disabled>
+        <div class="input-grp" style="flex-basis:50%">
+            <div class="d-flex flex-column">
+                <label for="mtn" class="fr-label">Montant achat HT</label>
+                <input class="fr-input" type="number" id="mtn" value="{{ result_achat.montantAchat | number_format(2, '.', '') }}" disabled>
+            </div>
+            <div class="d-flex flex-column">
+                <label for="cpv" class="fr-label">Montant autorisé</label>
+                <input class="fr-input" type="number" id="cpv" value="90000.00" disabled>
+            </div>
+            <div class="d-flex flex-column">
+                <label for="cpv" class="fr-label">Computation</label>
+                <input class="fr-input" type="number" id="cpv" value="{{ cpvMt.computation | number_format(2, '.', '') }}" disabled>
+            </div>
+            <div class="d-flex flex-column">
+                <label for="cpv" class="fr-label">Reliquat</label>
+                <input class="fr-input" type="number" id="cpv" value="{{ cpvMt.reliquat | number_format(2, '.', '') }}" disabled>
+            </div>
         </div>
-        <div class="d-flex flex-column  w-50">
-            <label for="ser" class="fr-label">N° Chrono</label>
-            <input class="fr-input" type="text" id="ser" value="{{result_achat.numeroAchat}}" disabled>
-        </div>
-    </div>
-        <div class="d-flex flex-column">
-            <label for="cpv" class="fr-label">CPV</label>
-            <input class="fr-input" type="text" id="cpv" value="{{result_achat.codeCPV|striptags }}" disabled>
-        </div>
-            <div class="d-flex">
-        <div class="d-flex flex-column me-3 w-50">
-            <label for="val" class="fr-label">Date de validation</label>
-            <input class="fr-input" size="15" type="text" id="valbox" name="val" value="{{result_achat.dateValidation | join ('') | date('d/m/y')}}">
-        </div>
-        <div class="d-flex flex-column me-3 w-50" >
-            <label for="val" class="fr-label">Date de notification</label>
-            <input class="fr-input" size="15" type="text" id="notbox" name="not" value="{{result_achat.dateNotification | join ('') | date('d/m/y')}}">
-        </div>
-        </div>
-<div class="d-flex flex-column">
-    <label for="val" class="fr-label">Numero EJ</label>
-    {% if result_achat.typeMarche == 0 %}
-        <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="14{{ result_achat.numeroEj | slice(2) }}" required>
-    {% elseif result_achat.typeMarche == 1 %}
-        <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="15{{ result_achat.numeroEj | slice(2) }}" required>
-    {% else %}
-        <input class="fr-input" size="20" type="number" id="ejbox" name="ej" value="{{ result_achat.numeroEj }}" required>
-    {% endif %}
-</div>
-    </div>
-    <div class="input-grp" style="flex-basis:50%">
-        <div class="d-flex flex-column">
-            <label for="mtn" class="fr-label">Montant achat HT</label>
-            <input class="fr-input" type="number" id="mtn" value="{{result_achat.montantAchat|number_format(2, '.', '') }}" disabled>
-        </div>
-        <div class="d-flex flex-column">
-            <label for="cpv" class="fr-label">Montant autorisé</label>
-            <input class="fr-input" type="number" id="cpv" value="90000.00" disabled>
-        </div>
-        <div class="d-flex flex-column">
-            <label for="cpv" class="fr-label">Computation</label>
-            <input class="fr-input" type="number" id="cpv" value="{{cpvMt.computation  |number_format(2, '.', '') }}" disabled>
-        </div>
-        <div class="d-flex flex-column">
-            <label for="cpv" class="fr-label">Reliquat</label>
-            <input class="fr-input" type="number" id="cpv" value="{{cpvMt.reliquat|number_format(2, '.', '') }}" disabled>
-        </div>
-    </div>
-            <div class="sub-btn d-flex justify-content-between align-items-centers">
+        <div class="sub-btn d-flex justify-content-between align-items-centers">
             {{ form_end(form) }}
-            </div> {# Terminez le formulaire #}
-</div>
-                     {# Démarrez le formulaire #}
+        </div>
+    </div>
 
-        {% for flash_message in app.session.flashbag.get('success') %}
+    {% for flash_message in app.session.flashbag.get('error') %}
+        <div class="alert alert-danger">
+            {{ flash_message | nl2br }}
+        </div>
+    {% endfor %}
+
+    {% for flash_message in app.session.flashbag.get('valid') %}
         <div class="alert alert-success">
-            {{ flash_message|nl2br }}
-            {% endfor %}
+            {{ flash_message | nl2br }}
         </div>
-        </div>
-
+    {% endfor %}
 
 </div>
-
-
 {% endblock %}

@@ -34,7 +34,7 @@ class StatisticVolValService  extends AbstractController
 
     }
 
-    public function purchaseStatisticsByMonth(array $result1, array $result2): array
+    public function purchaseStatisticsByMonth(array $currentYearMppa, array $previousYearMppa, array $currentYearMabc, array $previousYearMabc): array
     {
         $months = [
             1 => 'Janvier',
@@ -51,67 +51,96 @@ class StatisticVolValService  extends AbstractController
             12 => 'Décembre',
         ];
     
-        $purchaseData = [];
+        $currentYearData = [];
+        $previousYearData = [];
     
         foreach ($months as $month) {
-            $purchaseData[$month] = [
+            $currentYearData[$month] = [
                 'countmppa' => 0,
                 'totalmontantmppa' => 0,
                 'countmabc' => 0,
                 'totalmontantmabc' => 0,
-                'totalcount' => 0
+                'totalcount' => 0,
+                'totalmontant' => 0,
+            ];
+            $previousYearData[$month] = [
+                'countmppa' => 0,
+                'totalmontantmppa' => 0,
+                'countmabc' => 0,
+                'totalmontantmabc' => 0,
+                'totalcount' => 0,
+                'totalmontant' => 0,
             ];
         }
     
-        foreach ($result1 as $row) {
+        foreach ($currentYearMppa as $row) {
             $month = intval($row['month']);
             $totalmontant = $row['totalmontant'];
             $count = intval($row['count']);
-            $purchaseData[$months[$month]]['countmppa'] += $count;
-            $purchaseData[$months[$month]]['totalmontantmppa'] += $totalmontant;
+            $currentYearData[$months[$month]]['countmppa'] += $count;
+            $currentYearData[$months[$month]]['totalmontantmppa'] += $totalmontant;
         }
     
-        foreach ($result2 as $row) {
+        foreach ($previousYearMppa as $row) {
             $month = intval($row['month']);
             $totalmontant = $row['totalmontant'];
             $count = intval($row['count']);
-            $purchaseData[$months[$month]]['countmabc'] += $count;
-            $purchaseData[$months[$month]]['totalmontantmabc'] += $totalmontant;
+            $previousYearData[$months[$month]]['countmppa'] += $count;
+            $previousYearData[$months[$month]]['totalmontantmppa'] += $totalmontant;
         }
     
-        foreach ($purchaseData as &$data) {
+        foreach ($currentYearMabc as $row) {
+            $month = intval($row['month']);
+            $totalmontant = $row['totalmontant'];
+            $count = intval($row['count']);
+            $currentYearData[$months[$month]]['countmabc'] += $count;
+            $currentYearData[$months[$month]]['totalmontantmabc'] += $totalmontant;
+        }
+    
+        foreach ($previousYearMabc as $row) {
+            $month = intval($row['month']);
+            $totalmontant = $row['totalmontant'];
+            $count = intval($row['count']);
+            $previousYearData[$months[$month]]['countmabc'] += $count;
+            $previousYearData[$months[$month]]['totalmontantmabc'] += $totalmontant;
+        }
+    
+        foreach ($currentYearData as &$data) {
             $data['totalcount'] = $data['countmppa'] + $data['countmabc'];
-            $data['totalmotant'] = $data['totalmontantmabc'] + $data['totalmontantmppa'];
+            $data['totalmontant'] = $data['totalmontantmppa'] + $data['totalmontantmabc'];
         }
     
-        return $purchaseData;
+        foreach ($previousYearData as &$data) {
+            $data['totalcount'] = $data['countmppa'] + $data['countmabc'];
+            $data['totalmontant'] = $data['totalmontantmppa'] + $data['totalmontantmabc'];
+        }
+    
+        return [
+            'current_year' => $currentYearData,
+            'previous_year' => $previousYearData,
+        ];
     }
 
-    public function arrayMapChart($counts, $dataKey,$dataKey2)
-    {
-        foreach ($counts as $count1) {
-            $mppa[] = $count1[$dataKey];
-        }
-        foreach ($counts as $count2) {
-            $mabc[] = $count2[$dataKey2];
-        }
+    public function arrayMapChart($counts, $dataKey, $dataKey2)
+{
+    $mppa = [];
+    $mabc = [];
 
-        foreach ($counts as $count1) {
-            $mppa[] = $count1[$dataKey];
-        }
-        foreach ($counts as $count2) {
-            $mabc[] = $count2[$dataKey2];
-        }
-        $mppa = array_map(function($value) {
-            return round($value, 2);
-        }, $mppa);
-        $mabc = array_map(function($value) {
-            return round($value, 2);
-        }, $mabc);
-        
-        return ['mppa' => $mppa, 'mabc' => $mabc];
+    foreach ($counts as $count) {
+        $mppa[] = $count[$dataKey];
+        $mabc[] = $count[$dataKey2];
     }
 
+    $mppa = array_map(function($value) {
+        return round($value, 2);
+    }, $mppa);
+
+    $mabc = array_map(function($value) {
+        return round($value, 2);
+    }, $mabc);
+    
+    return ['mppa' => $mppa, 'mabc' => $mabc];
+}
     
 
 

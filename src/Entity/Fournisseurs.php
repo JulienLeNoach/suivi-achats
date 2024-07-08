@@ -33,15 +33,7 @@ class Fournisseurs
  */
     #[ORM\Column(length: 255)]
     private ?string $nom_fournisseur = null;
-/**
- * @ORM\Column(length=255)
- * @Assert\Length(
- *     max=50,
- *     maxMessage="Le nom de la ville ne doit pas dépasser 50 caractères."
- * )
- */
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $ville = null;
+
 /**
  * @ORM\Column(length=255, nullable=true)
  * @Assert\Length(
@@ -97,19 +89,7 @@ class Fournisseurs
  */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tel = null;
-/**
- * @ORM\Column(length=255, nullable=true)
- * @Assert\Length(
- *     max=20,
- *     maxMessage="Le numéro de fax ne doit pas dépasser 10 caractères."
- * )
- * @Assert\Regex(
- *     pattern="/^\d*(?:\s*\d*)*$/",
- *     message="Le numéro de fax doit contenir uniquement des chiffres."
- * )
- */
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $FAX = null;
+
 /**
  * @ORM\Column(length=255, nullable=true)
  * @Assert\Regex(
@@ -131,24 +111,7 @@ class Fournisseurs
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $date_maj_fournisseur = null;
-/**
- * @ORM\Column(length=255, nullable=true)
- * @Assert\Length(
- *     max=20,
- *     maxMessage="Le numéro de mobile ne doit pas dépasser 20 caractères."
- * )
- * @Assert\Regex(
- *     pattern="/^\d*(?:\s*\d*)*$/",
- *     message="Le numéro de mobile doit contenir uniquement des chiffres."
- * )
- */
-    #[ORM\Column(length: 255)]
-    private ?string $mobile = null;
 
-    public function __construct()
-    {
-        $this->achats = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {

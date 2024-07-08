@@ -7,19 +7,7 @@ exports["default"] = void 0;
 
 var _stimulus = require("@hotwired/stimulus");
 
-var _jspdf = _interopRequireDefault(require("jspdf"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -37,7 +25,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-// Importez jsPDF
 var _default =
 /*#__PURE__*/
 function (_Controller) {
@@ -51,45 +38,51 @@ function (_Controller) {
 
   _createClass(_default, [{
     key: "connect",
-    value: function connect() {}
+    value: function connect() {
+      this.observeOptions();
+    }
   }, {
-    key: "download",
-    value: function download() {
-      var canvas = document.getElementById('myChart');
-      var criteriaForm = criteria;
-      canvas.fillStyle = "white";
-      var canvasImage = canvas.toDataURL('image/png', 1.0);
-      var values = Object.entries(criteriaForm).filter(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            key = _ref2[0],
-            value = _ref2[1];
+    key: "observeOptions",
+    value: function observeOptions() {
+      var _this = this;
 
-        return value !== null && value !== undefined;
-      }).map(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 2),
-            key = _ref4[0],
-            value = _ref4[1];
+      var selectContainer = document.querySelector('#add_achat_code_cpv_autocomplete');
 
-        return "".concat(key, ": ").concat(value);
-      });
-      var criteriaText = values.join(', ');
-      var pdf = new _jspdf["default"]('l', 'mm', [360, 350]);
-      pdf.setFontSize(8);
-      pdf.text("Critères de sélection : " + criteriaText, 15, 10);
-      pdf.setFontSize(12);
-      pdf.text('Activité en volume et valeur', 15, 25);
-      pdf.addImage(canvasImage, 'png', 15, 30, 320, 200);
-      pdf.setFontSize(8);
-      pdf.setFillColor(106, 106, 244, 1);
-      var dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
-      var pageCount = pdf.internal.getNumberOfPages();
+      if (selectContainer) {
+        this.disableInvalidOptions(); // Initial call to disable options
 
-      for (var i = 1; i <= pageCount; i++) {
-        pdf.setPage(i);
-        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 10);
+        var observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+              _this.disableInvalidOptions();
+            }
+          });
+        });
+        var config = {
+          childList: true,
+          subtree: true
+        };
+        observer.observe(document.body, config); // Observe changes in the body
+
+        this.disableInvalidOptions();
       }
+    }
+  }, {
+    key: "disableInvalidOptions",
+    value: function disableInvalidOptions() {
+      var options = document.querySelectorAll('div[data-selectable][role="option"]');
+      options.forEach(function (option) {
+        var textContent = option.textContent || option.innerText;
 
-      pdf.save("Graphique activit\xE9 annuelle ".concat(dateEdited, ".pdf"));
+        if (textContent.includes('Utilisation du CPV concerné impossible')) {
+          option.setAttribute('aria-disabled', 'true');
+          option.style.pointerEvents = 'none'; // Prevent selection
+
+          option.style.backgroundColor = '#f0f0f0'; // Indicate disabled option
+
+          option.style.color = 'gray'; // Indicate disabled option
+        }
+      });
     }
   }]);
 

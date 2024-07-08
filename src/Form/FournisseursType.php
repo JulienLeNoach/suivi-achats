@@ -42,10 +42,7 @@ class FournisseursType extends AbstractType
             ->add('nom_fournisseur',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Nom du fournisseur'])
-            ->add('ville',TextType::class,['attr' => ['class' => 'fr-input'], 
-            'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Ville',
-            'required'=>false])
+
             ->add('code_postal',IntegerType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Code postal',
@@ -74,10 +71,7 @@ class FournisseursType extends AbstractType
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Téléphone',
             'required'=>false])
-            ->add('FAX',TextType::class,['attr' => ['class' => 'fr-input'], 
-            'label_attr' => ['class' => 'fr-label'],
-            'label'=>'FAX',
-            'required'=>false])
+
             ->add('mail',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Mail',
@@ -89,11 +83,7 @@ class FournisseursType extends AbstractType
                 'Actif' => '1',
                 'Inactif' => '0',
             ],])
-            ->add('mobile',IntegerType::class,['attr' => ['class' => 'fr-input'], 
-            'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Mobile',
-            'required'=>false]
-        )
+
             
 
         ;

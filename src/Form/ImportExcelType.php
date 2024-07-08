@@ -13,7 +13,7 @@ class ImportExcelType extends AbstractType
     {
         $builder
         ->add('excel_file', FileType::class, [
-            'label' => 'Importer de nouveaux CPV',
+            'label' => 'Importer de nouvelles données',
             'required' => true,
             'attr' => ['class' => 'form-control','id'=>'inputGroupFile02'], 
             'label_attr' => ['class' => 'mx-5','for'=>"inputGroupFile02"]

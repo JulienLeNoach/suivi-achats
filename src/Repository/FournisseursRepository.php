@@ -20,6 +20,14 @@ class FournisseursRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Fournisseurs::class);
     }
+    public function findOneByNumSiret($numSiret): ?Fournisseurs
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.num_siret = :num_siret')
+            ->setParameter('num_siret', $numSiret)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
     public function save(Fournisseurs $entity, bool $flush = false): void
     {

@@ -43,113 +43,130 @@ class StatisticVolController extends AbstractController
         $this->projectDir = $kernel->getProjectDir();
     }
 
-    #[Route('/statistic/vol', name: 'app_statistic_vol')]
-    public function showStat(Request $request, SessionInterface $session): Response
-    {
-
-        $form = $this->createForm(StatisticType::class, null, []);
-        $excelForm = $this->createForm(CreateExcelType::class); 
-        $mppaEtat = 1;
-        $mabcEtat = 0;
-        $mppaMtTotal = [];
-        $mabcMtTotal = [];
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            
-
-            $mppaMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mppaEtat,$form);
-            $mabcMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat,$form);
-            $VolValStat = $this->statisticService->purchaseStatisticsByMonth($mppaMtTotal,$mabcMtTotal);
-
-            $delayVolVal = $this->achatRepository->getVolValDelay($form);
-
-            $chartDataCount = $this->statisticService->arrayMapChart( $VolValStat, 'countmppa','countmabc');
-            $chartDataTotal = $this->statisticService->arrayMapChart($VolValStat, 'totalmontantmppa','totalmontantmabc');
-            $chartDataCountMppa = $chartDataCount['mppa'];
-            $chartDataCountMabc = $chartDataCount['mabc'];
-            $chartDataTotalMppa = $chartDataTotal['mppa'];
-            $chartDataTotalMabc = $chartDataTotal['mabc'];
-            
-            $toPDF=[
-                'criteria'=>[
-                'Date' =>  $form["date"]->getData(),
-                'Fournisseur' =>  ($form["num_siret"]->getData() !== null) ? $form["num_siret"]->getData()->getNomFournisseur() : null,
-                'Utilisateur' =>  ($form["utilisateurs"]->getData() !== null) ? $form["utilisateurs"]->getData()->getNomConnexion() : null,
-                'Unité organique' =>  ($form["code_uo"]->getData() !== null) ? $form["code_uo"]->getData()->getLibelleUo() : null,
-                'CPV' =>  ($form["code_cpv"]->getData() !== null) ? $form["code_cpv"]->getData()->getLibelleCPV() : null,
-                'Formation ' =>  ($form["code_formation"]->getData() !== null) ? $form["code_formation"]->getData()->getLibelleFormation() : null,
-                'Taxe' =>  $form["tax"]->getData(),
-                ],
-                'delayVolVal'=>$delayVolVal,
-                'VolValStat' => $VolValStat,
-
-            ];
-            $session->set('toPDF', $toPDF);
-
-
+        #[Route('/statistic/vol', name: 'app_statistic_vol')]
+        public function showStat(Request $request, SessionInterface $session): Response
+        {
+            $form = $this->createForm(StatisticType::class, null, []);
+            $excelForm = $this->createForm(CreateExcelType::class); 
+            $mppaEtat = 1;
+            $mabcEtat = 0;
+            $form->handleRequest($request);
+        
+            if ($form->isSubmitted() && $form->isValid()) {
+                $mppaMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mppaEtat, $form);
+                $mabcMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat, $form);
+        
+                $volValStat = $this->statisticService->purchaseStatisticsByMonth(
+                    $mppaMtTotal['current_year'], 
+                    $mppaMtTotal['previous_year'], 
+                    $mabcMtTotal['current_year'], 
+                    $mabcMtTotal['previous_year']
+                );
+        
+                $delayVolVal = $this->achatRepository->getVolValDelay($form);
+        
+                $chartDataCountCurrent = $this->statisticService->arrayMapChart($volValStat['current_year'], 'countmppa', 'countmabc');
+                $chartDataCountPrevious = $this->statisticService->arrayMapChart($volValStat['previous_year'], 'countmppa', 'countmabc');
+                $chartDataTotalCurrent = $this->statisticService->arrayMapChart($volValStat['current_year'], 'totalmontantmppa', 'totalmontantmabc');
+                $chartDataTotalPrevious = $this->statisticService->arrayMapChart($volValStat['previous_year'], 'totalmontantmppa', 'totalmontantmabc');
+        
+                // dd($chartDataCountCurrent, $chartDataCountPrevious, $chartDataTotalCurrent, $chartDataTotalPrevious);
+                $anne_precedente=$form["annee_precedente"]->getData();
+                $toPDF = [
+                    'criteria' => [
+                        'Date' => $form["date"]->getData(),
+                        'Fournisseur' => ($form["num_siret"]->getData() !== null) ? $form["num_siret"]->getData()->getNomFournisseur() : null,
+                        'Utilisateur' => ($form["utilisateurs"]->getData() !== null) ? $form["utilisateurs"]->getData()->getNomConnexion() : null,
+                        'Unité organique' => ($form["code_uo"]->getData() !== null) ? $form["code_uo"]->getData()->getLibelleUo() : null,
+                        'CPV' => ($form["code_cpv"]->getData() !== null) ? $form["code_cpv"]->getData()->getLibelleCPV() : null,
+                        'Formation ' => ($form["code_formation"]->getData() !== null) ? $form["code_formation"]->getData()->getLibelleFormation() : null,
+                        'Taxe' => $form["tax"]->getData(),
+                    ],
+                    'delayVolVal' => $delayVolVal,
+                    'volValStat' => $volValStat,
+                    'chartDataCountCurrent' => $chartDataCountCurrent,
+                    'chartDataCountPrevious' => $chartDataCountPrevious,
+                    'chartDataTotalCurrent' => $chartDataTotalCurrent,
+                    'chartDataTotalPrevious' => $chartDataTotalPrevious,
+                    'annee_precedente'=>$anne_precedente,
+                ];
+                $session->set('toPDF', $toPDF);
+        
                 return $this->render('statistic/index.html.twig', [
                     'form' => $form->createView(),
                     'excelForm' => $excelForm->createView(),
-                    'delayVolVal'=>$delayVolVal,
-                    'chartDataCountMppa' => $chartDataCountMppa,
-                    'chartDataCountMabc' => $chartDataCountMabc,
-                    'chartDataTotalMppa' => $chartDataTotalMppa,
-                    'chartDataTotalMabc' => $chartDataTotalMabc,
+                    'delayVolVal' => $delayVolVal,
+                    'chartDataCountCurrent' => $chartDataCountCurrent,
+                    'chartDataCountPrevious' => $chartDataCountPrevious,
+                    'chartDataTotalCurrent' => $chartDataTotalCurrent,
+                    'chartDataTotalPrevious' => $chartDataTotalPrevious,
                     'toPDF' => $toPDF,
-                    'VolValStat' => $VolValStat,
+                    'volValStat' => $volValStat,
+                    'annee_precedente'=>$anne_precedente,
                 ]);
-        }
-
-        return $this->render('statistic/index.html.twig', [
-            'form' => $form->createView(),
-            'excelForm' => $excelForm->createView(),
-
-        ]);
-    }
-    #[Route('/pdf/generator/stat_vol', name: 'pdf_generator_stat_vol')]
-    public function pdf(SessionInterface $session): Response
-    {
+            }
         
-        $html =  $this->renderView('statistic/stat_pdf.html.twig', [
-            'criteria' => $session->get('toPDF')["criteria"],
-            'delayVolVal'=>$session->get('toPDF')["delayVolVal"],
-            'VolValStat'=>$session->get('toPDF')["VolValStat"],
+            return $this->render('statistic/index.html.twig', [
+                'form' => $form->createView(),
+                'excelForm' => $excelForm->createView(),
+            ]);
+        }
+    
 
 
-        ]);
-        $dompdf = new Dompdf();
-        $dompdf->setPaper('A3', 'landscape');
 
-        $dompdf->loadHtml($html);
-        $dompdf->render();
-         
-        $dompdf->stream('stat_vol', array('Attachment' => 0));
-        return new Response('', 200, [
-            'Content-Type' => 'application/pdf',
-        ]);
-    }
+
+        #[Route('/pdf/generator/stat_vol', name: 'pdf_generator_stat_vol')]
+        public function pdf(SessionInterface $session): Response
+        {
+            $toPDF = $session->get('toPDF');
+            
+            $html =  $this->renderView('statistic/stat_pdf.html.twig', [
+                'criteria' => $toPDF["criteria"],
+                'delayVolVal' => $toPDF["delayVolVal"],
+                'VolValStat' => $toPDF["volValStat"],
+                'annee_precedente' => $toPDF["annee_precedente"],
+            ]);
+        
+            $dompdf = new Dompdf();
+            $dompdf->setPaper('A3', 'landscape');
+            $dompdf->loadHtml($html);
+            $dompdf->render();
+            $dompdf->stream('stat_vol', ['Attachment' => 0]);
+        
+            return new Response('', 200, [
+                'Content-Type' => 'application/pdf',
+            ]);
+        }
+        
 
 /**
  * @Route("/statistic/vol/export_excel", name="app_statistic_vol_export_excel")
  */
-public function exportExcel(Request $request,CreateExcelVolVal $createExcelVolVal): Response
+public function exportExcel(Request $request, CreateExcelVolVal $createExcelVolVal): Response
 {
     // Traitez la requête pour obtenir les données nécessaires à l'export Excel
-    // Supposons que les données sont passées via une requête GET ou POST
-    $chartDataCountMppa = $request->get('chartDataCountMppa');
-    $chartDataCountMabc = $request->get('chartDataCountMabc');
-    $chartDataTotalMppa = $request->get('chartDataTotalMppa');
-    $chartDataTotalMabc = $request->get('chartDataTotalMabc');
+    $chartDataCountCurrent = $request->get('chartDataCountCurrent');
+    $chartDataCountPrevious = $request->get('chartDataCountPrevious');
+    $chartDataTotalCurrent = $request->get('chartDataTotalCurrent');
+    $chartDataTotalPrevious = $request->get('chartDataTotalPrevious');
 
     // Convertir les données JSON en tableau PHP
-    $chartDataCountMppa = json_decode($chartDataCountMppa, true);
-    $chartDataCountMabc = json_decode($chartDataCountMabc, true);
-    $chartDataTotalMppa = json_decode($chartDataTotalMppa, true);
-    $chartDataTotalMabc = json_decode($chartDataTotalMabc, true);
+    $chartDataCountCurrent = json_decode($chartDataCountCurrent, true);
+    $chartDataCountPrevious = json_decode($chartDataCountPrevious, true);
+    $chartDataTotalCurrent = json_decode($chartDataTotalCurrent, true);
+    $chartDataTotalPrevious = json_decode($chartDataTotalPrevious, true);
 
     // Générer le fichier Excel
-    $filePath = $createExcelVolVal->generateExcelFile($chartDataCountMppa, $chartDataCountMabc, $chartDataTotalMppa, $chartDataTotalMabc, $this->projectDir);
+    $filePath = $createExcelVolVal->generateExcelFile(
+        $chartDataCountCurrent, 
+        $chartDataCountPrevious, 
+        $chartDataTotalCurrent, 
+        $chartDataTotalPrevious, 
+        $this->getParameter('kernel.project_dir')
+    );
+
     return new BinaryFileResponse($filePath);
 }
+
 }

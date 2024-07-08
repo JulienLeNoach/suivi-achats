@@ -9,6 +9,7 @@ use App\Form\AddAchatType;
 use App\Form\EditAchatType;
 use App\Factory\AchatFactory;
 use App\Form\AchatSearchType;
+use App\Repository\CPVRepository;
 use App\Repository\AchatRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -145,19 +146,20 @@ public function add(Request $request,SessionInterface $session,): Response
     if ($form->isSubmitted() && $form->isValid()) {
 
 
-        $montantAchat = $achat->getMontantAchat();
-    
+        $cpvId = $achat->getCodeCpv()->getId();
         // Formater le montant avec deux chiffres après la virgule et ",00" si nécessaire
-        $montantAchatFormatted = number_format($montantAchat, 2, '.', '');
-        
+        $montantAchatFormatted = number_format($achat->getMontantAchat(), 2, '.', '');
+        $cpvSold = $this->entityManager->getRepository(CPV::class)->find($cpvId);
+        // $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPVwithoutId($cpvId);
+
+        $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() - $achat->getMontantAchat());
         // Ajouter ",00" si le montant ne contient pas de décimales
         if (strpos($montantAchatFormatted, '.') === false) {
             $montantAchatFormatted .= ',00';
         }       
         $this->entityManager->getRepository(Achat::class)->add($achat);
 
-        $this->addFlash('success', 'Nouvel achat n° ' . $achat->getNumeroAchat() . " ajouté \n\n Computation actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : ".  $achat->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : " . $achat->getCodeCpv()->getMtCpvAuto() - $achat->getMontantAchat(). "€");
-        return $this->redirect("/search");
+        $this->addFlash('valid', 'Achat n° ' . $achat->getNumeroAchat() . " ajouté \n\n Computation actuel du CPV '" . $achat->getCodeCpv()->getLibelleCpv() . "' : " . 90000-$cpvSold->getMtCpvAuto() . "€ \n\n Reliquat actuel du CPV '" . $achat->getCodeCpv()->getLibelleCpv() . "' : " . $cpvSold->getMtCpvAuto() . "€");        return $this->redirect("/search");
 
 
     
@@ -171,25 +173,27 @@ public function add(Request $request,SessionInterface $session,): Response
 public function valid(Request $request, $id, SessionInterface $session): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-    $cpvId = $result_achat->getCodeCpv()->getId();
+    $cpv = $result_achat->getCodeCpv();
+    $cpvId = $cpv->getId();
+
     $form = $this->createForm(ValidType::class, null, []);
-    $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId,$id);
-    // dd($result_achat);
+    $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId, $id);
+    
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
 
-        if ($form->get('Valider')->isClicked()) {
+        if ($cpv->getMtCpvAuto() <= 50000) {
+            $this->addFlash('error', 'L\'achat ne peut être validé car le montant du CPV actuel est supérieur à 40 000€.');
+        } else {
+            if ($form->get('Valider')->isClicked()) {
+                $this->entityManager->getRepository(Achat::class)->valid($request, $id);
+            
+                $this->entityManager->flush();
+                $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé \n\n Computation actuel du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpvMt['computation'] . "€ \n\n Reliquat actuel du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€");
 
-            $this->entityManager->getRepository(Achat::class)->valid($request, $id);
-            $cpvSold = $this->entityManager->getRepository(CPV::class)->find($cpvId);
-        
-            $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() - $result_achat->getMontantAchat());
-            $this->entityManager->persist($cpvSold);
-            $this->entityManager->flush();
-            $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé \n\n Computation actuel du CPV '" . $result_achat->getCodeCpv()->getLibelleCpv() . "' : " . $cpvMt['computation'] . "€ \n\n Reliquat actuel du CPV '" . $result_achat->getCodeCpv()->getLibelleCpv() . "' : " . $cpvMt['reliquat'] . "€");
-
-            return $this->redirect("/search");
+                return $this->redirect("/search");
+            }
         }
     }
 
@@ -220,6 +224,13 @@ public function cancel($id, Request $request,SessionInterface $session): Respons
 public function reint($id, Request $request,SessionInterface $session): Response
 {
     $currentUrl = $session->get('current_url');
+    $achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
+    $cpvId = $achat->getCodeCpv()->getId();
+    $cpvSold = $this->entityManager->getRepository(CPV::class)->findOneByCodeCpv($cpvId);    // Formater le montant avec deux chiffres après la virgule et ",00" si nécessaire
+    $montantAchatFormatted = number_format($achat->getMontantAchat(), 2, '.', '');
+    $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() - $achat->getMontantAchat());
+    $this->entityManager->persist($cpvSold);
+    $this->entityManager->flush();
     $query = $this->entityManager->getRepository(Achat::class)->reint($id);
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
             $this->addFlash('success', 'Achat n° ' .  $result_achat->getNumeroAchat() . " réintégré.");
@@ -240,7 +251,7 @@ public function edit(Request $request, $id, Achat $achat,  AchatRepository $acha
 
     if ($form->isSubmitted() && $form->isValid()) {
         $achatRepository->edit($achat, true);
-        $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . " modifié \n\n Computation actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : ".  $achat->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : " . $achat->getCodeCpv()->getMtCpvAuto() - $achat->getMontantAchat(). "€");
+        $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . " modifié \n\n Computation actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : ".  90000-$achat->getCodeCpv()->getMtCpvAuto()."€ \n\n Reliquat actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : " . $achat->getCodeCpv()->getMtCpvAuto() . "€");
         return $this->redirect($currentUrl);
     }
     return $this->render('achat/edit_achat_id.html.twig', [
