@@ -55,7 +55,8 @@ class StatisticVolController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $mppaMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mppaEtat, $form);
                 $mabcMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat, $form);
-        
+                $totalAchatPerMonthUnder2K = $this->achatRepository->getTotalAchatUnder2K($form);
+
                 $volValStat = $this->statisticService->purchaseStatisticsByMonth(
                     $mppaMtTotal['current_year'], 
                     $mppaMtTotal['previous_year'], 
@@ -89,9 +90,10 @@ class StatisticVolController extends AbstractController
                     'chartDataTotalCurrent' => $chartDataTotalCurrent,
                     'chartDataTotalPrevious' => $chartDataTotalPrevious,
                     'annee_precedente'=>$anne_precedente,
+                    'totalAchatPerMonthUnder2K'=>$totalAchatPerMonthUnder2K
                 ];
                 $session->set('toPDF', $toPDF);
-        
+                
                 return $this->render('statistic/index.html.twig', [
                     'form' => $form->createView(),
                     'excelForm' => $excelForm->createView(),
@@ -103,6 +105,7 @@ class StatisticVolController extends AbstractController
                     'toPDF' => $toPDF,
                     'volValStat' => $volValStat,
                     'annee_precedente'=>$anne_precedente,
+                    'totalAchatPerMonthUnder2K'=>$totalAchatPerMonthUnder2K
                 ]);
             }
         
@@ -117,33 +120,44 @@ class StatisticVolController extends AbstractController
 
 
         #[Route('/pdf/generator/stat_vol', name: 'pdf_generator_stat_vol')]
-        public function pdf(SessionInterface $session): Response
-        {
-            $toPDF = $session->get('toPDF');
-            
-            $html =  $this->renderView('statistic/stat_pdf.html.twig', [
-                'criteria' => $toPDF["criteria"],
-                'delayVolVal' => $toPDF["delayVolVal"],
-                'VolValStat' => $toPDF["volValStat"],
-                'annee_precedente' => $toPDF["annee_precedente"],
-            ]);
-        
-            $dompdf = new Dompdf();
-            $dompdf->setPaper('A3', 'landscape');
-            $dompdf->loadHtml($html);
-            $dompdf->render();
-            $dompdf->stream('stat_vol', ['Attachment' => 0]);
-        
-            return new Response('', 200, [
-                'Content-Type' => 'application/pdf',
-            ]);
-        }
+public function pdf(SessionInterface $session): Response
+{
+    $toPDF = $session->get('toPDF');
+
+    // Ensure $toPDF is defined
+    if (!$toPDF) {
+        throw new \Exception('PDF data is not available in the session');
+    }
+
+    $html = $this->renderView('statistic/stat_pdf.html.twig', [
+        'criteria' => $toPDF["criteria"],
+        'delayVolVal' => $toPDF["delayVolVal"],
+        'volValStat' => $toPDF["volValStat"],
+        'annee_precedente' => $toPDF["annee_precedente"],
+        'totalAchatPerMonthUnder2K' => $toPDF["totalAchatPerMonthUnder2K"],
+        'chartDataCountCurrent' => $toPDF["chartDataCountCurrent"],
+        'chartDataCountPrevious' => $toPDF["chartDataCountPrevious"],
+        'chartDataTotalCurrent' => $toPDF["chartDataTotalCurrent"],
+        'chartDataTotalPrevious' => $toPDF["chartDataTotalPrevious"],
+    ]);
+
+    $dompdf = new Dompdf();
+    $dompdf->setPaper('A3', 'landscape');
+    $dompdf->loadHtml($html);
+    $dompdf->render();
+    $dompdf->stream('stat_vol', ['Attachment' => 0]);
+
+    return new Response('', 200, [
+        'Content-Type' => 'application/pdf',
+    ]);
+}
+
         
 
 /**
  * @Route("/statistic/vol/export_excel", name="app_statistic_vol_export_excel")
  */
-public function exportExcel(Request $request, CreateExcelVolVal $createExcelVolVal): Response
+public function exportExcel(Request $request, CreateExcelVolVal $createExcelVolVal,SessionInterface $session): Response
 {
     // Traitez la requête pour obtenir les données nécessaires à l'export Excel
     $chartDataCountCurrent = $request->get('chartDataCountCurrent');
@@ -157,12 +171,18 @@ public function exportExcel(Request $request, CreateExcelVolVal $createExcelVolV
     $chartDataTotalCurrent = json_decode($chartDataTotalCurrent, true);
     $chartDataTotalPrevious = json_decode($chartDataTotalPrevious, true);
 
+    // Obtenir les données de la session
+    $totalAchatPerMonthUnder2K = $session->get('toPDF')['totalAchatPerMonthUnder2K'];
+    $anne_precedente = $session->get('toPDF')['annee_precedente'];
+
     // Générer le fichier Excel
     $filePath = $createExcelVolVal->generateExcelFile(
         $chartDataCountCurrent, 
         $chartDataCountPrevious, 
         $chartDataTotalCurrent, 
         $chartDataTotalPrevious, 
+        $totalAchatPerMonthUnder2K,
+        $anne_precedente,
         $this->getParameter('kernel.project_dir')
     );
 

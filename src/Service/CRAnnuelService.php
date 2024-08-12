@@ -33,319 +33,310 @@ class CRAnnuelService  extends AbstractController
     }
 
     public function generateExcelFile($chartDataCountCurrent, $chartDataCountPrevious, $chartDataTotalCurrent, $chartDataTotalPrevious, $projectDir,$achats, $achats_delay_all,
-                                    $result_achats, $result_achats_mounts, $parameter,$result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal)
+                                    $result_achats, $result_achats_mounts, $parameter,$result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal,$totalAchatPerMonthUnder2K)
     {
-        $mois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('H1', 'COMPTE RENDU ANNUEL')
-      ->getStyle('H1')
-      ->getFont()
-      ->setBold(true)
-      ->setSize(18);
-        $col = 'C'; // Commencez à partir de la colonne C pour les données
-        foreach (range('B', 'Q') as $columnID) {
-            $sheet->getColumnDimension($columnID)->setWidth(15); // Définir la largeur à 15 pour chaque colonne
-        }
-        $includePreviousYear = true;
-        
+        $mois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
+        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('H1', 'Activités appro en volume/valeur ')
-              ->getStyle('H1')
-              ->getFont()
-              ->setBold(true)
-              ->setSize(18)
-              ->setColor(new Color(Color::COLOR_RED));
-    
-        foreach (range('B', 'Q') as $columnID) {
-            $sheet->getColumnDimension($columnID)->setWidth(15);
-        }
-    
-        $cellBorder = [
-            'B3:O6', 'B13:O16'
-        ];
-    
-        if ($includePreviousYear) {
-            $cellBorder = array_merge($cellBorder, ['B7:O9', 'B17:O19']);
-        }
-    
-        $styleBorderB = [
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                ],
-            ],
-        ];
-    
-        foreach ($cellBorder as $cellRange) {
-            $sheet->getStyle($cellRange)->applyFromArray($styleBorderB);
-        }
-    
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
+$sheet->setCellValue('H1', 'COMPTE RENDU ANNUEL')
+     ->getStyle('H1')
+     ->getFont()
+     ->setBold(true)
+     ->setSize(18);
+
+foreach (range('B', 'Q') as $columnID) {
+   $sheet->getColumnDimension($columnID)->setWidth(15);
+}
+
+$includePreviousYear = true;
+
 // Définir le style de bordure
 $styleBorder = [
-    'borders' => [
-        'allBorders' => [
-            'borderStyle' => Border::BORDER_THIN,
-            'color' => ['argb' => '00000000'],
-        ],
-    ],
-];
-
-// Définir les plages de cellules à bordurer
-$cellRanges = [
-    'B64:O73',
-    'B89:D90',
-    'G89:I90',
-    'L89:N90',
-    'B110:D111',
-    'G110:I111',
-    'L110:N111',
-    'B131:D132',
-    'B153:E158',
-    'B161:E163',
-    'G161:J163',
-    'L161:O163',
-    'B182:E187',
-    'I185:K187',
-    'B207:O209',
+   'borders' => [
+       'allBorders' => [
+           'borderStyle' => Border::BORDER_THIN,
+           'color' => ['argb' => '00000000'],
+       ],
+   ],
 ];
 
 // Appliquer les bordures aux plages de cellules
+$cellRanges = [
+   'B3:O6', 'B11:O14', 'B18:O25', 'B28:O35',
+   'B62:O71', 'B87:D88', 'G87:I88', 'L87:N88',
+   'B108:D109', 'G108:I109', 'L108:N109',
+   'B129:D130', 'B151:E156', 'B159:E161', 'G159:J161',
+   'L159:O161', 'B180:E185', 'I183:K185',
+   'B205:O207',
+];
+
 foreach ($cellRanges as $range) {
-    $sheet->getStyle($range)->applyFromArray($styleBorder);
+   $sheet->getStyle($range)->applyFromArray($styleBorder);
 }
-        // Tableaux pour les volumes
-        $sheet->setCellValue('B3', 'Volume');
-        $sheet->setCellValue('B4', 'MPPA (Année en cours)');
-        $sheet->setCellValue('B5', 'MABC (Année en cours)');
-        $sheet->setCellValue('B6', 'TOTAL (Année en cours)');
-        if ($includePreviousYear) {
-            $sheet->setCellValue('B7', 'MPPA (Année Précédente)');
-            $sheet->setCellValue('B8', 'MABC (Année Précédente)');
-            $sheet->setCellValue('B9', 'TOTAL (Année Précédente)');
-        }
-        $sheet->setCellValue('O3', 'TOTAL');
-    
-        // Tableaux pour les valeurs (HT)
-        $sheet->setCellValue('B13', 'Valeur (HT)');
-        $sheet->setCellValue('B14', 'MPPA (Année en cours)');
-        $sheet->setCellValue('B15', 'MABC (Année en cours)');
-        $sheet->setCellValue('B16', 'TOTAL (Année en cours)');
-        if ($includePreviousYear) {
-            $sheet->setCellValue('B17', 'MPPA (Année Précédente)');
-            $sheet->setCellValue('B18', 'MABC (Année Précédente)');
-            $sheet->setCellValue('B19', 'TOTAL (Année Précédente)');
-        }
-        $sheet->setCellValue('O13', 'TOTAL');
-    
-        // Insérer les mois en première ligne et calculer les cumulatives
-        $col = 'C';
-        $cumulativeTotalCurrent = 0;
-        $cumulativeTotalPrevious = 0;
-        foreach ($mois as $index => $moi) {
-            // Volumes
-            $sheet->setCellValue($col . '3', $moi);
-            $sheet->setCellValue($col . '4', $chartDataCountCurrent['mppa'][$index]);
-            $sheet->setCellValue($col . '5', $chartDataCountCurrent['mabc'][$index]);
-            $sheet->setCellValue($col . '6', $chartDataCountCurrent['mppa'][$index] + $chartDataCountCurrent['mabc'][$index]);
-            if ($includePreviousYear) {
-                $sheet->setCellValue($col . '7', $chartDataCountPrevious['mppa'][$index]);
-                $sheet->setCellValue($col . '8', $chartDataCountPrevious['mabc'][$index]);
-                $sheet->setCellValue($col . '9', $chartDataCountPrevious['mppa'][$index] + $chartDataCountPrevious['mabc'][$index]);
-            }
-    
-            // Valeurs (HT)
-            $sheet->setCellValue($col . '13', $moi);
-            $sheet->setCellValue($col . '14', $chartDataTotalCurrent['mppa'][$index]);
-            $sheet->setCellValue($col . '15', $chartDataTotalCurrent['mabc'][$index]);
-            $cumulativeTotalCurrent += $chartDataTotalCurrent['mppa'][$index] + $chartDataTotalCurrent['mabc'][$index];
-            $sheet->setCellValue($col . '16', $cumulativeTotalCurrent);
-            if ($includePreviousYear) {
-                $sheet->setCellValue($col . '17', $chartDataTotalPrevious['mppa'][$index]);
-                $sheet->setCellValue($col . '18', $chartDataTotalPrevious['mabc'][$index]);
-                $cumulativeTotalPrevious += $chartDataTotalPrevious['mppa'][$index] + $chartDataTotalPrevious['mabc'][$index];
-                $sheet->setCellValue($col . '19', $cumulativeTotalPrevious);
-            }
-            $col++;
-        }
-    
-        // Somme des totaux
-        $sheet->setCellValue('O4', '=SUM(C4:N4)');
-        $sheet->setCellValue('O5', '=SUM(C5:N5)');
-        $sheet->setCellValue('O6', '=SUM(C6:N6)');
-        if ($includePreviousYear) {
-            $sheet->setCellValue('O7', '=SUM(C7:N7)');
-            $sheet->setCellValue('O8', '=SUM(C8:N8)');
-            $sheet->setCellValue('O9', '=SUM(C9:N9)');
-        }
-        $sheet->setCellValue('O14', '=SUM(C14:N14)');
-        $sheet->setCellValue('O15', '=SUM(C15:N15)');
-        $sheet->setCellValue('O16', '=SUM(C16:N16)');
-        if ($includePreviousYear) {
-            $sheet->setCellValue('O17', '=SUM(C17:N17)');
-            $sheet->setCellValue('O18', '=SUM(C18:N18)');
-            $sheet->setCellValue('O19', '=SUM(C19:N19)');
-        }
-    
-        // Ajouter le graphique pour les volumes
-        $dataSeriesLabelsVolume = [
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$4', null, 1),
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$5', null, 1)
-        ];
-    
-        if ($includePreviousYear) {
-            $dataSeriesLabelsVolume[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$7', null, 1);
-            $dataSeriesLabelsVolume[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$8', null, 1);
-        }
-    
-        $xAxisTickValues = [
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$C$3:$N$3', null, 12)
-        ];
-    
-        $dataSeriesValuesVolume = [
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$4:$N$4', null, 12),
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$5:$N$5', null, 12)
-        ];
-    
-        if ($includePreviousYear) {
-            $dataSeriesValuesVolume[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$7:$N$7', null, 12);
-            $dataSeriesValuesVolume[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$8:$N$8', null, 12);
-        }
-    
-        $seriesVolume = new DataSeries(
-            DataSeries::TYPE_BARCHART,
-            DataSeries::GROUPING_CLUSTERED,
-            range(0, count($dataSeriesValuesVolume) - 1),
-            $dataSeriesLabelsVolume,
-            $xAxisTickValues,
-            $dataSeriesValuesVolume
-        );
-    
-        $layoutVolume = new Layout([
-            'showVal' => true,
-            'showCatName' => false
-        ]);
-    
-        $plotAreaVolume = new PlotArea($layoutVolume, [$seriesVolume]);
-        $legendVolume = new Legend(Legend::POSITION_RIGHT, null, false);
-        $titleVolume = new Title('Activité appro en volume');
-    
-        $chartVolume = new Chart(
-            'chartVolume',
-            $titleVolume,
-            $legendVolume,
-            $plotAreaVolume
-        );
-    
-        $chartVolume->setTopLeftPosition('B20');
-        $chartVolume->setBottomRightPosition('P40');
-    
-        // Ajouter le graphique pour les valeurs cumulatives
-        $dataSeriesLabelsValue = [
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$16', null, 1)
-        ];
-    
-        if ($includePreviousYear) {
-            $dataSeriesLabelsValue[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$19', null, 1);
-        }
-    
-        $dataSeriesValuesValue = [
-            new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$16:$N$16', null, 12)
-        ];
-    
-        if ($includePreviousYear) {
-            $dataSeriesValuesValue[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$19:$N$19', null, 12);
-        }
-    
-        $seriesValue = new DataSeries(
-            DataSeries::TYPE_LINECHART,
-            null,
-            range(0, count($dataSeriesValuesValue) - 1),
-            $dataSeriesLabelsValue,
-            $xAxisTickValues,
-            $dataSeriesValuesValue
-        );
-    
-        $layoutValue = new Layout([
-            'showVal' => true,
-            'showCatName' => false
-        ]);
-    
-        $plotAreaValue = new PlotArea($layoutValue, [$seriesValue]);
-        $legendValue = new Legend(Legend::POSITION_RIGHT, null, false);
-        $titleValue = new Title('Activité appro en valeur cumulative (HT)');
-    
-        $chartValue = new Chart(
-            'chartValue',
-            $titleValue,
-            $legendValue,
-            $plotAreaValue
-        );
-    
-        $chartValue->setTopLeftPosition('B41');
-        $chartValue->setBottomRightPosition('P61');
-    
-        $sheet->addChart($chartVolume);
-        $sheet->addChart($chartValue);
-    
-        // Coloriser les cases selon les couleurs utilisées dans le graphique
-        $styleArrayMPPA_Current = [
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '4f81bd'] // Bleu pour MPPA Année en cours
-            ]
-        ];
-        $styleArrayMABC_Current = [
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'c0504d'] // Rouge pour MABC Année en cours
-            ]
-        ];
-        $styleArrayMPPA_Previous = [
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '9bbb59'] // Vert pour MPPA Année Précédente
-            ]
-        ];
-        $styleArrayMABC_Previous = [
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '8064a2'] // Violet pour MABC Année Précédente
-            ]
-        ];
-        $styleArrayTotal_Current = [
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '8ebaee'] // Bleu clair pour TOTAL Année en cours
-            ]
-        ];
-        $styleArrayTotal_Previous = [
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'b7cc8a'] // Rouge clair pour TOTAL Année Précédente
-            ]
-        ];
-    
-        // Appliquer les styles aux cellules correspondantes
-        $sheet->getStyle('C4:N4')->applyFromArray($styleArrayMPPA_Current);
-        $sheet->getStyle('C5:N5')->applyFromArray($styleArrayMABC_Current);
-        $sheet->getStyle('C6:N6')->applyFromArray($styleArrayTotal_Current);
-        $sheet->getStyle('C14:N14')->applyFromArray($styleArrayMPPA_Current);
-        $sheet->getStyle('C15:N15')->applyFromArray($styleArrayMABC_Current);
-        $sheet->getStyle('C16:N16')->applyFromArray($styleArrayTotal_Current);
-    
-        if ($includePreviousYear) {
-            $sheet->getStyle('C7:N7')->applyFromArray($styleArrayMPPA_Previous);
-            $sheet->getStyle('C8:N8')->applyFromArray($styleArrayMABC_Previous);
-            $sheet->getStyle('C9:N9')->applyFromArray($styleArrayTotal_Previous);
-            $sheet->getStyle('C17:N17')->applyFromArray($styleArrayMPPA_Previous);
-            $sheet->getStyle('C18:N18')->applyFromArray($styleArrayMABC_Previous);
-            $sheet->getStyle('C19:N19')->applyFromArray($styleArrayTotal_Previous);
-        }
 
+// Tableaux pour les volumes
+$sheet->setCellValue('B3', 'Volume');
+$sheet->setCellValue('B4', 'MPPA (Année en cours)');
+$sheet->setCellValue('B5', 'MABC (Année en cours)');
+$sheet->setCellValue('B6', 'TOTAL (Année en cours)');
+if ($includePreviousYear) {
+   $sheet->setCellValue('B7', 'MPPA (Année Précédente)');
+   $sheet->setCellValue('B8', 'MABC (Année Précédente)');
+   $sheet->setCellValue('B9', 'TOTAL (Année Précédente)');
+}
+$sheet->setCellValue('O3', 'TOTAL');
 
+// Tableaux pour les valeurs (HT)
+$sheet->setCellValue('B11', 'Valeur (HT)');
+$sheet->setCellValue('B12', 'MPPA (Année en cours)');
+$sheet->setCellValue('B13', 'MABC (Année en cours)');
+$sheet->setCellValue('B14', 'TOTAL (Année en cours)');
+if ($includePreviousYear) {
+   $sheet->setCellValue('B15', 'MPPA (Année Précédente)');
+   $sheet->setCellValue('B16', 'MABC (Année Précédente)');
+   $sheet->setCellValue('B17', 'TOTAL (Année Précédente)');
+}
+$sheet->setCellValue('O11', 'TOTAL');
+
+// Tableaux pour les dossiers inférieurs à 2 000,00 € TTC
+$sheet->setCellValue('B18', 'Dossiers inférieurs à 2 000,00 € TTC');
+$sheet->setCellValue('B19', 'MPPA (Année en cours)');
+$sheet->setCellValue('B20', 'MABC (Année en cours)');
+$sheet->setCellValue('B21', 'TOTAL (Année en cours)');
+if ($includePreviousYear) {
+   $sheet->setCellValue('B22', 'MPPA (Année Précédente)');
+   $sheet->setCellValue('B23', 'MABC (Année Précédente)');
+   $sheet->setCellValue('B24', 'TOTAL (Année Précédente)');
+}
+$sheet->setCellValue('O18', 'TOTAL');
+
+// Insérer les mois en première ligne et calculer les cumulatives
+$col = 'C';
+$cumulativeTotalCurrent = 0;
+$cumulativeTotalPrevious = 0;
+foreach ($mois as $index => $moi) {
+   // Volumes
+   $sheet->setCellValue($col . '3', $moi);
+   $sheet->setCellValue($col . '4', $chartDataCountCurrent['mppa'][$index]);
+   $sheet->setCellValue($col . '5', $chartDataCountCurrent['mabc'][$index]);
+   $sheet->setCellValue($col . '6', $chartDataCountCurrent['mppa'][$index] + $chartDataCountCurrent['mabc'][$index]);
+   if ($includePreviousYear) {
+       $sheet->setCellValue($col . '7', $chartDataCountPrevious['mppa'][$index]);
+       $sheet->setCellValue($col . '8', $chartDataCountPrevious['mabc'][$index]);
+       $sheet->setCellValue($col . '9', $chartDataCountPrevious['mppa'][$index] + $chartDataCountPrevious['mabc'][$index]);
+   }
+
+   // Valeurs (HT)
+   $sheet->setCellValue($col . '11', $moi);
+   $sheet->setCellValue($col . '12', $chartDataTotalCurrent['mppa'][$index]);
+   $sheet->setCellValue($col . '13', $chartDataTotalCurrent['mabc'][$index]);
+   $cumulativeTotalCurrent += $chartDataTotalCurrent['mppa'][$index] + $chartDataTotalCurrent['mabc'][$index];
+   $sheet->setCellValue($col . '14', $cumulativeTotalCurrent);
+   if ($includePreviousYear) {
+       $sheet->setCellValue($col . '15', $chartDataTotalPrevious['mppa'][$index]);
+       $sheet->setCellValue($col . '16', $chartDataTotalPrevious['mabc'][$index]);
+       $cumulativeTotalPrevious += $chartDataTotalPrevious['mppa'][$index] + $chartDataTotalPrevious['mabc'][$index];
+       $sheet->setCellValue($col . '17', $cumulativeTotalPrevious);
+   }
+
+   // Dossiers inférieurs à 2 000,00 € TTC
+   $sheet->setCellValue($col . '18', $moi);
+   $sheet->setCellValue($col . '19', $totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count']);
+   $sheet->setCellValue($col . '20', $totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count']);
+   $sheet->setCellValue($col . '21', $totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count'] + $totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count']);
+   if ($includePreviousYear) {
+       $sheet->setCellValue($col . '22', $totalAchatPerMonthUnder2K['type_marche_1']['previous_year'][$index]['count']);
+       $sheet->setCellValue($col . '23', $totalAchatPerMonthUnder2K['type_marche_0']['previous_year'][$index]['count']);
+       $sheet->setCellValue($col . '24', $totalAchatPerMonthUnder2K['type_marche_1']['previous_year'][$index]['count'] + $totalAchatPerMonthUnder2K['type_marche_0']['previous_year'][$index]['count']);
+   }
+   $col++;
+}
+
+// Somme des totaux
+$sheet->setCellValue('O4', '=SUM(C4:N4)');
+$sheet->setCellValue('O5', '=SUM(C5:N5)');
+$sheet->setCellValue('O6', '=SUM(C6:N6)');
+if ($includePreviousYear) {
+   $sheet->setCellValue('O7', '=SUM(C7:N7)');
+   $sheet->setCellValue('O8', '=SUM(C8:N8)');
+   $sheet->setCellValue('O9', '=SUM(C9:N9)');
+}
+$sheet->setCellValue('O12', '=SUM(C12:N12)');
+$sheet->setCellValue('O13', '=SUM(C13:N13)');
+$sheet->setCellValue('O14', '=SUM(C14:N14)');
+if ($includePreviousYear) {
+   $sheet->setCellValue('O15', '=SUM(C15:N15)');
+   $sheet->setCellValue('O16', '=SUM(C16:N16)');
+   $sheet->setCellValue('O17', '=SUM(C17:N17)');
+}
+$sheet->setCellValue('O19', '=SUM(C19:N19)');
+$sheet->setCellValue('O20', '=SUM(C20:N20)');
+$sheet->setCellValue('O21', '=SUM(C21:N21)');
+if ($includePreviousYear) {
+   $sheet->setCellValue('O22', '=SUM(C22:N22)');
+   $sheet->setCellValue('O23', '=SUM(C23:N23)');
+   $sheet->setCellValue('O24', '=SUM(C24:N24)');
+}
+
+// Ajouter les graphiques pour les volumes, valeurs et dossiers inférieurs à 2 000,00 € TTC
+$dataSeriesLabelsVolume = [
+   new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$4', null, 1),
+   new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$5', null, 1)
+];
+if ($includePreviousYear) {
+   $dataSeriesLabelsVolume[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$7', null, 1);
+   $dataSeriesLabelsVolume[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$8', null, 1);
+}
+
+$xAxisTickValues = [
+   new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$C$3:$N$3', null, 12)
+];
+
+$dataSeriesValuesVolume = [
+   new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$4:$N$4', null, 12),
+   new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$5:$N$5', null, 12)
+];
+if ($includePreviousYear) {
+   $dataSeriesValuesVolume[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$7:$N$7', null, 12);
+   $dataSeriesValuesVolume[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$8:$N$8', null, 12);
+}
+
+$seriesVolume = new DataSeries(
+   DataSeries::TYPE_BARCHART,
+   DataSeries::GROUPING_CLUSTERED,
+   range(0, count($dataSeriesValuesVolume) - 1),
+   $dataSeriesLabelsVolume,
+   $xAxisTickValues,
+   $dataSeriesValuesVolume
+);
+
+$layoutVolume = new Layout([
+   'showVal' => true,
+   'showCatName' => false
+]);
+
+$plotAreaVolume = new PlotArea($layoutVolume, [$seriesVolume]);
+$legendVolume = new Legend(Legend::POSITION_RIGHT, null, false);
+$titleVolume = new Title('Activité appro en volume');
+
+$chartVolume = new Chart(
+   'chartVolume',
+   $titleVolume,
+   $legendVolume,
+   $plotAreaVolume
+);
+
+$chartVolume->setTopLeftPosition('B26');
+$chartVolume->setBottomRightPosition('P45');
+
+// Ajouter le graphique pour les valeurs cumulatives
+$dataSeriesLabelsValue = [
+   new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$12', null, 1)
+];
+if ($includePreviousYear) {
+   $dataSeriesLabelsValue[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$15', null, 1);
+}
+
+$dataSeriesValuesValue = [
+   new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$14:$N$14', null, 12)
+];
+if ($includePreviousYear) {
+   $dataSeriesValuesValue[] = new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, 'Worksheet!$C$17:$N$17', null, 12);
+}
+
+$seriesValue = new DataSeries(
+   DataSeries::TYPE_LINECHART,
+   null,
+   range(0, count($dataSeriesValuesValue) - 1),
+   $dataSeriesLabelsValue,
+   $xAxisTickValues,
+   $dataSeriesValuesValue
+);
+
+$layoutValue = new Layout([
+   'showVal' => true,
+   'showCatName' => false
+]);
+
+$plotAreaValue = new PlotArea($layoutValue, [$seriesValue]);
+$legendValue = new Legend(Legend::POSITION_RIGHT, null, false);
+$titleValue = new Title('Activité appro en valeur cumulative (HT)');
+
+$chartValue = new Chart(
+   'chartValue',
+   $titleValue,
+   $legendValue,
+   $plotAreaValue
+);
+
+$chartValue->setTopLeftPosition('B46');
+$chartValue->setBottomRightPosition('P65');
+
+$sheet->addChart($chartVolume);
+$sheet->addChart($chartValue);
+
+// Coloriser les cases selon les couleurs utilisées dans le graphique
+$styleArrayMPPA_Current = [
+   'fill' => [
+       'fillType' => Fill::FILL_SOLID,
+       'startColor' => ['rgb' => '4f81bd'] // Bleu pour MPPA Année en cours
+   ]
+];
+$styleArrayMABC_Current = [
+   'fill' => [
+       'fillType' => Fill::FILL_SOLID,
+       'startColor' => ['rgb' => 'c0504d'] // Rouge pour MABC Année en cours
+   ]
+];
+$styleArrayMPPA_Previous = [
+   'fill' => [
+       'fillType' => Fill::FILL_SOLID,
+       'startColor' => ['rgb' => '9bbb59'] // Vert pour MPPA Année Précédente
+   ]
+];
+$styleArrayMABC_Previous = [
+   'fill' => [
+       'fillType' => Fill::FILL_SOLID,
+       'startColor' => ['rgb' => '8064a2'] // Violet pour MABC Année Précédente
+   ]
+];
+$styleArrayTotal_Current = [
+   'fill' => [
+       'fillType' => Fill::FILL_SOLID,
+       'startColor' => ['rgb' => '8ebaee'] // Bleu clair pour TOTAL Année en cours
+   ]
+];
+$styleArrayTotal_Previous = [
+   'fill' => [
+       'fillType' => Fill::FILL_SOLID,
+       'startColor' => ['rgb' => 'b7cc8a'] // Rouge clair pour TOTAL Année Précédente
+   ]
+];
+
+// Appliquer les styles aux cellules correspondantes
+$sheet->getStyle('C4:N4')->applyFromArray($styleArrayMPPA_Current);
+$sheet->getStyle('C5:N5')->applyFromArray($styleArrayMABC_Current);
+$sheet->getStyle('C6:N6')->applyFromArray($styleArrayTotal_Current);
+$sheet->getStyle('C12:N12')->applyFromArray($styleArrayMPPA_Current);
+$sheet->getStyle('C13:N13')->applyFromArray($styleArrayMABC_Current);
+$sheet->getStyle('C14:N14')->applyFromArray($styleArrayTotal_Current);
+$sheet->getStyle('C19:N19')->applyFromArray($styleArrayMPPA_Current);
+$sheet->getStyle('C20:N20')->applyFromArray($styleArrayMABC_Current);
+$sheet->getStyle('C21:N21')->applyFromArray($styleArrayTotal_Current);
+
+if ($includePreviousYear) {
+   $sheet->getStyle('C7:N7')->applyFromArray($styleArrayMPPA_Previous);
+   $sheet->getStyle('C8:N8')->applyFromArray($styleArrayMABC_Previous);
+   $sheet->getStyle('C9:N9')->applyFromArray($styleArrayTotal_Previous);
+   $sheet->getStyle('C15:N15')->applyFromArray($styleArrayMPPA_Previous);
+   $sheet->getStyle('C16:N16')->applyFromArray($styleArrayMABC_Previous);
+   $sheet->getStyle('C17:N17')->applyFromArray($styleArrayTotal_Previous);
+   $sheet->getStyle('C22:N22')->applyFromArray($styleArrayMPPA_Previous);
+   $sheet->getStyle('C23:N23')->applyFromArray($styleArrayMABC_Previous);
+   $sheet->getStyle('C24:N24')->applyFromArray($styleArrayTotal_Previous);
+}
 
                 //-------------------------- Delay chart -------------------------------- // 
                 $sheet->setCellValue('H62', 'Activités appro délais')

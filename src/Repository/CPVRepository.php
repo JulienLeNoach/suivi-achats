@@ -21,11 +21,11 @@ class CPVRepository extends ServiceEntityRepository
         parent::__construct($registry, CPV::class);
     }
 
-    public function findOneByCodeCpv($codeCpv): ?CPV
+    public function findOneByCodeCpv($id): ?CPV
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.code_cpv = :code_cpv')
-            ->setParameter('code_cpv', $codeCpv)
+            ->andWhere('c.id = :id')
+            ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();
     }

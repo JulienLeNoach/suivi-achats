@@ -38,24 +38,24 @@ class AddAchatType extends AbstractType
         $todayFormatted = $today->format('Y-m-d');
 
         $builder
-            ->add('date_sillage', DateType::class, [
-                'required' => true,
-                'widget' => 'single_text',
-                'label' => false,
-                'attr' => [
-                    'class' => 'fr-input',
-                    'min' => $todayFormatted,
-                    'data-add-achat-target' => 'dateSillage'
-                ],
-                'label_attr' => ['class' => 'fr-label']
-            ])
+            // ->add('date_sillage', DateType::class, [
+            //     'required' => true,
+            //     'widget' => 'single_text',
+            //     'label' => false,
+            //     'attr' => [
+            //         'class' => 'fr-input',
+            //         'max' => $todayFormatted,
+            //         'data-add-achat-target' => 'dateSillage'
+            //     ],
+            //     'label_attr' => ['class' => 'fr-label']
+            // ])
             ->add('date_commande_chorus', DateType::class, [
                 'required' => true,
                 'label' => false,
                 'widget' => 'single_text',
                 'attr' => [
                     'class' => 'fr-input',
-                    'min' => $todayFormatted,
+                    'max' => $todayFormatted,
                     'data-add-achat-target' => 'dateCommandeChorus'
                 ],
                 'label_attr' => ['class' => 'fr-label']
@@ -66,7 +66,7 @@ class AddAchatType extends AbstractType
                 'widget' => 'single_text',
                 'attr' => [
                     'class' => 'fr-input',
-                    'min' => $todayFormatted,
+                    'max' => $todayFormatted,
                     'data-add-achat-target' => 'dateValidInter'
                 ],
                 'label_attr' => ['class' => 'fr-label']

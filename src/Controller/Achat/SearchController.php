@@ -226,8 +226,11 @@ public function reint($id, Request $request,SessionInterface $session): Response
     $currentUrl = $session->get('current_url');
     $achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
     $cpvId = $achat->getCodeCpv()->getId();
+    // dd($cpvId);
+
     $cpvSold = $this->entityManager->getRepository(CPV::class)->findOneByCodeCpv($cpvId);    // Formater le montant avec deux chiffres après la virgule et ",00" si nécessaire
     $montantAchatFormatted = number_format($achat->getMontantAchat(), 2, '.', '');
+    // dd($cpvSold);
     $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() - $achat->getMontantAchat());
     $this->entityManager->persist($cpvSold);
     $this->entityManager->flush();

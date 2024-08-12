@@ -41,7 +41,7 @@ export default class extends Controller {
         datasets: [
           {
             type: 'bar',
-            label: 'MPPA Count (Current Year)',
+            label: 'Volume MPPA (année en cours)',
             data: chartDataCountCurrentMppa,
             yAxisID: 'y1',
             order: 4, // Barres seront en dessous
@@ -51,7 +51,7 @@ export default class extends Controller {
           },
           {
             type: 'bar',
-            label: 'MABC Count (Current Year)',
+            label: 'Volume MABC (année en cours)',
             data: chartDataCountCurrentMabc,
             yAxisID: 'y1',
             order: 4, // Barres seront en dessous
@@ -61,7 +61,7 @@ export default class extends Controller {
           },
           {
             type: 'bar',
-            label: 'MPPA Count (Previous Year)',
+            label: 'Volume MPPA (année précédente)',
             data: chartDataCountPreviousMppa,
             yAxisID: 'y1',
             order: 3, // Barres seront en dessous
@@ -71,7 +71,7 @@ export default class extends Controller {
           },
           {
             type: 'bar',
-            label: 'MABC Count (Previous Year)',
+            label: 'Volume MABC (année précédente)',
             data: chartDataCountPreviousMabc,
             yAxisID: 'y1',
             order: 3, // Barres seront en dessous
@@ -81,7 +81,7 @@ export default class extends Controller {
           },
           {
             type: 'line',
-            label: 'Cumulative Total (Current Year)',
+            label: 'Total (année en cours)',
             data: cumulativeTotalsCurrent,
             yAxisID: 'y',
             order: 2, // Lignes seront au-dessus
@@ -92,7 +92,7 @@ export default class extends Controller {
           },
           {
             type: 'line',
-            label: 'Cumulative Total (Previous Year)',
+            label: 'Total (année précédente)',
             data: cumulativeTotalsPrevious,
             yAxisID: 'y',
             order: 1, // Lignes seront au-dessus

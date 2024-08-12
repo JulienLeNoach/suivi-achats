@@ -39,15 +39,14 @@ class CreateExcelVolVal  extends AbstractController
 
 
     }
-    public function generateExcelFile($chartDataCountCurrent, $chartDataCountPrevious, $chartDataTotalCurrent, $chartDataTotalPrevious, $projectDir)
+    public function generateExcelFile($chartDataCountCurrent, $chartDataCountPrevious, $chartDataTotalCurrent, $chartDataTotalPrevious, $totalAchatPerMonthUnder2K, $anne_precedente, $projectDir)
     {
         $mois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-        $session = $this->requestStack->getSession()->get('toPDF');
-        $includePreviousYear = $session['annee_precedente'] == 'anneePrecedente';
+        $includePreviousYear = $anne_precedente == 'anneePrecedente';
         
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('H1', 'Activités appro en volume/valeur ' . $session['criteria']['Date'])
+        $sheet->setCellValue('H1', 'Activités appro en volume/valeur ')
               ->getStyle('H1')
               ->getFont()
               ->setBold(true)
@@ -59,11 +58,11 @@ class CreateExcelVolVal  extends AbstractController
         }
     
         $cellBorder = [
-            'B3:O6', 'B13:O16'
+            'B3:O6', 'B13:O16', 'B20:O23'
         ];
     
         if ($includePreviousYear) {
-            $cellBorder = array_merge($cellBorder, ['B7:O9', 'B17:O19']);
+            $cellBorder = array_merge($cellBorder, ['B7:O9', 'B17:O19', 'B24:O26']);
         }
     
         $styleBorderB = [
@@ -151,6 +150,43 @@ class CreateExcelVolVal  extends AbstractController
             $sheet->setCellValue('O19', '=SUM(C19:N19)');
         }
     
+        // Tableaux pour les Dossiers inférieurs à 2 000,00 € TTC
+        $rowStart = $includePreviousYear ? 22 : 20;
+        $sheet->setCellValue('B' . $rowStart, 'Dossiers inférieurs à 2 000,00 € TTC');
+        $sheet->setCellValue('B' . ($rowStart + 1), 'MPPA (Année en cours)');
+        $sheet->setCellValue('B' . ($rowStart + 2), 'MABC (Année en cours)');
+        $sheet->setCellValue('B' . ($rowStart + 3), 'TOTAL (Année en cours)');
+        if ($includePreviousYear) {
+            $sheet->setCellValue('B' . ($rowStart + 4), 'MPPA (Année Précédente)');
+            $sheet->setCellValue('B' . ($rowStart + 5), 'MABC (Année Précédente)');
+            $sheet->setCellValue('B' . ($rowStart + 6), 'TOTAL (Année Précédente)');
+        }
+        $sheet->setCellValue('O' . $rowStart, 'TOTAL');
+    
+        $col = 'C';
+        foreach ($mois as $index => $moi) {
+            $sheet->setCellValue($col . $rowStart, $moi);
+            $sheet->setCellValue($col . ($rowStart + 1), $totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count']);
+            $sheet->setCellValue($col . ($rowStart + 2), $totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count']);
+            $sheet->setCellValue($col . ($rowStart + 3), $totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count'] + $totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count']);
+            if ($includePreviousYear) {
+                $sheet->setCellValue($col . ($rowStart + 4), $totalAchatPerMonthUnder2K['type_marche_1']['previous_year'][$index]['count']);
+                $sheet->setCellValue($col . ($rowStart + 5), $totalAchatPerMonthUnder2K['type_marche_0']['previous_year'][$index]['count']);
+                $sheet->setCellValue($col . ($rowStart + 6), $totalAchatPerMonthUnder2K['type_marche_1']['previous_year'][$index]['count'] + $totalAchatPerMonthUnder2K['type_marche_0']['previous_year'][$index]['count']);
+            }
+            $col++;
+        }
+    
+        // Somme des totaux pour les Dossiers inférieurs à 2 000,00 € TTC
+        $sheet->setCellValue('O' . ($rowStart + 1), '=SUM(C' . ($rowStart + 1) . ':N' . ($rowStart + 1) . ')');
+        $sheet->setCellValue('O' . ($rowStart + 2), '=SUM(C' . ($rowStart + 2) . ':N' . ($rowStart + 2) . ')');
+        $sheet->setCellValue('O' . ($rowStart + 3), '=SUM(C' . ($rowStart + 3) . ':N' . ($rowStart + 3) . ')');
+        if ($includePreviousYear) {
+            $sheet->setCellValue('O' . ($rowStart + 4), '=SUM(C' . ($rowStart + 4) . ':N' . ($rowStart + 4) . ')');
+            $sheet->setCellValue('O' . ($rowStart + 5), '=SUM(C' . ($rowStart + 5) . ':N' . ($rowStart + 5) . ')');
+            $sheet->setCellValue('O' . ($rowStart + 6), '=SUM(C' . ($rowStart + 6) . ':N' . ($rowStart + 6) . ')');
+        }
+    
         // Ajouter le graphique pour les volumes
         $dataSeriesLabelsVolume = [
             new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$4', null, 1),
@@ -201,8 +237,8 @@ class CreateExcelVolVal  extends AbstractController
             $plotAreaVolume
         );
     
-        $chartVolume->setTopLeftPosition('B20');
-        $chartVolume->setBottomRightPosition('P40');
+        $chartVolume->setTopLeftPosition('B30');
+        $chartVolume->setBottomRightPosition('P50');
     
         // Ajouter le graphique pour les valeurs cumulatives
         $dataSeriesLabelsValue = [
@@ -246,8 +282,8 @@ class CreateExcelVolVal  extends AbstractController
             $plotAreaValue
         );
     
-        $chartValue->setTopLeftPosition('B41');
-        $chartValue->setBottomRightPosition('P61');
+        $chartValue->setTopLeftPosition('B51');
+        $chartValue->setBottomRightPosition('P71');
     
         $sheet->addChart($chartVolume);
         $sheet->addChart($chartValue);
@@ -307,6 +343,17 @@ class CreateExcelVolVal  extends AbstractController
             $sheet->getStyle('C19:N19')->applyFromArray($styleArrayTotal_Previous);
         }
     
+        // Appliquer les styles aux cellules des Dossiers inférieurs à 2 000,00 € TTC
+        $sheet->getStyle('C' . ($rowStart + 1) . ':N' . ($rowStart + 1))->applyFromArray($styleArrayMPPA_Current);
+        $sheet->getStyle('C' . ($rowStart + 2) . ':N' . ($rowStart + 2))->applyFromArray($styleArrayMABC_Current);
+        $sheet->getStyle('C' . ($rowStart + 3) . ':N' . ($rowStart + 3))->applyFromArray($styleArrayTotal_Current);
+    
+        if ($includePreviousYear) {
+            $sheet->getStyle('C' . ($rowStart + 4) . ':N' . ($rowStart + 4))->applyFromArray($styleArrayMPPA_Previous);
+            $sheet->getStyle('C' . ($rowStart + 5) . ':N' . ($rowStart + 5))->applyFromArray($styleArrayMABC_Previous);
+            $sheet->getStyle('C' . ($rowStart + 6) . ':N' . ($rowStart + 6))->applyFromArray($styleArrayTotal_Previous);
+        }
+    
         $filePath = $projectDir . '/public/nom_de_fichier.xlsx';
         $writer = new Xlsx($spreadsheet);
         $writer->setIncludeCharts(true);
@@ -314,6 +361,7 @@ class CreateExcelVolVal  extends AbstractController
     
         return $filePath;
     }
+    
     
 
 }

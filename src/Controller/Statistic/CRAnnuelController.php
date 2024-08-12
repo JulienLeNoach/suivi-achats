@@ -52,7 +52,8 @@ class CRAnnuelController extends AbstractController
             $mabcEtat = 0;
              $mppaMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mppaEtat, $form);
                 $mabcMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat, $form);
-        
+                $totalAchatPerMonthUnder2K = $this->achatRepository->getTotalAchatUnder2K($form);
+
                 $volValStat = $this->statisticService->purchaseStatisticsByMonth(
                     $mppaMtTotal['current_year'], 
                     $mppaMtTotal['previous_year'], 
@@ -96,7 +97,7 @@ class CRAnnuelController extends AbstractController
                 ]);
             }
             $filePath = $this->crAnnuelService->generateExcelFile($chartDataCountCurrent, $chartDataCountPrevious, $chartDataTotalCurrent, $chartDataTotalPrevious, $this->projectDir, $achats, $achats_delay_all,$result_achats,
-                                                                $result_achats_mounts, $parameter,$result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal);
+                                                                $result_achats_mounts, $parameter,$result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal,$totalAchatPerMonthUnder2K);
             return new BinaryFileResponse($filePath);
         }
         return $this->render('cr_annuel/index.html.twig', [

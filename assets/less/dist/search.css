@@ -105,7 +105,6 @@ table {
   border-collapse: collapse;
 }
 table thead th {
-  position: sticky;
   top: 0;
   background-color: #000091;
   /* Couleur de fond de l'en-tête */

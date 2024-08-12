@@ -685,189 +685,259 @@ public function getPMETopVal($form)
             $organizedResults['previous_year'][] = $row;
         }
     }
+    return $organizedResults;
+}
+public function getTotalAchatUnder2K($form)
+{
+    // Retrieve data from the form correctly
+    $data = $form->getData();
+    $date = $form->get('date')->getData();
+    $tax = $form->get('tax')->getData();
+    $etat_achat = $form->get('etat_achat')->getData();
+    $annee_precedente = $form->get('annee_precedente')->getData();
+    
+    $qb = $this->createQueryBuilder('a');
+    
+    // Determine the date column to use
+    $dateColumn = ($etat_achat == 'valid') ? 'a.date_notification' : 'a.date_saisie';
+    
+    // Join the TVA table
+    $qb->innerJoin('a.tva_ident', 't');
+    
+    // New query to count purchases with montant_achat less than 2000 (taking into account the tva)
+    $qb->select('a.type_marche, YEAR(' . $dateColumn . ') AS year, MONTH(' . $dateColumn . ') AS month, COUNT(a) AS count')
+       ->where('a.montant_achat * (1 + t.tva_taux / 100) < 2000');
+    
+    // Basic conditions
+    $qb->andWhere('YEAR(' . $dateColumn . ') IN (:years)')
+       ->andWhere('a.etat_achat = :etat_achats')
+       ->setParameter('years', [$date, $annee_precedente == 'anneePrecedente' ? $date - 1 : $date])
+       ->setParameter('etat_achats', 2);
+    
+    // Additional filters
+    if ($data->getUtilisateurs()) {
+        $qb->andWhere('a.utilisateurs = :utilisateurs')
+           ->setParameter('utilisateurs', $data->getUtilisateurs());
+    }
+    if ($data->getNumSiret()) {
+        $qb->andWhere('a.num_siret = :num_siret')
+           ->setParameter('num_siret', $data->getNumSiret());
+    }
+    if ($data->getCodeUo()) {
+        $qb->andWhere('a.code_uo = :code_uo')
+           ->setParameter('code_uo', $data->getCodeUo());
+    }
+    if ($data->getCodeCpv()) {
+        $qb->andWhere('a.code_cpv = :code_cpv')
+           ->setParameter('code_cpv', $data->getCodeCpv());
+    }
+    if ($data->getCodeFormation()) {
+        $qb->andWhere('a.code_formation = :code_formation')
+           ->setParameter('code_formation', $data->getCodeFormation());
+    }
+    
+    // Group by type_marche, year, and month
+    $result = $qb->groupBy('a.type_marche, year, month')
+                 ->getQuery()
+                 ->getResult();
+    
+    // Organize results into a structured array
+    $organizedResults = [
+        'type_marche_1' => [
+            'current_year' => [],
+            'previous_year' => []
+        ],
+        'type_marche_0' => [
+            'current_year' => [],
+            'previous_year' => []
+        ]
+    ];
+
+    foreach ($result as $row) {
+        if ($row['type_marche'] == 1) {
+            if ($row['year'] == $date) {
+                $organizedResults['type_marche_1']['current_year'][] = $row;
+            } elseif ($row['year'] == ($date - 1)) {
+                $organizedResults['type_marche_1']['previous_year'][] = $row;
+            }
+        } elseif ($row['type_marche'] == 0) {
+            if ($row['year'] == $date) {
+                $organizedResults['type_marche_0']['current_year'][] = $row;
+            } elseif ($row['year'] == ($date - 1)) {
+                $organizedResults['type_marche_0']['previous_year'][] = $row;
+            }
+        }
+    }
     // dd($organizedResults);
     return $organizedResults;
 }
-
     
    
-    public function getYearDelayDiff($form)
-    {
-        $criteria = $this->extractCriteriaFromForm($form);
+public function getYearDelayDiff($form)
+{
+    $criteria = $this->extractCriteriaFromForm($form);
 
-        $jourcalendar = $form["jourcalendar"]->getData();
+    $jourcalendar = $form["jourcalendar"]->getData();
 
-        $conn = $this->getEntityManager()->getConnection();
-        if($jourcalendar=="jO"){
-
-        
+    $conn = $this->getEntityManager()->getConnection();
+    if ($jourcalendar == "jO") {
         $sql = "
         SELECT
         source,
         ROUND(AVG(CASE WHEN MONTH(date_notification) = 1 THEN difference END), 2) AS Mois_1,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 2 THEN difference END), 2) AS Mois_2,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 3 THEN difference END), 2) AS Mois_3,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 4 THEN difference END), 2) AS Mois_4,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 5 THEN difference END), 2) AS Mois_5,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 6 THEN difference END), 2) AS Mois_6,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 7 THEN difference END), 2) AS Mois_7,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 8 THEN difference END), 2) AS Mois_8,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 9 THEN difference END), 2) AS Mois_9,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 10 THEN difference END), 2) AS Mois_10,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 11 THEN difference END), 2) AS Mois_11,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 12 THEN difference END), 2) AS Mois_12
-      FROM (
-        SELECT
-          'ANT GSBDD' AS source,
-          (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus )) AS difference,
-          date_notification
-        FROM achat
-        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-        {$criteria['conditions']}      
-        UNION ALL
-      
-        SELECT
-          'BUDGET' AS source,
-          (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter)) AS difference,
-          date_notification
-        FROM achat
-        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-        {$criteria['conditions']}    
-        UNION ALL
-      
-        SELECT
-          'APPRO' AS source,
-          (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation )) AS difference,
-          date_notification
-        FROM achat
-        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-        {$criteria['conditions']}     
-        UNION ALL
-      
-        SELECT
-          'FIN' AS source,
-          (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification)) AS difference,
-          date_notification
-        FROM achat
-        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-        {$criteria['conditions']}     
-        UNION ALL
-      
-        SELECT
-          'PFAF' AS source,
-          (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification )) AS difference,
-          date_notification
-        FROM achat
-        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-        {$criteria['conditions']}     
-        UNION ALL
-      
-        SELECT
-          'Chorus formul.' AS source,
-          (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_notification )) AS difference,
-          date_notification
-        FROM achat
-        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-        {$criteria['conditions']}     
-    ) AS combined_data
-      GROUP BY source
-      ORDER BY
-        source = 'ANT GSBDD' DESC,
-        source = 'BUDGET' DESC,
-        source = 'APPRO' DESC,
-        source = 'FIN' DESC,
-        source = 'PFAF' DESC,
-        source = 'Chorus formul.' DESC
-      LIMIT 0,100
-            ";
-        }
-        else{
-            $sql = "SELECT
-            source,
-            ROUND(AVG(CASE WHEN MONTH(date_notification) = 1 THEN difference END), 2) AS Mois_1,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 2 THEN difference END), 2) AS Mois_2,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 3 THEN difference END), 2) AS Mois_3,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 4 THEN difference END), 2) AS Mois_4,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 5 THEN difference END), 2) AS Mois_5,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 6 THEN difference END), 2) AS Mois_6,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 7 THEN difference END), 2) AS Mois_7,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 8 THEN difference END), 2) AS Mois_8,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 9 THEN difference END), 2) AS Mois_9,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 10 THEN difference END), 2) AS Mois_10,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 11 THEN difference END), 2) AS Mois_11,
-    ROUND(AVG(CASE WHEN MONTH(date_notification) = 12 THEN difference END), 2) AS Mois_12
-          FROM (
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 2 THEN difference END), 2) AS Mois_2,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 3 THEN difference END), 2) AS Mois_3,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 4 THEN difference END), 2) AS Mois_4,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 5 THEN difference END), 2) AS Mois_5,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 6 THEN difference END), 2) AS Mois_6,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 7 THEN difference END), 2) AS Mois_7,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 8 THEN difference END), 2) AS Mois_8,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 9 THEN difference END), 2) AS Mois_9,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 10 THEN difference END), 2) AS Mois_10,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 11 THEN difference END), 2) AS Mois_11,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 12 THEN difference END), 2) AS Mois_12
+        FROM (
             SELECT
-              'ANT GSBDD' AS source,
-              (DATEDIFF(date_commande_chorus, date_sillage)) AS difference,
-              date_notification
+                'ANT GSBDD' AS source,
+                (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus)) AS difference,
+                date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
-            {$criteria['conditions']}      
-            UNION ALL 
-            
-            SELECT
-              'BUDGET' AS source,
-              (DATEDIFF(date_valid_inter, date_commande_chorus)) AS difference,
-              date_notification
-            FROM achat
-            WHERE YEAR(date_notification) = :year AND etat_achat = 2
-            {$criteria['conditions']}      
+            {$criteria['conditions']}
             UNION ALL
-          
             SELECT
-              'APPRO' AS source,
-              (DATEDIFF(date_validation, date_valid_inter))  AS difference,
-              date_notification
+                'BUDGET' AS source,
+                (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter)) AS difference,
+                date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
-            {$criteria['conditions']}      
+            {$criteria['conditions']}
             UNION ALL
-          
             SELECT
-              'FIN' AS source,
-              (DATEDIFF(date_notification, date_validation))  AS difference,
-              date_notification
+                'APPRO' AS source,
+                (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation)) AS difference,
+                date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
-            {$criteria['conditions']}      
+            {$criteria['conditions']}
             UNION ALL
-          
             SELECT
-              'PFAF' AS source,
-              (DATEDIFF(date_notification, date_valid_inter)) AS difference,
-              date_notification
+                'FIN' AS source,
+                (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification)) AS difference,
+                date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
-            {$criteria['conditions']}     
+            {$criteria['conditions']}
             UNION ALL
-          
             SELECT
-              'Chorus formul.' AS source,
-              (DATEDIFF(date_notification, date_commande_chorus)) AS difference,
-              date_notification
+                'PFAF' AS source,
+                (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification)) AS difference,
+                date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
-            {$criteria['conditions']}      
+            {$criteria['conditions']}
+            UNION ALL
+            SELECT
+                'Chorus formul.' AS source,
+                (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_notification)) AS difference,
+                date_notification
+            FROM achat
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
         ) AS combined_data
-          GROUP BY source
-          ORDER BY
+        GROUP BY source
+        ORDER BY
             source = 'ANT GSBDD' DESC,
             source = 'BUDGET' DESC,
-            source = 'APPRO' DESC,s
+            source = 'APPRO' DESC,
             source = 'FIN' DESC,
             source = 'PFAF' DESC,
             source = 'Chorus formul.' DESC
-          LIMIT 0,100
-                ";
-        }
-            $stmt = $conn->prepare($sql);
-  
-            $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
-            $achats=$resultSet->fetchAllAssociative();
-           
-            return $achats;
-        }
+        LIMIT 0, 100
+        ";
+    } else {
+        $sql = "
+        SELECT
+        source,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 1 THEN difference END), 2) AS Mois_1,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 2 THEN difference END), 2) AS Mois_2,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 3 THEN difference END), 2) AS Mois_3,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 4 THEN difference END), 2) AS Mois_4,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 5 THEN difference END), 2) AS Mois_5,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 6 THEN difference END), 2) AS Mois_6,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 7 THEN difference END), 2) AS Mois_7,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 8 THEN difference END), 2) AS Mois_8,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 9 THEN difference END), 2) AS Mois_9,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 10 THEN difference END), 2) AS Mois_10,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 11 THEN difference END), 2) AS Mois_11,
+        ROUND(AVG(CASE WHEN MONTH(date_notification) = 12 THEN difference END), 2) AS Mois_12
+        FROM (
+            SELECT
+                'ANT GSBDD' AS source,
+                (DATEDIFF(date_commande_chorus, date_sillage)) AS difference,
+                date_notification
+            FROM achat
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
+            UNION ALL
+            SELECT
+                'BUDGET' AS source,
+                (DATEDIFF(date_valid_inter, date_commande_chorus)) AS difference,
+                date_notification
+            FROM achat
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
+            UNION ALL
+            SELECT
+                'APPRO' AS source,
+                (DATEDIFF(date_validation, date_valid_inter)) AS difference,
+                date_notification
+            FROM achat
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
+            UNION ALL
+            SELECT
+                'FIN' AS source,
+                (DATEDIFF(date_notification, date_validation)) AS difference,
+                date_notification
+            FROM achat
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
+            UNION ALL
+            SELECT
+                'PFAF' AS source,
+                (DATEDIFF(date_notification, date_valid_inter)) AS difference,
+                date_notification
+            FROM achat
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
+            UNION ALL
+            SELECT
+                'Chorus formul.' AS source,
+                (DATEDIFF(date_notification, date_commande_chorus)) AS difference,
+                date_notification
+            FROM achat
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
+        ) AS combined_data
+        GROUP BY source
+        ORDER BY
+            source = 'ANT GSBDD' DESC,
+            source = 'BUDGET' DESC,
+            source = 'APPRO' DESC,
+            source = 'FIN' DESC,
+            source = 'PFAF' DESC,
+            source = 'Chorus formul.' DESC
+        LIMIT 0, 100
+        ";
+    }
+    $stmt = $conn->prepare($sql);
+
+    $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
+    $achats = $resultSet->fetchAllAssociative();
+
+    return $achats;
+}       
         public function getYearDelayCount($form)
         {
             $criteria = $this->extractCriteriaFromForm($form);

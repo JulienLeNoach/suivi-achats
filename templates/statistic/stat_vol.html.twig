@@ -1,4 +1,4 @@
-<h6 class="blueF">Activité en volume</h6>
+<h5 class="blueF">Activité en volume</h5>
 <table id='tableCheck'>
     <thead>
         <tr>
@@ -62,10 +62,76 @@
                 <td>{{ totalmppaPrev + totalmabcPrev }}</td>
             </tr>
         {% endif %}
+      
     </tbody>
 </table>
-
-<h6 class="blueF">Activité en valeur ({{ toPDF['criteria']['Taxe'] | upper }})</h6>
+<h5 class="blueF">Dossiers inférieurs à 2 000,00 € TTC</h5>
+<table id='tableUnder2K'>
+    <thead>
+        <tr>
+            <th>Mois</th>
+            {% set totalUnder2KMPPA = 0 %}
+            {% set totalUnder2KMABC = 0 %}
+            {% for month, count in toPDF.volValStat.current_year %}
+                <td>{{ month }}</td>
+            {% endfor %}
+            <td>Total</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>MPPA (Année en cours)</th>
+            {% for month, data in totalAchatPerMonthUnder2K.type_marche_1.current_year %}
+                <td>{{ data['count']|default(0) }}</td>
+                {% set totalUnder2KMPPA = totalUnder2KMPPA + (data['count']|default(0)) %}
+            {% endfor %}
+            <td>{{ totalUnder2KMPPA }}</td>
+        </tr>
+        <tr>
+            <th>MABC (Année en cours)</th>
+            {% for month, data in totalAchatPerMonthUnder2K.type_marche_0.current_year %}
+                <td>{{ data['count']|default(0) }}</td>
+                {% set totalUnder2KMABC = totalUnder2KMABC + (data['count']|default(0)) %}
+            {% endfor %}
+            <td>{{ totalUnder2KMABC }}</td>
+        </tr>
+        <tr>
+            <th>TOTAL (Année en cours)</th>
+            {% for month, data in totalAchatPerMonthUnder2K.type_marche_1.current_year %}
+                <td>{{ (data['count']|default(0) + totalAchatPerMonthUnder2K.type_marche_0.current_year[loop.index0]['count']|default(0)) }}</td>
+            {% endfor %}
+            <td>{{ totalUnder2KMPPA + totalUnder2KMABC }}</td>
+        </tr>
+        {% if annee_precedente == 'anneePrecedente' %}
+            <tr>
+                <th>MPPA (Année Précédente)</th>
+                {% set totalUnder2KMPPAPrev = 0 %}
+                {% for month, data in totalAchatPerMonthUnder2K.type_marche_1.previous_year %}
+                    <td>{{ data['count']|default(0) }}</td>
+                    {% set totalUnder2KMPPAPrev = totalUnder2KMPPAPrev + (data['count']|default(0)) %}
+                {% endfor %}
+                <td>{{ totalUnder2KMPPAPrev }}</td>
+            </tr>
+            <tr>
+                <th>MABC (Année Précédente)</th>
+                {% set totalUnder2KMABCPrev = 0 %}
+                {% for month, data in totalAchatPerMonthUnder2K.type_marche_0.previous_year %}
+                    <td>{{ data['count']|default(0) }}</td>
+                    {% set totalUnder2KMABCPrev = totalUnder2KMABCPrev + (data['count']|default(0)) %}
+                {% endfor %}
+                <td>{{ totalUnder2KMABCPrev }}</td>
+            </tr>
+            <tr>
+                <th>TOTAL (Année Précédente)</th>
+                {% for month, data in totalAchatPerMonthUnder2K.type_marche_1.previous_year %}
+                    <td>{{ (data['count']|default(0) + totalAchatPerMonthUnder2K.type_marche_0.previous_year[loop.index0]['count']|default(0)) }}</td>
+                {% endfor %}
+                <td>{{ totalUnder2KMPPAPrev + totalUnder2KMABCPrev }}</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+<h5 class="blueF">Activité en valeur ({{ toPDF['criteria']['Taxe'] | upper }})</h5>
 <table id="volValTable">
     <thead>
         <tr>

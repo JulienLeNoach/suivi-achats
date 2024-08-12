@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ["dateSillage", "dateCommandeChorus", "dateValidInter", "submitButton", "montantAchat", "tvaIdent"];
+    static targets = [ "dateCommandeChorus", "dateValidInter", "submitButton", "montantAchat", "tvaIdent"];
 
     connect() {
         this.observeOptions();
@@ -67,9 +67,7 @@ export default class extends Controller {
     }
 
     setupDateValidation() {
-        if (this.hasDateSillageTarget) {
-            this.dateSillageTarget.addEventListener('change', this.validateDates.bind(this));
-        }
+
         if (this.hasDateCommandeChorusTarget) {
             this.dateCommandeChorusTarget.addEventListener('change', this.validateDates.bind(this));
         }
@@ -82,15 +80,11 @@ export default class extends Controller {
     }
 
     validateDates() {
-        const dateSillage = this.dateSillageTarget.value;
         const dateCommandeChorus = this.dateCommandeChorusTarget.value;
         const dateValidInter = this.dateValidInterTarget.value;
 
         if (dateCommandeChorus) {
-            if (dateSillage && dateCommandeChorus > dateSillage) {
-                alert("La date de création CF ne peut pas être postérieure à la date d'enregistrement Sillage.");
-                this.dateCommandeChorusTarget.value = "";
-            }
+
             if (dateValidInter && dateCommandeChorus > dateValidInter) {
                 alert("La date de création CF ne peut pas être postérieure à la date de dernier validateur.");
                 this.dateCommandeChorusTarget.value = "";
@@ -99,11 +93,10 @@ export default class extends Controller {
     }
 
     validateFormOnSubmit(event) {
-        const dateSillage = this.dateSillageTarget.value;
         const dateCommandeChorus = this.dateCommandeChorusTarget.value;
         const dateValidInter = this.dateValidInterTarget.value;
 
-        if ((dateSillage && dateCommandeChorus > dateSillage) || (dateValidInter && dateCommandeChorus > dateValidInter)) {
+        if ((dateValidInter && dateCommandeChorus > dateValidInter)) {
             alert("Veuillez corriger les dates avant de soumettre le formulaire.");
             event.preventDefault();
         }
