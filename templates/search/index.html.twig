@@ -154,10 +154,10 @@
             <button class="fr-btn valid" id="btn" data-link="valid_achat" data-action="valider">Valider un
                 achat</button>
         {% endif %}
-        {% if is_granted ('ROLE_OPT_ANNULER_ACHATS') %}
-            <button class="fr-btn annul" id="btn" data-link="annul_achat" data-action="annuler">Annuler un
-                achat</button>
-        {% endif %}
+{% if is_granted ('ROLE_OPT_ANNULER_ACHATS') %}
+    <button class="fr-btn annul" id="btn" data-link="annul_achat" data-action="annuler">Annuler un achat</button>
+{% endif %}
+
         {% if is_granted ('ROLE_OPT_REINT_ACHATS') %}
             <button class="fr-btn reint" id="btn" data-link="reint_achat" data-action="reintégrer">Réintégrer un
                 achat</button>
