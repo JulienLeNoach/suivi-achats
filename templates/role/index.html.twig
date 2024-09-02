@@ -15,6 +15,10 @@
                 <div data-controller="role">
             {{ form_row(form.nom_connexion) }}
             {{ form_end(form) }}
+            <div class="select-all-container  align-items-center" data-role-target="selectAllContainer" style="display: none;">
+                <label for="selectAll" class="me-2">Tout cocher/décocher</label>
+                <input type="checkbox" id="selectAll">
+            </div>
             <div class="table-container overflow-scroll">
             <table class="roleTable" style="undefined;table-layout: fixed; width: 480px">
                 <colgroup>
@@ -23,7 +27,7 @@
                 </colgroup>
                 <thead>
                     <tr>
-                        <th class="tg-c3ow">Autorisé</th>
+                        <th class="tg-c3ow"> Autorisé</th>
                         <th class="tg-c3ow">Options</th>
                     </tr>
                 </thead>

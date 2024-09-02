@@ -798,24 +798,24 @@ public function getYearDelayDiff($form)
         ROUND(AVG(CASE WHEN MONTH(date_notification) = 12 THEN difference END), 2) AS Mois_12
         FROM (
             SELECT
-                'ANT GSBDD' AS source,
-                (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus)) AS difference,
+                'Transmissions' AS source,
+                (DATEDIFF(date_saisie, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_saisie AND date_valid_inter)) AS difference,
                 date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
             {$criteria['conditions']}
             UNION ALL
             SELECT
-                'BUDGET' AS source,
-                (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter)) AS difference,
+                'Traitement' AS source,
+                (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_valid_inter)) AS difference,
                 date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
             {$criteria['conditions']}
             UNION ALL
             SELECT
-                'APPRO' AS source,
-                (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation)) AS difference,
+                'Notifications' AS source,
+                (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_notification AND date_validation)) AS difference,
                 date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
@@ -847,9 +847,9 @@ public function getYearDelayDiff($form)
         ) AS combined_data
         GROUP BY source
         ORDER BY
-            source = 'ANT GSBDD' DESC,
-            source = 'BUDGET' DESC,
-            source = 'APPRO' DESC,
+            source = 'Transmissions' DESC,
+            source = 'Traitement' DESC,
+            source = 'Notifications' DESC,
             source = 'FIN' DESC,
             source = 'PFAF' DESC,
             source = 'Chorus formul.' DESC
@@ -873,24 +873,24 @@ public function getYearDelayDiff($form)
         ROUND(AVG(CASE WHEN MONTH(date_notification) = 12 THEN difference END), 2) AS Mois_12
         FROM (
             SELECT
-                'ANT GSBDD' AS source,
-                (DATEDIFF(date_commande_chorus, date_sillage)) AS difference,
+                'Transmissions' AS source,
+                (DATEDIFF(date_saisie, date_valid_inter)) AS difference,
                 date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
             {$criteria['conditions']}
             UNION ALL
             SELECT
-                'BUDGET' AS source,
-                (DATEDIFF(date_valid_inter, date_commande_chorus)) AS difference,
-                date_notification
-            FROM achat
-            WHERE YEAR(date_notification) = :year AND etat_achat = 2
-            {$criteria['conditions']}
-            UNION ALL
-            SELECT
-                'APPRO' AS source,
+                'Traitement' AS source,
                 (DATEDIFF(date_validation, date_valid_inter)) AS difference,
+                date_notification
+            FROM achat
+            WHERE YEAR(date_notification) = :year AND etat_achat = 2
+            {$criteria['conditions']}
+            UNION ALL
+            SELECT
+                'Notifications' AS source,
+                (DATEDIFF(date_notification, date_validation)) AS difference,
                 date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
@@ -922,9 +922,9 @@ public function getYearDelayDiff($form)
         ) AS combined_data
         GROUP BY source
         ORDER BY
-            source = 'ANT GSBDD' DESC,
-            source = 'BUDGET' DESC,
-            source = 'APPRO' DESC,
+            source = 'Transmissions' DESC,
+            source = 'Traitement' DESC,
+            source = 'Notifications' DESC,
             source = 'FIN' DESC,
             source = 'PFAF' DESC,
             source = 'Chorus formul.' DESC
@@ -949,30 +949,18 @@ public function getYearDelayDiff($form)
 
             $sql = "SELECT
             source,
-            ROUND(COUNT(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE NULL END), 2) AS CountAntInf3,
-    ROUND(COUNT(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE NULL END), 2) AS CountAntSup3,
-    ROUND(COUNT(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE NULL END), 2) AS CountBudgetInf3,
-    ROUND(COUNT(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE NULL END), 2) AS CountBudgetSup3,
-    ROUND(COUNT(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE NULL END), 2) AS CountApproInf7,
-    ROUND(COUNT(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE NULL END), 2) AS CountApproSup7,
-    ROUND(COUNT(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE NULL END), 2) AS CountFinInf7,
-    ROUND(COUNT(CASE WHEN source = 'FIN' AND difference > 7 THEN 1 ELSE NULL END), 2) AS CountFinSup7,
-    ROUND(COUNT(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE NULL END), 2) AS CountChorusFormInf10,
-    ROUND(COUNT(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE NULL END), 2) AS CountChorusFormSup10,
-    ROUND(COUNT(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE NULL END), 2) AS CountPfafInf14,
-    ROUND(COUNT(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE NULL END), 2) AS CountPfafSup14,
-    ROUND((SUM(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Ant,
-    ROUND((SUM(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Ant,
-    ROUND((SUM(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Budget,
-    ROUND((SUM(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Budget,
-    ROUND((SUM(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Appro,
-    ROUND((SUM(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Appro,
-    ROUND((SUM(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Fin,
-    ROUND((SUM(CASE WHEN source = 'FIN' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Fin,
-    ROUND((SUM(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_10_Jours_Chorus,
-    ROUND((SUM(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_10_Jours_Chorus,
-    ROUND((SUM(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_14_Jours_Pfaf,
-    ROUND((SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_14_Jours_Pfaf,
+            ROUND(COUNT(CASE WHEN source = 'Transmissions' AND difference <= 5 THEN 1 ELSE NULL END), 2) AS CountAntInf3,
+    ROUND(COUNT(CASE WHEN source = 'Transmissions' AND difference > 5 THEN 1 ELSE NULL END), 2) AS CountAntSup3,
+    ROUND(COUNT(CASE WHEN source = 'Traitement' AND difference <= 3 THEN 1 ELSE NULL END), 2) AS CountBudgetInf3,
+    ROUND(COUNT(CASE WHEN source = 'Traitement' AND difference > 3 THEN 1 ELSE NULL END), 2) AS CountBudgetSup3,
+    ROUND(COUNT(CASE WHEN source = 'Notifications' AND difference <= 5 THEN 1 ELSE NULL END), 2) AS CountApproInf7,
+    ROUND(COUNT(CASE WHEN source = 'Notifications' AND difference > 5 THEN 1 ELSE NULL END), 2) AS CountApproSup7,
+    ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference <= 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Ant,
+    ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference > 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Ant,
+    ROUND((SUM(CASE WHEN source = 'Traitement' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Budget,
+    ROUND((SUM(CASE WHEN source = 'Traitement' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Budget,
+    ROUND((SUM(CASE WHEN source = 'Notifications' AND difference <= 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Appro,
+    ROUND((SUM(CASE WHEN source = 'Notifications' AND difference > 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Appro,
     ROUND(COUNT(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE NULL END), 2) AS CountDelaiTotalInf15,
     ROUND(COUNT(CASE WHEN source IN ('Délai total') AND (difference > 15) THEN 1 ELSE NULL END), 2) AS CountDelaiTotalSup15,
     ROUND((SUM(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_15_Jours,
@@ -980,8 +968,8 @@ public function getYearDelayDiff($form)
                 FROM
                     (
                         SELECT
-                            'ANT GSBDD' AS source,
-                            (DATEDIFF(date_commande_chorus, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_commande_chorus )) AS difference,
+                            'Transmissions' AS source,
+                            (DATEDIFF(date_saisie, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_saisie AND date_valid_inter)) AS difference,
                             date_notification
                         FROM achat
                         WHERE YEAR(date_notification) = :year AND etat_achat = 2
@@ -990,8 +978,8 @@ public function getYearDelayDiff($form)
                 UNION ALL
 
                 SELECT
-                'BUDGET' AS source,
-                (DATEDIFF(date_valid_inter, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_valid_inter )) AS difference,
+                'Traitement' AS source,
+                (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation)) AS difference,
                 date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
@@ -1000,47 +988,21 @@ public function getYearDelayDiff($form)
                 UNION ALL
             
                 SELECT
-                    'APPRO' AS source,
-                    (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation )) AS difference,
+                    'Notifications' AS source,
+                    (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_notification AND date_validation)) AS difference,
                     date_notification
                 FROM achat
                 WHERE YEAR(date_notification) = :year AND etat_achat = 2
                 {$criteria['conditions']}
-        
-                UNION ALL
-                SELECT
-                'FIN' AS source,
-                (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification  )) AS difference,
-                date_notification
-            FROM achat
-            WHERE YEAR(date_notification) = :year AND etat_achat = 2
-            {$criteria['conditions']}
-        
-                UNION ALL
-            
-                SELECT
-                    'PFAF' AS source,
-                    (DATEDIFF(date_notification, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_notification  )) AS difference,
-                    date_notification
-                FROM achat
-                WHERE YEAR(date_notification) = :year AND etat_achat = 2
-                {$criteria['conditions']}
-        
-                UNION ALL
-            
-                SELECT
-                'Chorus formul.' AS source,
-                (DATEDIFF(date_notification, date_commande_chorus) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_commande_chorus AND date_notification )) AS difference,
-                date_notification
-            FROM achat
-            WHERE YEAR(date_notification) = :year AND etat_achat = 2
-            {$criteria['conditions']}
+
 
                 UNION ALL
             
                 SELECT
                 'Délai total' AS source,
-                (DATEDIFF(date_notification, date_sillage) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_sillage AND date_notification )) AS difference,
+                ((DATEDIFF(date_saisie, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_saisie)) 
+                 + (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation))
+                 + (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_validation AND date_notification))) AS difference,
                 date_notification
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
@@ -1048,15 +1010,12 @@ public function getYearDelayDiff($form)
                 
         
                 ) AS combined_data
-                WHERE source IN ('ANT GSBDD', 'BUDGET', 'APPRO', 'FIN', 'Chorus formul.', 'PFAF', 'Délai total')
+                WHERE source IN ('Transmissions', 'Traitement', 'Notifications', 'Délai total')
             GROUP BY source
             ORDER BY
-                source = 'ANT GSBDD' DESC,
-                source = 'BUDGET' DESC,
-                source = 'APPRO' DESC,
-                source = 'FIN' DESC,
-                source = 'Chorus formul.' DESC,
-                source = 'PFAF' DESC,
+                source = 'Transmissions' DESC,
+                source = 'Traitement' DESC,
+                source = 'Notifications' DESC,
                 source = 'Délai total' DESC
             LIMIT 0,100
                 ";
@@ -1064,38 +1023,28 @@ public function getYearDelayDiff($form)
                     else{
                         $sql="SELECT
                         source,
-                        COUNT(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE NULL END) AS CountAntInf3,
-    COUNT(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE NULL END) AS CountAntSup3,
-    COUNT(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE NULL END) AS CountBudgetInf3,
-    COUNT(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE NULL END) AS CountBudgetSup3,
-    COUNT(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE NULL END) AS CountApproInf7,
-    COUNT(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE NULL END) AS CountApproSup7,
-    COUNT(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE NULL END) AS CountFinInf7,
-    COUNT(CASE WHEN source = 'FIN' AND difference > 7 THEN 1 ELSE NULL END) AS CountFinSup7,
-    COUNT(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE NULL END) AS CountChorusFormInf10,
-    COUNT(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE NULL END) AS CountChorusFormSup10,
-    COUNT(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE NULL END) AS CountPfafInf14,
-    COUNT(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE NULL END) AS CountPfafSup14,
-    ROUND((SUM(CASE WHEN source = 'ANT GSBDD' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Ant,
-    ROUND((SUM(CASE WHEN source = 'ANT GSBDD' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'ANT GSBDD' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Ant,
-    ROUND((SUM(CASE WHEN source = 'BUDGET' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Budget,
-    ROUND((SUM(CASE WHEN source = 'BUDGET' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'BUDGET' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Budget,
-    ROUND((SUM(CASE WHEN source = 'APPRO' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Appro,
-    ROUND((SUM(CASE WHEN source = 'APPRO' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'APPRO' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Appro,
-    ROUND((SUM(CASE WHEN source = 'FIN' AND difference <= 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Fin,
-    ROUND((SUM(CASE WHEN source = 'FIN' AND difference > 7 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'FIN' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Fin,
-    ROUND((SUM(CASE WHEN source = 'Chorus formul.' AND difference <= 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_10_Jours_Chorus,
-    ROUND((SUM(CASE WHEN source = 'Chorus formul.' AND difference > 10 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Chorus formul.' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_10_Jours_Chorus,
-    ROUND((SUM(CASE WHEN source = 'PFAF' AND difference <= 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_14_Jours_Pfaf,
-    ROUND((SUM(CASE WHEN source = 'PFAF' AND difference > 14 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'PFAF' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_14_Jours_Pfaf,
+                        COUNT(CASE WHEN source = 'Transmissions' AND difference <= 5 THEN 1 ELSE NULL END) AS CountAntInf3,
+    COUNT(CASE WHEN source = 'Transmissions' AND difference > 5 THEN 1 ELSE NULL END) AS CountAntSup3,
+    COUNT(CASE WHEN source = 'Traitement' AND difference <= 3 THEN 1 ELSE NULL END) AS CountBudgetInf3,
+    COUNT(CASE WHEN source = 'Traitement' AND difference > 3 THEN 1 ELSE NULL END) AS CountBudgetSup3,
+    COUNT(CASE WHEN source = 'Notifications' AND difference <= 5 THEN 1 ELSE NULL END) AS CountApproInf7,
+    COUNT(CASE WHEN source = 'Notifications' AND difference > 5 THEN 1 ELSE NULL END) AS CountApproSup7,
+
+    ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference <= 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Ant,
+    ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference > 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Ant,
+    ROUND((SUM(CASE WHEN source = 'Traitement' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Budget,
+    ROUND((SUM(CASE WHEN source = 'Traitement' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Budget,
+    ROUND((SUM(CASE WHEN source = 'Notifications' AND difference <= 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Appro,
+    ROUND((SUM(CASE WHEN source = 'Notifications' AND difference > 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Appro,
+
     COUNT(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE NULL END) AS CountDelaiTotalInf15,
     COUNT(CASE WHEN source IN ('Délai total') AND (difference > 15) THEN 1 ELSE NULL END) AS CountDelaiTotalSup15,
     ROUND((SUM(CASE WHEN source = 'Délai total' AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_15_Jours,
     ROUND((SUM(CASE WHEN source = 'Délai total' AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_15_Jours
                       FROM (
                         SELECT
-                          'ANT GSBDD' AS source,
-                          DATEDIFF(date_commande_chorus, date_sillage) AS difference,
+                          'Transmissions' AS source,
+                          DATEDIFF(date_saisie, date_valid_inter) AS difference,
                           date_notification
                         FROM achat
                         WHERE YEAR(date_notification) = :year AND etat_achat = 2
@@ -1104,17 +1053,7 @@ public function getYearDelayDiff($form)
                         UNION ALL
                       
                         SELECT
-                          'BUDGET' AS source,
-                          DATEDIFF(date_valid_inter, date_commande_chorus) AS difference,
-                          date_notification
-                        FROM achat
-                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-                        {$criteria['conditions']}
-                
-                        UNION ALL
-                      
-                        SELECT
-                          'APPRO' AS source,
+                          'Traitement' AS source,
                           DATEDIFF(date_validation, date_valid_inter) AS difference,
                           date_notification
                         FROM achat
@@ -1124,7 +1063,7 @@ public function getYearDelayDiff($form)
                         UNION ALL
                       
                         SELECT
-                          'FIN' AS source,
+                          'Notifications' AS source,
                           DATEDIFF(date_notification, date_validation) AS difference,
                           date_notification
                         FROM achat
@@ -1132,46 +1071,23 @@ public function getYearDelayDiff($form)
                         {$criteria['conditions']}
                 
                         UNION ALL
-                      
-                        SELECT
-                          'PFAF' AS source,
-                          DATEDIFF(date_notification, date_valid_inter) AS difference,
-                          date_notification
-                        FROM achat
-                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-                        {$criteria['conditions']}
-                
-                        UNION ALL
-                      
-                        SELECT
-                          'Chorus formul.' AS source,
-                          DATEDIFF(date_notification, date_commande_chorus) AS difference,
-                          date_notification
-                        FROM achat
-                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-                        {$criteria['conditions']}
-
-                        UNION ALL
-            
-                        SELECT
+                                  
+                       SELECT
                         'Délai total' AS source,
-                        (DATEDIFF(date_notification, date_sillage)) AS difference,
+                        (DATEDIFF(date_saisie, date_valid_inter) + DATEDIFF(date_validation, date_valid_inter) + DATEDIFF(date_notification, date_validation)) AS difference,
                         date_notification
                     FROM achat
                     WHERE YEAR(date_notification) = :year AND etat_achat = 2
                     {$criteria['conditions']}
                       ) AS combined_data
-                      WHERE source IN ('ANT GSBDD', 'BUDGET', 'APPRO', 'FIN','Chorus formul.', 'PFAF', 'Délai total')
+                      WHERE source IN ('Transmissions', 'Traitement', 'Notifications','Délai total')
             
                       GROUP BY source
                       -- Organisez les sources dans l'ordre d'apparition
                       ORDER BY
-                        source = 'ANT GSBDD' DESC,
-                        source = 'BUDGET' DESC,
-                        source = 'APPRO' DESC,
-                        source = 'FIN' DESC,
-                        source = 'Chorus formul.' DESC,
-                        source = 'PFAF' DESC,
+                        source = 'Transmissions' DESC,
+                        source = 'Traitement' DESC,
+                        source = 'Notifications' DESC,
                         source = 'Délai total' DESC
                       LIMIT 0,100";
                     }

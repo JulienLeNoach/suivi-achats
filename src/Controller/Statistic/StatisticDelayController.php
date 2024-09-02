@@ -44,17 +44,7 @@ class StatisticDelayController extends AbstractController
             $achats_delay = $this->achatRepository->getYearDelayDiff($form);
             $achats = $this->statisticDelayService->getDelayPerMonth($achats_delay);
             $achats_delay_all = $this->achatRepository->getYearDelayCount($form);
-            
-        $transStat = array_filter(array_values($achats[2]), 'is_numeric');
-        if (isset($achats[5]) && is_array($achats[5])) {
-            $notStat = array_filter(array_values($achats[5]), 'is_numeric');
-        } else {
-            // La clé 5 n'existe pas ou n'est pas un tableau, gérer l'erreur ici
-            // Par exemple, vous pouvez définir $notStat comme un tableau vide ou lancer une exception
-            $notStat = [];
-            // ou
-            // throw new \Exception("La clé 5 n'existe pas ou n'est pas un tableau.");
-        }
+            // dd($achats_delay_all);
                 $toPDF=[
             'criteria'=>[
             'Date' =>  $form["date"]->getData(),
@@ -66,8 +56,6 @@ class StatisticDelayController extends AbstractController
             'Taxe' =>  $form["tax"]->getData(),
             ],
             'achats' => $achats,
-            'transStat' => $transStat,
-            'notStat' => $notStat,
             'achats_delay_all' => $achats_delay_all,
         ];
         $session->set('toPDF', $toPDF);
@@ -76,8 +64,6 @@ class StatisticDelayController extends AbstractController
             'form' => $form->createView(),
             'excelForm' => $excelForm->createView(),
             'achats' => $achats,
-            'transStat' => $transStat,
-            'notStat' => $notStat,
             'achats_delay_all' => $achats_delay_all,
             'toPDF' => $toPDF
 
@@ -93,14 +79,10 @@ class StatisticDelayController extends AbstractController
     #[Route('/pdf/generator/stat_delay', name: 'pdf_generator_stat_delay')]
     public function pdf(SessionInterface $session): Response
     {
-        
         $html =  $this->renderView('statistic_delay/stat_pdf.html.twig', [
             'criteria' => $session->get('toPDF')["criteria"],
             'achats' => $session->get('toPDF')["achats"],
-            'transStat' => $session->get('toPDF')["transStat"],
-            'notStat' => $session->get('toPDF')["notStat"],
             'achats_delay_all' => $session->get('toPDF')["achats_delay_all"],
-
         ]);
     
         $dompdf = new Dompdf();

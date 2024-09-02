@@ -12,13 +12,12 @@ class ValidType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        ->add('Valider', SubmitType::class, [
-            'attr' => [
-                'class' => 'fr-btn'
-            ],
-        ])
-
-        ;
+            ->add('Valider', SubmitType::class, [
+                'attr' => [
+                    'class' => 'fr-btn',
+                    'data-valid-achat-target' => 'submitButton' // Ajoutez cet attribut pour Stimulus
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

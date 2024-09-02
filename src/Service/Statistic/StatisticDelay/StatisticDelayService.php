@@ -60,26 +60,31 @@ class StatisticDelayService  extends AbstractController
         unset($achat); // Délier la dernière référence pour éviter des effets de bord
     
         // Calcul des sommes pour Transmission et Notification
-        foreach ($monthNames as $monthName) {
-            $sumTransmission = 0;
-            $sumNotification = 0;
+        // foreach ($monthNames as $monthName) {
+        //     $sumTransmission = 0;
+        //     $sumNotification = 0;
     
-            foreach ($achats as $achat) {
-                if ($achat['source'] === 'ANT GSBDD' || $achat['source'] === 'BUDGET') {
-                    $sumTransmission += $achat[$monthName];
-                } elseif ($achat['source'] === 'APPRO' || $achat['source'] === 'FIN') {
-                    $sumNotification += $achat[$monthName];
-                }   
-            }
+        //     foreach ($achats as $achat) {
+        //         if ($achat['source'] === 'Transmissions' || $achat['source'] === 'Traitement') {
+        //             $sumTransmission += $achat[$monthName];
+        //         } elseif ($achat['source'] === 'Notifications') {
+        //             $sumNotification += $achat[$monthName];
+        //         }   
+        //     }
     
-            $transmission[$monthName] = $sumTransmission;
-            $notification[$monthName] = $sumNotification;
-        }
+        //     $transmission[$monthName] = $sumTransmission;
+        //     $notification[$monthName] = $sumNotification;
+        // }
     
         // Calculer la ligne "Délai TOTAL"
         foreach ($monthNames as $monthName) {
-            $total = $transmission[$monthName] + $notification[$monthName];
-            $delaiTotal[$monthName] = number_format($total, 1);
+            $total = 0;
+            foreach ($achats as $achat) {
+                if (in_array($achat['source'], ['Transmissions', 'Traitement', 'Notifications'])) {
+                    $total += $achat[$monthName];
+                }
+            }
+            $delaiTotal[$monthName] = number_format($total, 2);
         }
         $delaiTotal['source'] = 'Délai TOTAL';
         $transmission['source'] = 'Transmission';
@@ -87,7 +92,7 @@ class StatisticDelayService  extends AbstractController
     
         // Organiser les éléments dans l'ordre spécifié
         $orderedAchats = [];
-        foreach (['ANT GSBDD', 'BUDGET', 'APPRO', 'FIN', 'PFAF', 'Chorus formul.'] as $source) {
+        foreach (['Transmissions', 'Traitement', 'Notifications'] as $source) {
             foreach ($achats as $achat) {
                 if ($achat['source'] === $source) {
                     $orderedAchats[] = $achat;
@@ -97,8 +102,8 @@ class StatisticDelayService  extends AbstractController
         }
     
         // Ajouter les éléments calculés aux positions spécifiées
-        array_splice($orderedAchats, 2, 0, [$transmission]);
-        array_splice($orderedAchats, 5, 0, [$notification]);
+        // array_splice($orderedAchats, 2, 0, [$transmission]);
+        // array_splice($orderedAchats, 5, 0, [$notification]);
         $orderedAchats[] = $delaiTotal;
         
         return $orderedAchats;

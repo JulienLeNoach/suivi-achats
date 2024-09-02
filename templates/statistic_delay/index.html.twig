@@ -16,7 +16,7 @@
       class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
 </div>
 {% if app.request.method == 'POST' %}
-{% if notStat is not empty %}
+{# {% if notStat is not empty %} #}
     <div class="p-3 font-weight-bold d-flex flex-row ">
 <form action="{{ path('app_statistic_delay_export_excel') }}" method="post">
     <input type="hidden" name="achats" value="{{ achats | json_encode }}">
@@ -80,19 +80,19 @@
 
 
     <div class=" justify-content-center w-100 mw-75 d-flex" data-controller="chartdelay">
-      <div class="delay-bar w-50">
+      {# <div class="delay-bar w-50">
         <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
           <h4 class=" blueF">Délai d'activié annuelle graphe</h4>
-          <div class="" data-controller="pdf-generator-chartdelay">
+          <div class="" >
             <button class="print" id="pdf" data-action="click->pdf-generator-chartdelay#downloadgraphBar">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
-    </button>
+            </button>
           </div>
         </div>
-        <canvas id="delayChart" data-chartdelay-target="delayChart" > </canvas></div>
+        <canvas id="delayChart" data-chartdelay-target="delayChart" > </canvas></div> #}
       <div class="delay-pie w-50">
       <div class=" p-3 font-weight-bold d-flex flex-row justify-content-between">
             <h4 class="blueF">Délai d'activié anuelle détaillé par traitement</h4>
-            <div class="">
+            <div class="" data-controller="pdf-generator-chartdelay">
               <button id="pdf" class="print" data-action="click->pdf-generator-chartdelay#downloadgraphPie">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span>
     </button>
             </div>
@@ -112,7 +112,7 @@
               <p class="text-center">{{achats_delay_all[2]["source"]}}</p>
               <canvas id="ctxAppro" data-chartdelay-target="ctxAppro"> </canvas>
             </div>
-            <div class="w-25 ">
+            {# <div class="w-25 ">
               <p class="text-center">{{achats_delay_all[3]["source"]}}</p>
               <canvas id="ctxFin" data-chartdelay-target="ctxFin"> </canvas>
             </div>
@@ -123,7 +123,7 @@
             <div class="w-25 ">
               <p class="text-center">{{achats_delay_all[4]["source"]}}</p>
               <canvas id="ctxChorus" data-chartdelay-target="ctxChorus"> </canvas>
-            </div>
+            </div> #}
             <div class="w-25 ">
               <p class="text-center">Délai Total</p>
               <canvas id="ctxTotalDelay" data-chartdelay-target="ctxTotalDelay"> </canvas>
@@ -134,8 +134,8 @@
     </div>
   </div>
 <script>
-    let transStat = {{ transStat | map(v => v|number_format(1, '.', '')) | json_encode | raw }};
-    let notStat = {{ notStat | map(v => v|number_format(1, '.', '')) | json_encode | raw }};
+    {# let transStat = {{ transStat | map(v => v|number_format(1, '.', '')) | json_encode | raw }};
+    let notStat = {{ notStat | map(v => v|number_format(1, '.', '')) | json_encode | raw }}; #}
     let criteria = {{toPDF["criteria"] | json_encode | raw}};
     let achats_delay_all = {{achats_delay_all | json_encode | raw}}
 </script>
@@ -143,7 +143,7 @@
         <div class="alert alert-warning" role="alert">
             Aucun résultat pour cette recherche.
         </div>
-    {% endif %}
+    {# {% endif %} #}
 {% endif %}
   </div>
 

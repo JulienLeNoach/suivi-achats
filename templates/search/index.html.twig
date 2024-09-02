@@ -21,6 +21,11 @@
             {{ flash_message }}
         </div>
         {% endfor %}
+            {% for flash_message in app.session.flashbag.get('error') %}
+        <div class="alert alert-danger">
+            {{ flash_message | nl2br }}
+        </div>
+    {% endfor %}
     </div>
     {% endif %}
     <!-- Création du formulaire de recherche d'achat -->

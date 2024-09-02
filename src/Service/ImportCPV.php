@@ -62,7 +62,7 @@ class ImportCPV  extends AbstractController
                         // Enregistrement d'autres propriétés ...
                         $this->entityManager->persist($entity);
                     } else {
-                        $existingCpv->setMtCpvAuto(90000);
+                        $existingCpv->setMtCpvAuto(40000);
                         continue;
                     }
                 } else {

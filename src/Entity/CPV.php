@@ -148,14 +148,14 @@ class CPV
 
     public function __toString()
 {
-    $formatted_string = $this->code_cpv . ' - ' . $this->libelle_cpv . ' - ' . (90000-$this->mt_cpv_auto) . '€';
+    $formatted_string = $this->code_cpv . ' - ' . $this->libelle_cpv . ' - ' . (40000-$this->mt_cpv_auto) . '€';
     $style = '';
     
-    if ((90000-$this->mt_cpv_auto) >= 0 && (90000-$this->mt_cpv_auto) <= 29999) {
+    if ((40000-$this->mt_cpv_auto) >= 0 && (40000-$this->mt_cpv_auto) <= 29999) {
         $style = 'style="color: green;"';
-    } elseif ((90000-$this->mt_cpv_auto) >= 30000 && (90000-$this->mt_cpv_auto) <= 39999) {
+    } elseif ((40000-$this->mt_cpv_auto) >= 30000 && (40000-$this->mt_cpv_auto) <= 39999) {
         $style = 'style="color: orange;"';
-    } elseif ((90000-$this->mt_cpv_auto) > 39999) {
+    } elseif ((40000-$this->mt_cpv_auto) > 39999) {
         $style = 'style="color: red;"';
         $formatted_string .= ' - Utilisation du CPV concerné impossible';
     }

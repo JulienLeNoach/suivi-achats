@@ -40,7 +40,6 @@ class CPVRepository extends ServiceEntityRepository
             ->addSelect('cpv.mt_cpv_auto')
             ->addSelect('(cpv.mt_cpv_auto - SUM(achat.montant_achat)) AS reliquat')
             ->from('App\Entity\Achat', 'achat')
-
             ->join('achat.code_cpv', 'cpv')
             ->where("YEAR(achat.date_saisie) = :date")
             ->setParameter('date',$date)
@@ -48,11 +47,34 @@ class CPVRepository extends ServiceEntityRepository
             ->setParameter('etat', 1)
             ->groupBy('cpv.libelle_cpv, cpv.mt_cpv_auto')
             ->orderBy('somme_montants', 'DESC');
-    
         $query = $queryBuilder->getQuery();
-    
         return $query;
     }
+    
+    public function showCPVwithId($id)
+    {
+        
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder
+            ->select('cpv.libelle_cpv')
+            ->addSelect('SUM(achat.montant_achat) AS somme_montants')
+            ->addSelect('cpv.mt_cpv_auto')
+            ->addSelect('(40000 - SUM(achat.montant_achat)) AS reliquat')
+            ->from('App\Entity\Achat', 'achat')
+            ->join('achat.code_cpv', 'cpv')
+            ->where("YEAR(achat.date_saisie) = :date")
+            ->setParameter('date',2024)
+            ->andWhere("cpv.etat_cpv = :etat")
+            ->setParameter('etat', 1)
+            ->andWhere("cpv.code_cpv = :id")
+            ->setParameter('id', $id)
+            
+            ->groupBy('cpv.libelle_cpv, cpv.mt_cpv_auto')
+            ->orderBy('somme_montants', 'DESC');
+        $query = $queryBuilder->getQuery()->getSingleResult();
+        return $query;
+    }
+    
     public function getTotalMontantCPV($cpvId, $id)
 {
     $entityManager = $this->getEntityManager();
@@ -67,7 +89,7 @@ class CPVRepository extends ServiceEntityRepository
         ->setParameter('achatId', $id)
         ->setMaxResults(1)
         ->getQuery();
-    
+        
     // Obtenir l'année de la date_saisie
     $year = $yearQuery->getSingleScalarResult();
 

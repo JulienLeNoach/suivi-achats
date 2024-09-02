@@ -54,14 +54,6 @@ class EditAchatType extends AbstractType
 
             ])
 
-            ->add('date_sillage', DateType::class, [
-                'required' => false,
-                'label' => "Date enregistrement sillage",
-                'widget' => 'single_text',
-                'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']
-
-            ])
             ->add('date_commande_chorus', DateType::class, [
                 'required' => false,
                 'label' => 'Date commande CF',

@@ -33,9 +33,7 @@
                 </div>
             </div>
             <div class="d-flex">
-                <div class="w-50 me-3">
-                    {{ form_row(form.date_sillage) }}
-                </div>
+
                 <div class="w-50">
                     {{ form_row(form.date_commande_chorus) }}
                 </div>
@@ -67,5 +65,10 @@
         {{ form_end(form) }}
     </div>
 
+    {% for flash_message in app.session.flashbag.get('error') %}
+        <div class="alert alert-danger">
+            {{ flash_message | nl2br }}
+        </div>
+    {% endfor %}
 </div>
 {% endblock %}

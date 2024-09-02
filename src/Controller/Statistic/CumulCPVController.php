@@ -65,8 +65,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
                 $result_cpv = $result_cpv->setFirstResult($offset)->getResult();
 
                 $alertValue = $form["alertValue"]->getData();
-
-
                 if (empty($result_cpv)) {
                     $errorMessage = 'Aucun résultat pour cette recherche.';
                     return $this->render('cumul_cpv/index.html.twig', [

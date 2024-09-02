@@ -51,12 +51,55 @@ function (_Controller) {
   }
 
   _createClass(_default, [{
-    key: "downloadgraphBar",
-    value: function downloadgraphBar() {
-      var canvas = document.getElementById('delayChart');
+    key: "downloadgraphPie",
+    // downloadgraphBar() {
+    //   const canvas = document.getElementById('delayChart');
+    //   const criteriaForm = criteria; 
+    //   canvas.fillStyle = "white";
+    //   const canvasImage = canvas.toDataURL('image/png', 1.0);
+    //   const values = Object.entries(criteriaForm)
+    //   .filter(([key, value]) => value !== null && value !== undefined)
+    //   .map(([key, value]) => `${key}: ${value}`);
+    //   const criteriaText = values.join(', ');
+    //   let pdf = new jsPDF('p', 'mm', 'a4');
+    //   pdf.setFontSize(8);
+    //   pdf.text("Critères de sélection : " + criteriaText, 15, 5);
+    //   pdf.setFontSize(15);
+    //   pdf.text('Délai d\'activité annuelle', 15, 15);
+    //   pdf.addImage(canvasImage, 'png', 15, 20, 180, 150);
+    //   pdf.setFillColor(106, 106, 244, 1);
+    //   const dateEdited = `édité le ${new Date().toLocaleDateString()}`;
+    //   const pageCount = pdf.internal.getNumberOfPages();
+    //   pdf.setFontSize(8);
+    //   for (let i = 1; i <= pageCount; i++) {
+    //       pdf.setPage(i);
+    //       pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 5);
+    //   }
+    //   pdf.save(`Graphique en bar d'activité annuelle ${dateEdited} .pdf`);
+    // }
+    value: function downloadgraphPie() {
+      var ctxAntenne = document.getElementById('ctxAntenne');
+      var ctxBudget = document.getElementById('ctxBudget');
+      var ctxAppro = document.getElementById('ctxAppro'); // const ctxFin = document.getElementById('ctxFin');
+      // const ctxPFAF = document.getElementById('ctxPFAF');
+      // const ctxChorus = document.getElementById('ctxChorus');
+
+      var ctxTotalDelay = document.getElementById('ctxTotalDelay');
       var criteriaForm = criteria;
-      canvas.fillStyle = "white";
-      var canvasImage = canvas.toDataURL('image/png', 1.0);
+      ctxAntenne.fillStyle = "white";
+      ctxBudget.fillStyle = "white";
+      ctxAppro.fillStyle = "white"; // ctxFin.fillStyle = "white";
+      // ctxPFAF.fillStyle = "white";
+      // ctxChorus.fillStyle = "white";
+
+      ctxTotalDelay.fillStyle = "white";
+      var ctxAntenneImage = ctxAntenne.toDataURL('image/png', 1.0);
+      var ctxBudgetImage = ctxBudget.toDataURL('image/png', 1.0);
+      var ctxApproImage = ctxAppro.toDataURL('image/png', 1.0); // const ctxFinImage = ctxFin.toDataURL('image/png', 1.0);
+      // const ctxPFAFImage = ctxPFAF.toDataURL('image/png', 1.0);
+      // const ctxChorusImage = ctxChorus.toDataURL('image/png', 1.0);
+
+      var ctxTotalDelayImage = ctxTotalDelay.toDataURL('image/png', 1.0);
       var values = Object.entries(criteriaForm).filter(function (_ref) {
         var _ref2 = _slicedToArray(_ref, 2),
             key = _ref2[0],
@@ -67,63 +110,6 @@ function (_Controller) {
         var _ref4 = _slicedToArray(_ref3, 2),
             key = _ref4[0],
             value = _ref4[1];
-
-        return "".concat(key, ": ").concat(value);
-      });
-      var criteriaText = values.join(', ');
-      var pdf = new _jspdf["default"]('p', 'mm', 'a4');
-      pdf.setFontSize(8);
-      pdf.text("Critères de sélection : " + criteriaText, 15, 5);
-      pdf.setFontSize(15);
-      pdf.text('Délai d\'activité annuelle', 15, 15);
-      pdf.addImage(canvasImage, 'png', 15, 20, 180, 150);
-      pdf.setFillColor(106, 106, 244, 1);
-      var dateEdited = "\xE9dit\xE9 le ".concat(new Date().toLocaleDateString());
-      var pageCount = pdf.internal.getNumberOfPages();
-      pdf.setFontSize(8);
-
-      for (var i = 1; i <= pageCount; i++) {
-        pdf.setPage(i);
-        pdf.text(dateEdited, pdf.internal.pageSize.getWidth() - 30, 5);
-      }
-
-      pdf.save("Graphique en bar d'activit\xE9 annuelle ".concat(dateEdited, " .pdf"));
-    }
-  }, {
-    key: "downloadgraphPie",
-    value: function downloadgraphPie() {
-      var ctxAntenne = document.getElementById('ctxAntenne');
-      var ctxBudget = document.getElementById('ctxBudget');
-      var ctxAppro = document.getElementById('ctxAppro');
-      var ctxFin = document.getElementById('ctxFin');
-      var ctxPFAF = document.getElementById('ctxPFAF');
-      var ctxChorus = document.getElementById('ctxChorus');
-      var ctxTotalDelay = document.getElementById('ctxTotalDelay');
-      var criteriaForm = criteria;
-      ctxAntenne.fillStyle = "white";
-      ctxBudget.fillStyle = "white";
-      ctxAppro.fillStyle = "white";
-      ctxFin.fillStyle = "white";
-      ctxPFAF.fillStyle = "white";
-      ctxChorus.fillStyle = "white";
-      ctxTotalDelay.fillStyle = "white";
-      var ctxAntenneImage = ctxAntenne.toDataURL('image/png', 1.0);
-      var ctxBudgetImage = ctxBudget.toDataURL('image/png', 1.0);
-      var ctxApproImage = ctxAppro.toDataURL('image/png', 1.0);
-      var ctxFinImage = ctxFin.toDataURL('image/png', 1.0);
-      var ctxPFAFImage = ctxPFAF.toDataURL('image/png', 1.0);
-      var ctxChorusImage = ctxChorus.toDataURL('image/png', 1.0);
-      var ctxTotalDelayImage = ctxTotalDelay.toDataURL('image/png', 1.0);
-      var values = Object.entries(criteriaForm).filter(function (_ref5) {
-        var _ref6 = _slicedToArray(_ref5, 2),
-            key = _ref6[0],
-            value = _ref6[1];
-
-        return value !== null && value !== undefined;
-      }).map(function (_ref7) {
-        var _ref8 = _slicedToArray(_ref7, 2),
-            key = _ref8[0],
-            value = _ref8[1];
 
         return "".concat(key, ": ").concat(value);
       });
@@ -145,8 +131,8 @@ function (_Controller) {
 
       pdf.text('Délai d\'activité annuelle détaillé par traitement', 15, 15); // Ajout des titres et images pour chaque graphique avec décalage
 
-      var titles = ['Ant. GSBDD', 'Budget', 'Appro', 'Fin', 'PFAF', 'Chorus', 'Délai total'];
-      var images = [ctxAntenneImage, ctxBudgetImage, ctxApproImage, ctxFinImage, ctxPFAFImage, ctxChorusImage, ctxTotalDelayImage];
+      var titles = ['Transmission', 'Traitement', 'Notification', 'Délai total'];
+      var images = [ctxAntenneImage, ctxBudgetImage, ctxApproImage, ctxTotalDelayImage];
       var positions = [{
         x: 15,
         y: 35

@@ -5,14 +5,43 @@ const roleDiv = document.getElementById('role');
 const submitChangesBtn = document.getElementById('submitChangesBtn');
 const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 export default class extends Controller {
+    
+    static targets = ["selectAllContainer", "checkbox"];
     connect() {
         document.querySelector('form').addEventListener('submit', this.handleFormSubmit);
+
+        // Gestion de l'affichage de la checkbox "Tout cocher/décocher"
+        const selectElement = document.getElementById('role_nom_connexion');
+        selectElement.addEventListener('change', this.toggleSelectAllVisibility.bind(this));
+
+        const selectAllCheckbox = document.getElementById('selectAll');
+        selectAllCheckbox.addEventListener('change', this.toggleAllCheckboxes.bind(this));
     }
 
     handleFormSubmit(event) {
         // Empêcher la soumission par défaut du formulaire
         event.preventDefault();
     }
+    toggleSelectAllVisibility(event) {
+        const selectAllContainer = this.selectAllContainerTarget;
+
+        if (event.target.value) {
+            selectAllContainer.style.display = "flex";
+        } else {
+            selectAllContainer.style.display = "none";
+        }
+    }
+    toggleAllCheckboxes(event) {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const selectAll = event.target.checked;
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox !== event.target) { // Ne pas cocher/décocher la case "Sélectionner tout" elle-même
+                checkbox.checked = selectAll;
+            }
+        });
+    }
+
     getRoles = async (event) => {
         const selectedValue = event.target.value; // Utilisez event.target pour obtenir la valeur sélectionnée
         console.log("selectedValue: " + selectedValue);
