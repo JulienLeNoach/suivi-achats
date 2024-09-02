@@ -176,22 +176,7 @@ class DataExtractType extends AbstractType
                 'mapped' => false,
                 'data' => true,
             ])
-            ->add('code_service_attr', CheckboxType::class, [
-                'label'    => 'Code service',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'],
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
-            ->add('nom_service_attr', CheckboxType::class, [
-                'label'    => 'Nom service',
-                'required' => false,
-                'attr' => ['class' => 'ms-3'],
-                'row_attr' => ['class' => 'p-3'],
-                'mapped' => false,
-                'data' => true,
-            ])
+
             ->add('code_acheteur_attr', CheckboxType::class, [
                 'label'    => 'Code acheteur',
                 'required' => false,

@@ -520,12 +520,7 @@ public function getPMETopVal($form)
 
                 
             }
-            if ($form['nom_service_attr']->getData() == true ||  $form['code_service_attr'] == true) {
 
-                $queryBuilder->leftJoin('b.code_service', 's'); // Jointure avec la table 'service'
-                $selectFields[] = $form['code_service_attr']->getData() == true ? $queryBuilder->addSelect('s.code_service') : null;
-                $selectFields[] = $form['nom_service_attr']->getData() == true ?  $queryBuilder->addSelect('s.nom_service') : null;
-            }
 
 
             if ($form["objet_achat"]->getData()){
@@ -606,7 +601,7 @@ public function getPMETopVal($form)
                 ->setParameter('fin_rec',  $form["fin_rec"]->getData()->format('Y-m-d') );
             }
         // ... Votre logique de construction de la requête ici ...
-        $queryBuilder->orderBy('b.date_saisie', 'DESC')->addOrderBy('s.code_service', 'ASC')->addOrderBy('s.nom_service', 'ASC');
+        $queryBuilder->orderBy('b.date_saisie', 'DESC');
 
         $query = $queryBuilder->getQuery();
     
