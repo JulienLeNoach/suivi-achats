@@ -89,6 +89,10 @@
                     <label for="typ" class="fr-label">Type de marché</label>
                     <input type="text" id="typ" class="fr-input"
                         value="{% if result_achat.typeMarche == 0 %}MABC{% else %}MPPA{% endif %}" disabled>
+                    <label for="typ" class="fr-label">Numero de marché</label>
+                    <input type="text" id="numMarche" class="fr-input" value="{{result_achat.numeroMarche|striptags}}" disabled>
+                    <label for="typ" class="fr-label">Numero EJ de marché</label>
+                    <input type="text" id="ejMarche" class="fr-input" value="{{result_achat.numeroEjMarche|striptags}}" disabled>
                 </div>
                 
 

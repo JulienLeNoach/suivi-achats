@@ -1,23 +1,33 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = [ "dateCommandeChorus", "dateValidInter", "submitButton", "montantAchat", "tvaIdent"];
-
     connect() {
+        // Récupération des éléments du DOM
+        this.dateCommandeChorusTarget = this.element.querySelector('[data-add-achat-target="dateCommandeChorus"]');
+        this.dateValidInterTarget = this.element.querySelector('[data-add-achat-target="dateValidInter"]');
+        this.submitButtonTarget = this.element.querySelector('[data-add-achat-target="submitButton"]');
+        this.montantAchatTarget = this.element.querySelector('[data-add-achat-target="montantAchat"]');
+        this.tvaIdentTarget = this.element.querySelector('[data-add-achat-target="tvaIdent"]');
+        this.typeMarcheTarget = this.element.querySelector('[data-add-achat-target="typeMarche"]');
+        this.numeroMarcheTarget = this.element.querySelector('[data-add-achat-target="numeroMarche"]');
+        this.numeroEjMarcheTarget = this.element.querySelector('[data-add-achat-target="numeroEjMarche"]');
+
         this.observeOptions();
         this.setupDateValidation();
         this.setupTvaCalculation();
+        this.setupTypeMarcheVisibility();
     }
+
     setupTvaCalculation() {
-        if (this.hasMontantAchatTarget) {
+        if (this.montantAchatTarget) {
             this.montantAchatTarget.addEventListener('input', this.calculateTva.bind(this));
         }
 
-        if (this.hasTvaIdentTarget) {
+        if (this.tvaIdentTarget) {
             this.tvaIdentTarget.addEventListener('change', this.calculateTva.bind(this));
         }
 
-        // Initial calculation if there is a preselected option
+        // Calcul initial si une option est pré-sélectionnée
         this.calculateTva();
     }
 
@@ -36,7 +46,7 @@ export default class extends Controller {
         const selectContainer = document.querySelector('#add_achat_code_cpv_autocomplete');
 
         if (selectContainer) {
-            this.disableInvalidOptions(); // Initial call to disable options
+            this.disableInvalidOptions(); // Appel initial pour désactiver les options
 
             const observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
@@ -47,7 +57,7 @@ export default class extends Controller {
             });
 
             const config = { childList: true, subtree: true };
-            observer.observe(document.body, config); // Observe changes in the body
+            observer.observe(document.body, config); // Observer les changements dans le body
 
             this.disableInvalidOptions();
         }
@@ -59,22 +69,21 @@ export default class extends Controller {
             const textContent = option.textContent || option.innerText;
             if (textContent.includes('Utilisation du CPV concerné impossible')) {
                 option.setAttribute('aria-disabled', 'true');
-                option.style.pointerEvents = 'none'; // Prevent selection
-                option.style.backgroundColor = '#f0f0f0'; // Indicate disabled option
-                option.style.color = 'gray'; // Indicate disabled option
+                option.style.pointerEvents = 'none'; // Empêcher la sélection
+                option.style.backgroundColor = '#f0f0f0'; // Indiquer l'option désactivée
+                option.style.color = 'gray'; // Indiquer l'option désactivée
             }
         });
     }
 
     setupDateValidation() {
-
-        if (this.hasDateCommandeChorusTarget) {
+        if (this.dateCommandeChorusTarget) {
             this.dateCommandeChorusTarget.addEventListener('change', this.validateDates.bind(this));
         }
-        if (this.hasDateValidInterTarget) {
+        if (this.dateValidInterTarget) {
             this.dateValidInterTarget.addEventListener('change', this.validateDates.bind(this));
         }
-        if (this.hasSubmitButtonTarget) {
+        if (this.submitButtonTarget) {
             this.submitButtonTarget.addEventListener('click', this.validateFormOnSubmit.bind(this));
         }
     }
@@ -84,7 +93,6 @@ export default class extends Controller {
         const dateValidInter = this.dateValidInterTarget.value;
 
         if (dateCommandeChorus) {
-
             if (dateValidInter && dateCommandeChorus > dateValidInter) {
                 alert("La date de création CF ne peut pas être postérieure à la date de dernier validateur.");
                 this.dateCommandeChorusTarget.value = "";
@@ -99,6 +107,28 @@ export default class extends Controller {
         if ((dateValidInter && dateCommandeChorus > dateValidInter)) {
             alert("Veuillez corriger les dates avant de soumettre le formulaire.");
             event.preventDefault();
+        }
+    }
+
+    setupTypeMarcheVisibility() {
+        if (this.typeMarcheTarget) {
+            this.typeMarcheTarget.querySelectorAll('input[type="radio"]').forEach((radio) => {
+                radio.addEventListener('change', this.toggleMarcheFieldsVisibility.bind(this));
+            });
+
+            this.toggleMarcheFieldsVisibility(); // Vérification initiale
+        }
+    }
+
+    toggleMarcheFieldsVisibility() {
+        const selectedValue = this.typeMarcheTarget.querySelector('input[type="radio"]:checked').value;
+
+        if (selectedValue === '0') { // Si 'MABC' est sélectionné
+            this.numeroMarcheTarget.closest('.form-group').classList.remove('hidden');
+            this.numeroEjMarcheTarget.closest('.form-group').classList.remove('hidden');
+        } else {
+            this.numeroMarcheTarget.closest('.form-group').classList.add('hidden');
+            this.numeroEjMarcheTarget.closest('.form-group').classList.add('hidden');
         }
     }
 }

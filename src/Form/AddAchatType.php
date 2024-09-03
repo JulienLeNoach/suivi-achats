@@ -81,6 +81,20 @@ class AddAchatType extends AbstractType
                 'attr' => ['class' => 'fr-input'],
                 'label_attr' => ['class' => 'fr-label']
             ])
+            ->add('numero_marche', TextType::class, [
+                'label' => 'Numero de marché',
+                'attr' => ['class' => 'fr-input'],
+                'label_attr' => ['class' => 'fr-label'],                
+                'required' => false,
+
+            ])
+            ->add('numero_ej_marche', TextType::class, [
+                'label' => 'Numero EJ de marché',
+                'attr' => ['class' => 'fr-input'],
+                'label_attr' => ['class' => 'fr-label'],
+                'required' => false,
+
+            ])
             ->add('id_demande_achat', IntegerType::class, [
                 'required' => true,
                 'label' => false,

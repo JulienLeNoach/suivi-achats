@@ -65,9 +65,17 @@ Saisir un achat
             {{ form_row(form.tva_ident) }}
             {{ form_errors(form.tva_ident) }}
         </div>
-        <div class="input-grp" style="flex-basis:33%;">
-            {{ form_row(form.type_marche) }}
-        </div>
+<div class="input-grp" style="flex-basis:33%;">
+    {{ form_row(form.type_marche, {'attr': {'data-add-achat-target': 'typeMarche'}}) }}
+    <div data-add-achat-target="numeroMarche" class="form-group hidden">
+        {{ form_row(form.numero_marche) }}
+    </div>
+    <div data-add-achat-target="numeroEjMarche" class="form-group hidden">
+        {{ form_row(form.numero_ej_marche) }}
+    </div>
+</div>
+
+        
         <div class="sub-btn d-flex justify-content-between align-items-centers">
             {{ form_row(form.Valider, {'attr': {'data-add-achat-target': 'submitButton'}}) }}
             {{ form_row(form.Fermer) }}

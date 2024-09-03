@@ -39,7 +39,44 @@ function (_Controller) {
   _createClass(_default, [{
     key: "connect",
     value: function connect() {
+      // Récupération des éléments du DOM
+      this.dateCommandeChorusTarget = this.element.querySelector('[data-add-achat-target="dateCommandeChorus"]');
+      this.dateValidInterTarget = this.element.querySelector('[data-add-achat-target="dateValidInter"]');
+      this.submitButtonTarget = this.element.querySelector('[data-add-achat-target="submitButton"]');
+      this.montantAchatTarget = this.element.querySelector('[data-add-achat-target="montantAchat"]');
+      this.tvaIdentTarget = this.element.querySelector('[data-add-achat-target="tvaIdent"]');
+      this.typeMarcheTarget = this.element.querySelector('[data-add-achat-target="typeMarche"]');
+      this.numeroMarcheTarget = this.element.querySelector('[data-add-achat-target="numeroMarche"]');
+      this.numeroEjMarcheTarget = this.element.querySelector('[data-add-achat-target="numeroEjMarche"]');
       this.observeOptions();
+      this.setupDateValidation();
+      this.setupTvaCalculation();
+      this.setupTypeMarcheVisibility();
+    }
+  }, {
+    key: "setupTvaCalculation",
+    value: function setupTvaCalculation() {
+      if (this.montantAchatTarget) {
+        this.montantAchatTarget.addEventListener('input', this.calculateTva.bind(this));
+      }
+
+      if (this.tvaIdentTarget) {
+        this.tvaIdentTarget.addEventListener('change', this.calculateTva.bind(this));
+      } // Calcul initial si une option est pré-sélectionnée
+
+
+      this.calculateTva();
+    }
+  }, {
+    key: "calculateTva",
+    value: function calculateTva() {
+      var montantAchat = parseFloat(this.montantAchatTarget.value) || 0;
+      var selectedTvaOption = this.tvaIdentTarget.selectedOptions[0];
+      var tvaText = selectedTvaOption ? selectedTvaOption.textContent : '';
+      var tvaPercentageMatch = tvaText.match(/(\d+\.?\d*)/);
+      var tvaPercentage = tvaPercentageMatch ? parseFloat(tvaPercentageMatch[0]) : 0;
+      var montantTtc = montantAchat + montantAchat * tvaPercentage / 100;
+      document.getElementById('montant-tcc').innerText = " / ".concat(montantTtc.toFixed(2), " TTC");
     }
   }, {
     key: "observeOptions",
@@ -49,7 +86,7 @@ function (_Controller) {
       var selectContainer = document.querySelector('#add_achat_code_cpv_autocomplete');
 
       if (selectContainer) {
-        this.disableInvalidOptions(); // Initial call to disable options
+        this.disableInvalidOptions(); // Appel initial pour désactiver les options
 
         var observer = new MutationObserver(function (mutations) {
           mutations.forEach(function (mutation) {
@@ -62,7 +99,7 @@ function (_Controller) {
           childList: true,
           subtree: true
         };
-        observer.observe(document.body, config); // Observe changes in the body
+        observer.observe(document.body, config); // Observer les changements dans le body
 
         this.disableInvalidOptions();
       }
@@ -76,13 +113,78 @@ function (_Controller) {
 
         if (textContent.includes('Utilisation du CPV concerné impossible')) {
           option.setAttribute('aria-disabled', 'true');
-          option.style.pointerEvents = 'none'; // Prevent selection
+          option.style.pointerEvents = 'none'; // Empêcher la sélection
 
-          option.style.backgroundColor = '#f0f0f0'; // Indicate disabled option
+          option.style.backgroundColor = '#f0f0f0'; // Indiquer l'option désactivée
 
-          option.style.color = 'gray'; // Indicate disabled option
+          option.style.color = 'gray'; // Indiquer l'option désactivée
         }
       });
+    }
+  }, {
+    key: "setupDateValidation",
+    value: function setupDateValidation() {
+      if (this.dateCommandeChorusTarget) {
+        this.dateCommandeChorusTarget.addEventListener('change', this.validateDates.bind(this));
+      }
+
+      if (this.dateValidInterTarget) {
+        this.dateValidInterTarget.addEventListener('change', this.validateDates.bind(this));
+      }
+
+      if (this.submitButtonTarget) {
+        this.submitButtonTarget.addEventListener('click', this.validateFormOnSubmit.bind(this));
+      }
+    }
+  }, {
+    key: "validateDates",
+    value: function validateDates() {
+      var dateCommandeChorus = this.dateCommandeChorusTarget.value;
+      var dateValidInter = this.dateValidInterTarget.value;
+
+      if (dateCommandeChorus) {
+        if (dateValidInter && dateCommandeChorus > dateValidInter) {
+          alert("La date de création CF ne peut pas être postérieure à la date de dernier validateur.");
+          this.dateCommandeChorusTarget.value = "";
+        }
+      }
+    }
+  }, {
+    key: "validateFormOnSubmit",
+    value: function validateFormOnSubmit(event) {
+      var dateCommandeChorus = this.dateCommandeChorusTarget.value;
+      var dateValidInter = this.dateValidInterTarget.value;
+
+      if (dateValidInter && dateCommandeChorus > dateValidInter) {
+        alert("Veuillez corriger les dates avant de soumettre le formulaire.");
+        event.preventDefault();
+      }
+    }
+  }, {
+    key: "setupTypeMarcheVisibility",
+    value: function setupTypeMarcheVisibility() {
+      var _this2 = this;
+
+      if (this.typeMarcheTarget) {
+        this.typeMarcheTarget.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+          radio.addEventListener('change', _this2.toggleMarcheFieldsVisibility.bind(_this2));
+        });
+        this.toggleMarcheFieldsVisibility(); // Vérification initiale
+      }
+    }
+  }, {
+    key: "toggleMarcheFieldsVisibility",
+    value: function toggleMarcheFieldsVisibility() {
+      var selectedValue = this.typeMarcheTarget.querySelector('input[type="radio"]:checked').value;
+
+      if (selectedValue === '0') {
+        // Si 'MABC' est sélectionné
+        this.numeroMarcheTarget.closest('.form-group').classList.remove('hidden');
+        this.numeroEjMarcheTarget.closest('.form-group').classList.remove('hidden');
+      } else {
+        this.numeroMarcheTarget.closest('.form-group').classList.add('hidden');
+        this.numeroEjMarcheTarget.closest('.form-group').classList.add('hidden');
+      }
     }
   }]);
 

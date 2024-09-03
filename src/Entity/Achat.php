@@ -163,6 +163,12 @@ private ?float $montant_achat = null;
     #[ORM\ManyToOne(inversedBy: 'achats')]
     private ?TVA $tva_ident = null;
 
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $numero_marche = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $numero_ej_marche = null;
+
     
 
     public function setNumeroAchat(string $numero_achat)
@@ -432,6 +438,30 @@ private ?float $montant_achat = null;
     public function setTvaIdent(?TVA $tva_ident): self
     {
         $this->tva_ident = $tva_ident;
+
+        return $this;
+    }
+
+    public function getNumeroMarche(): ?string
+    {
+        return $this->numero_marche;
+    }
+
+    public function setNumeroMarche(?string $numero_marche): static
+    {
+        $this->numero_marche = $numero_marche;
+
+        return $this;
+    }
+
+    public function getNumeroEjMarche(): ?string
+    {
+        return $this->numero_ej_marche;
+    }
+
+    public function setNumeroEjMarche(?string $numero_ej_marche): static
+    {
+        $this->numero_ej_marche = $numero_ej_marche;
 
         return $this;
     }
