@@ -164,19 +164,43 @@ class CreateExcelVolVal  extends AbstractController
         $sheet->setCellValue('O' . $rowStart, 'TOTAL');
     
         $col = 'C';
+
         foreach ($mois as $index => $moi) {
-            $sheet->setCellValue($col . $rowStart, $moi);
-            $sheet->setCellValue($col . ($rowStart + 1), $totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count']);
-            $sheet->setCellValue($col . ($rowStart + 2), $totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count']);
-            $sheet->setCellValue($col . ($rowStart + 3), $totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count'] + $totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count']);
+            foreach ($mois as $index => $moi) {
+                // Vérification de l'existence des clés avant d'accéder aux valeurs
+                if (isset($totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count']) && 
+                    isset($totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count'])) {
+            
+                    // Définir les valeurs dans les cellules Excel
+                    $sheet->setCellValue($col . $rowStart, $moi);
+                    $sheet->setCellValue($col . ($rowStart + 1), $totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count']);
+                    $sheet->setCellValue($col . ($rowStart + 2), $totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count']);
+                    $sheet->setCellValue($col . ($rowStart + 3), 
+                        $totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count'] + 
+                        $totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count']);
+                } else {
+                    // Gérer les cas où les clés n'existent pas (par exemple, remplir avec 0 ou une autre valeur par défaut)
+                    $sheet->setCellValue($col . $rowStart, $moi);
+                    $sheet->setCellValue($col . ($rowStart + 1), isset($totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count']) ? 
+                        $totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count'] : 0);
+                    $sheet->setCellValue($col . ($rowStart + 2), isset($totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count']) ? 
+                        $totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count'] : 0);
+                    $sheet->setCellValue($col . ($rowStart + 3), 
+                        (isset($totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count']) ? 
+                        $totalAchatPerMonthUnder2K['type_marche_1']['current_year'][$index]['count'] : 0) + 
+                        (isset($totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count']) ? 
+                        $totalAchatPerMonthUnder2K['type_marche_0']['current_year'][$index]['count'] : 0));
+                }
+            }
+            
             if ($includePreviousYear) {
                 $sheet->setCellValue($col . ($rowStart + 4), $totalAchatPerMonthUnder2K['type_marche_1']['previous_year'][$index]['count']);
                 $sheet->setCellValue($col . ($rowStart + 5), $totalAchatPerMonthUnder2K['type_marche_0']['previous_year'][$index]['count']);
                 $sheet->setCellValue($col . ($rowStart + 6), $totalAchatPerMonthUnder2K['type_marche_1']['previous_year'][$index]['count'] + $totalAchatPerMonthUnder2K['type_marche_0']['previous_year'][$index]['count']);
             }
             $col++;
+        
         }
-    
         // Somme des totaux pour les Dossiers inférieurs à 2 000,00 € TTC
         $sheet->setCellValue('O' . ($rowStart + 1), '=SUM(C' . ($rowStart + 1) . ':N' . ($rowStart + 1) . ')');
         $sheet->setCellValue('O' . ($rowStart + 2), '=SUM(C' . ($rowStart + 2) . ':N' . ($rowStart + 2) . ')');
