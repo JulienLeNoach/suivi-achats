@@ -29,14 +29,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var labels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre']; // const ctxdelayChart = document.getElementById('delayChart');
-
+var labels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 var ctxAntenne = document.getElementById('ctxAntenne');
 var ctxBudget = document.getElementById('ctxBudget');
-var ctxAppro = document.getElementById('ctxAppro'); // const ctxFin = document.getElementById('ctxFin');
-// const ctxPFAF = document.getElementById('ctxPFAF');
-// const ctxChorus = document.getElementById('ctxChorus');
-
+var ctxAppro = document.getElementById('ctxAppro');
 var ctxTotalDelay = document.getElementById('ctxTotalDelay');
 
 var _default =
@@ -53,58 +49,29 @@ function (_Controller) {
   _createClass(_default, [{
     key: "connect",
     value: function connect() {
-      // ctxdelayChart.width = 1200; // Définit la largeur du premier canvas
-      // ctxdelayChart.height = 800; // Définit la hauteur du premier canvas
-      // new Chart(ctxdelayChart, {
-      //     type: 'bar',
-      //     data: {
-      //       labels: labels,
-      //       datasets: [{
-      //           label: 'Transmission',
-      //           data: transStat,
-      //           borderWidth: 1,
-      //           backgroundColor: 'rgb(77 104 188)', 
-      //           borderColor: 'rgb(77 104 188)'
-      //       },
-      //     {
-      //       label: 'Notification',
-      //       data: notStat,
-      //       borderWidth: 1,
-      //       backgroundColor: 'rgb(162 225 228)', 
-      //       borderColor: 'rgb(162 225 228)' 
-      //     }],
-      //     options: {
-      //         responsive: false,
-      //       scales: {
-      //         y: {
-      //           beginAtZero: true
-      //         }
-      //       },
-      //     },
-      //   }
-      //   });
       new _auto["default"](ctxAntenne, {
         type: 'pie',
         data: {
-          labels: ['<= 5 jours / ' + [achats_delay_all[0]["Pourcentage_Delai_Inf_3_Jours_Ant"]] + "%", '> 5 jours / ' + [achats_delay_all[0]["Pourcentage_Delai_Sup_3_Jours_Ant"]] + "%"],
+          labels: ["<= ".concat(delaiTransmissions, " jours / ") + achats_delay_all[0]["Pourcentage_Delai_Inf_3_Jours_Ant"] + "%", "> ".concat(delaiTransmissions, " jours / ") + achats_delay_all[0]["Pourcentage_Delai_Sup_3_Jours_Ant"] + "%"],
           datasets: [{
             label: 'Transmission',
             data: [achats_delay_all[0]["CountAntInf3"], achats_delay_all[0]["CountAntSup3"]],
             backgroundColor: ['rgb(77 104 188)', 'rgb(162 225 228)'],
             hoverOffset: 4
-          }],
-          options: {
-            responsive: false,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            },
-            plugins: {
-              title: {
-                display: true,
-                text: 'Custom Chart Title'
-              }
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              display: false // Désactive l'affichage de l'axe des ordonnées
+
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Custom Chart Title'
             }
           }
         }
@@ -112,19 +79,20 @@ function (_Controller) {
       new _auto["default"](ctxBudget, {
         type: 'pie',
         data: {
-          labels: ['<= 3 jours / ' + [achats_delay_all[1]["Pourcentage_Delai_Inf_3_Jours_Budget"]] + "%", '> 3 jours / ' + [achats_delay_all[1]["Pourcentage_Delai_Sup_3_Jours_Budget"]] + "%"],
+          labels: ["<= ".concat(delaiTraitement, " jours / ") + achats_delay_all[1]["Pourcentage_Delai_Inf_3_Jours_Budget"] + "%", "> ".concat(delaiTraitement, " jours / ") + achats_delay_all[1]["Pourcentage_Delai_Sup_3_Jours_Budget"] + "%"],
           datasets: [{
             label: 'Traitement',
             data: [achats_delay_all[1]["CountBudgetInf3"], achats_delay_all[1]["CountBudgetSup3"]],
             backgroundColor: ['rgb(77 104 188)', 'rgb(162 225 228)'],
             hoverOffset: 4
-          }],
-          options: {
-            responsive: false,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              display: false // Désactive l'affichage de l'axe des ordonnées
+
             }
           }
         }
@@ -132,117 +100,41 @@ function (_Controller) {
       new _auto["default"](ctxAppro, {
         type: 'pie',
         data: {
-          labels: ['<= 5 jours / ' + [achats_delay_all[2]["Pourcentage_Delai_Inf_7_Jours_Appro"]] + "%", '> 5 jours / ' + [achats_delay_all[2]["Pourcentage_Delai_Sup_7_Jours_Appro"]] + "%"],
+          labels: ["<= ".concat(delaiNotifications, " jours / ") + achats_delay_all[2]["Pourcentage_Delai_Inf_7_Jours_Appro"] + "%", "> ".concat(delaiNotifications, " jours / ") + achats_delay_all[2]["Pourcentage_Delai_Sup_7_Jours_Appro"] + "%"],
           datasets: [{
             label: 'Notification',
             data: [achats_delay_all[2]["CountApproInf7"], achats_delay_all[2]["CountApproSup7"]],
             backgroundColor: ['rgb(77 104 188)', 'rgb(162 225 228)'],
             hoverOffset: 4
-          }],
-          options: {
-            responsive: false,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              display: false // Désactive l'affichage de l'axe des ordonnées
+
             }
           }
         }
-      }); // new Chart(ctxFin, {
-      //   type: 'pie',
-      //   data: {
-      //     labels: [
-      //       '< 7 jours / ' +[achats_delay_all[3]["Pourcentage_Delai_Inf_7_Jours_Fin"]] + "%",
-      //       '> 7 jours / '+[achats_delay_all[3]["Pourcentage_Delai_Sup_7_Jours_Fin"]] + "%",
-      //     ],
-      //     datasets: [{
-      //       label: 'PFAF Fin',
-      //       data: [achats_delay_all[3]["CountFinInf7"],achats_delay_all[3]["CountFinSup7"]],
-      //       backgroundColor: [
-      //         'rgb(77 104 188)',
-      //         'rgb(162 225 228)',
-      //       ],
-      //       hoverOffset: 4
-      //     }],
-      //   options: {
-      //       responsive: false,
-      //     scales: {
-      //       y: {
-      //         beginAtZero: true
-      //       }
-      //     }
-      //   }
-      // }
-      // });
-      // new Chart(ctxPFAF, {
-      //   type: 'pie',
-      //   data: {
-      //     labels: [
-      //       '<= 14 jours / ' +[achats_delay_all[5]["Pourcentage_Delai_Inf_14_Jours_Pfaf"]] + "%",
-      //       '> à 14 jours / '+[achats_delay_all[5]["Pourcentage_Delai_Sup_14_Jours_Pfaf"]] + "%",
-      //     ],
-      //     datasets: [{
-      //       label: 'PFAF Fin',
-      //       data: [achats_delay_all[5]["CountPfafInf14"],achats_delay_all[5]["CountPfafSup14"]],
-      //       backgroundColor: [
-      //         'rgb(77 104 188)',
-      //         'rgb(162 225 228)',
-      //       ],
-      //       hoverOffset: 4
-      //     }],
-      //   options: {
-      //       responsive: false,
-      //     scales: {
-      //       y: {
-      //         beginAtZero: true
-      //       }
-      //     }
-      //   }
-      // }
-      // });
-      // new Chart(ctxChorus, {
-      //   type: 'pie',
-      //   data: {
-      //     labels: [
-      //       '<= 10 jours / ' +[achats_delay_all[4]["Pourcentage_Delai_Inf_10_Jours_Chorus"]] + "%",
-      //       '> à 10 jours / '+[achats_delay_all[4]["Pourcentage_Delai_Sup_10_Jours_Chorus"]] + "%",
-      //     ],
-      //     datasets: [{
-      //       label: 'Chorus Formul.',
-      //       data: [achats_delay_all[4]["CountChorusFormInf10"],achats_delay_all[4]["CountChorusFormSup10"]],
-      //       backgroundColor: [
-      //         'rgb(77 104 188)',
-      //         'rgb(162 225 228)',
-      //       ],
-      //       hoverOffset: 4
-      //     }],
-      //   options: {
-      //       responsive: false,
-      //     scales: {
-      //       y: {
-      //         beginAtZero: true
-      //       }
-      //     }
-      //   }
-      // }
-      // });
-
+      });
       new _auto["default"](ctxTotalDelay, {
         type: 'pie',
         data: {
-          labels: ['<= 15 jours / ' + [achats_delay_all[3]["Pourcentage_Delai_Inf_15_Jours"]] + "%", '> à 15 jours / ' + [achats_delay_all[3]["Pourcentage_Delai_Sup_15_Jours"]] + "%"],
+          labels: ["<= ".concat(delaiTotal, " jours / ") + achats_delay_all[3]["Pourcentage_Delai_Inf_15_Jours"] + "%", "> ".concat(delaiTotal, " jours / ") + achats_delay_all[3]["Pourcentage_Delai_Sup_15_Jours"] + "%"],
           datasets: [{
             label: 'Délai Total',
             data: [achats_delay_all[3]["CountDelaiTotalInf15"], achats_delay_all[3]["CountDelaiTotalSup15"]],
             backgroundColor: ['rgb(77 104 188)', 'rgb(162 225 228)'],
             hoverOffset: 4
-          }],
-          options: {
-            responsive: false,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              display: false // Désactive l'affichage de l'axe des ordonnées
+
             }
           }
         }

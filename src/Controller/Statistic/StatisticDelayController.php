@@ -35,46 +35,56 @@ class StatisticDelayController extends AbstractController
     #[Route('/statistic/delay', name: 'app_statistic_delay')]
     public function index(Request $request, SessionInterface $session): Response
     {
-
         $form = $this->createForm(StatisticType::class, null, []);
         $form->handleRequest($request);        
-        $achats[]=null;
-
+        $achats = [];
+    
         if ($form->isSubmitted() && $form->isValid()) {
-            $achats_delay = $this->achatRepository->getYearDelayDiff($form);
+            // Récupération des valeurs de délai saisies
+            $delaiTransmissions = $form->get('delai_transmissions')->getData() ?? 5; // Valeur par défaut 5 si null
+            $delaiTraitement = $form->get('delai_traitement')->getData() ?? 3; // Valeur par défaut 3 si null
+            $delaiNotifications = $form->get('delai_notifications')->getData() ?? 5; // Valeur par défaut 5 si null
+            $delaiTotal = $form->get('delai_total')->getData() ?? 15; // Valeur par défaut 15 si null
+    
+            $achats_delay = $this->achatRepository->getYearDelayDiff($form, $delaiTransmissions, $delaiTraitement, $delaiNotifications, $delaiTotal);
             $achats = $this->statisticDelayService->getDelayPerMonth($achats_delay);
-            $achats_delay_all = $this->achatRepository->getYearDelayCount($form);
-            // dd($achats_delay_all);
-                $toPDF=[
-            'criteria'=>[
-            'Date' =>  $form["date"]->getData(),
-            'Fournisseur' =>  ($form["num_siret"]->getData() !== null) ? $form["num_siret"]->getData()->getNomFournisseur() : null,
-            'Utilisateur' =>  ($form["utilisateurs"]->getData() !== null) ? $form["utilisateurs"]->getData()->getNomConnexion() : null,
-            'Unité organique' =>  ($form["code_uo"]->getData() !== null) ? $form["code_uo"]->getData()->getLibelleUo() : null,
-            'CPV' =>  ($form["code_cpv"]->getData() !== null) ? $form["code_cpv"]->getData()->getLibelleCPV() : null,
-            'Formation ' =>  ($form["code_formation"]->getData() !== null) ? $form["code_formation"]->getData()->getLibelleFormation() : null,
-            'Taxe' =>  $form["tax"]->getData(),
-            ],
-            'achats' => $achats,
-            'achats_delay_all' => $achats_delay_all,
-        ];
-        $session->set('toPDF', $toPDF);
-        $excelForm = $this->createForm(CreateExcelType::class); 
-        return $this->render('statistic_delay/index.html.twig', [
-            'form' => $form->createView(),
-            'excelForm' => $excelForm->createView(),
-            'achats' => $achats,
-            'achats_delay_all' => $achats_delay_all,
-            'toPDF' => $toPDF
-
-        ]);
-
+            $achats_delay_all = $this->achatRepository->getYearDelayCount($form, $delaiTransmissions, $delaiTraitement, $delaiNotifications, $delaiTotal);
+    
+            $toPDF = [
+                'criteria' => [
+                    'Date' =>  $form["date"]->getData(),
+                    'Fournisseur' =>  ($form["num_siret"]->getData() !== null) ? $form["num_siret"]->getData()->getNomFournisseur() : null,
+                    'Utilisateur' =>  ($form["utilisateurs"]->getData() !== null) ? $form["utilisateurs"]->getData()->getNomConnexion() : null,
+                    'Unité organique' =>  ($form["code_uo"]->getData() !== null) ? $form["code_uo"]->getData()->getLibelleUo() : null,
+                    'CPV' =>  ($form["code_cpv"]->getData() !== null) ? $form["code_cpv"]->getData()->getLibelleCPV() : null,
+                    'Formation ' =>  ($form["code_formation"]->getData() !== null) ? $form["code_formation"]->getData()->getLibelleFormation() : null,
+                    'Taxe' =>  $form["tax"]->getData(),
+                ],
+                'achats' => $achats,
+                'achats_delay_all' => $achats_delay_all,
+            ];
+            $session->set('toPDF', $toPDF);
+    
+            $excelForm = $this->createForm(CreateExcelType::class);
+    
+            return $this->render('statistic_delay/index.html.twig', [
+                'form' => $form->createView(),
+                'excelForm' => $excelForm->createView(),
+                'achats' => $achats,
+                'achats_delay_all' => $achats_delay_all,
+                'toPDF' => $toPDF
+            ]);
         }
+    
         return $this->render('statistic_delay/index.html.twig', [
             'form' => $form->createView(),
             'achats' => $achats,
         ]);
     }
+    
+
+    // Ajoutez les autres méthodes du contrôleur ici...
+
 
     #[Route('/pdf/generator/stat_delay', name: 'pdf_generator_stat_delay')]
     public function pdf(SessionInterface $session): Response

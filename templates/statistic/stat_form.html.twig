@@ -37,8 +37,26 @@
           {{ form_row(form.num_siret) }}
           {{ form_row(form.code_uo) }}
           {{ form_row(form.utilisateurs) }}
-          
-      </div>
+                </div>
+
+        
+
+        {% if app.request.attributes.get('_route') == 'app_statistic_delay' %}
+        <div class="input-grp-tab d-flex flex-wrap justify-content-between" style="flex-basis:100%">
+    {{ form_row(form.delai_transmissions, {'attr': {'class': "fr-input"}, 'label_attr': {'class': 'fr-label'}}) }}
+    {{ form_row(form.delai_traitement, {'attr': {'class': "fr-input"}, 'label_attr': {'class': 'fr-label'}}) }}
+    {{ form_row(form.delai_notifications, {'attr': {'class': "fr-input"}, 'label_attr': {'class': 'fr-label'}}) }}
+    {{ form_row(form.delai_total, {'attr': {'class': "fr-input"}, 'label_attr': {'class': 'fr-label'}}) }}
+    </div>
+    {% else %}
+    <div class="input-grp-tab d-flex flex-wrap justify-content-between">
+    {{ form_row(form.delai_transmissions, {'attr': {'class': "hidden"}, 'label_attr': {'class': 'hidden'}}) }}
+    {{ form_row(form.delai_traitement, {'attr': {'class': "hidden"}, 'label_attr': {'class': 'hidden'}}) }}
+    {{ form_row(form.delai_notifications, {'attr': {'class': "hidden"}, 'label_attr': {'class': 'hidden'}}) }}
+    {{ form_row(form.delai_total, {'attr': {'class': "hidden"}, 'label_attr': {'class': 'hidden'}}) }}
+    </div>
+          {% endif %}
+      
 
       <div class="btn-submit">
           {% if app.request.attributes.get('_route') == 'app_statistic_vol' %}

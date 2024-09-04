@@ -933,45 +933,48 @@ public function getYearDelayDiff($form)
 
     return $achats;
 }       
-        public function getYearDelayCount($form)
-        {
-            $criteria = $this->extractCriteriaFromForm($form);
+public function getYearDelayCount($form, $delaiTransmissions, $delaiTraitement, $delaiNotifications, $delaiTotal)
+{
+    // Extraction des critères de recherche à partir du formulaire
+    $criteria = $this->extractCriteriaFromForm($form);
 
-            $jourcalendar = $form["jourcalendar"]->getData();
+    // Récupération de la valeur du calendrier des jours ouvrés ou tous les jours
+    $jourcalendar = $form["jourcalendar"]->getData();
 
-            $conn = $this->getEntityManager()->getConnection();
-            if($jourcalendar=="jO"){
+    // Connexion à la base de données
+    $conn = $this->getEntityManager()->getConnection();
 
-            $sql = "SELECT
+    // Vérifier le type de calendrier
+    if ($jourcalendar == "jO") {
+        // Requête SQL pour les jours ouvrés
+        $sql = "SELECT
             source,
-            ROUND(COUNT(CASE WHEN source = 'Transmissions' AND difference <= 5 THEN 1 ELSE NULL END), 2) AS CountAntInf3,
-    ROUND(COUNT(CASE WHEN source = 'Transmissions' AND difference > 5 THEN 1 ELSE NULL END), 2) AS CountAntSup3,
-    ROUND(COUNT(CASE WHEN source = 'Traitement' AND difference <= 3 THEN 1 ELSE NULL END), 2) AS CountBudgetInf3,
-    ROUND(COUNT(CASE WHEN source = 'Traitement' AND difference > 3 THEN 1 ELSE NULL END), 2) AS CountBudgetSup3,
-    ROUND(COUNT(CASE WHEN source = 'Notifications' AND difference <= 5 THEN 1 ELSE NULL END), 2) AS CountApproInf7,
-    ROUND(COUNT(CASE WHEN source = 'Notifications' AND difference > 5 THEN 1 ELSE NULL END), 2) AS CountApproSup7,
-    ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference <= 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Ant,
-    ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference > 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Ant,
-    ROUND((SUM(CASE WHEN source = 'Traitement' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Budget,
-    ROUND((SUM(CASE WHEN source = 'Traitement' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Budget,
-    ROUND((SUM(CASE WHEN source = 'Notifications' AND difference <= 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Appro,
-    ROUND((SUM(CASE WHEN source = 'Notifications' AND difference > 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Appro,
-    ROUND(COUNT(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE NULL END), 2) AS CountDelaiTotalInf15,
-    ROUND(COUNT(CASE WHEN source IN ('Délai total') AND (difference > 15) THEN 1 ELSE NULL END), 2) AS CountDelaiTotalSup15,
-    ROUND((SUM(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_15_Jours,
-    ROUND((SUM(CASE WHEN source IN ('Délai total') AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_15_Jours
-                FROM
-                    (
-                        SELECT
-                            'Transmissions' AS source,
-                            (DATEDIFF(date_saisie, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_saisie AND date_valid_inter)) AS difference,
-                            date_notification
-                        FROM achat
-                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-                        {$criteria['conditions']}
-        
-                UNION ALL
-
+            ROUND(COUNT(CASE WHEN source = 'Transmissions' AND difference <= :delaiTransmissions THEN 1 ELSE NULL END), 2) AS CountAntInf3,
+            ROUND(COUNT(CASE WHEN source = 'Transmissions' AND difference > :delaiTransmissions THEN 1 ELSE NULL END), 2) AS CountAntSup3,
+            ROUND(COUNT(CASE WHEN source = 'Traitement' AND difference <= :delaiTraitement THEN 1 ELSE NULL END), 2) AS CountBudgetInf3,
+            ROUND(COUNT(CASE WHEN source = 'Traitement' AND difference > :delaiTraitement THEN 1 ELSE NULL END), 2) AS CountBudgetSup3,
+            ROUND(COUNT(CASE WHEN source = 'Notifications' AND difference <= :delaiNotifications THEN 1 ELSE NULL END), 2) AS CountApproInf7,
+            ROUND(COUNT(CASE WHEN source = 'Notifications' AND difference > :delaiNotifications THEN 1 ELSE NULL END), 2) AS CountApproSup7,
+            ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference <= :delaiTransmissions THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Ant,
+            ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference > :delaiTransmissions THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Ant,
+            ROUND((SUM(CASE WHEN source = 'Traitement' AND difference <= :delaiTraitement THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Budget,
+            ROUND((SUM(CASE WHEN source = 'Traitement' AND difference > :delaiTraitement THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Budget,
+            ROUND((SUM(CASE WHEN source = 'Notifications' AND difference <= :delaiNotifications THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Appro,
+            ROUND((SUM(CASE WHEN source = 'Notifications' AND difference > :delaiNotifications THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Appro,
+            ROUND(COUNT(CASE WHEN source IN ('Délai total') AND (difference <= :delaiTotal) THEN 1 ELSE NULL END), 2) AS CountDelaiTotalInf15,
+            ROUND(COUNT(CASE WHEN source IN ('Délai total') AND (difference > :delaiTotal) THEN 1 ELSE NULL END), 2) AS CountDelaiTotalSup15,
+            ROUND((SUM(CASE WHEN source IN ('Délai total') AND (difference <= :delaiTotal) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_15_Jours,
+            ROUND((SUM(CASE WHEN source IN ('Délai total') AND (difference > :delaiTotal) THEN 1 ELSE 0 END) / SUM(CASE WHEN source IN ('Délai total') THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_15_Jours
+            FROM
+            (
+                SELECT
+                    'Transmissions' AS source,
+                    (DATEDIFF(date_saisie, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_saisie AND date_valid_inter)) AS difference,
+                    date_notification
+                FROM achat
+                WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                {$criteria['conditions']}
+            UNION ALL
                 SELECT
                 'Traitement' AS source,
                 (DATEDIFF(date_validation, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_validation)) AS difference,
@@ -979,9 +982,7 @@ public function getYearDelayDiff($form)
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
             {$criteria['conditions']}
-        
-                UNION ALL
-            
+            UNION ALL
                 SELECT
                     'Notifications' AS source,
                     (DATEDIFF(date_notification, date_validation) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_notification AND date_validation)) AS difference,
@@ -989,10 +990,7 @@ public function getYearDelayDiff($form)
                 FROM achat
                 WHERE YEAR(date_notification) = :year AND etat_achat = 2
                 {$criteria['conditions']}
-
-
-                UNION ALL
-            
+            UNION ALL
                 SELECT
                 'Délai total' AS source,
                 ((DATEDIFF(date_saisie, date_valid_inter) - (SELECT COUNT(*) FROM calendar WHERE start BETWEEN date_valid_inter AND date_saisie)) 
@@ -1002,99 +1000,95 @@ public function getYearDelayDiff($form)
             FROM achat
             WHERE YEAR(date_notification) = :year AND etat_achat = 2
             {$criteria['conditions']}
-                
-        
-                ) AS combined_data
-                WHERE source IN ('Transmissions', 'Traitement', 'Notifications', 'Délai total')
+            ) AS combined_data
+            WHERE source IN ('Transmissions', 'Traitement', 'Notifications', 'Délai total')
             GROUP BY source
             ORDER BY
                 source = 'Transmissions' DESC,
                 source = 'Traitement' DESC,
                 source = 'Notifications' DESC,
                 source = 'Délai total' DESC
-            LIMIT 0,100
-                ";
-                    }
-                    else{
-                        $sql="SELECT
-                        source,
-                        COUNT(CASE WHEN source = 'Transmissions' AND difference <= 5 THEN 1 ELSE NULL END) AS CountAntInf3,
-    COUNT(CASE WHEN source = 'Transmissions' AND difference > 5 THEN 1 ELSE NULL END) AS CountAntSup3,
-    COUNT(CASE WHEN source = 'Traitement' AND difference <= 3 THEN 1 ELSE NULL END) AS CountBudgetInf3,
-    COUNT(CASE WHEN source = 'Traitement' AND difference > 3 THEN 1 ELSE NULL END) AS CountBudgetSup3,
-    COUNT(CASE WHEN source = 'Notifications' AND difference <= 5 THEN 1 ELSE NULL END) AS CountApproInf7,
-    COUNT(CASE WHEN source = 'Notifications' AND difference > 5 THEN 1 ELSE NULL END) AS CountApproSup7,
+            LIMIT 0,100";
+    } else {
+        // Requête SQL pour tous les jours
+        $sql = "SELECT
+            source,
+            COUNT(CASE WHEN source = 'Transmissions' AND difference <= :delaiTransmissions THEN 1 ELSE NULL END) AS CountAntInf3,
+            COUNT(CASE WHEN source = 'Transmissions' AND difference > :delaiTransmissions THEN 1 ELSE NULL END) AS CountAntSup3,
+            COUNT(CASE WHEN source = 'Traitement' AND difference <= :delaiTraitement THEN 1 ELSE NULL END) AS CountBudgetInf3,
+            COUNT(CASE WHEN source = 'Traitement' AND difference > :delaiTraitement THEN 1 ELSE NULL END) AS CountBudgetSup3,
+            COUNT(CASE WHEN source = 'Notifications' AND difference <= :delaiNotifications THEN 1 ELSE NULL END) AS CountApproInf7,
+            COUNT(CASE WHEN source = 'Notifications' AND difference > :delaiNotifications THEN 1 ELSE NULL END) AS CountApproSup7,
+            ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference <= :delaiTransmissions THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Ant,
+            ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference > :delaiTransmissions THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Ant,
+            ROUND((SUM(CASE WHEN source = 'Traitement' AND difference <= :delaiTraitement THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Budget,
+            ROUND((SUM(CASE WHEN source = 'Traitement' AND difference > :delaiTraitement THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Budget,
+            ROUND((SUM(CASE WHEN source = 'Notifications' AND difference <= :delaiNotifications THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Appro,
+            ROUND((SUM(CASE WHEN source = 'Notifications' AND difference > :delaiNotifications THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Appro,
+            COUNT(CASE WHEN source IN ('Délai total') AND (difference <= :delaiTotal) THEN 1 ELSE NULL END) AS CountDelaiTotalInf15,
+            COUNT(CASE WHEN source IN ('Délai total') AND (difference > :delaiTotal) THEN 1 ELSE NULL END) AS CountDelaiTotalSup15,
+            ROUND((SUM(CASE WHEN source = 'Délai total' AND (difference <= :delaiTotal) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_15_Jours,
+            ROUND((SUM(CASE WHEN source = 'Délai total' AND (difference > :delaiTotal) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_15_Jours
+            FROM (
+                SELECT
+                    'Transmissions' AS source,
+                    DATEDIFF(date_saisie, date_valid_inter) AS difference,
+                    date_notification
+                FROM achat
+                WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                {$criteria['conditions']}
+            UNION ALL
+                SELECT
+                    'Traitement' AS source,
+                    DATEDIFF(date_validation, date_valid_inter) AS difference,
+                    date_notification
+                FROM achat
+                WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                {$criteria['conditions']}
+            UNION ALL
+                SELECT
+                    'Notifications' AS source,
+                    DATEDIFF(date_notification, date_validation) AS difference,
+                    date_notification
+                FROM achat
+                WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                {$criteria['conditions']}
+            UNION ALL
+                SELECT
+                    'Délai total' AS source,
+                    (DATEDIFF(date_saisie, date_valid_inter) + DATEDIFF(date_validation, date_valid_inter) + DATEDIFF(date_notification, date_validation)) AS difference,
+                    date_notification
+                FROM achat
+                WHERE YEAR(date_notification) = :year AND etat_achat = 2
+                {$criteria['conditions']}
+            ) AS combined_data
+            WHERE source IN ('Transmissions', 'Traitement', 'Notifications','Délai total')
+            GROUP BY source
+            ORDER BY
+                source = 'Transmissions' DESC,
+                source = 'Traitement' DESC,
+                source = 'Notifications' DESC,
+                source = 'Délai total' DESC
+            LIMIT 0,100";
+    }
 
-    ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference <= 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Ant,
-    ROUND((SUM(CASE WHEN source = 'Transmissions' AND difference > 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Transmissions' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Ant,
-    ROUND((SUM(CASE WHEN source = 'Traitement' AND difference <= 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_3_Jours_Budget,
-    ROUND((SUM(CASE WHEN source = 'Traitement' AND difference > 3 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Traitement' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_3_Jours_Budget,
-    ROUND((SUM(CASE WHEN source = 'Notifications' AND difference <= 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_7_Jours_Appro,
-    ROUND((SUM(CASE WHEN source = 'Notifications' AND difference > 5 THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Notifications' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_7_Jours_Appro,
+    // Préparation de la requête
+    $stmt = $conn->prepare($sql);
 
-    COUNT(CASE WHEN source IN ('Délai total') AND (difference <= 15) THEN 1 ELSE NULL END) AS CountDelaiTotalInf15,
-    COUNT(CASE WHEN source IN ('Délai total') AND (difference > 15) THEN 1 ELSE NULL END) AS CountDelaiTotalSup15,
-    ROUND((SUM(CASE WHEN source = 'Délai total' AND (difference <= 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Inf_15_Jours,
-    ROUND((SUM(CASE WHEN source = 'Délai total' AND (difference > 15) THEN 1 ELSE 0 END) / SUM(CASE WHEN source = 'Délai total' THEN 1 ELSE 0 END)) * 100, 2) AS Pourcentage_Delai_Sup_15_Jours
-                      FROM (
-                        SELECT
-                          'Transmissions' AS source,
-                          DATEDIFF(date_saisie, date_valid_inter) AS difference,
-                          date_notification
-                        FROM achat
-                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-                        {$criteria['conditions']}
-                
-                        UNION ALL
-                      
-                        SELECT
-                          'Traitement' AS source,
-                          DATEDIFF(date_validation, date_valid_inter) AS difference,
-                          date_notification
-                        FROM achat
-                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-                        {$criteria['conditions']}
-                
-                        UNION ALL
-                      
-                        SELECT
-                          'Notifications' AS source,
-                          DATEDIFF(date_notification, date_validation) AS difference,
-                          date_notification
-                        FROM achat
-                        WHERE YEAR(date_notification) = :year AND etat_achat = 2
-                        {$criteria['conditions']}
-                
-                        UNION ALL
-                                  
-                       SELECT
-                        'Délai total' AS source,
-                        (DATEDIFF(date_saisie, date_valid_inter) + DATEDIFF(date_validation, date_valid_inter) + DATEDIFF(date_notification, date_validation)) AS difference,
-                        date_notification
-                    FROM achat
-                    WHERE YEAR(date_notification) = :year AND etat_achat = 2
-                    {$criteria['conditions']}
-                      ) AS combined_data
-                      WHERE source IN ('Transmissions', 'Traitement', 'Notifications','Délai total')
-            
-                      GROUP BY source
-                      -- Organisez les sources dans l'ordre d'apparition
-                      ORDER BY
-                        source = 'Transmissions' DESC,
-                        source = 'Traitement' DESC,
-                        source = 'Notifications' DESC,
-                        source = 'Délai total' DESC
-                      LIMIT 0,100";
-                    }
-                $stmt = $conn->prepare($sql);
-      
-                $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
-           
-                $achats=$resultSet->fetchAllAssociative();
-               
-                // dd($achats);
-                return $achats;
-            }
+    // Exécution de la requête avec les paramètres
+    $resultSet = $conn->executeQuery($sql, [
+        'year' => $criteria['date'],
+        'delaiTransmissions' => $delaiTransmissions,
+        'delaiTraitement' => $delaiTraitement,
+        'delaiNotifications' => $delaiNotifications,
+        'delaiTotal' => $delaiTotal
+    ] + $criteria['parameters']);
+
+    // Récupération des résultats
+    $achats = $resultSet->fetchAllAssociative();
+    
+    return $achats;
+}
 
             public function getVolValDelay($form)
             {
