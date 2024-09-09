@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
@@ -179,6 +180,46 @@ class CRAnnuelType extends AbstractType
                 'required' => false,
                 'label' => false,
                 'attr' => ['class' => 'hidden'],  
+            ])
+            ->add('delai_transmissions', NumberType::class, [
+                'required' => false,
+                'mapped' => false,
+                'attr' => ['class' => 'hidden'],  
+
+                'label' => 'Délai pour Transmissions (en jours)',
+                'empty_data' => 5, // Valeur par défaut
+                'data' => 5, // Valeur par défaut
+
+            ])
+            ->add('delai_traitement', NumberType::class, [
+                'required' => false,
+                'mapped' => false,
+                'attr' => ['class' => 'hidden'],  
+
+                'label' => 'Délai pour Traitement (en jours)',
+                'empty_data' => 3, // Valeur par défaut
+                'data' => 3, // Valeur par défaut
+
+            ])
+            ->add('delai_notifications', NumberType::class, [
+                'required' => false,
+                'mapped' => false,
+                'attr' => ['class' => 'hidden'],  
+
+                'label' => 'Délai pour Notifications (en jours)',
+                'empty_data' => 5, // Valeur par défaut
+                'data' => 5, // Valeur par défaut
+
+            ])
+            ->add('delai_total', NumberType::class, [
+                'required' => false,
+                'mapped' => false,
+                'attr' => ['class' => 'hidden'],  
+
+                'label' => 'Délai total (en jours)',
+                'empty_data' => 15, // Valeur par défaut
+                'data' => 15, // Valeur par défaut
+
             ])
         ;
     }

@@ -15,7 +15,7 @@ class ValidType extends AbstractType
             ->add('Valider', SubmitType::class, [
                 'attr' => [
                     'class' => 'fr-btn',
-                    'data-valid-achat-target' => 'submitButton' // Ajoutez cet attribut pour Stimulus
+                    'data-valid-achat-target' => 'submitButton',
                 ],
             ]);
     }

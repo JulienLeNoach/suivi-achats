@@ -46,9 +46,9 @@ class StatisticDelayController extends AbstractController
             $delaiNotifications = $form->get('delai_notifications')->getData() ?? 5; // Valeur par défaut 5 si null
             $delaiTotal = $form->get('delai_total')->getData() ?? 15; // Valeur par défaut 15 si null
     
-            $achats_delay = $this->achatRepository->getYearDelayDiff($form, $delaiTransmissions, $delaiTraitement, $delaiNotifications, $delaiTotal);
+            $achats_delay = $this->achatRepository->getYearDelayDiff($form);
             $achats = $this->statisticDelayService->getDelayPerMonth($achats_delay);
-            $achats_delay_all = $this->achatRepository->getYearDelayCount($form, $delaiTransmissions, $delaiTraitement, $delaiNotifications, $delaiTotal);
+            $achats_delay_all = $this->achatRepository->getYearDelayCount($form);
     
             $toPDF = [
                 'criteria' => [

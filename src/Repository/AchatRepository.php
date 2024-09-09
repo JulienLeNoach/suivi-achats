@@ -933,11 +933,14 @@ public function getYearDelayDiff($form)
 
     return $achats;
 }       
-public function getYearDelayCount($form, $delaiTransmissions, $delaiTraitement, $delaiNotifications, $delaiTotal)
+public function getYearDelayCount($form)
 {
     // Extraction des critères de recherche à partir du formulaire
     $criteria = $this->extractCriteriaFromForm($form);
-
+    $delaiTransmissions = $form->get('delai_transmissions')->getData() ?? 5; // Valeur par défaut 5 si null
+    $delaiTraitement = $form->get('delai_traitement')->getData() ?? 3; // Valeur par défaut 3 si null
+    $delaiNotifications = $form->get('delai_notifications')->getData() ?? 5; // Valeur par défaut 5 si null
+    $delaiTotal = $form->get('delai_total')->getData() ?? 15; // Valeur par défaut 15 si null
     // Récupération de la valeur du calendrier des jours ouvrés ou tous les jours
     $jourcalendar = $form["jourcalendar"]->getData();
 
