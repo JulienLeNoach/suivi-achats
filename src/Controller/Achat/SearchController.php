@@ -195,6 +195,7 @@ public function add(Request $request, SessionInterface $session): Response
 public function valid(Request $request, $id, SessionInterface $session): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
+    // dd($result_achat);
     $cpv = $result_achat->getCodeCpv();
     $cpvId = $cpv->getId();
     $result_cpv = $this->entityManager->getRepository(CPV::class)->showCPVwithId($cpv);

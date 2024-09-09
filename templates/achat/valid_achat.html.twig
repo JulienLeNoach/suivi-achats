@@ -21,7 +21,7 @@
                 </div>
                 <div class="d-flex flex-column  w-50">
                     <label for="ser" class="fr-label">N° Chrono</label>
-                    <input class="fr-input" type="text" id="ser" value="{{ result_achat.numeroAchat }}" disabled>
+                    <input class="fr-input" type="text" id="chrono" value="{{ result_achat.numeroAchat }}" disabled>
                 </div>
             </div>
             <div class="d-flex flex-column">
@@ -64,11 +64,20 @@
             </div>
             <div class="d-flex flex-column">
                 <label for="cpv" class="fr-label">Computation</label>
-                <input class="fr-input" type="number" id="cpv" value="{{ cpvMt.computation | number_format(2, '.', '') }}" disabled>
+                <input class="fr-input" type="number" id="comp" value="{{ cpvMt.computation | number_format(2, '.', '') }}" disabled>
             </div>
             <div class="d-flex flex-column">
                 <label for="cpv" class="fr-label">Reliquat</label>
-                <input class="fr-input" type="number" id="cpv" value="{{ cpvMt.reliquat | number_format(2, '.', '') }}" disabled>
+                <input class="fr-input" type="number" id="rel" value="{{ cpvMt.reliquat | number_format(2, '.', '') }}" disabled>
+                <input class="fr-input hidden" type="text" id="objet" value="{{ result_achat.objetAchat }}" disabled>
+                <input class="fr-input hidden" type="text" id="valInt" value="{{ result_achat.dateValidInter | join('') | date('d/m/y') }}" disabled>
+                <input class="fr-input hidden" type="text" id="dateCho" value="{{ result_achat.dateCommandeChorus | join('') | date('d/m/y') }}" disabled>
+                <input class="fr-input hidden" type="text" id="uo" value="{{ result_achat.codeUo.libelleUo }}" disabled>
+                <input class="fr-input hidden" type="text" id="uo2" value="{{ result_achat.codeUo }}" disabled>
+                <input class="fr-input hidden" type="text" id="tri" value="{{ result_achat.utilisateurs.trigram }}" disabled>
+                <input class="fr-input hidden" type="text" id="four" value="{{ result_achat.numSiret.nomFournisseur}}" disabled>
+                <input class="fr-input hidden" type="text" id="typem" value="{{ result_achat.typeMarche}}" disabled>
+
             </div>
         </div>
         <div class="sub-btn d-flex justify-content-between align-items-centers">

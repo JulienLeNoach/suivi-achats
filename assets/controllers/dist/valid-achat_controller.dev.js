@@ -95,8 +95,6 @@ function (_Controller) {
       var form = this.element.querySelector('form');
       var submitButton = form.querySelector('[data-valid-achat-target="submitButton"]');
       form.addEventListener('submit', function (event) {
-        // event.preventDefault(); // Empêche la soumission immédiate du formulaire
-        // Soumettre le formulaire via AJAX
         var formData = new FormData(form);
         fetch(form.action, {
           method: 'POST',
@@ -119,8 +117,7 @@ function (_Controller) {
   }, {
     key: "fillPdfWithNumeroEj",
     value: function fillPdfWithNumeroEj() {
-      var url, existingPdfBytes, _PDFLib, _PDFDocument, pdfDoc, form, numeroEjField, pdfBytes, blob, link;
-
+      var url, existingPdfBytes, pdfDoc, form, numeroEjField, montantHtField, computationField, validationBaField, codeCpvField, chronoField, notificationField, objetField, validInterField, comChorField, uoField, triField, anneeField, serviceField, fournisseurField, MPPAField, MABCField, numeroEjValue, montantHtValue, computationValue, validationBaValue, codeCpvValue, chronoValue, notificationValue, objetValue, validInterValue, comChorValue, uoValue, triValue, serviceValue, currentYear, fournisseurValue, typeMarcheValue, pdfBytes, blob, link;
       return regeneratorRuntime.async(function fillPdfWithNumeroEj$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -135,20 +132,87 @@ function (_Controller) {
 
             case 4:
               existingPdfBytes = _context.sent;
-              _PDFLib = PDFLib, _PDFDocument = _PDFLib.PDFDocument;
-              _context.next = 8;
-              return regeneratorRuntime.awrap(_PDFDocument.load(existingPdfBytes));
+              _context.next = 7;
+              return regeneratorRuntime.awrap(_pdfLib.PDFDocument.load(existingPdfBytes));
 
-            case 8:
+            case 7:
               pdfDoc = _context.sent;
-              form = pdfDoc.getForm();
-              numeroEjField = form.getTextField('N EJ'); // Nom exact du champ à remplir dans le PDF
+              form = pdfDoc.getForm(); // Récupérer les champs du PDF
 
-              numeroEjField.setText(document.querySelector('input[name="ej"]').value);
-              _context.next = 14;
+              numeroEjField = form.getTextField('N EJ');
+              montantHtField = form.getTextField('Montant HT');
+              computationField = form.getTextField('Dernière computation connue');
+              validationBaField = form.getTextField('Validation BA');
+              codeCpvField = form.getTextField('Code CPV');
+              chronoField = form.getTextField('Chrono');
+              notificationField = form.getTextField('Notification');
+              objetField = form.getTextField('OBJET 1');
+              validInterField = form.getTextField('undefined_2');
+              comChorField = form.getTextField('Commande CF');
+              uoField = form.getTextField('undefined_4');
+              triField = form.getTextField('ACHETEUR');
+              anneeField = form.getTextField('ANNEE'); // Champ pour l'année
+
+              serviceField = form.getTextField('SERVICE BENEFICIAIRE'); // Champ pour l'année
+
+              fournisseurField = form.getTextField('TITULAIRE'); // Champ pour l'année
+
+              MPPAField = form.getCheckBox('MPPA'); // Le champ case à cocher pour typeMarche
+
+              MABCField = form.getCheckBox('undefined'); // Le champ case à cocher pour typeMarche
+              // Récupérer les valeurs des inputs dans la vue HTML
+
+              numeroEjValue = document.querySelector('input[name="ej"]').value;
+              montantHtValue = document.getElementById('mtn').value;
+              computationValue = document.querySelector('input[id="comp"]').value;
+              validationBaValue = document.getElementById('valbox').value;
+              codeCpvValue = document.querySelector('input[id="cpv"]').value;
+              chronoValue = document.getElementById('chrono').value.split('-')[1].trim();
+              notificationValue = document.getElementById('notbox').value;
+              objetValue = document.getElementById('objet').value;
+              validInterValue = document.getElementById('valInt').value;
+              comChorValue = document.getElementById('dateCho').value;
+              uoValue = document.getElementById('uo2').value;
+              triValue = document.getElementById('tri').value;
+              serviceValue = document.getElementById('uo').value;
+              currentYear = new Date().getFullYear(); // Année en cours
+
+              fournisseurValue = document.getElementById('four').value; // Année en cours
+
+              typeMarcheValue = document.getElementById('typem').value; // Année en cours
+              // Remplir les champs dans le PDF
+
+              numeroEjField.setText(numeroEjValue);
+              montantHtField.setText(montantHtValue);
+              computationField.setText(computationValue);
+              validationBaField.setText(validationBaValue);
+              codeCpvField.setText(codeCpvValue);
+              chronoField.setText(chronoValue);
+              notificationField.setText(notificationValue);
+              objetField.setText(objetValue); // Remplir le champ OBJET
+
+              objetField.setFontSize(12);
+              validInterField.setText(validInterValue);
+              comChorField.setText(comChorValue);
+              uoField.setText(uoValue);
+              triField.setText(triValue);
+              anneeField.setText(currentYear.toString());
+              serviceField.setText(serviceValue);
+              fournisseurField.setText(fournisseurValue);
+
+              if (typeMarcheValue === '1') {
+                MABCField.check();
+                MPPAField.uncheck(); // Cocher la première case
+              } else if (typeMarcheValue === '0') {
+                MPPAField.check();
+                MABCField.uncheck(); // Cocher la deuxième case (ou laisser décoché)
+              } // Sauvegarder et télécharger le PDF
+
+
+              _context.next = 61;
               return regeneratorRuntime.awrap(pdfDoc.save());
 
-            case 14:
+            case 61:
               pdfBytes = _context.sent;
               blob = new Blob([pdfBytes], {
                 type: 'application/pdf'
@@ -157,20 +221,20 @@ function (_Controller) {
               link.href = window.URL.createObjectURL(blob);
               link.download = 'achat_validé_numero_ej.pdf';
               link.click();
-              _context.next = 25;
+              _context.next = 72;
               break;
 
-            case 22:
-              _context.prev = 22;
+            case 69:
+              _context.prev = 69;
               _context.t0 = _context["catch"](0);
               console.error('Erreur lors de la génération du PDF :', _context.t0);
 
-            case 25:
+            case 72:
             case "end":
               return _context.stop();
           }
         }
-      }, null, null, [[0, 22]]);
+      }, null, null, [[0, 69]]);
     }
   }]);
 

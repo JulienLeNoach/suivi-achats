@@ -46,9 +46,6 @@ export default class extends Controller {
         const submitButton = form.querySelector('[data-valid-achat-target="submitButton"]');
 
         form.addEventListener('submit', (event) => {
-            // event.preventDefault(); // Empêche la soumission immédiate du formulaire
-
-            // Soumettre le formulaire via AJAX
             const formData = new FormData(form);
             fetch(form.action, {
                 method: 'POST',
@@ -74,14 +71,75 @@ export default class extends Controller {
             const url = '/POCHETTE_2024_vierge.pdf'; // URL de votre fichier PDF
             const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
 
-            const { PDFDocument } = PDFLib;
             const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
             const form = pdfDoc.getForm();
-            const numeroEjField = form.getTextField('N EJ'); // Nom exact du champ à remplir dans le PDF
 
-            numeroEjField.setText(document.querySelector('input[name="ej"]').value);
+            // Récupérer les champs du PDF
+            const numeroEjField = form.getTextField('N EJ');
+            const montantHtField = form.getTextField('Montant HT');
+            const computationField = form.getTextField('Dernière computation connue');
+            const validationBaField = form.getTextField('Validation BA');
+            const codeCpvField = form.getTextField('Code CPV');
+            const chronoField = form.getTextField('Chrono');
+            const notificationField = form.getTextField('Notification');
+            const objetField = form.getTextField('OBJET 1'); 
+            const validInterField = form.getTextField('undefined_2');
+            const comChorField = form.getTextField('Commande CF');
+            const uoField = form.getTextField('undefined_4');
+            const triField = form.getTextField('ACHETEUR');
+            const anneeField = form.getTextField('ANNEE'); // Champ pour l'année
+            const serviceField = form.getTextField('SERVICE BENEFICIAIRE'); // Champ pour l'année
+            const fournisseurField = form.getTextField('TITULAIRE'); // Champ pour l'année
+            const MPPAField = form.getCheckBox('MPPA'); // Le champ case à cocher pour typeMarche
+            const MABCField = form.getCheckBox('undefined'); // Le champ case à cocher pour typeMarche
 
+            // Récupérer les valeurs des inputs dans la vue HTML
+            const numeroEjValue = document.querySelector('input[name="ej"]').value;
+            const montantHtValue = document.getElementById('mtn').value;
+            const computationValue = document.querySelector('input[id="comp"]').value;
+            const validationBaValue = document.getElementById('valbox').value;
+            const codeCpvValue = document.querySelector('input[id="cpv"]').value;
+            const chronoValue = document.getElementById('chrono').value.split('-')[1].trim();
+            const notificationValue = document.getElementById('notbox').value;
+            const objetValue = document.getElementById('objet').value; 
+            const validInterValue = document.getElementById('valInt').value; 
+            const comChorValue = document.getElementById('dateCho').value; 
+            const uoValue = document.getElementById('uo2').value; 
+            const triValue = document.getElementById('tri').value;
+            const serviceValue = document.getElementById('uo').value; 
+            const currentYear = new Date().getFullYear(); // Année en cours
+            const fournisseurValue = document.getElementById('four').value;  // Année en cours
+            const typeMarcheValue = document.getElementById('typem').value;  // Année en cours
+
+            // Remplir les champs dans le PDF
+            numeroEjField.setText(numeroEjValue);
+            montantHtField.setText(montantHtValue);
+            computationField.setText(computationValue);
+            validationBaField.setText(validationBaValue);
+            codeCpvField.setText(codeCpvValue);
+            chronoField.setText(chronoValue);
+            notificationField.setText(notificationValue);
+            objetField.setText(objetValue); // Remplir le champ OBJET
+            objetField.setFontSize(12);
+            validInterField.setText(validInterValue);
+            comChorField.setText(comChorValue);
+            uoField.setText(uoValue);
+            triField.setText(triValue);
+            anneeField.setText(currentYear.toString()); 
+            serviceField.setText(serviceValue); 
+            fournisseurField.setText(fournisseurValue); 
+            if (typeMarcheValue === '1') {
+                MABCField.check();
+                MPPAField.uncheck();
+                  // Cocher la première case
+            } else if (typeMarcheValue === '0') {
+                MPPAField.check();
+                MABCField.uncheck();
+                // Cocher la deuxième case (ou laisser décoché)
+            }
+ 
+            // Sauvegarder et télécharger le PDF
             const pdfBytes = await pdfDoc.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const link = document.createElement('a');
