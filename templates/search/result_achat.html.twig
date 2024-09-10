@@ -3,7 +3,7 @@
 {% block title %}Visualiser un achat{% endblock %}
 
 {% block body %}
-<div class="achat-container">
+<div class="achat-container" data-controller="valid-achat">
 
     <div class='align-items-center d-flex mt-3 bandeau-form-search'>
         <span class="fr-icon-search-line" aria-hidden="true"></span>
@@ -27,12 +27,12 @@
                 </div>
                 <div class="d-flex flex-column">
                     <label for="id_demande_achat" class="fr-label">Identifiant de la demande d'achat</label>
-                    <input type="text" id="id_demande_achat" class="fr-input" value="{{result_achat.idDemandeAchat}}"
+                    <input type="text" id="da" class="fr-input" value="{{result_achat.idDemandeAchat}}"
                         disabled>
                 </div>
                 <div class="d-flex flex-column">
                     <label for="uti" class="fr-label">Utilisateur</label>
-                    <input type="text" class="fr-input" id="uti" value="{{result_achat.utilisateurs.trigram}}" disabled>
+                    <input type="text" class="fr-input" id="tri" value="{{result_achat.utilisateurs.trigram}}" disabled>
                 </div>
                 <div class="d-flex flex-column">
                     <label for="mtn" class="fr-label">Montant achat HT</label>
@@ -53,12 +53,12 @@
                 </div>
                 <div class="d-flex flex-column">
                     <label for="chor" class="fr-label">Date de création CF</label>
-                    <input type="text" id="chor" class="fr-input"
+                    <input type="text" id="dateCho" class="fr-input"
                         value="{{result_achat.dateCommandeChorus | join ('') | date('d/m/y')}}" disabled>
                 </div>
                 <div class="d-flex flex-column">
                     <label for="val" class="fr-label">Date de validation de l'achat</label>
-                    <input type="text" id="val" class="fr-input"
+                    <input type="text" id="valbox" class="fr-input"
                         value="{{result_achat.dateValidation | join ('') | date('d/m/y')}}" disabled>
                 </div>
                 <div class="d-flex flex-column">
@@ -73,7 +73,7 @@
                 </div>
                 <div class="d-flex flex-column">
                     <label for="uo" class="fr-label">Unité organique</label>
-                    <input type="text" id="uo" class="fr-input" value="{{result_achat.codeUO}}" disabled>
+                    <input type="text" id="uo2" class="fr-input" value="{{result_achat.codeUO}}" disabled>
                 </div>
                 <div class="d-flex flex-column">
                     <label for="for" class="fr-label">Formation</label>
@@ -103,17 +103,32 @@
             <div class="d-flex w-100 flex-column">
                 <div class="d-flex flex-column w-100">
                     <label for="obj " class="fr-label">Objet de l'achat</label>
-                    <input type="text" class="fr-input" id="obj" value="{{result_achat.objetAchat}}" disabled>
+                    <input type="text" class="fr-input" id="objet" value="{{result_achat.objetAchat}}" disabled>
                 </div>
                 <div class="d-flex flex-column w-100 ">
                     <label for="obs" class="fr-label">Observations</label>
                     <textarea rows="5" cols="30" class="fr-input" id="obs"
                         disabled>{{result_achat.observations}}</textarea>
                 </div>
+                <input class="fr-input hidden" size="20" type="text" id="ejbox" name="ej" value="14{{ result_achat.numeroEj | slice(2) }}" required minlength="10" maxlength="10" data-valid-achat-target="ej">
+                <input class="fr-input hidden" type="text" id="valInt" value="{{ result_achat.dateValidInter | join('') | date('d/m/y') }}" disabled>
+                <input class="fr-input hidden"  type="text" id="ejmarche" name="ejm" value="{{ result_achat.numeroEjMarche}}">
+                <input class="fr-input hidden" type="number" id="comp" value="{{ cpvMt.computation | number_format(2, '.', '') }}" disabled>
+                <input class="fr-input hidden" type="text" id="uo" value="{{ result_achat.codeUo.libelleUo }}" disabled>
+                <input class="fr-input hidden" type="text" id="typem" value="{{ result_achat.typeMarche}}" disabled>
+                <input class="fr-input hidden" type="text" id="four" value="{{ result_achat.numSiret.nomFournisseur}}" disabled>
+                <input class="fr-input hidden" type="text" id="ej2" value="{{ result_achat.numeroEjMarche}}" disabled>
+                <input class="fr-input hidden" type="text" id="numM" value="{{ result_achat.numeroMarche}}" disabled>
+                <input class="fr-input hidden" size="15" type="text" id="notbox" name="not" value="{{ result_achat.dateNotification | join('') | date('d/m/y') }}">
             </div>
-
             <div class="sub-btn d-flex justify-content-between align-items-centers">
-
+ <button 
+                    type="button" 
+                    class="fr-btn" 
+                    id="generatePdfBtn" 
+                    {{ result_achat.etatAchat != 2 ? 'disabled' : '' }}>
+                    Générer la pochette
+                </button>
 
         </form>
     </div>

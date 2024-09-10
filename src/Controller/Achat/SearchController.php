@@ -116,11 +116,14 @@ class SearchController extends AbstractController
 public function show(Request $request,$id,SessionInterface $session): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-
+    $cpv = $result_achat->getCodeCpv();
+    $cpvId = $cpv->getId();
+    $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId, $id);
 
 
     return $this->render('search/result_achat.html.twig', [
         'result_achat' => $result_achat,
+        'cpvMt' => $cpvMt
 
     ]);
 }
@@ -159,46 +162,12 @@ public function add(Request $request, SessionInterface $session): Response
 }
 
 
-// #[Route('/ajout_achat', name: 'ajout_achat')] V1
-// public function add(Request $request,SessionInterface $session,): Response
-// {
-    
-//     $achat = $this->achatFactory->create();
-//     $form = $this->createForm(AddAchatType::class, $achat);
-//     $form->handleRequest($request);
-//     $currentUrl = $session->get('current_url');
-
-//     if ($form->isSubmitted() && $form->isValid()) {
-
-
-//         $cpvId = $achat->getCodeCpv()->getId();
-//         // Formater le montant avec deux chiffres après la virgule et ",00" si nécessaire
-//         $montantAchatFormatted = number_format($achat->getMontantAchat(), 2, '.', '');
-//         $cpvSold = $this->entityManager->getRepository(CPV::class)->find($cpvId);
-//         // $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPVwithoutId($cpvId);
-
-//         $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() - $achat->getMontantAchat());
-//         // Ajouter ",00" si le montant ne contient pas de décimales
-//         if (strpos($montantAchatFormatted, '.') === false) {
-//             $montantAchatFormatted .= ',00';
-//         }
-//         $this->entityManager->getRepository(Achat::class)->add($achat);
-
-//         $this->addFlash('valid', 'Achat n° ' . $achat->getNumeroAchat() . " ajouté \n\n Computation actuel du CPV '" . $achat->getCodeCpv()->getLibelleCpv() . "' : " . 40000-$cpvSold->getMtCpvAuto() . "€ \n\n Reliquat actuel du CPV '" . $achat->getCodeCpv()->getLibelleCpv() . "' : " . $cpvSold->getMtCpvAuto() . "€");        return $this->redirect("/search");
-
-// }
-//     return $this->render('achat/addAchat.html.twig', [
-//         'form' => $form->createView(),
-//     ]);
-// } 
 #[Route('/valid_achat/{id}', name: 'valid_achat')] //V2
 public function valid(Request $request, $id, SessionInterface $session): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-    // dd($result_achat);
     $cpv = $result_achat->getCodeCpv();
     $cpvId = $cpv->getId();
-    $result_cpv = $this->entityManager->getRepository(CPV::class)->showCPVwithId($cpv);
 
     $form = $this->createForm(ValidType::class, null, []);
     $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId, $id);
