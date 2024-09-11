@@ -1,4 +1,3 @@
-// search-achat_controller.js
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
@@ -6,32 +5,7 @@ export default class extends Controller {
         this.attachEventListeners();
     }
 
-    collapse() {
-        let formContainer = document.querySelector('.form-container');
-        let toggleButton = document.getElementById('toggleFormBtn');
-        formContainer.classList.add('collapsed');
-        toggleButton.innerHTML = '<span class="fr-icon-arrow-down-fill" aria-hidden="true"></span>';
-
-        toggleButton.addEventListener('click', function() {
-            if (formContainer.classList.contains('collapsed')) {
-                formContainer.classList.remove('collapsed');
-                toggleButton.innerHTML = '<span class="fr-icon-arrow-up-fill" aria-hidden="true"></span>';
-            } else {
-                formContainer.classList.add('collapsed');
-                toggleButton.innerHTML = '<span class="fr-icon-arrow-down-fill" aria-hidden="true"></span>';
-            }
-        });
-    }
-    
     attachEventListeners() {
-        let table = document.querySelector('table');
-        let footer = document.querySelector('footer');
-        let noResult = document.querySelector('#noResult');
-
-        // Garder la logique existante intacte
-        table ? footer.scrollIntoView({ behavior: 'smooth', block: 'nearest' }) : 
-        (noResult ? noResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' }) : null);
-
         let rows = document.querySelectorAll('.clickable-row');
         let btnElements = document.querySelectorAll('#btn');
 
@@ -59,35 +33,79 @@ export default class extends Controller {
             });
         });
 
-        // Ajouter l'écouteur d'événement pour les boutons, y compris l'alerte de confirmation
         this.setupAlertForAnnulButton(btnElements);
+        this.setupSaveComment();
     }
 
     setupAlertForAnnulButton(btnElements) {
         btnElements.forEach((btn) => {
-            // Vérifier si l'écouteur d'événement a déjà été ajouté
             if (!btn.hasListener) {
                 btn.addEventListener('click', (event) => {
-                    // Vérifier si le bouton cliqué est le bouton "Annuler un achat"
                     if (btn.getAttribute('data-action') === 'annuler') {
-                        if (!confirm('Voulez-vous vraiment annuler cet achat?')) {
-                            event.preventDefault(); // Annuler l'action si l'utilisateur ne confirme pas
-                            return;
-                        }
+                        event.preventDefault();
+                        this.showCommentModal(); // Afficher la modale pour le commentaire
                     }
 
-                    // Exécuter l'action si l'utilisateur confirme
                     let link = btn.getAttribute('data-link');
                     let id = document.querySelector('.selected').getAttribute('data-id');
-
-                    let detailLink = document.getElementById('detail');
-                    detailLink.setAttribute('href', '/' + link + '/' + id);
-                    window.location.href = detailLink.getAttribute('href');
+                    document.getElementById('detail').setAttribute('href', '/' + link + '/' + id);
                 });
 
-                // Marquer le bouton comme ayant déjà un écouteur d'événement
                 btn.hasListener = true;
             }
         });
+    }
+
+    // Fonction pour afficher la fenêtre modale
+    showCommentModal() {
+        const modal = document.getElementById('commentModal');
+        modal.style.display = 'block';
+
+        window.onclick = (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        document.getElementById('closeModal').onclick = () => {
+            modal.style.display = 'none';
+        };
+    }
+
+    // Configuration pour envoyer le commentaire lors de l'annulation
+    setupSaveComment() {
+        document.getElementById('saveComment').onclick = () => {
+            const id = document.querySelector('.selected').getAttribute('data-id');
+            const comment = document.getElementById('commentText').value;
+
+            // Envoie la requête AJAX pour enregistrer le commentaire d'annulation
+            fetch(`/annul_achat/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',  // Assurez-vous que le serveur sait qu'il doit renvoyer du JSON
+                },
+                body: JSON.stringify({ comment: comment })
+            })
+            .then(response => {
+                // Vérifier que la réponse est bien du JSON
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text);  // Gérer les erreurs comme du texte si ce n'est pas du JSON
+                    });
+                }
+                return response.json();  // Si c'est du JSON, on le retourne
+            })
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirectUrl;  // Redirection après annulation
+                } else {
+                    alert('Erreur lors de l\'annulation');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+            });
+        };
     }
 }

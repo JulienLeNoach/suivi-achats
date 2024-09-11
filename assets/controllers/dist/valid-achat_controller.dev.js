@@ -132,7 +132,7 @@ function (_Controller) {
   }, {
     key: "fillPdfWithNumeroEj",
     value: function fillPdfWithNumeroEj() {
-      var url, existingPdfBytes, pdfDoc, form, numeroEjField, numMarcheField, montantHtField, computationField, validationBaField, codeCpvField, chronoField, notificationField, objetField, validInterField, comChorField, uoField, triField, anneeField, serviceField, fournisseurField, MPPAField, MABCField, numeroEjValue, numMarcheValue, montantHtValue, computationValue, validationBaValue, codeCpvValue, chronoValue, notificationValue, objetValue, validInterValue, comChorValue, uoValue, triValue, serviceValue, currentYear, fournisseurValue, typeMarcheValue, pdfBytes, blob, link;
+      var url, existingPdfBytes, pdfDoc, form, numeroEjField, numMarcheField, montantHtField, computationField, validationBaField, codeCpvField, chronoField, notificationField, objetField, validInterField, comChorField, uoField, triField, tri2Field, anneeField, serviceField, fournisseurField, MPPAField, MABCField, numeroEjValue, numMarcheValue, montantHtValue, tvaIdentValue, montantTTC, tvaNumeric, computationValue, validationBaValue, rawCodeCpvValue, lastDashIndex, processedCodeCpvValue, chronoValue, notificationValue, objetValue, validInterValue, comChorValue, rawUoValue, lastDashIndexUo, processedUoValue, triValue, serviceValue, currentYear, fournisseurValue, typeMarcheValue, pdfBytes, blob, link;
       return regeneratorRuntime.async(function fillPdfWithNumeroEj$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -167,6 +167,7 @@ function (_Controller) {
               comChorField = form.getTextField('Commande CF');
               uoField = form.getTextField('undefined_4');
               triField = form.getTextField('ACHETEUR');
+              tri2Field = form.getTextField('Acheteur');
               anneeField = form.getTextField('ANNEE');
               serviceField = form.getTextField('SERVICE BENEFICIAIRE');
               fournisseurField = form.getTextField('TITULAIRE');
@@ -184,16 +185,41 @@ function (_Controller) {
                 numMarcheValue = 'Néant';
               }
 
-              montantHtValue = document.getElementById('mtn').value;
+              montantHtValue = parseFloat(document.getElementById('mtn').value); // Convertir en nombre
+
+              tvaIdentValue = document.getElementById('tva').value; // Vérifier si les valeurs sont valides pour le calcul
+
+              tvaNumeric = parseFloat(tvaIdentValue);
+              console.log(tvaIdentValue);
+
+              if (isNaN(montantHtValue)) {
+                montantTTC = 'Erreur montant HT'; // Gérer les cas où le montant HT n'est pas un nombre valide
+              } else if (tvaIdentValue.toLowerCase() === 'exonéré') {
+                montantTTC = montantHtValue.toFixed(2) + ' TTC'; // Si exonéré, pas de calcul
+              } else if (!isNaN(tvaNumeric)) {
+                montantTTC = (montantHtValue * (1 + tvaNumeric / 100)).toFixed(2) + ' TTC';
+              } else {
+                montantTTC = 'Erreur TVA'; // Gérer les cas où la TVA n'est pas valide
+              }
+
               computationValue = document.querySelector('input[id="comp"]').value;
-              validationBaValue = document.getElementById('valbox').value;
-              codeCpvValue = document.querySelector('input[id="cpv"]').value;
-              chronoValue = document.getElementById('chrono').value.split('-')[1].trim();
+              validationBaValue = document.getElementById('valbox').value; // Récupérer la valeur du champ CPV, conserver tout jusqu'au dernier tiret
+
+              rawCodeCpvValue = document.querySelector('input[id="cpv"]').value;
+              lastDashIndex = rawCodeCpvValue.lastIndexOf(' - '); // Trouver l'index du dernier tiret
+
+              processedCodeCpvValue = lastDashIndex !== -1 ? rawCodeCpvValue.slice(0, lastDashIndex) : rawCodeCpvValue; // Supprimer tout ce qui est après le dernier tiret
+
+              chronoValue = document.getElementById('chrono').value;
               notificationValue = document.getElementById('notbox').value;
               objetValue = document.getElementById('objet').value;
               validInterValue = document.getElementById('valInt').value;
               comChorValue = document.getElementById('dateCho').value;
-              uoValue = document.getElementById('uo2').value;
+              rawUoValue = document.querySelector('input[id="uo2"]').value;
+              lastDashIndexUo = rawUoValue.lastIndexOf(' - '); // Trouver l'index du dernier tiret
+
+              processedUoValue = lastDashIndexUo !== -1 ? rawUoValue.slice(0, lastDashIndexUo) : rawUoValue; // Supprimer tout ce qui est après le dernier tiret 
+
               triValue = document.getElementById('tri').value;
               serviceValue = document.getElementById('uo').value;
               currentYear = new Date().getFullYear();
@@ -204,18 +230,21 @@ function (_Controller) {
               numeroEjField.setFontSize(12);
               numMarcheField.setText(numMarcheValue);
               numMarcheField.setFontSize(12);
-              montantHtField.setText(montantHtValue);
+              montantHtField.setText(montantHtValue.toFixed(2) + ' / ' + montantTTC); // Ajout du montant TTC
+
               computationField.setText(computationValue);
               validationBaField.setText(validationBaValue);
-              codeCpvField.setText(codeCpvValue);
+              codeCpvField.setText(processedCodeCpvValue);
               chronoField.setText(chronoValue);
+              chronoField.setFontSize(12);
               notificationField.setText(notificationValue);
               objetField.setText(objetValue);
               objetField.setFontSize(12);
               validInterField.setText(validInterValue);
               comChorField.setText(comChorValue);
-              uoField.setText(uoValue);
+              uoField.setText(processedUoValue);
               triField.setText(triValue);
+              tri2Field.setText(triValue);
               anneeField.setText(currentYear.toString());
               serviceField.setText(serviceValue);
               fournisseurField.setText(fournisseurValue);
@@ -229,10 +258,10 @@ function (_Controller) {
               } // Sauvegarder et télécharger le PDF
 
 
-              _context.next = 68;
+              _context.next = 79;
               return regeneratorRuntime.awrap(pdfDoc.save());
 
-            case 68:
+            case 79:
               pdfBytes = _context.sent;
               blob = new Blob([pdfBytes], {
                 type: 'application/pdf'
@@ -241,20 +270,20 @@ function (_Controller) {
               link.href = window.URL.createObjectURL(blob);
               link.download = 'achat_validé_numero_ej.pdf';
               link.click();
-              _context.next = 79;
+              _context.next = 90;
               break;
 
-            case 76:
-              _context.prev = 76;
+            case 87:
+              _context.prev = 87;
               _context.t0 = _context["catch"](0);
               console.error('Erreur lors de la génération du PDF :', _context.t0);
 
-            case 79:
+            case 90:
             case "end":
               return _context.stop();
           }
         }
-      }, null, null, [[0, 76]]);
+      }, null, null, [[0, 87]]);
     }
   }]);
 

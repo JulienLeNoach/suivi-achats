@@ -169,6 +169,9 @@ private ?float $montant_achat = null;
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $numero_ej_marche = null;
 
+    #[ORM\Column(length: 1000, nullable: true)]
+    private ?string $commentaire_annulation = null;
+
     
 
     public function setNumeroAchat(string $numero_achat)
@@ -274,12 +277,12 @@ private ?float $montant_achat = null;
         return $this;
     }
 
-    public function getDateAnnulation(): ?string
+    public function getDateAnnulation(): \DateTime
     {
         return $this->date_annulation;
     }
 
-    public function setDateAnnulation(?string $date_annulation): self
+    public function setDateAnnulation(\DateTime $date_annulation): self
     {
         $this->date_annulation = $date_annulation;
 
@@ -462,6 +465,18 @@ private ?float $montant_achat = null;
     public function setNumeroEjMarche(?string $numero_ej_marche): static
     {
         $this->numero_ej_marche = $numero_ej_marche;
+
+        return $this;
+    }
+
+    public function getCommentaireAnnulation(): ?string
+    {
+        return $this->commentaire_annulation;
+    }
+
+    public function setCommentaireAnnulation(?string $commentaire_annulation): static
+    {
+        $this->commentaire_annulation = $commentaire_annulation;
 
         return $this;
     }

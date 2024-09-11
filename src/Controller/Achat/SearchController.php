@@ -16,6 +16,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Service\Statistic\VolVal\StatisticVolValService;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -192,46 +193,18 @@ public function valid(Request $request, $id, SessionInterface $session): Respons
     ]);
 }
 
-// #[Route('/valid_achat/{id}', name: 'valid_achat')] V1
-// public function valid(Request $request, $id, SessionInterface $session): Response
-// {
-//     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-//     $cpv = $result_achat->getCodeCpv();
-//     $cpvId = $cpv->getId();
-//     $result_cpv = $this->entityManager->getRepository(CPV::class)->showCPVwithId($cpv);
 
-//     $form = $this->createForm(ValidType::class, null, []);
-//     $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId, $id);
-    
-//     $form->handleRequest($request);
-
-//     if ($form->isSubmitted() && $form->isValid()) {
-
-//         if ($result_cpv["somme_montants"] > 40000) {
-//             $this->addFlash('error', 'L\'achat ne peut être validé car le montant du CPV actuel est supérieur à 40 000€.');
-//         } else {
-//             if ($form->get('Valider')->isClicked()) {
-//                 $this->entityManager->getRepository(Achat::class)->valid($request, $id);
-            
-//                 $this->entityManager->flush();
-//                 $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé \n\n Computation actuel du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpvMt['computation'] . "€ \n\n Reliquat actuel du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€");
-
-//                 return $this->redirect("/search");
-//             }
-//         }
-//     }
-
-//     return $this->render('achat/valid_achat.html.twig', [
-//         'result_achat' => $result_achat,
-//         'cpvMt' => $cpvMt,
-//         'form' => $form->createView(),
-//     ]);
-// }
-#[Route('/annul_achat/{id}', name: 'annul_achat')] //V2
-public function cancel($id, Request $request, SessionInterface $session): Response
+#[Route('/annul_achat/{id}', name: 'annul_achat', methods: ['POST'])]
+public function cancel($id, Request $request, SessionInterface $session): JsonResponse
 {
-    $currentUrl = $session->get('current_url');
+    $data = json_decode($request->getContent(), true);
+    $comment = $data['comment'] ?? null;
+
     $achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
+    if (!$achat) {
+        return new JsonResponse(['success' => false, 'message' => 'Achat non trouvé'], 404);
+    }
+
     $cpv = $achat->getCodeCpv();
 
     // Augmenter le montant du CPV avec le montant de l'achat annulé
@@ -239,30 +212,21 @@ public function cancel($id, Request $request, SessionInterface $session): Respon
     $this->entityManager->persist($cpv);
 
     // Annuler l'achat
-    $this->entityManager->getRepository(Achat::class)->cancel($id);
+    $achat->setEtatAchat('1');
+    $achat->setCommentaireAnnulation($comment); // Sauvegarder le commentaire
+    $achat->setDateAnnulation(new \DateTime()); // Ajouter la date d'annulation
+
     $this->entityManager->flush();
 
-    $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . " annulé. Montant restant du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€.");
+    $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . ' annulé. Montant restant du CPV : ' . $cpv->getMtCpvAuto() . '€.');
 
-    return $this->redirect($currentUrl);
+    // Redirection après annulation
+    return new JsonResponse(['success' => true, 'redirectUrl' => $session->get('current_url')]);
 }
 
 
-// #[Route('/annul_achat/{id}', name: 'annul_achat')] V1
-// public function cancel($id, Request $request,SessionInterface $session): Response
-// {
-//     $currentUrl = $session->get('current_url');
-//     $query = $this->entityManager->getRepository(Achat::class)->cancel($id);
-//     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-//     $cpvId = $result_achat->getCodeCpv()->getId();
-//     $cpvSold = $this->entityManager->getRepository(CPV::class)->find($cpvId);
-//     $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() + $result_achat->getMontantAchat());
-//     $this->entityManager->persist($cpvSold);
-//     $this->entityManager->flush();
-//     $this->addFlash('success', 'Achat n° ' . $result_achat->getNumeroAchat() . " annulé.");
 
-//     return $this->redirect($currentUrl);
-// }
+
 #[Route('/reint_achat/{id}', name: 'reint_achat')] //V2
 public function reint($id, Request $request, SessionInterface $session): Response
 {
@@ -288,86 +252,7 @@ public function reint($id, Request $request, SessionInterface $session): Respons
     return $this->redirect($currentUrl);
 }
 
-// #[Route('/reint_achat/{id}', name: 'reint_achat')] V1
-// public function reint($id, Request $request,SessionInterface $session): Response
-// {
-//     $currentUrl = $session->get('current_url');
-//     $achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-//     $cpvId = $achat->getCodeCpv()->getId();
-//     // dd($cpvId);
 
-//     $cpvSold = $this->entityManager->getRepository(CPV::class)->findOneByCodeCpv($cpvId);    // Formater le montant avec deux chiffres après la virgule et ",00" si nécessaire
-//     $montantAchatFormatted = number_format($achat->getMontantAchat(), 2, '.', '');
-//     $cpv = $achat->getCodeCpv();
-//     $result_cpv = $this->entityManager->getRepository(CPV::class)->showCPVwithId($cpv);
-//     $somme_montants_cpv = $result_cpv['somme_montants'];
-//     $montant_achat_reint = $achat->getMontantAchat();
-//     if ($somme_montants_cpv  + $montant_achat_reint > 40000) {
-//         $this->addFlash('error', 'L\'achat ne peut être réintégré car le montant du CPV actuel ne peut excéder 40 000€.');
-//         return $this->redirect($currentUrl); // Assurez-vous de retourner une réponse ici aussi
-//     } else {
-//     $cpvSold->setMtCpvAuto($cpvSold->getMtCpvAuto() - $achat->getMontantAchat());
-//     $this->entityManager->persist($cpvSold);
-//     $this->entityManager->flush();
-//     $query = $this->entityManager->getRepository(Achat::class)->reint($id);
-//     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-//             $this->addFlash('success', 'Achat n° ' .  $result_achat->getNumeroAchat() . " réintégré.");
-//     return $this->redirect($currentUrl);
-//     }
-// }
-
-// #[Route('/edit_achat/{id}', name: 'edit_achat')] V1
-// public function edit(Request $request, $id, Achat $achat, AchatRepository $achatRepository, SessionInterface $session): Response
-// {
-//     $currentUrl = $session->get('current_url');
-//     $form = $this->createForm(EditAchatType::class, $achat);
-//     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-//     $montant_achat_initial = $result_achat->getMontantAchat(); 
-//     $form->handleRequest($request);
-
-//     $cpv = $result_achat->getCodeCpv();
-//     $result_cpv = $this->entityManager->getRepository(CPV::class)->showCPVwithId($cpv);
-//     // if ($form->isSubmitted() && !$form->isValid()) {
-//     //     $errors = $form->getErrors(true);
-//     //     foreach ($errors as $error) {
-//     //         // Affiche les erreurs dans la console ou dans les logs
-//     //         dump($error->getMessage());
-//     //     }
-//     //     // Ajoutez un dd() ici pour voir les erreurs dans le dump si nécessaire
-//     //     dd($errors);
-//     // }
-//     if ($form->isSubmitted() && $form->isValid()) {
-//         // $montant_achat_modifie = $form->get('montant_achat')->getData();
-//         // $somme_montants_cpv = $result_cpv['somme_montants'];
-
-//         // if ($somme_montants_cpv - $montant_achat_initial + $montant_achat_modifie > 40000) {
-//         //     $this->addFlash('error', 'L\'achat ne peut être modifié car le montant du CPV actuel ne peut excéder 40 000€.');
-//         // } else {
-//             // Mise à jour de l'achat en base de données
-//             $achatRepository->edit($achat, true);
-
-//             // Recalcul des données du CPV après la mise à jour de l'achat
-//             $result_cpv = $this->entityManager->getRepository(CPV::class)->showCPVwithId($cpv);
-//             $somme_montants_cpv = $result_cpv['somme_montants']; // Recalcule la somme après mise à jour de l'achat
-
-//             // Mise à jour du CPV
-//             $cpv->setMtCpvAuto(40000 - $somme_montants_cpv);
-//             $this->entityManager->persist($cpv);
-
-//             // Sauvegarde de toutes les modifications
-//             $this->entityManager->flush();
-
-//             $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . " modifié \n\n Computation actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : ". $result_cpv["somme_montants"]."€ \n\n Reliquat actuel du CPV  '". $achat->getCodeCpv()->getLibelleCpv() ."' : " . $result_cpv["reliquat"] . "€");
-            
-//             return $this->redirect($currentUrl);
-//         // }
-//     }
-
-//     return $this->render('achat/edit_achat_id.html.twig', [
-//         'achat' => $achat,
-//         'form' => $form->createView(),
-//     ]);
-// }
 #[Route('/edit_achat/{id}', name: 'edit_achat')] //V2
     public function edit(Request $request, $id, Achat $achat, AchatRepository $achatRepository, SessionInterface $session): Response
     {

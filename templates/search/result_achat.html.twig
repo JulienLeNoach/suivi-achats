@@ -63,7 +63,7 @@
                 </div>
                 <div class="d-flex flex-column">
                     <label for="tva" class="fr-label">TVA</label>
-                    <input type="text" id="tva" class="fr-input" value="{{result_achat.tvaIdent}}" disabled>
+                    <input type="text" id="tva2" class="fr-input" value="{{result_achat.tvaIdent}}" disabled>
                 </div>
             </div>
             <div class="input-grp" style="flex-basis:25%">
@@ -110,6 +110,12 @@
                     <textarea rows="5" cols="30" class="fr-input" id="obs"
                         disabled>{{result_achat.observations}}</textarea>
                 </div>
+                {% if result_achat.etatAchat == 1 %}
+                <div class="d-flex flex-column w-100">
+                    <label for="com_annul" class="fr-label">Commentaire annulation</label>
+                    <input class="fr-input" id="com_annul" disabled value="{{ result_achat.commentaireAnnulation }}">
+                </div>
+                {% endif %}
                 <input class="fr-input hidden" size="20" type="text" id="ejbox" name="ej" value="14{{ result_achat.numeroEj | slice(2) }}" required minlength="10" maxlength="10" data-valid-achat-target="ej">
                 <input class="fr-input hidden" type="text" id="valInt" value="{{ result_achat.dateValidInter | join('') | date('d/m/y') }}" disabled>
                 <input class="fr-input hidden"  type="text" id="ejmarche" name="ejm" value="{{ result_achat.numeroEjMarche}}">
@@ -119,6 +125,7 @@
                 <input class="fr-input hidden" type="text" id="four" value="{{ result_achat.numSiret.nomFournisseur}}" disabled>
                 <input class="fr-input hidden" type="text" id="ej2" value="{{ result_achat.numeroEjMarche}}" disabled>
                 <input class="fr-input hidden" type="text" id="numM" value="{{ result_achat.numeroMarche}}" disabled>
+                <input type="text" id="tva"  class="fr-input hidden" value="{{result_achat.tvaIdent.tvaTaux}}" disabled>
                 <input class="fr-input hidden" size="15" type="text" id="notbox" name="not" value="{{ result_achat.dateNotification | join('') | date('d/m/y') }}">
             </div>
             <div class="sub-btn d-flex justify-content-between align-items-centers">
