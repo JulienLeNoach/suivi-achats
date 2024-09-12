@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -35,7 +36,24 @@ class CPVController extends AbstractController
         $this->importCPV = $importCPV;
 
     }
-
+    #[Route('/update_all_cpv', name: 'update_all_cpv', methods: ['POST'])]
+    public function updateAllCpv(Request $request, CPVRepository $cpvRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Récupérer les données envoyées par la requête
+        $data = json_decode($request->getContent(), true);
+        $newAmount = $data['amount'];
+    
+        // Mettre à jour tous les CPV avec le montant donné
+        $cpvs = $cpvRepository->findAll();
+        foreach ($cpvs as $cpv) {
+            $cpv->setMtCpvAuto($newAmount);
+            $entityManager->persist($cpv);
+        }
+    
+        $entityManager->flush();
+    
+        return new JsonResponse(['success' => true]);
+    }
     #[Route('/', name: 'cpv', methods: ['GET','POST'])]
     public function index(CPVRepository $cPVRepository, Request $request,Security $security, PaginatorInterface $paginator): Response
     {
@@ -135,14 +153,6 @@ class CPVController extends AbstractController
 
         return $this->redirectToRoute('cpv', [], Response::HTTP_SEE_OTHER);
     }
-    // /**
-    //  * @Route("/import-excel", name="import_excel")
-    //  */
-    // public function importExcel(Request $request): Response
-    // {
-       
-
-    //     return $this->render('import_excel.html.twig', [
-    //     ]);
-    // }
+ 
+    
 }
