@@ -104,6 +104,8 @@ class CPVRepository extends ServiceEntityRepository
         ->from('App\Entity\Achat', 'achat')
         ->join('achat.code_cpv', 'cpv')
         ->where('cpv.id = :cpvId')
+        ->andWhere('achat.etat_achat IN (:statuses)')
+        ->setParameter('statuses', [0, 2])
         ->andWhere('YEAR(achat.date_saisie) = :year')
         ->setParameter('cpvId', $cpvId)
         ->setParameter('year', $year);
