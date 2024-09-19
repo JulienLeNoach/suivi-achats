@@ -186,7 +186,7 @@ class CRAnnuelType extends AbstractType
                 'mapped' => false,
                 'attr' => ['class' => 'hidden'],  
 
-                'label' => 'Délai pour Transmissions (en jours)',
+                'label' => false,
                 'empty_data' => 5, // Valeur par défaut
                 'data' => 5, // Valeur par défaut
 
@@ -196,7 +196,7 @@ class CRAnnuelType extends AbstractType
                 'mapped' => false,
                 'attr' => ['class' => 'hidden'],  
 
-                'label' => 'Délai pour Traitement (en jours)',
+                'label' => false,
                 'empty_data' => 3, // Valeur par défaut
                 'data' => 3, // Valeur par défaut
 
@@ -205,8 +205,8 @@ class CRAnnuelType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'attr' => ['class' => 'hidden'],  
-
-                'label' => 'Délai pour Notifications (en jours)',
+                
+                'label' => false,
                 'empty_data' => 5, // Valeur par défaut
                 'data' => 5, // Valeur par défaut
 
@@ -216,7 +216,7 @@ class CRAnnuelType extends AbstractType
                 'mapped' => false,
                 'attr' => ['class' => 'hidden'],  
 
-                'label' => 'Délai total (en jours)',
+                'label' => false,
                 'empty_data' => 15, // Valeur par défaut
                 'data' => 15, // Valeur par défaut
 

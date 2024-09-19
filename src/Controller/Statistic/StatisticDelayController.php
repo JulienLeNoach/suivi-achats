@@ -41,10 +41,7 @@ class StatisticDelayController extends AbstractController
     
         if ($form->isSubmitted() && $form->isValid()) {
             // Récupération des valeurs de délai saisies
-            $delaiTransmissions = $form->get('delai_transmissions')->getData() ?? 5; // Valeur par défaut 5 si null
-            $delaiTraitement = $form->get('delai_traitement')->getData() ?? 3; // Valeur par défaut 3 si null
-            $delaiNotifications = $form->get('delai_notifications')->getData() ?? 5; // Valeur par défaut 5 si null
-            $delaiTotal = $form->get('delai_total')->getData() ?? 15; // Valeur par défaut 15 si null
+            
     
             $achats_delay = $this->achatRepository->getYearDelayDiff($form);
             $achats = $this->statisticDelayService->getDelayPerMonth($achats_delay);

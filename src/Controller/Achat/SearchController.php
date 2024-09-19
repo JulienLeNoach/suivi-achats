@@ -176,14 +176,13 @@ public function valid(Request $request, $id, SessionInterface $session): Respons
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-        if ($form->get('Valider')->isClicked()) {
             $this->entityManager->getRepository(Achat::class)->valid($request, $id);
         
             $this->entityManager->flush();
             $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé \n\n Computation actuel du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpvMt['computation'] . "€ \n\n Reliquat actuel du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€");
 
             return $this->redirect("/search");
-        }
+        
     }
 
     return $this->render('achat/valid_achat.html.twig', [

@@ -68,12 +68,7 @@ function (_Controller) {
 
             }
           },
-          plugins: {
-            title: {
-              display: true,
-              text: 'Custom Chart Title'
-            }
-          }
+          plugins: {}
         }
       });
       new _auto["default"](ctxBudget, {

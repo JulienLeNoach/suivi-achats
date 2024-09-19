@@ -31,10 +31,7 @@ export default class extends Controller {
                     }
                 },
                 plugins: {
-                    title: {
-                        display: true,
-                        text: 'Custom Chart Title',
-                    }
+
                 }
             }
         });
