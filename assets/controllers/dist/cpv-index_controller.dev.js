@@ -64,8 +64,13 @@ function (_Controller) {
       }); // Sauvegarder le nouveau montant pour tous les CPV
 
       saveCpvAmount.addEventListener('click', function () {
-        var newAmount = document.getElementById('newCpvAmount').value;
-        console.log(newAmount); // Envoie de la requête pour mettre à jour tous les CPV
+        var newAmount = document.getElementById('newCpvAmount').value; // Vérification que l'utilisateur a bien entré une valeur
+
+        if (newAmount === '') {
+          alert('Veuillez entrer un montant.');
+          return;
+        } // Envoie de la requête pour mettre à jour tous les CPV
+
 
         fetch('/cpv/update_all_cpv', {
           method: 'POST',
@@ -76,15 +81,24 @@ function (_Controller) {
             amount: newAmount
           })
         }).then(function (response) {
+          // Ajout d'un contrôle pour s'assurer que la réponse est bien au format JSON
+          if (!response.ok) {
+            throw new Error('Erreur serveur lors de la mise à jour.');
+          }
+
           return response.json();
         }).then(function (data) {
+          console.log('Réponse serveur:', data); // Ajout d'un log pour vérifier la réponse
+
           if (data.success) {
-            window.location.reload(); // Actualiser la page après la mise à jour
+            // Recharger la page uniquement en cas de succès
+            window.location.reload();
           } else {
             alert('Erreur lors de la mise à jour');
           }
         })["catch"](function (error) {
-          return console.error('Erreur:', error);
+          console.error('Erreur:', error);
+          alert('Erreur lors de la mise à jour');
         });
       });
     }

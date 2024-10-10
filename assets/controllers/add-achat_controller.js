@@ -16,8 +16,47 @@ export default class extends Controller {
         this.setupDateValidation();
         this.setupTvaCalculation();
         this.setupTypeMarcheVisibility();
-    }
+        this.colorizeOptions(); // Appel pour appliquer la colorisation initialement
 
+    }
+    colorizeOptions() {
+        function colorizeOptions() {
+            // Sélectionner tous les div avec l'attribut aria-disabled="true" pour les coloriser en rouge
+            const disabledDivs = document.querySelectorAll('div[aria-disabled="true"]');
+
+            // Boucler sur les divs désactivés et appliquer le style rouge
+            disabledDivs.forEach((div) => {
+                div.style.color = 'red'; // Coloriser en rouge les éléments désactivés
+            });
+
+            // Sélectionner tous les div avec le rôle option pour vérifier s'ils ont atteint le premier seuil
+            const allDivs = document.querySelectorAll('div[role="option"]');
+
+            allDivs.forEach((div) => {
+                const textContent = div.textContent || div.innerText;
+                // Si le texte contient "Premier seuil atteint", coloriser en orange
+                if (textContent.includes('Premier seuil atteint')) {
+                    div.style.color = 'orange'; // Coloriser en orange les éléments ayant atteint le premier seuil
+                }
+            });
+        }
+
+        // Observer les mutations dans le DOM pour détecter les changements
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    colorizeOptions(); // Appeler la fonction lorsque des éléments sont ajoutés
+                }
+            });
+        });
+
+        // Configurer l'observation du body pour suivre les changements dans l'arborescence DOM
+        const config = { childList: true, subtree: true };
+        observer.observe(document.body, config);
+
+        // Appel initial pour coloriser les éléments déjà présents
+        colorizeOptions();
+    }
     setupTvaCalculation() {
         if (this.montantAchatTarget) {
             this.montantAchatTarget.addEventListener('input', this.calculateTva.bind(this));
@@ -30,18 +69,6 @@ export default class extends Controller {
         // Calcul initial si une option est pré-sélectionnée
         this.calculateTva();
     }
-
-    calculateTva() {
-        const montantAchat = parseFloat(this.montantAchatTarget.value) || 0;
-        const selectedTvaOption = this.tvaIdentTarget.selectedOptions[0];
-        const tvaText = selectedTvaOption ? selectedTvaOption.textContent : '';
-        const tvaPercentageMatch = tvaText.match(/(\d+\.?\d*)/);
-        const tvaPercentage = tvaPercentageMatch ? parseFloat(tvaPercentageMatch[0]) : 0;
-        const montantTtc = montantAchat + (montantAchat * tvaPercentage / 100);
-
-        document.getElementById('montant-tcc').innerText = ` / ${montantTtc.toFixed(2)} TTC`;
-    }
-
     observeOptions() {
         const selectContainer = document.querySelector('#add_achat_code_cpv_autocomplete');
 
@@ -62,19 +89,21 @@ export default class extends Controller {
             this.disableInvalidOptions();
         }
     }
+    calculateTva() {
+        const montantAchat = parseFloat(this.montantAchatTarget.value) || 0;
+        const selectedTvaOption = this.tvaIdentTarget.selectedOptions[0];
+        const tvaText = selectedTvaOption ? selectedTvaOption.textContent : '';
+        const tvaPercentageMatch = tvaText.match(/(\d+\.?\d*)/);
+        const tvaPercentage = tvaPercentageMatch ? parseFloat(tvaPercentageMatch[0]) : 0;
+        const montantTtc = montantAchat + (montantAchat * tvaPercentage / 100);
 
-    disableInvalidOptions() {
-        const options = document.querySelectorAll('div[data-selectable][role="option"]');
-        options.forEach((option) => {
-            const textContent = option.textContent || option.innerText;
-            if (textContent.includes('Utilisation du CPV concerné impossible')) {
-                option.setAttribute('aria-disabled', 'true');
-                option.style.pointerEvents = 'none'; // Empêcher la sélection
-                option.style.backgroundColor = '#f0f0f0'; // Indiquer l'option désactivée
-                option.style.color = 'gray'; // Indiquer l'option désactivée
-            }
-        });
+        document.getElementById('montant-tcc').innerText = ` / ${montantTtc.toFixed(2)} TTC`;
     }
+
+
+    
+
+
 
     setupDateValidation() {
         if (this.dateCommandeChorusTarget) {
@@ -121,14 +150,23 @@ export default class extends Controller {
     }
 
     toggleMarcheFieldsVisibility() {
-        const selectedValue = this.typeMarcheTarget.querySelector('input[type="radio"]:checked').value;
-
-        if (selectedValue === '0') { // Si 'MABC' est sélectionné
-            this.numeroMarcheTarget.closest('.form-group').classList.remove('hidden');
-            this.numeroEjMarcheTarget.closest('.form-group').classList.remove('hidden');
+        const selectedRadio = this.typeMarcheTarget.querySelector('input[type="radio"]:checked');
+    
+        if (selectedRadio) {
+            const selectedValue = selectedRadio.value;
+    
+            if (selectedValue === '0') { // Si 'MABC' est sélectionné
+                this.numeroMarcheTarget.closest('.form-group').classList.remove('hidden');
+                this.numeroEjMarcheTarget.closest('.form-group').classList.remove('hidden');
+            } else {
+                this.numeroMarcheTarget.closest('.form-group').classList.add('hidden');
+                this.numeroEjMarcheTarget.closest('.form-group').classList.add('hidden');
+            }
         } else {
+            // Aucune option n'est cochée, masquer les champs par défaut
             this.numeroMarcheTarget.closest('.form-group').classList.add('hidden');
             this.numeroEjMarcheTarget.closest('.form-group').classList.add('hidden');
         }
     }
+    
 }

@@ -40,6 +40,7 @@ function (_Controller) {
     key: "connect",
     value: function connect() {
       this.attachEventListeners();
+      this.colorizeOptions(); // Appel pour appliquer la colorisation initialement
     }
   }, {
     key: "attachEventListeners",
@@ -154,6 +155,40 @@ function (_Controller) {
           console.error('Erreur:', error);
         });
       };
+    }
+  }, {
+    key: "colorizeOptions",
+    value: function colorizeOptions() {
+      function colorizeOptions() {
+        // Sélectionner tous les div avec le rôle option pour vérifier s'ils ont atteint le premier seuil
+        var allDivs = document.querySelectorAll('div[role="option"]');
+        allDivs.forEach(function (div) {
+          var textContent = div.textContent || div.innerText; // Si le texte contient "Premier seuil atteint", coloriser en orange
+
+          if (textContent.includes('Premier seuil atteint')) {
+            div.style.color = 'orange'; // Coloriser en orange les éléments ayant atteint le premier seuil
+          } else if (textContent.includes('Deuxieme seuil atteint')) {
+            div.style.color = 'red';
+          }
+        });
+      } // Observer les mutations dans le DOM pour détecter les changements
+
+
+      var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            colorizeOptions(); // Appeler la fonction lorsque des éléments sont ajoutés
+          }
+        });
+      }); // Configurer l'observation du body pour suivre les changements dans l'arborescence DOM
+
+      var config = {
+        childList: true,
+        subtree: true
+      };
+      observer.observe(document.body, config); // Appel initial pour coloriser les éléments déjà présents
+
+      colorizeOptions();
     }
   }]);
 

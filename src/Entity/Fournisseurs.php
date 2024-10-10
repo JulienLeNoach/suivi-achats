@@ -17,11 +17,12 @@ class Fournisseurs
     private ?int $id = null;
 /**
  * @ORM\Column(length=255)
- * @Assert\Regex(
- *     pattern="/^\d{1,14}$/",
- *     message="Le numéro SIRET doit contenir uniquement des chiffres et avoir un maximum de 14 caractères."
+ * @Assert\Length(
+ *     max=14,
+ *     maxMessage="Le numéro SIRET doit avoir un maximum de 14 caractères."
  * )
  */
+
     #[ORM\Column(length: 255)]
     private ?string $num_siret = null;
 /**

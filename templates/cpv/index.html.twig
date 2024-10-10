@@ -11,7 +11,6 @@
 
     <div class='addAchat mt-5 p-3'>
         <span class="fr-icon-arrow-right-line ms-5" aria-hidden="true"></span>
-        <div class=" ms-5 blueF align-items-center justify-content-center d-flex">Saisir un nouveau CPV</div>
         <button class="fr-btn btn-achat ms-5"> 
             <a href="{{ path('app_c_p_v_new') }}" class="text-center">Ajouter un CPV</a>
         </button>
@@ -33,22 +32,51 @@
             <form method="get" action="{{ path('cpv') }}" class="d-flex flex-column">
                 <h6 class="d-flex w-50 blueF mt-3">
                     <input type="text" class="w-75 searchcrud" name="search" value="{{ searchTerm }}" placeholder="Rechercher par code ou libellé">
+                    <input type="hidden" name="perPage" value="{{ perPage }}">
+                    <input type="hidden" name="activeCpv" value="{{ activeCpv ? 'on' : '' }}">
                     <button type="submit" class="fr-btn btn-achat">Rechercher</button>
                 </h6>
             </form>
         </div>
-        <div>
-            <button id="modifyAllCpvBtn" class="fr-btn btn-achat">Modifier le montant autorisé de tous les CPV</button>
+        <div class="w-25">
+            <form method="get" action="{{ path('cpv') }}">
+                <label for="perPage" class="align-items-center vertical-align-middle justify-content-center d-inline-flex">Nombre par page:</label>
+                <select name="perPage" id="perPage" onchange="this.form.submit()">
+                    <option value="5" {% if perPage == 5 %}selected{% endif %}>5</option>
+                    <option value="10" {% if perPage == 10 %}selected{% endif %}>10</option>
+                    <option value="20" {% if perPage == 20 %}selected{% endif %}>20</option>
+                </select>
+                <label for="activeCpv" class="align-items-center vertical-align-middle justify-content-center d-inline-flex">CPV actifs uniquement :</label>
+                <input type="checkbox" id="activeCpv" name="activeCpv" {% if activeCpv %}checked{% endif %} onchange="this.form.submit()">
+                <input type="hidden" name="search" value="{{ searchTerm }}">
+            </form>
         </div>
-    </div>
 
+            <button id="modifyAllCpvBtn" class="fr-btn btn-achat">Modifier le montant autorisé de tous les CPV</button>
+    </div>
     <table>
         <thead>
             <tr>
-                <th>Code CPV</th>
-                <th>Libellé CPV</th>
-                <th>Montant CPV autorisé</th>
-                <th>État</th>
+                <th>Code CPV 
+                    <a href="{{ path('cpv', {'sortField': 'code_cpv', 'sortDirection': sortField == 'code_cpv' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage, 'activeCpv': activeCpv ? 'on' : null}) }}">
+                        <span class="fr-icon-filter-line" aria-hidden="true"></span>
+                    </a>
+                </th>
+                <th>Libellé CPV 
+                    <a href="{{ path('cpv', {'sortField': 'libelle_cpv', 'sortDirection': sortField == 'libelle_cpv' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage, 'activeCpv': activeCpv ? 'on' : null}) }}">
+                        <span class="fr-icon-filter-line" aria-hidden="true"></span>
+                    </a>
+                </th>
+                <th>Montant CPV autorisé 
+                    <a href="{{ path('cpv', {'sortField': 'mt_cpv_auto', 'sortDirection': sortField == 'mt_cpv_auto' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage, 'activeCpv': activeCpv ? 'on' : null}) }}">
+                        <span class="fr-icon-filter-line" aria-hidden="true"></span>
+                    </a>
+                </th>
+                <th>État 
+                    <a href="{{ path('cpv', {'sortField': 'etat_cpv', 'sortDirection': sortField == 'etat_cpv' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage, 'activeCpv': activeCpv ? 'on' : null}) }}">
+                        <span class="fr-icon-filter-line" aria-hidden="true"></span>
+                    </a>
+                </th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -73,7 +101,7 @@
     </table>
 
     <div class="pagination">
-        {{ knp_pagination_render(pagination,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{'pageParameterName': 'page', 'sortFieldParameterName': 'sortField', 'sortDirectionParameterName': 'sortDirection', 'routeParams': {'perPage': perPage, 'sortField': sortField, 'sortDirection': sortDirection}}) }}
+        {{ knp_pagination_render(pagination, '@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig') }}
     </div>
 </div>
 
@@ -87,7 +115,4 @@
     </div>
 </div>
 
-<style>
-
-</style>
 {% endblock %}

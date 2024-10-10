@@ -48,8 +48,8 @@
                     </div>
                     {% if app.user %}
                     <!-- Menu déroulant sur les 2 premiers éléments -->
-                    <nav class="fr-nav" id="navigation-773" role="navigation" aria-label="Menu principal">
-                        <ul class="fr-nav__list">
+                    <nav class="fr-nav " id="navigation-773" role="navigation" aria-label="Menu principal">
+                        <ul class=" ml-5 fr-nav__list " style="margin-left:75px;">
                             <li class="fr-nav__item"> <button class="fr-nav__btn" aria-expanded="false"
                                     aria-controls="menu-77"><a class="fr-nav__link" href="{{path('app_search')}}"
                                         target="_self">Achat</a></button>
@@ -153,12 +153,12 @@
                         <div class="fr-header__tools-links">
                             <ul class="fr-btns-group">
 
-                                <li>
+                                {# <li>
                                     <a class="fr-btn " href="{{path('app_account')}}"><span
                                             class="fr-icon-account-circle-fill" aria-hidden="true"></span>
                                         Mon Compte (
                                         {{ app.user.userIdentifier }}) </a>
-                                </li>
+                                </li> #}
                                 <li> <a class="fr-btn " href="{{path('app_logout')}}"><span class="fr-icon-lock-fill"
                                             aria-hidden="true"></span>
                                         Déconnexion</a>

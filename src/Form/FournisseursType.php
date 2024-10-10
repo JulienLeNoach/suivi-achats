@@ -34,9 +34,9 @@ class FournisseursType extends AbstractType
                     ->andWhere('u.code_service = :val')
                     ->setParameter('val', $user->getCodeService()->getId());
                 },
-                'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']])
-            ->add('num_siret',IntegerType::class,['attr' => ['class' => 'fr-input'], 
+                'attr' => ['class' => 'fr-input hidden'], 
+                'label_attr' => ['class' => 'fr-label hidden']])
+            ->add('num_siret',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'N° SIRET'])
             ->add('nom_fournisseur',TextType::class,['attr' => ['class' => 'fr-input'], 
@@ -63,7 +63,7 @@ class FournisseursType extends AbstractType
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Code client',
             'required'=>false])
-            ->add('num_chorus_fournisseur',IntegerType::class,['attr' => ['class' => 'fr-input'], 
+            ->add('num_chorus_fournisseur',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Numéro Chorus Fournisseur',
             'required'=>false])

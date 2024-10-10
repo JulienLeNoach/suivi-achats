@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use DateTime;
+use App\Entity\CPV;
 use App\Entity\Achat;
 use App\Factory\AchatFactory;
 use Doctrine\ORM\Query\Expr\Join;
@@ -682,6 +683,20 @@ public function getPMETopVal($form)
     }
     return $organizedResults;
 }
+public function getTotalAchatsForCPVByYear(CPV $cpv, int $year): float
+{
+    return (float) $this->createQueryBuilder('a')
+        ->select('SUM(a.montant_achat)')
+        ->andWhere('a.code_cpv = :cpv')
+        ->andWhere('YEAR(a.date_saisie) = :year')
+        ->andWhere('a.etat_achat IN (:states)')
+        ->setParameter('cpv', $cpv)
+        ->setParameter('year', $year)
+        ->setParameter('states', [0, 2]) // Filtrer les achats dont etat_achat = 0 ou 2
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+
 public function getTotalAchatUnder2K($form)
 {
     // Retrieve data from the form correctly

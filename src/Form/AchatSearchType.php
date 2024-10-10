@@ -3,15 +3,19 @@
 namespace App\Form;
 
 
+use App\Entity\CPV;
 use App\Entity\Achat;
 use App\Form\LibelleCpv;
 use App\Form\UOAutocompleteField;
+use App\Repository\CPVRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use App\Form\FormationsAutocompleteField;
 use App\Form\FournisseursAutocompleteField;
 use App\Form\UtilisateursAutocompleteField;
+use Proxies\__CG__\App\Entity\CPV as EntityCPV;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -138,13 +142,52 @@ class AchatSearchType extends AbstractType
                 'attr' => ['class' => 'fr-input'],  
                 'label_attr' => ['class' => 'fr-label']
             ])
-            ->add('code_cpv', LibelleCpv::class, [  
+            
+            ->add('code_cpv', EntityType::class, [
+                'class' => CPV::class,
                 'required' => false,
                 'label' => false,
-                'attr' => ['class' => 'fr-input'],  
-                'label_attr' => ['class' => 'fr-label']
-
+                'attr' => ['class' => 'fr-input'],
+                'label_attr' => ['class' => 'fr-label'],
+                'autocomplete' => true,
+                'query_builder' => function (CPVRepository $cpvRepository) {
+                    return $cpvRepository->createQueryBuilder('cpv')
+                                         ->setMaxResults(10);  // Limite à 10 résultats
+                },
+                'choice_label' => function (CPV $cpv) use ($options) {
+                    $entityManager = $options['em'];
+                    $achatRepository = $entityManager->getRepository(Achat::class);
+                    $totalAchats = $achatRepository->getTotalAchatsForCPVByYear($cpv, date('Y'));
+            
+                    // Construire le libellé de base
+                    $label = $cpv->getLibelleCpv() . ' - Total achats : ' . $totalAchats . ' €';
+            
+                    // Ajouter le texte d'état selon les seuils
+                    if ($totalAchats > $cpv->getMtCpvAuto()) {
+                        $label .= ' - Deuxieme seuil atteint';
+                    } elseif ($totalAchats >= $cpv->getPremierSeuil()) {
+                        $label .= ' - Premier seuil atteint';
+                    }
+            
+                    return $label;
+                },
+                'choice_attr' => function (CPV $cpv) use ($options) {
+                    $entityManager = $options['em'];
+                    $achatRepository = $entityManager->getRepository(Achat::class);
+                    $totalAchats = $achatRepository->getTotalAchatsForCPVByYear($cpv, date('Y'));
+            
+                    // // Désactiver l'option si le montant total des achats dépasse le montant autorisé
+                    // if ($totalAchats > $cpv->getMtCpvAuto()) {
+                    //     return [
+                    //         'disabled' => 'true',
+                    //     ];
+                    // }
+            
+                    return [];
+                }
             ])
+            
+            
 
             ->add('code_formation', FormationsAutocompleteField::class, [  
                 'required' => false,
@@ -243,7 +286,7 @@ class AchatSearchType extends AbstractType
 $resolver->setDefaults([
         'data_class' => Achat::class,
         'allAchats' => [],
-        // 'cpv' => [],
+        'em' => $this->entityManager // Passer l'EntityManager aux options
     ]);
     $resolver->setAllowedTypes('allAchats', 'array');
     }

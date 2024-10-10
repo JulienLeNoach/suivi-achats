@@ -39,8 +39,8 @@ class UtilisateursType extends AbstractType
                     ->andWhere('u.code_service = :val')
                     ->setParameter('val', $user->getCodeService()->getId());
                 },
-                'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']])
+                'attr' => ['class' => 'fr-input hidden'], 
+                'label_attr' => ['class' => 'fr-label hidden']])
             ->add('nom_connexion',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Nom de connexion'])

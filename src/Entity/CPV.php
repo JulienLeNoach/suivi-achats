@@ -1,61 +1,35 @@
 <?php
 
+// src/Entity/CPV.php
+
 namespace App\Entity;
 
-use App\Repository\CPVRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\CPVRepository;
 
 #[ORM\Entity(repositoryClass: CPVRepository::class)]
-/**
- * @ORM\Entity(repositoryClass="App\Repository\CPVRepository")
- * @ORM\Table(name="cpv", uniqueConstraints={@ORM\UniqueConstraint(name="unique_code_cpv", columns={"code_cpv"})})
- */
 class CPV
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 8, nullable: true)]
-    #[Assert\Regex(
-        pattern: "/^[a-zA-Z0-9]{1,8}$/",
-        message: "Le champ doit contenir des chiffres et/ou des lettres et avoir une longueur maximale de 8 caractères."
-    )]
     private ?string $code_cpv = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: "Le libellé CPV ne doit pas dépasser 255 caractères."
-    )]
     private ?string $libelle_cpv = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $etat_cpv = null;
 
-    #[ORM\OneToMany(mappedBy: 'code_cpv', targetEntity: Achat::class)]
-    private Collection $achats;
-
-    #[ORM\ManyToOne(inversedBy: 'CPVs')]
-    private ?Services $code_service = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Regex(
-        pattern: "/^\d{1,10}([.,]\d+)?$/",
-        message: "Le champ doit contenir uniquement des chiffres positifs et peut inclure un point ou une virgule pour les décimales, avec un maximum de 10 chiffres."
-    )]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $mt_cpv_auto = null;
 
-
-    public function __construct()
-    {
-        $this->achats = new ArrayCollection();
-    }
+    #[ORM\Column(type: 'float', nullable: true)]  // Ajout du champ premier_seuil
+    private ?float $premier_seuil = null;
 
     public function getId(): ?int
     {
@@ -95,44 +69,6 @@ class CPV
         return $this;
     }
 
-    /**
-     * @return Collection<int, Achat>
-     */
-    public function getAchats(): Collection
-    {
-        return $this->achats;
-    }
-
-    public function addAchat(Achat $achat): self
-    {
-        if (!$this->achats->contains($achat)) {
-            $this->achats->add($achat);
-            $achat->setCodeCpv($this);
-        }
-        return $this;
-    }
-
-    public function removeAchat(Achat $achat): self
-    {
-        if ($this->achats->removeElement($achat)) {
-            if ($achat->getCodeCpv() === $this) {
-                $achat->setCodeCpv(null);
-            }
-        }
-        return $this;
-    }
-
-    public function getCodeService(): ?Services
-    {
-        return $this->code_service;
-    }
-
-    public function setCodeService(?Services $code_service): self
-    {
-        $this->code_service = $code_service;
-        return $this;
-    }
-
     public function getMtCpvAuto(): ?float
     {
         return $this->mt_cpv_auto;
@@ -144,24 +80,21 @@ class CPV
         return $this;
     }
 
-
-
-    public function __toString()
-{
-    $formatted_string = $this->code_cpv . ' - ' . $this->libelle_cpv . ' - ' . (40000-$this->mt_cpv_auto) . '€';
-    $style = '';
-    
-    if ((40000-$this->mt_cpv_auto) >= 0 && (40000-$this->mt_cpv_auto) <= 29999) {
-        $style = 'style="color: green;"';
-    } elseif ((40000-$this->mt_cpv_auto) >= 30000 && (40000-$this->mt_cpv_auto) <= 39999) {
-        $style = 'style="color: orange;"';
-    } elseif ((40000-$this->mt_cpv_auto) > 39999) {
-        $style = 'style="color: red;"';
-        $formatted_string .= ' - Utilisation du CPV concerné impossible';
+    public function getPremierSeuil(): ?float
+    {
+        return $this->premier_seuil;
     }
-    
-    return "<div $style>" . $formatted_string . "</div>";
-}
 
+    public function setPremierSeuil(?float $premier_seuil): self
+    {
+        $this->premier_seuil = $premier_seuil;
+        return $this;
+    }
+
+    // Méthode __toString modifiée
+    public function __toString(): string
+    {
+        return $this->code_cpv . ' - '. $this->libelle_cpv ;
+    }
 }
 

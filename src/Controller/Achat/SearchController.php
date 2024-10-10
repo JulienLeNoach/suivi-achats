@@ -194,30 +194,29 @@ public function valid(Request $request, $id, SessionInterface $session): Respons
 
 
 #[Route('/annul_achat/{id}', name: 'annul_achat', methods: ['POST'])]
-public function cancel($id, Request $request, SessionInterface $session): JsonResponse
+public function cancel($id, Request $request, SessionInterface $session, AchatRepository $achatRepository): JsonResponse
 {
     $data = json_decode($request->getContent(), true);
     $comment = $data['comment'] ?? null;
 
+    // Trouver l'achat correspondant à l'ID
     $achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
     if (!$achat) {
         return new JsonResponse(['success' => false, 'message' => 'Achat non trouvé'], 404);
     }
 
+    // Récupérer le CPV associé à l'achat (mais on ne touche pas à mt_cpv_auto)
     $cpv = $achat->getCodeCpv();
 
-    // Augmenter le montant du CPV avec le montant de l'achat annulé
-    $cpv->setMtCpvAuto($cpv->getMtCpvAuto() + $achat->getMontantAchat());
-    $this->entityManager->persist($cpv);
+    // Annuler l'achat (sans modifier mt_cpv_auto)
+    $achat->setEtatAchat('1');  // Définir l'état de l'achat comme annulé
+    $achat->setCommentaireAnnulation($comment);  // Ajouter le commentaire d'annulation
+    $achat->setDateAnnulation(new \DateTime());  // Ajouter la date d'annulation
 
-    // Annuler l'achat
-    $achat->setEtatAchat('1');
-    $achat->setCommentaireAnnulation($comment); // Sauvegarder le commentaire
-    $achat->setDateAnnulation(new \DateTime()); // Ajouter la date d'annulation
-
+    // Sauvegarder les modifications en base de données
     $this->entityManager->flush();
 
-    $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . ' annulé. Montant restant du CPV : ' . $cpv->getMtCpvAuto() . '€.');
+    $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . ' annulé avec succès.');
 
     // Redirection après annulation
     return new JsonResponse(['success' => true, 'redirectUrl' => $session->get('current_url')]);
@@ -226,20 +225,31 @@ public function cancel($id, Request $request, SessionInterface $session): JsonRe
 
 
 
+
 #[Route('/reint_achat/{id}', name: 'reint_achat')] //V2
-public function reint($id, Request $request, SessionInterface $session): Response
+public function reint($id, Request $request, SessionInterface $session, AchatRepository $achatRepository, CPVRepository $cpvRepository): Response
 {
     $currentUrl = $session->get('current_url');
     $achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
     $cpv = $achat->getCodeCpv();
     $montantAchat = $achat->getMontantAchat();
 
-    // Vérifier si la réintégration ne rendrait pas le montant du CPV négatif
-    if ($cpv->getMtCpvAuto() < $montantAchat) {
-        $this->addFlash('error', 'L\'achat ne peut être réintégré car le montant du CPV disponible est insuffisant.');
+    // Récupérer le montant total des achats pour ce CPV sur l'année en cours
+    $currentYear = (new \DateTime())->format('Y');
+    $totalAchats = $achatRepository->getTotalAchatsForCPVByYear($cpv, $currentYear);
+
+    // Obtenir le seuil autorisé pour le CPV
+    $montant_cpv_auto = $cpv->getMtCpvAuto();
+
+    // Calculer le nouveau total après réintégration
+    $nouveau_total_cpv = $totalAchats + $montantAchat;
+
+    // Vérifier si la réintégration dépasse le montant autorisé
+    if ($nouveau_total_cpv > $montant_cpv_auto) {
+        $this->addFlash('error', 'L\'achat ne peut être réintégré car le montant total des achats pour ce CPV dépasse le montant autorisé (' . $montant_cpv_auto . '€).');
     } else {
         // Mettre à jour le montant du CPV après réintégration
-        $cpv->setMtCpvAuto($cpv->getMtCpvAuto() - $montantAchat);
+        $cpv->setMtCpvAuto($montant_cpv_auto - $montantAchat);
         $this->entityManager->persist($cpv);
         $this->entityManager->flush();
 
@@ -252,55 +262,60 @@ public function reint($id, Request $request, SessionInterface $session): Respons
 }
 
 
+
 #[Route('/edit_achat/{id}', name: 'edit_achat')] //V2
-    public function edit(Request $request, $id, Achat $achat, AchatRepository $achatRepository, SessionInterface $session): Response
-    {
-        $currentUrl = $session->get('current_url');
-        $form = $this->createForm(EditAchatType::class, $achat);
-        $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-        $montant_achat_initial = $result_achat->getMontantAchat(); 
-        $form->handleRequest($request);
+public function edit(Request $request, $id, Achat $achat, AchatRepository $achatRepository, CPVRepository $cpvRepository, SessionInterface $session): Response
+{
+    $currentUrl = $session->get('current_url');
+    $form = $this->createForm(EditAchatType::class, $achat);
+    $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
 
-        $cpv = $result_achat->getCodeCpv();
-        $result_cpv = $this->entityManager->getRepository(CPV::class)->showCPVwithId($cpv);
-        $somme_montants_cpv = $result_cpv['somme_montants'];
+    // Montant initial de l'achat
+    $montant_achat_initial = $result_achat->getMontantAchat();
 
-        // Récupérer l'année en cours
-        $currentYear = (new \DateTime())->format('Y');
+    // Récupérer le CPV lié à l'achat
+    $cpv = $result_achat->getCodeCpv();
+    $cpvId = $cpv->getId();
 
-        // Vérifier si l'année de date_saisie est l'année en cours
-        $dateSaisieYear = $result_achat->getDateSaisie()->format('Y');
-        $updateMontantCPV = $dateSaisieYear === $currentYear;
+    // Calculer le montant total des achats pour ce CPV pour l'année en cours
+    $currentYear = (new \DateTime())->format('Y');
+    $totalAchats = $achatRepository->getTotalAchatsForCPVByYear($cpv, $currentYear);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Vérifier si l'année de date_saisie correspond à l'année en cours
-            if ($updateMontantCPV) {
-                $montant_achat_modifie = $form->get('montant_achat')->getData();
+    // Obtenir le seuil autorisé pour le CPV
+    $montant_cpv_auto = $cpv->getMtCpvAuto();
 
-                // Vérifier si la modification du montant fait dépasser 40 000€
-                if ($somme_montants_cpv - $montant_achat_initial + $montant_achat_modifie > 40000) {
-                    $this->addFlash('error', 'L\'achat ne peut être modifié car le montant du CPV actuel ne peut excéder 40 000€.');
-                } else {
-                    // Mise à jour du CPV
-                    $cpv->setMtCpvAuto(40000 - ($somme_montants_cpv - $montant_achat_initial + $montant_achat_modifie));
-                    $this->entityManager->persist($cpv);
-                }
-            }
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Récupérer le nouveau montant modifié de l'achat
+        $montant_achat_modifie = $form->get('montant_achat')->getData();
 
-            // Mise à jour de l'achat en base de données
+        // Calculer le nouveau total d'achats si le montant est modifié
+        $nouveau_total_cpv = $totalAchats - $montant_achat_initial + $montant_achat_modifie;
+
+        // Vérifier si le montant total des achats dépasse le seuil autorisé
+        if ($nouveau_total_cpv > $montant_cpv_auto) {
+            $this->addFlash('error', 'Modification impossible : le total des achats pour ce CPV dépasse le montant autorisé (' . $montant_cpv_auto . ' €).');
+        } else {
+            // Sauvegarder les modifications de l'achat
             $achatRepository->edit($achat, true);
 
             // Sauvegarde de toutes les modifications
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . " modifié avec succès.");
-
             return $this->redirect($currentUrl);
         }
-
-        return $this->render('achat/edit_achat_id.html.twig', [
-            'achat' => $achat,
-            'form' => $form->createView(),
-        ]);
     }
+
+    return $this->render('achat/edit_achat_id.html.twig', [
+        'achat' => $achat,
+        'form' => $form->createView(),
+        'cpvMt' => [
+            'totalAchats' => $totalAchats,
+            'mt_cpv_auto' => $montant_cpv_auto
+        ], // Passer les infos CPV à la vue
+    ]);
+}
+
+
 }

@@ -34,8 +34,8 @@ class FormationsType extends AbstractType
                     ->andWhere('u.code_service = :val')
                     ->setParameter('val', $user->getCodeService()->getId());
                 },
-                'attr' => ['class' => 'fr-input'], 
-                'label_attr' => ['class' => 'fr-label']])
+                'attr' => ['class' => 'fr-input hidden'], 
+                'label_attr' => ['class' => 'fr-label hidden']])
             ->add('code_formation',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Code formation'])

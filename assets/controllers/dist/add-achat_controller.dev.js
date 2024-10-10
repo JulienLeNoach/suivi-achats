@@ -52,6 +52,45 @@ function (_Controller) {
       this.setupDateValidation();
       this.setupTvaCalculation();
       this.setupTypeMarcheVisibility();
+      this.colorizeOptions(); // Appel pour appliquer la colorisation initialement
+    }
+  }, {
+    key: "colorizeOptions",
+    value: function colorizeOptions() {
+      function colorizeOptions() {
+        // Sélectionner tous les div avec l'attribut aria-disabled="true" pour les coloriser en rouge
+        var disabledDivs = document.querySelectorAll('div[aria-disabled="true"]'); // Boucler sur les divs désactivés et appliquer le style rouge
+
+        disabledDivs.forEach(function (div) {
+          div.style.color = 'red'; // Coloriser en rouge les éléments désactivés
+        }); // Sélectionner tous les div avec le rôle option pour vérifier s'ils ont atteint le premier seuil
+
+        var allDivs = document.querySelectorAll('div[role="option"]');
+        allDivs.forEach(function (div) {
+          var textContent = div.textContent || div.innerText; // Si le texte contient "Premier seuil atteint", coloriser en orange
+
+          if (textContent.includes('Premier seuil atteint')) {
+            div.style.color = 'orange'; // Coloriser en orange les éléments ayant atteint le premier seuil
+          }
+        });
+      } // Observer les mutations dans le DOM pour détecter les changements
+
+
+      var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            colorizeOptions(); // Appeler la fonction lorsque des éléments sont ajoutés
+          }
+        });
+      }); // Configurer l'observation du body pour suivre les changements dans l'arborescence DOM
+
+      var config = {
+        childList: true,
+        subtree: true
+      };
+      observer.observe(document.body, config); // Appel initial pour coloriser les éléments déjà présents
+
+      colorizeOptions();
     }
   }, {
     key: "setupTvaCalculation",
@@ -66,17 +105,6 @@ function (_Controller) {
 
 
       this.calculateTva();
-    }
-  }, {
-    key: "calculateTva",
-    value: function calculateTva() {
-      var montantAchat = parseFloat(this.montantAchatTarget.value) || 0;
-      var selectedTvaOption = this.tvaIdentTarget.selectedOptions[0];
-      var tvaText = selectedTvaOption ? selectedTvaOption.textContent : '';
-      var tvaPercentageMatch = tvaText.match(/(\d+\.?\d*)/);
-      var tvaPercentage = tvaPercentageMatch ? parseFloat(tvaPercentageMatch[0]) : 0;
-      var montantTtc = montantAchat + montantAchat * tvaPercentage / 100;
-      document.getElementById('montant-tcc').innerText = " / ".concat(montantTtc.toFixed(2), " TTC");
     }
   }, {
     key: "observeOptions",
@@ -105,21 +133,15 @@ function (_Controller) {
       }
     }
   }, {
-    key: "disableInvalidOptions",
-    value: function disableInvalidOptions() {
-      var options = document.querySelectorAll('div[data-selectable][role="option"]');
-      options.forEach(function (option) {
-        var textContent = option.textContent || option.innerText;
-
-        if (textContent.includes('Utilisation du CPV concerné impossible')) {
-          option.setAttribute('aria-disabled', 'true');
-          option.style.pointerEvents = 'none'; // Empêcher la sélection
-
-          option.style.backgroundColor = '#f0f0f0'; // Indiquer l'option désactivée
-
-          option.style.color = 'gray'; // Indiquer l'option désactivée
-        }
-      });
+    key: "calculateTva",
+    value: function calculateTva() {
+      var montantAchat = parseFloat(this.montantAchatTarget.value) || 0;
+      var selectedTvaOption = this.tvaIdentTarget.selectedOptions[0];
+      var tvaText = selectedTvaOption ? selectedTvaOption.textContent : '';
+      var tvaPercentageMatch = tvaText.match(/(\d+\.?\d*)/);
+      var tvaPercentage = tvaPercentageMatch ? parseFloat(tvaPercentageMatch[0]) : 0;
+      var montantTtc = montantAchat + montantAchat * tvaPercentage / 100;
+      document.getElementById('montant-tcc').innerText = " / ".concat(montantTtc.toFixed(2), " TTC");
     }
   }, {
     key: "setupDateValidation",
@@ -175,13 +197,21 @@ function (_Controller) {
   }, {
     key: "toggleMarcheFieldsVisibility",
     value: function toggleMarcheFieldsVisibility() {
-      var selectedValue = this.typeMarcheTarget.querySelector('input[type="radio"]:checked').value;
+      var selectedRadio = this.typeMarcheTarget.querySelector('input[type="radio"]:checked');
 
-      if (selectedValue === '0') {
-        // Si 'MABC' est sélectionné
-        this.numeroMarcheTarget.closest('.form-group').classList.remove('hidden');
-        this.numeroEjMarcheTarget.closest('.form-group').classList.remove('hidden');
+      if (selectedRadio) {
+        var selectedValue = selectedRadio.value;
+
+        if (selectedValue === '0') {
+          // Si 'MABC' est sélectionné
+          this.numeroMarcheTarget.closest('.form-group').classList.remove('hidden');
+          this.numeroEjMarcheTarget.closest('.form-group').classList.remove('hidden');
+        } else {
+          this.numeroMarcheTarget.closest('.form-group').classList.add('hidden');
+          this.numeroEjMarcheTarget.closest('.form-group').classList.add('hidden');
+        }
       } else {
+        // Aucune option n'est cochée, masquer les champs par défaut
         this.numeroMarcheTarget.closest('.form-group').classList.add('hidden');
         this.numeroEjMarcheTarget.closest('.form-group').classList.add('hidden');
       }
