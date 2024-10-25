@@ -19,20 +19,23 @@ class UOAutocompleteField extends AbstractType
     {
         $this->security = $security;
     }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'placeholder' => 'Sélectionnez une unité organique', 
             'class' => UO::class,
-            //'choice_label' => 'name',
+
+            // Allow search on both code_uo and libelle_uo fields
+            'searchable_fields' => ['code_uo', 'libelle_uo'],
 
             'query_builder' => function(UORepository $uORepository) {
                 $user = $this->security->getUser();
-                return $uORepository->createQueryBuilder('u')->andWhere('u.code_service = :val')
-                ->andWhere('u.etat_uo = 1')
-                ->setParameter('val', $user->getCodeService()->getId());
+                return $uORepository->createQueryBuilder('u')
+                    ->andWhere('u.code_service = :val')
+                    ->andWhere('u.etat_uo = 1')
+                    ->setParameter('val', $user->getCodeService()->getId());
             },
-            //'security' => 'ROLE_SOMETHING',
         ]);
     }
 

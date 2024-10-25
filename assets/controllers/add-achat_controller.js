@@ -12,23 +12,83 @@ export default class extends Controller {
         this.numeroMarcheTarget = this.element.querySelector('[data-add-achat-target="numeroMarche"]');
         this.numeroEjMarcheTarget = this.element.querySelector('[data-add-achat-target="numeroEjMarche"]');
 
+        // Attache les écouteurs d'événements
         this.observeOptions();
         this.setupDateValidation();
         this.setupTvaCalculation();
         this.setupTypeMarcheVisibility();
-        this.colorizeOptions(); // Appel pour appliquer la colorisation initialement
-
+        this.colorizeOptions();
+        this.attachEventListeners();
     }
+
+    attachEventListeners() {
+        if (this.submitButtonTarget) {
+            this.submitButtonTarget.addEventListener('click', this.checkMontantBeforeSubmit.bind(this));
+        }
+
+        // Écouteurs pour la modale
+        document.getElementById('confirmValidation').addEventListener('click', this.confirmValidation.bind(this));
+        document.getElementById('cancelValidation').addEventListener('click', this.hideValidationModal.bind(this));
+        document.getElementById('closeValidationModal').addEventListener('click', this.hideValidationModal.bind(this));
+    }
+
+    checkMontantBeforeSubmit(event) {
+        // Calculer le montant TTC avant de vérifier
+        const montantTtc = this.calculateTva();
+        console.log(montantTtc);
+        // Vérifier si le montant TTC est inférieur à 2000 €
+        if (montantTtc < 2000) {
+            event.preventDefault(); // Empêche la soumission du formulaire
+            this.showValidationModal(); // Affiche la modale
+        }
+    }
+
+    showValidationModal() {
+        const modal = document.getElementById('validationModal');
+        modal.style.display = 'block';
+    }
+
+    hideValidationModal() {
+        const modal = document.getElementById('validationModal');
+        modal.style.display = 'none';
+    }
+
+    confirmValidation() {
+        const selectedOption = document.getElementById('validationSelect').value;
+        const customInput = document.getElementById('customValidationInput').value;
+    
+        if (selectedOption || customInput) {
+            const justifIdInput = document.createElement('input');
+            justifIdInput.type = 'hidden';
+            justifIdInput.name = 'justif_id';
+            justifIdInput.value = selectedOption ? selectedOption : "new"; // Marque si c'est un nouveau justificatif
+            this.element.querySelector('form').appendChild(justifIdInput);
+    
+            if (customInput) {
+                const customJustifInput = document.createElement('input');
+                customJustifInput.type = 'hidden';
+                customJustifInput.name = 'custom_justif';
+                customJustifInput.value = customInput;
+                this.element.querySelector('form').appendChild(customJustifInput);
+            }
+    
+            this.hideValidationModal();
+            this.submitActualForm();
+        } else {
+            alert("Veuillez sélectionner ou entrer une option avant de valider.");
+        }
+    }
+    
+    
+    
+
+    submitActualForm() {
+        // Code pour soumettre le formulaire, par exemple avec une requête AJAX ou un submit traditionnel
+        this.element.querySelector('form').submit();
+    }
+
     colorizeOptions() {
         function colorizeOptions() {
-            // Sélectionner tous les div avec l'attribut aria-disabled="true" pour les coloriser en rouge
-            const disabledDivs = document.querySelectorAll('div[aria-disabled="true"]');
-
-            // Boucler sur les divs désactivés et appliquer le style rouge
-            disabledDivs.forEach((div) => {
-                div.style.color = 'red'; // Coloriser en rouge les éléments désactivés
-            });
-
             // Sélectionner tous les div avec le rôle option pour vérifier s'ils ont atteint le premier seuil
             const allDivs = document.querySelectorAll('div[role="option"]');
 
@@ -37,6 +97,8 @@ export default class extends Controller {
                 // Si le texte contient "Premier seuil atteint", coloriser en orange
                 if (textContent.includes('Premier seuil atteint')) {
                     div.style.color = 'orange'; // Coloriser en orange les éléments ayant atteint le premier seuil
+                } else if (textContent.includes('Utilisation du CPV impossible')) {
+                    div.style.color = 'red';
                 }
             });
         }
@@ -57,6 +119,7 @@ export default class extends Controller {
         // Appel initial pour coloriser les éléments déjà présents
         colorizeOptions();
     }
+
     setupTvaCalculation() {
         if (this.montantAchatTarget) {
             this.montantAchatTarget.addEventListener('input', this.calculateTva.bind(this));
@@ -69,6 +132,22 @@ export default class extends Controller {
         // Calcul initial si une option est pré-sélectionnée
         this.calculateTva();
     }
+
+    calculateTva() {
+        const montantAchat = parseFloat(this.montantAchatTarget.value) || 0;
+        const selectedTvaOption = this.tvaIdentTarget.selectedOptions[0];
+        const tvaText = selectedTvaOption ? selectedTvaOption.textContent : '';
+        const tvaPercentageMatch = tvaText.match(/(\d+\.?\d*)/);
+        const tvaPercentage = tvaPercentageMatch ? parseFloat(tvaPercentageMatch[0]) : 0;
+
+        // Calcul du montant TTC
+        const montantTtc = montantAchat + (montantAchat * tvaPercentage / 100);
+        document.getElementById('montant-tcc').innerText = ` / ${montantTtc.toFixed(2)} TTC`;
+
+        // Retourne le montant TTC pour l'utiliser ailleurs
+        return montantTtc;
+    }
+
     observeOptions() {
         const selectContainer = document.querySelector('#add_achat_code_cpv_autocomplete');
 
@@ -89,21 +168,6 @@ export default class extends Controller {
             this.disableInvalidOptions();
         }
     }
-    calculateTva() {
-        const montantAchat = parseFloat(this.montantAchatTarget.value) || 0;
-        const selectedTvaOption = this.tvaIdentTarget.selectedOptions[0];
-        const tvaText = selectedTvaOption ? selectedTvaOption.textContent : '';
-        const tvaPercentageMatch = tvaText.match(/(\d+\.?\d*)/);
-        const tvaPercentage = tvaPercentageMatch ? parseFloat(tvaPercentageMatch[0]) : 0;
-        const montantTtc = montantAchat + (montantAchat * tvaPercentage / 100);
-
-        document.getElementById('montant-tcc').innerText = ` / ${montantTtc.toFixed(2)} TTC`;
-    }
-
-
-    
-
-
 
     setupDateValidation() {
         if (this.dateCommandeChorusTarget) {
@@ -168,5 +232,4 @@ export default class extends Controller {
             this.numeroEjMarcheTarget.closest('.form-group').classList.add('hidden');
         }
     }
-    
 }

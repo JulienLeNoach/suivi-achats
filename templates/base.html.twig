@@ -94,13 +94,12 @@
                                                 target="_self">Délai activité annuelle</a>
                                             {% endif %}
                                         </li>
-                                        {# Mise en commentaire cause demande suppression par les utilisateurs, je garde 
-                                        la feature jusqu'a la confirmation lors de la prochaine réunion.
+
                                          <li>{% if is_granted ('ROLE_OPT_STAT_MPPA_MABC') %}
                                             <a class="fr-nav__link" href="{{path('app_statistic_typemarche')}}"
                                                 target="_self">Statistiques MPPA/MABC</a>
                                             {% endif %}
-                                        </li> #}
+                                        </li>
                                         <li>{% if is_granted ('ROLE_OPT_STAT_PME') %}
                                             <a class="fr-nav__link" href="{{path('app_statisticpme')}}"
                                                 target="_self">Statistique PME</a>
@@ -140,10 +139,10 @@
                                                 les droits d'accès</a>
                                             {% endif %}
                                         </li>
-                                        {# <li>{% if is_granted ('ROLE_OPT_PARAMETRES') %}
+                                        <li>{% if is_granted ('ROLE_OPT_PARAMETRES') %}
                                             <a class="fr-nav__link" href="{{ path('parameters') }}" target="_self">Modifier les paramètres</a>
                                             {% endif %}
-                                        </li> #}
+                                        </li>
                                     </ul>
                                 </div>
                             </li>

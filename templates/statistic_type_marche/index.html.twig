@@ -91,10 +91,10 @@
                         <h6 class="blueF">Montant des MPPA</h6>
                         <table id="mppaTable" class="mppaTable" border=1>
                             <tr>
-                                <th>X <= {{parameter[0].four2}}</th>
+                                <th>X <= {{parameter[0].four1}}</th>
+                                <th>{{parameter[0].four1}} < X <={{parameter[0].four2}}</th>
                                 <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
-                                <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
-                                <th>X > {{parameter[0].four4}}</th>
+                                <th>X > {{parameter[0].four3}}</th>
                             </tr>
                             <tr>
                                 <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"]}}</td>
@@ -108,11 +108,11 @@
                     <div class="mabcMount p-3 w-50">
                         <h6 class="blueF">Montant des MABC</h6>
                         <table id="mabcTable" border=1 class="mabcTable">
-                            <tr>
-                                <th>X <= {{parameter[0].four2}}</th>
+                             <tr>
+                                <th>X <= {{parameter[0].four1}}</th>
+                                <th>{{parameter[0].four1}} < X <={{parameter[0].four2}}</th>
                                 <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
-                                <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
-                                <th>X > {{parameter[0].four4}}</th>
+                                <th>X > {{parameter[0].four3}}</th>
                             </tr>
                             <tr>
                                 <td>{{result_achats_mounts[1]["nombre_achats_inf_four1"]}}</td>
@@ -127,10 +127,10 @@
                         <h6 class="blueF">Montant des MPPA + MABC</h6>
                         <table id="allMountTable" border=1 class="allMountTable">
                             <tr>
-                                <th>X <= {{parameter[0].four2}}</th>
+                                <th>X <= {{parameter[0].four1}}</th>
+                                <th>{{parameter[0].four1}} < X <={{parameter[0].four2}}</th>
                                 <th>{{parameter[0].four2}} < X <={{parameter[0].four3}}</th>
-                                <th>{{parameter[0].four3}} < X <={{parameter[0].four4}}</th>
-                                <th>X > {{parameter[0].four4}}</th>
+                                <th>X > {{parameter[0].four3}}</th>
                             </tr>
                             <tr>
                                 <td>{{result_achats_mounts[0]["nombre_achats_inf_four1"] + result_achats_mounts[1]["nombre_achats_inf_four1"]}}
@@ -152,6 +152,7 @@
 <script>
     let result_achats_mounts = {{result_achats_mounts | json_encode | raw}};
     let result_achats = {{result_achats | json_encode | raw}};
+        let parameter0 = {{parameter[0].four1 | json_encode | raw}};
     let parameter1 = {{parameter[0].four2 | json_encode | raw}};
     let parameter2 = {{parameter[0].four3 | json_encode | raw}};
     let parameter3 = {{parameter[0].four4 | json_encode | raw}};

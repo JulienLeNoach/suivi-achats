@@ -8,15 +8,15 @@ const ctxallMount = document.getElementById('allMountChart');
 export default class extends Controller {
 
     connect(){
-        console.log(parameter1)
+        console.log(parameter0)
           new Chart(ctxMppa, {
             type: 'pie',
             data: {
               labels: [
-                'X <=' + parameter1,
-                parameter1+' < X <='+ parameter2,
-                parameter2 + '< X <='+ parameter3,
-                parameter3+' < X'
+                'X <=' + parameter0,
+                parameter0+' < X <='+ parameter1,
+                parameter1 + '< X <='+ parameter2,
+                parameter2+' < X'
               ],
               datasets: [{
                 label: 'Montant des MPPA',
@@ -58,10 +58,10 @@ export default class extends Controller {
             type: 'pie',
             data: {
               labels: [
-                'X <=' + parameter1,
-                parameter1+' < X <='+ parameter2,
-                parameter2 + '< X <='+ parameter3,
-                parameter3+' < X'
+                'X <=' + parameter0,
+                parameter0+' < X <='+ parameter1,
+                parameter1 + '< X <='+ parameter2,
+                parameter2+' < X'
               ],
               datasets: [{
                 label: 'Montant des MABC',
@@ -101,10 +101,10 @@ export default class extends Controller {
             type: 'pie',
             data: {
               labels: [
-                'X <=' + parameter1,
-                parameter1+' < X <='+ parameter2,
-                parameter2 + '< X <='+ parameter3,
-                parameter3+' < X'
+                'X <=' + parameter0,
+                parameter0+' < X <='+ parameter1,
+                parameter1 + '< X <='+ parameter2,
+                parameter2+' < X'
               ],
               datasets: [{
                 label: 'Montant des MPPA + MABC',

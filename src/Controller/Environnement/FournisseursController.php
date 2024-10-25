@@ -5,11 +5,12 @@ namespace App\Controller\Environnement;
 use App\Entity\Fournisseurs;
 use App\Form\ImportExcelType;
 use App\Form\FournisseursType;
+use App\Service\ImportFournisseurs;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\FournisseursRepository;
-use App\Service\ImportFournisseurs;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -27,14 +28,16 @@ class FournisseursController extends AbstractController
     
 private $entityManager;
 private $importFournisseurs;
-
-public function __construct(EntityManagerInterface $entityManager,ImportFournisseurs $importFournisseurs)
+private $security;
+public function __construct(EntityManagerInterface $entityManager,Security $security,ImportFournisseurs $importFournisseurs)
 {
 
     $this->entityManager = $entityManager;
     $this->importFournisseurs = $importFournisseurs;
+    $this->security = $security;
 
 }
+
 
 
     #[Route('/', name: 'app_fournisseurs_index', methods: ['GET','POST'])]
@@ -45,6 +48,7 @@ public function index(FournisseursRepository $fournisseursRepository, Request $r
     $sortField = $request->query->get('sortField', 'id');
     $sortDirection = $request->query->get('sortDirection', 'asc');
     $activeFournisseur = $request->query->get('activeFournisseur');
+    $user = $this->security->getUser();
 
     $queryBuilder = $fournisseursRepository->createQueryBuilder('fournisseurs');
 
@@ -52,6 +56,7 @@ public function index(FournisseursRepository $fournisseursRepository, Request $r
         $queryBuilder->andWhere('fournisseurs.num_siret LIKE :searchTerm OR fournisseurs.nom_fournisseur LIKE :searchTerm')
             ->setParameter('searchTerm', '%' . $searchTerm . '%');
     }
+    $queryBuilder->andWhere('fournisseurs.code_service ='.$user->getCodeService()->getId());
 
     if ($activeFournisseur !== null && $activeFournisseur === 'on') {
         $queryBuilder->andWhere("fournisseurs.etat_fournisseur = 1");

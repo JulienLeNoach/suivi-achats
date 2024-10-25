@@ -45,6 +45,7 @@ class DataExtractController extends AbstractController
 
         if($form->isSubmitted()  ){
             $achats = $this->entityManager->getRepository(Achat::class)->extractSearchAchat($form)->getResult();
+            $selectedYear = $form->get('date')->getData();
             if (empty($achats)) {
                 $errorMessage = 'Aucun résultat pour cette recherche.';
                 return $this->render('data_extract/index.html.twig', [
@@ -64,6 +65,10 @@ $font->setBold(true);
 
 // Agrandir la police
 $font->setSize(14); 
+$sheet->setCellValue('A1', 'Année sélectionnée : ' . $selectedYear);
+$sheet->getColumnDimension('A')->setWidth(30);
+
+
              $sheet->mergeCells('B1:G1');
 $sheet->setCellValue('B1', "EXTRACTION DES DONNEES BASE SUIVI DES ACHATS POUR L'ANNEE ");
              // Supposons que $achats est un tableau contenant tous vos tableaux achat

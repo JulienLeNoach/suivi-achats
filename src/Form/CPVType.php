@@ -37,7 +37,7 @@ class CPVType extends AbstractType
             'attr' => ['class' => 'fr-input hidden'], 
             'label_attr' => ['class' => 'fr-label hidden' ]])
 
-            ->add('code_cpv',IntegerType::class,['attr' => ['class' => 'fr-input'], 
+            ->add('code_cpv',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Code CPV'])
             ->add('libelle_cpv',TextType::class,['attr' => ['class' => 'fr-input'], 

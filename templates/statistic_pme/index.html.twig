@@ -8,7 +8,7 @@
 
     <div class='align-items-center d-flex mt-3 bandeau-form-search'>
 
-        <h5 class="mt-4 ms-3 blueF">Statistic sur les PME (marché MPPA)</h5>
+        <h5 class="mt-4 ms-3 blueF">Statistique sur les PME (marché MPPA)</h5>
         <div class="bande ms-3">
         </div>
     </div>
@@ -29,10 +29,10 @@
 </form>
         <div class="ms-3" data-controller="pdf-generator-pme">
           <form action="{{ path('pdf_generator_stat_pme') }}" method="post">
-            <button type="submit" class="print">Imprimer<span class="fr-icon-printer-line" aria-hidden="true"></span></button>
+            <button type="submit" class="print">Impression tableau<span class="fr-icon-printer-line" aria-hidden="true"></span></button>
           </form></div>
           <div class="ms-auto" data-controller="pdf-generator-pme">
-            <button class="print" id="pdf" data-action="click->pdf-generator-pme#downloadgraphBar">Impression <span class="fr-icon-printer-line" aria-hidden="true"></span></button>
+            <button class="print" id="pdf" data-action="click->pdf-generator-pme#downloadgraphBar">Impression graphique<span class="fr-icon-printer-line" aria-hidden="true"></span></button>
 </button>
         
         </div>
@@ -51,7 +51,7 @@
                         </tr>
                         <tr>
                             <td>VALEUR</td>
-                            <td>{{ result_achats[0]["ValeurPME"] | number_format(2, '.', ' ')}}</td>
+<td>{{ result_achats[0]["ValeurPME"] | round(0, 'ceil') | number_format(0, '.', ' ') }}</td>
                             <td>{{ result_achats[0]["ValeurPercentPME"] | round }}%</td>
                         </tr>
                         <tr>

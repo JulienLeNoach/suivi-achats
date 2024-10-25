@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ORM\Entity(repositoryClass: UtilisateursRepository::class)]
 #[ApiResource]
@@ -24,16 +25,28 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private array $roles = [];
-
-    /**
+   /**
      * @var string The hashed password
+
      */
     #[ORM\Column]
     private ?string $password = null;
-
+/**
+ * @ORM\Column(length=255)
+ * @Assert\Length(
+ *     max=255,
+ *     maxMessage="Le nom de l'utilisateur ne doit pas dépasser 255 caractères."
+ * )
+ */
     #[ORM\Column(length: 255)]
     private ?string $nom_utilisateur = null;
-
+/**
+ * @ORM\Column(length=255)
+ * @Assert\Length(
+ *     max=255,
+ *     maxMessage="Le prenom de l'utilisateur ne doit pas dépasser 255 caractères."
+ * )
+ */
     #[ORM\Column(length: 255)]
     private ?string $prenom_utilisateur = null;
 
@@ -54,7 +67,13 @@ class Utilisateurs implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'utilisateurs')]
     private ?Services $code_service = null;
     
-
+/**
+ * @ORM\Column(length=3)
+ * @Assert\Length(
+ *     max=3,
+ *     maxMessage="Le trigram de l'utilisateur ne doit pas dépasser 3 caractères."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $trigram = null;
 

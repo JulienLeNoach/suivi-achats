@@ -76,8 +76,8 @@
                 <td>{{ uo.libelleUo }}</td>
                 <td>{{ uo.EtatUo == 1 ? 'Actif' : 'Inactif' }}</td>
                 <td>
-                    <a href="{{ path('app_u_o_show', {'id': uo.id}) }}">Voir</a>
-                    <a href="{{ path('app_u_o_edit', {'id': uo.id}) }}">Modifier</a>
+                    <a href="{{ path('app_u_o_show', {'id': uo.id}) }}">Voir<span class="fr-icon-eye-line" aria-hidden="true"></a>
+                    <a href="{{ path('app_u_o_edit', {'id': uo.id}) }}">Modifier<span class="fr-icon-draft-line" aria-hidden="true"></a>
                 </td>
             </tr>
         {% else %}

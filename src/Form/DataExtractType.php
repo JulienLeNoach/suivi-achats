@@ -98,7 +98,6 @@ class DataExtractType extends AbstractType
                 'mapped' => false,
                 'attr' => ['class' => 'fr-input'],  
                 'label_attr' => ['class' => 'fr-label']
-
             ])
             ->add('utilisateurs', UtilisateursAutocompleteField::class, [  
                 'required' => false,

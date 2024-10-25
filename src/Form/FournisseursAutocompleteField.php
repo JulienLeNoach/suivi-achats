@@ -19,20 +19,26 @@ class FournisseursAutocompleteField extends AbstractType
     {
         $this->security = $security;
     }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'placeholder' => 'Sélectionnez un fournisseur', 
+            'placeholder' => 'Sélectionnez un fournisseur',
             'class' => Fournisseurs::class,
-            //'choice_label' => 'name',
 
-            'query_builder' => function(FournisseursRepository $fournisseursRepository) {
+            // Only use the num_siret field for search
+            'searchable_fields' => ['num_siret','nom_fournisseur'],
+
+            'query_builder' => function (FournisseursRepository $fournisseursRepository) {
                 $user = $this->security->getUser();
-                return $fournisseursRepository->createQueryBuilder('u')->andWhere('u.code_service = :val')
-                ->andWhere('u.etat_fournisseur = 1')
-                ->setParameter('val', $user->getCodeService()->getId());
+
+                return $fournisseursRepository->createQueryBuilder('f')
+                    ->andWhere('f.code_service = :val')
+                    ->andWhere('f.etat_fournisseur = 1')
+                    ->setParameter('val', $user->getCodeService()->getId());
             },
-            //'security' => 'ROLE_SOMETHING',
+
+            'max_results' => 100, // Adjust this as needed
         ]);
     }
 

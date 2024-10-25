@@ -69,6 +69,7 @@ class CPVController extends AbstractController
             $queryBuilder->andWhere('cpv.code_cpv LIKE :searchTerm OR cpv.libelle_cpv LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
+
         if ($activeCpv !== null && $activeCpv === 'on') {
             $queryBuilder->andWhere("cpv.etat_cpv = 1");
         }        $queryBuilder->orderBy("cpv.$sortField", $sortDirection); // Ajout du tri

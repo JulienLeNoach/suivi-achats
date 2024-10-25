@@ -22,16 +22,8 @@ class ServicesType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        ->add('code_service', EntityType::class, ['label' => "Code service",
-        'label' => 'Service',
+        ->add('code_service', TextType::class, ['label' => "Code service",
 
-        'class' => Services::class,
-        'query_builder' => function (EntityRepository $er){
-                $user = $this->security->getUser();
-                return $er->createQueryBuilder('u')
-                ->andWhere('u.code_service = :val')
-                ->setParameter('val', $user->getCodeService()->getId());
-            },
             'attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label']])
             ->add('nom_service',TextType::class,['attr' => ['class' => 'fr-input'], 

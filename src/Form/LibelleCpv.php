@@ -8,8 +8,6 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\Autocomplete\Form\AsEntityAutocompleteField;
 use Symfony\UX\Autocomplete\Form\ParentEntityAutocompleteType;
@@ -23,26 +21,22 @@ class LibelleCpv extends AbstractType
     {
         $this->security = $security;
     }
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-
-
-        
-    }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'placeholder' => 'Sélectionnez un CPV',
             'class' => CPV::class,
-            'query_builder' => function(CPVRepository $cPVRepository) {
+            'searchable_fields' => ['code_cpv', 'libelle_cpv'], // Specify searchable fields
+
+            'query_builder' => function (CPVRepository $cPVRepository) {
                 $user = $this->security->getUser();
-                
+
                 return $cPVRepository->createQueryBuilder('u')
                     ->andWhere('u.code_service = :val')
                     ->andWhere('u.etat_cpv = 1')
                     ->setParameter('val', $user->getCodeService()->getId());
-            }
+            },
         ]);
     }
 

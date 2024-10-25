@@ -27,7 +27,13 @@ class UO
      */
     #[ORM\Column(length: 255)]
     private ?string $code_uo = null;
-
+/**
+ * @ORM\Column(length=255)
+ * @Assert\Length(
+ *     max=255,
+ *     maxMessage="Le nom de l'unité organique ne doit pas dépasser 255 caractères."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $libelle_uo = null;
 

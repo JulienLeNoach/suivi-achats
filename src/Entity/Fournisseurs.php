@@ -113,7 +113,58 @@ class Fournisseurs
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $date_maj_fournisseur = null;
 
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Length(
+ *     max=255,
+ *     maxMessage="La rue ne doit pas dépasser 255 caractères."
+ * )
+ * @Assert\Regex(
+ *     pattern="/^.{0,255}$/",
+ *     message="La rue ne doit pas dépasser 255 caractères."
+ * )
+ */
+#[ORM\Column(length: 255, nullable: true)]
+private ?string $rue = null;
 
+/**
+ * @ORM\Column(length=255, nullable=true)
+ * @Assert\Length(
+ *     max=255,
+ *     maxMessage="La ville ne doit pas dépasser 255 caractères."
+ * )
+ * @Assert\Regex(
+ *     pattern="/^.{0,255}$/",
+ *     message="La ville ne doit pas dépasser 255 caractères."
+ * )
+ */
+#[ORM\Column(length: 255, nullable: true)]
+private ?string $ville = null;
+
+// Ajouter les getters et setters correspondants
+public function getRue(): ?string
+{
+    return $this->rue;
+}
+
+public function setRue(?string $rue): self
+{
+    $this->rue = $rue;
+
+    return $this;
+}
+
+public function getVille(): ?string
+{
+    return $this->ville;
+}
+
+public function setVille(?string $ville): self
+{
+    $this->ville = $ville;
+
+    return $this;
+}
     public function getId(): ?int
     {
         return $this->id;
@@ -143,17 +194,6 @@ class Fournisseurs
         return $this;
     }
 
-    public function getVille(): ?string
-    {
-        return $this->ville;
-    }
-
-    public function setVille(?string $ville): self
-    {
-        $this->ville = $ville;
-
-        return $this;
-    }
 
     public function getCodePostal(): ?string
     {
@@ -215,17 +255,7 @@ class Fournisseurs
         return $this;
     }
 
-    public function getFAX(): ?string
-    {
-        return $this->FAX;
-    }
 
-    public function setFAX(?string $FAX): self
-    {
-        $this->FAX = $FAX;
-
-        return $this;
-    }
 
     public function getMail(): ?string
     {
@@ -305,17 +335,7 @@ class Fournisseurs
         return $this;
     }
 
-    public function getMobile(): ?string
-    {
-        return $this->mobile;
-    }
 
-    public function setMobile(string $mobile): self
-    {
-        $this->mobile = $mobile;
-
-        return $this;
-    }
     public function __toString()
     {
         return $this->num_siret.'-'. $this->nom_fournisseur;

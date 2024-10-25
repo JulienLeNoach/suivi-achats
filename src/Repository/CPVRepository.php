@@ -128,7 +128,6 @@ class CPVRepository extends ServiceEntityRepository
             ->setParameter('cpvId', $cpvId)
             ->setMaxResults(1)
             ->getQuery();
-        dd($yearQuery->getSingleScalarResult());
         // Obtenir l'année de la date_saisie
         $year = $yearQuery->getSingleScalarResult();
         // Construire la requête principale avec l'année extraite
@@ -142,7 +141,6 @@ class CPVRepository extends ServiceEntityRepository
             ->setParameter('cpvId', $cpvId)
             ->setParameter('year', $year);
     
-            dd($queryBuilder->getQuery()->getSingleResult());
             return $queryBuilder->getQuery()->getSingleResult();
     }
     public function edit(CPV $cpv, bool $flush = false): void

@@ -8,6 +8,7 @@ use App\Repository\FormationsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -18,6 +19,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FormationsController extends AbstractController
 {
+
+private $security;
+
+public function __construct(Security $security)
+{
+
+
+    $this->security = $security;
+
+}
+
+
     #[Route('/', name: 'app_formations_index', methods: ['GET'])]
     public function index(FormationsRepository $formationsRepository, Request $request, PaginatorInterface $paginator): Response
     {
@@ -26,6 +39,7 @@ class FormationsController extends AbstractController
         $sortField = $request->query->get('sortField', 'id');
         $sortDirection = $request->query->get('sortDirection', 'asc');
         $activeFormations = $request->query->get('activeFormations');
+        $user = $this->security->getUser();
 
         $queryBuilder = $formationsRepository->createQueryBuilder('formations');
     
@@ -33,7 +47,8 @@ class FormationsController extends AbstractController
             $queryBuilder->andWhere(' formations.code_formation LIKE :searchTerm OR formations.libelle_formation LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
-    
+        $queryBuilder->andWhere('formations.code_service ='.$user->getCodeService()->getId());
+
         $queryBuilder->orderBy("formations.$sortField", $sortDirection); // Ajout du tri
         if ($activeFormations !== null && $activeFormations === 'on') {
             $queryBuilder->andWhere("formations.etat_formation = 1");

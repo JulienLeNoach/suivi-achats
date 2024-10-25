@@ -166,11 +166,11 @@ class AddAchatType extends AbstractType
                     $totalAchats = $achatRepository->getTotalAchatsForCPVByYear($cpv, date('Y'));
             
                     // Désactiver l'option si le montant total des achats dépasse le montant autorisé
-                    if ($totalAchats > $cpv->getMtCpvAuto()) {
-                        return [
-                            'disabled' => 'true',
-                        ];
-                    }
+                    // if ($totalAchats > $cpv->getMtCpvAuto()) {
+                    //     return [
+                    //         'disabled' => 'true',
+                    //     ];
+                    // }
             
                     return [];
                 }

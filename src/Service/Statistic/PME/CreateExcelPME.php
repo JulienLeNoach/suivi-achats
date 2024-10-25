@@ -91,10 +91,10 @@ class CreateExcelPME  extends AbstractController
         $sheet->setCellValue('E2','% PME');
         $sheet->setCellValue('C3','VALEUR');
         $sheet->setCellValue('C4', 'NOMBRE');
-        $sheet->setCellValue('D3', $result_achats[0]["ValeurPME"]);
-        $sheet->setCellValue('E3', $result_achats[0]["ValeurPercentPME"]);
-        $sheet->setCellValue('D4', $result_achats[0]["VolumePME"]);
-        $sheet->setCellValue('E4', $result_achats[0]["VolumePercentPME"]);
+        $sheet->setCellValue('D3', ceil($result_achats[0]["ValeurPME"]));
+        $sheet->setCellValue('E3', ceil($result_achats[0]["ValeurPercentPME"]));
+        $sheet->setCellValue('D4', ceil($result_achats[0]["VolumePME"]));
+        $sheet->setCellValue('E4', ceil($result_achats[0]["VolumePercentPME"]));
 
         $sheet->setCellValue('G2', 'TOP PME VALEUR');
         $sheet->setCellValue('I3','VALEUR');
@@ -220,16 +220,18 @@ class CreateExcelPME  extends AbstractController
         $sheet->setCellValue('B24', '% MPPA');
         $approCol='C';
 
-        for($i=0;$i<count($result_achatsSum);$i++){
+        for($i = 0; $i < count($result_achatsSum); $i++) {
 
             $sheet->setCellValue($approCol . 22, $mois[$i]);
-            $sheet->setCellValue($approCol . 23, $result_achatsSum[$i]["nombre_achats_pme"]);
-            $sheet->setCellValue($approCol . 24, $result_achatsSum[$i]["pourcentage_achats_type_marche_1"]);
+            $sheet->setCellValue($approCol . 23, round($result_achatsSum[$i]["nombre_achats_pme"])); // Arrondi classique
+            $sheet->setCellValue($approCol . 24, round($result_achatsSum[$i]["pourcentage_achats_type_marche_1"])); // Arrondi classique
             $approCol++;
         }
+        
         $sheet->setCellValue('O22', "TOTAL");
         $sheet->setCellValue('O23',  '=SUM(C23:N23)');
-        $sheet->setCellValue('O24',  '=SUM(C24:N24) / 12' );
+        $sheet->setCellValue('O24',  '=CEILING(SUM(C24:N24) / 12, 1)');
+
 
         
         $approPmeLabels = [

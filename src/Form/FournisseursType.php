@@ -42,7 +42,14 @@ class FournisseursType extends AbstractType
             ->add('nom_fournisseur',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Nom du fournisseur'])
-
+            ->add('rue',TextType::class,['attr' => ['class' => 'fr-input'], 
+            'label_attr' => ['class' => 'fr-label'],
+            'label'=>'Rue',
+            'required'=>false])
+            ->add('ville',TextType::class,['attr' => ['class' => 'fr-input'], 
+            'label_attr' => ['class' => 'fr-label'],
+            'label'=>'Ville',
+            'required'=>false])
             ->add('code_postal',IntegerType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Code postal',
@@ -59,10 +66,10 @@ class FournisseursType extends AbstractType
                 'required'=>false
 
             ])
-            ->add('code_client',TextType::class,['attr' => ['class' => 'fr-input'], 
-            'label_attr' => ['class' => 'fr-label'],
-            'label'=>'Code client',
-            'required'=>false])
+            // ->add('code_client',TextType::class,['attr' => ['class' => 'fr-input'], 
+            // 'label_attr' => ['class' => 'fr-label'],
+            // 'label'=>'Code client',
+            // 'required'=>false])
             ->add('num_chorus_fournisseur',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Numéro Chorus Fournisseur',

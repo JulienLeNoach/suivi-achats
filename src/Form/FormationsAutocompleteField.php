@@ -19,20 +19,23 @@ class FormationsAutocompleteField extends AbstractType
     {
         $this->security = $security;
     }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'placeholder' => 'Sélectionnez une formation', 
             'class' => Formations::class,
-            //'choice_label' => 'name',
+            
+            // Search only in code_formation and libelle_formation
+            'searchable_fields' => ['code_formation', 'libelle_formation'],
 
             'query_builder' => function(FormationsRepository $formationsRepository) {
                 $user = $this->security->getUser();
-                return $formationsRepository->createQueryBuilder('u')->andWhere('u.code_service = :val')
-                ->andWhere('u.etat_formation = 1')
-                ->setParameter('val', $user->getCodeService()->getId());
+                return $formationsRepository->createQueryBuilder('u')
+                    ->andWhere('u.code_service = :val')
+                    ->andWhere('u.etat_formation = 1')
+                    ->setParameter('val', $user->getCodeService()->getId());
             },
-            //'security' => 'ROLE_SOMETHING',
         ]);
     }
 

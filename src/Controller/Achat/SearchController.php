@@ -6,6 +6,7 @@ use App\Entity\CPV;
 use App\Entity\Achat;
 use App\Form\ValidType;
 use App\Form\AddAchatType;
+use App\Entity\JustifAchat;
 use App\Form\EditAchatType;
 use App\Factory\AchatFactory;
 use App\Form\AchatSearchType;
@@ -128,7 +129,7 @@ public function show(Request $request,$id,SessionInterface $session): Response
 
     ]);
 }
-#[Route('/ajout_achat', name: 'ajout_achat')] //V2
+#[Route('/ajout_achat', name: 'ajout_achat')]
 public function add(Request $request, SessionInterface $session): Response
 {
     $achat = $this->achatFactory->create();
@@ -136,9 +137,38 @@ public function add(Request $request, SessionInterface $session): Response
     $form->handleRequest($request);
     $currentUrl = $session->get('current_url');
 
+    // Récupérer les justificatifs avec `etat_justif = 1` et `type_justif = 'inf2000'`
+    $justifs = $this->entityManager->getRepository(JustifAchat::class)->findBy([
+        'etat_justif' => 1,
+        'type_justif' => 'inf2000'
+    ]);
+
     if ($form->isSubmitted() && $form->isValid()) {
         $cpv = $achat->getCodeCpv();
         $montantAchat = $achat->getMontantAchat();
+
+        // Gestion du justificatif ajouté manuellement
+        $customJustif = $request->request->get('custom_justif');
+        $justifAchatId = $request->request->get('justif_id');
+        $justifAchat = null;
+
+        if ($customJustif && $justifAchatId === "new") {
+            // Créer un nouveau justificatif
+            $justifAchat = new JustifAchat();
+            $justifAchat->setLibelleJustif($customJustif);
+            $justifAchat->setTypeJustif('inf2000');
+            $justifAchat->setEtatJustif((int)0);
+
+            $this->entityManager->persist($justifAchat);
+            $this->entityManager->flush(); // Sauvegarde le nouveau justificatif pour avoir son ID
+
+            // Associer le nouvel ID au justificatif à utiliser pour l'achat
+            $achat->setJustifAchat($justifAchat);
+        } elseif ($justifAchatId) {
+            // Associer un justificatif existant
+            $justifAchat = $this->entityManager->getRepository(JustifAchat::class)->find($justifAchatId);
+            $achat->setJustifAchat($justifAchat);
+        }
 
         // Vérifier si l'ajout dépasse le montant restant dans le CPV
         if ($cpv->getMtCpvAuto() < $montantAchat) {
@@ -147,11 +177,11 @@ public function add(Request $request, SessionInterface $session): Response
             // Mettre à jour le montant du CPV
             $cpv->setMtCpvAuto($cpv->getMtCpvAuto() - $montantAchat);
             $this->entityManager->persist($cpv);
-            
-            // Ajouter l'achat en base de données
-            $this->entityManager->getRepository(Achat::class)->add($achat);
 
-            $this->addFlash('valid', 'Achat n° ' . $achat->getNumeroAchat() . " ajouté avec succès. \n\n Montant restant du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€");
+            // Ajouter l'achat en base de données avec le JustifAchat sélectionné
+            $this->entityManager->getRepository(Achat::class)->add($achat, $justifAchat ? $justifAchat->getId() : null);
+
+            $this->addFlash('valid', 'Achat n° ' . $achat->getNumeroAchat() . " ajouté avec succès. Montant restant du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€");
 
             return $this->redirect("/search");
         }
@@ -159,8 +189,12 @@ public function add(Request $request, SessionInterface $session): Response
 
     return $this->render('achat/addAchat.html.twig', [
         'form' => $form->createView(),
+        'justifs' => $justifs,  // Passer les justificatifs à la vue
+        'currentUrl' => $currentUrl
     ]);
 }
+
+
 
 
 #[Route('/valid_achat/{id}', name: 'valid_achat')] //V2

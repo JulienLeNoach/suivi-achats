@@ -25,6 +25,11 @@
                 {{ flash_message }}
             </div>
         {% endfor %}
+                {% for flash_message in app.session.flashbag.get('error') %}
+            <div class="alert alert-danger">
+                {{ flash_message }}
+            </div>
+        {% endfor %}
     </div>
 
     <div class="d-flex justify-content-between">
@@ -88,8 +93,8 @@
                 <td>{{ c_p_v.mtCpvAuto }}</td>
                 <td>{{ c_p_v.etatCpv == 1 ? 'Actif' : 'Inactif' }}</td>
                 <td>
-                    <a href="{{ path('app_c_p_v_show', {'id': c_p_v.id}) }}">Voir</a>
-                    <a href="{{ path('app_c_p_v_edit', {'id': c_p_v.id}) }}">Modifier</a>
+                    <a href="{{ path('app_c_p_v_show', {'id': c_p_v.id}) }}">Voir<span class="fr-icon-eye-line" aria-hidden="true"></a>
+                    <a href="{{ path('app_c_p_v_edit', {'id': c_p_v.id}) }}">Modifier<span class="fr-icon-draft-line" aria-hidden="true"></a>
                 </td>
             </tr>
         {% else %}

@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -34,13 +35,11 @@ class UtilisateursType extends AbstractType
 
             'class' => Services::class,
             'query_builder' => function (EntityRepository $er){
-                    $user = $this->security->getUser();
-                    return $er->createQueryBuilder('u')
-                    ->andWhere('u.code_service = :val')
-                    ->setParameter('val', $user->getCodeService()->getId());
+                    return $er->createQueryBuilder('u');
+
                 },
-                'attr' => ['class' => 'fr-input hidden'], 
-                'label_attr' => ['class' => 'fr-label hidden']])
+                'attr' => ['class' => 'fr-input '], 
+                'label_attr' => ['class' => 'fr-label ']])
             ->add('nom_connexion',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Nom de connexion'])
@@ -62,11 +61,19 @@ class UtilisateursType extends AbstractType
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les champs du nouveau mot de passe doivent correspondre.',
-                'options' => ['attr' => ['class' => 'password-field fr-input']], // Ajoutez les classes ici
-                'required' => false,
-                'first_options' => ['label' => 'Mot de passe'],
+                'options' => ['attr' => ['class' => 'password-field fr-input']],
+                'required' => !$isEdit,
+                'first_options' => [
+                    'label' => 'Mot de passe',
+                    'constraints' => [
+                        new Regex([
+                            'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
+                            'message' => 'Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.'
+                        ])
+                    ]
+                ],
                 'second_options' => ['label' => 'Répéter le mot de passe'],
-                'mapped'=> !$isEdit
+                'mapped' => !$isEdit
             ])
             ->add('nom_utilisateur',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],

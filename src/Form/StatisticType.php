@@ -10,9 +10,12 @@ use App\Form\FormationsAutocompleteField;
 use App\Form\FournisseursAutocompleteField;
 use App\Form\UtilisateursAutocompleteField;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType; // Ajout pour les champs de délai
 
 class StatisticType extends AbstractType
@@ -54,6 +57,14 @@ class StatisticType extends AbstractType
                 'label' => 'Délai pour Transmissions (en jours)',
                 'empty_data' => 5, // Valeur par défaut
                 'data' => 5, // Valeur par défaut
+                'constraints' => [
+                    new NotBlank(['message' => 'Ce champ ne peut pas être vide']),
+                    new Range([
+                        'min' => 0,
+                        'max' => 100,
+                        'notInRangeMessage' => 'Le nombre doit être compris entre {{ min }} et {{ max }}',
+                    ]),
+                ],
 
             ])
             ->add('delai_traitement', NumberType::class, [
@@ -64,6 +75,14 @@ class StatisticType extends AbstractType
                 'label' => 'Délai pour Traitement (en jours)',
                 'empty_data' => 3, // Valeur par défaut
                 'data' => 3, // Valeur par défaut
+                'constraints' => [
+                    new NotBlank(['message' => 'Ce champ ne peut pas être vide']),
+                    new Range([
+                        'min' => 0,
+                        'max' => 100,
+                        'notInRangeMessage' => 'Le nombre doit être compris entre {{ min }} et {{ max }}',
+                    ]),
+                ],
 
             ])
             ->add('delai_notifications', NumberType::class, [
@@ -74,6 +93,14 @@ class StatisticType extends AbstractType
                 'label' => 'Délai pour Notifications (en jours)',
                 'empty_data' => 5, // Valeur par défaut
                 'data' => 5, // Valeur par défaut
+                'constraints' => [
+                    new NotBlank(['message' => 'Ce champ ne peut pas être vide']),
+                    new Range([
+                        'min' => 0,
+                        'max' => 100,
+                        'notInRangeMessage' => 'Le nombre doit être compris entre {{ min }} et {{ max }}',
+                    ]),
+                ],
 
             ])
             ->add('delai_total', NumberType::class, [
@@ -84,6 +111,14 @@ class StatisticType extends AbstractType
                 'label' => 'Délai total (en jours)',
                 'empty_data' => 15, // Valeur par défaut
                 'data' => 15, // Valeur par défaut
+                'constraints' => [
+                    new NotBlank(['message' => 'Ce champ ne peut pas être vide']),
+                    new Range([
+                        'min' => 0,
+                        'max' => 100,
+                        'notInRangeMessage' => 'Le nombre doit être compris entre {{ min }} et {{ max }}',
+                    ]),
+                ],
 
             ])
             ->add('num_siret', FournisseursAutocompleteField::class, [  
@@ -98,7 +133,8 @@ class StatisticType extends AbstractType
                 'label' => "Utilisateur",
                 'attr' => ['class' => 'fr-input'],  
                 'label_attr' => ['class' => 'fr-label'],
-                'row_attr' => ['class' => 'fr-input-stat']
+                'row_attr' => ['class' => 'fr-input-stat'],
+                
             ])
             ->add('code_uo', UOAutocompleteField::class, [  
                 'required' => false,
@@ -163,6 +199,21 @@ class StatisticType extends AbstractType
                 'placeholder' => false,
                 'mapped'=>false,
                 'data'  => 'anneeEnCours',
+            ])
+            ->add('montant_achat_min', IntegerType::class, [
+                'required' => false,
+                'label' => false,
+                'mapped' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label'],
+                'empty_data' => '0'
+
+            ])
+            ->add('montant_achat', IntegerType::class, [
+                'required' => false,
+                'label' => false,
+                'attr' => ['class' => 'fr-input'], 
+                'label_attr' => ['class' => 'fr-label']
             ])
             ->add('recherche', SubmitType::class, [
                 'attr' => [

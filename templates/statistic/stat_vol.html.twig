@@ -15,23 +15,29 @@
         <tr>
             <th>MPPA (Année en cours)</th>
             {% for month, data in toPDF.volValStat.current_year %}
-                <td>{{ data['countmppa']|default(0) }}</td>
-                {% set totalmppa = totalmppa + (data['countmppa']|default(0)) %}
+                {% if data['countmppa']|default(0) != 0 %}
+                    <td>{{ data['countmppa'] }}</td>
+                    {% set totalmppa = totalmppa + (data['countmppa']|default(0)) %}
+                {% endif %}
             {% endfor %}
             <td>{{ totalmppa }}</td>
         </tr>
         <tr>
             <th>MABC (Année en cours)</th>
             {% for month, data in toPDF.volValStat.current_year %}
-                <td>{{ data['countmabc']|default(0) }}</td>
-                {% set totalmabc = totalmabc + (data['countmabc']|default(0)) %}
+                {% if data['countmabc']|default(0) != 0 %}
+                    <td>{{ data['countmabc'] }}</td>
+                    {% set totalmabc = totalmabc + (data['countmabc']|default(0)) %}
+                {% endif %}
             {% endfor %}
             <td>{{ totalmabc }}</td>
         </tr>
         <tr>
             <th>TOTAL (Année en cours)</th>
             {% for month, data in toPDF.volValStat.current_year %}
-                <td>{{ (data['countmppa']|default(0) + data['countmabc']|default(0)) }}</td>
+                {% if (data['countmppa']|default(0) + data['countmabc']|default(0)) != 0 %}
+                    <td>{{ (data['countmppa']|default(0) + data['countmabc']|default(0)) }}</td>
+                {% endif %}
             {% endfor %}
             <td>{{ totalmppa + totalmabc }}</td>
         </tr>
@@ -40,8 +46,10 @@
                 <th>MPPA (Année Précédente)</th>
                 {% set totalmppaPrev = 0 %}
                 {% for month, data in toPDF.volValStat.previous_year %}
-                    <td>{{ data['countmppa']|default(0) }}</td>
-                    {% set totalmppaPrev = totalmppaPrev + (data['countmppa']|default(0)) %}
+                    {% if data['countmppa']|default(0) != 0 %}
+                        <td>{{ data['countmppa'] }}</td>
+                        {% set totalmppaPrev = totalmppaPrev + (data['countmppa']|default(0)) %}
+                    {% endif %}
                 {% endfor %}
                 <td>{{ totalmppaPrev }}</td>
             </tr>
@@ -49,22 +57,26 @@
                 <th>MABC (Année Précédente)</th>
                 {% set totalmabcPrev = 0 %}
                 {% for month, data in toPDF.volValStat.previous_year %}
-                    <td>{{ data['countmabc']|default(0) }}</td>
-                    {% set totalmabcPrev = totalmabcPrev + (data['countmabc']|default(0)) %}
+                    {% if data['countmabc']|default(0) != 0 %}
+                        <td>{{ data['countmabc'] }}</td>
+                        {% set totalmabcPrev = totalmabcPrev + (data['countmabc']|default(0)) %}
+                    {% endif %}
                 {% endfor %}
                 <td>{{ totalmabcPrev }}</td>
             </tr>
             <tr>
                 <th>TOTAL (Année Précédente)</th>
                 {% for month, data in toPDF.volValStat.previous_year %}
-                    <td>{{ (data['countmppa']|default(0) + data['countmabc']|default(0)) }}</td>
+                    {% if (data['countmppa']|default(0) + data['countmabc']|default(0)) != 0 %}
+                        <td>{{ (data['countmppa']|default(0) + data['countmabc']|default(0)) }}</td>
+                    {% endif %}
                 {% endfor %}
                 <td>{{ totalmppaPrev + totalmabcPrev }}</td>
             </tr>
         {% endif %}
-      
     </tbody>
 </table>
+
 <h5 class="blueF">Dossiers inférieurs à 2 000,00 € TTC</h5>
 <table id='tableUnder2K'>
     <thead>
@@ -82,23 +94,29 @@
         <tr>
             <th>MPPA (Année en cours)</th>
             {% for month, data in totalAchatPerMonthUnder2K.type_marche_1.current_year %}
-                <td>{{ data['count']|default(0) }}</td>
-                {% set totalUnder2KMPPA = totalUnder2KMPPA + (data['count']|default(0)) %}
+                {% if data['count']|default(0) != 0 %}
+                    <td>{{ data['count'] }}</td>
+                    {% set totalUnder2KMPPA = totalUnder2KMPPA + (data['count']|default(0)) %}
+                {% endif %}
             {% endfor %}
             <td>{{ totalUnder2KMPPA }}</td>
         </tr>
         <tr>
             <th>MABC (Année en cours)</th>
             {% for month, data in totalAchatPerMonthUnder2K.type_marche_0.current_year %}
-                <td>{{ data['count']|default(0) }}</td>
-                {% set totalUnder2KMABC = totalUnder2KMABC + (data['count']|default(0)) %}
+                {% if data['count']|default(0) != 0 %}
+                    <td>{{ data['count'] }}</td>
+                    {% set totalUnder2KMABC = totalUnder2KMABC + (data['count']|default(0)) %}
+                {% endif %}
             {% endfor %}
             <td>{{ totalUnder2KMABC }}</td>
         </tr>
         <tr>
             <th>TOTAL (Année en cours)</th>
             {% for month, data in totalAchatPerMonthUnder2K.type_marche_1.current_year %}
-                <td>{{ (data['count']|default(0) + totalAchatPerMonthUnder2K.type_marche_0.current_year[loop.index0]['count']|default(0)) }}</td>
+                {% if (data['count']|default(0) + totalAchatPerMonthUnder2K.type_marche_0.current_year[loop.index0]['count']|default(0)) != 0 %}
+                    <td>{{ (data['count']|default(0) + totalAchatPerMonthUnder2K.type_marche_0.current_year[loop.index0]['count']|default(0)) }}</td>
+                {% endif %}
             {% endfor %}
             <td>{{ totalUnder2KMPPA + totalUnder2KMABC }}</td>
         </tr>
@@ -107,8 +125,10 @@
                 <th>MPPA (Année Précédente)</th>
                 {% set totalUnder2KMPPAPrev = 0 %}
                 {% for month, data in totalAchatPerMonthUnder2K.type_marche_1.previous_year %}
-                    <td>{{ data['count']|default(0) }}</td>
-                    {% set totalUnder2KMPPAPrev = totalUnder2KMPPAPrev + (data['count']|default(0)) %}
+                    {% if data['count']|default(0) != 0 %}
+                        <td>{{ data['count'] }}</td>
+                        {% set totalUnder2KMPPAPrev = totalUnder2KMPPAPrev + (data['count']|default(0)) %}
+                    {% endif %}
                 {% endfor %}
                 <td>{{ totalUnder2KMPPAPrev }}</td>
             </tr>
@@ -116,21 +136,26 @@
                 <th>MABC (Année Précédente)</th>
                 {% set totalUnder2KMABCPrev = 0 %}
                 {% for month, data in totalAchatPerMonthUnder2K.type_marche_0.previous_year %}
-                    <td>{{ data['count']|default(0) }}</td>
-                    {% set totalUnder2KMABCPrev = totalUnder2KMABCPrev + (data['count']|default(0)) %}
+                    {% if data['count']|default(0) != 0 %}
+                        <td>{{ data['count'] }}</td>
+                        {% set totalUnder2KMABCPrev = totalUnder2KMABCPrev + (data['count']|default(0)) %}
+                    {% endif %}
                 {% endfor %}
                 <td>{{ totalUnder2KMABCPrev }}</td>
             </tr>
             <tr>
                 <th>TOTAL (Année Précédente)</th>
                 {% for month, data in totalAchatPerMonthUnder2K.type_marche_1.previous_year %}
-                    <td>{{ (data['count']|default(0) + totalAchatPerMonthUnder2K.type_marche_0.previous_year[loop.index0]['count']|default(0)) }}</td>
+                    {% if (data['count']|default(0) + totalAchatPerMonthUnder2K.type_marche_0.previous_year[loop.index0]['count']|default(0)) != 0 %}
+                        <td>{{ (data['count']|default(0) + totalAchatPerMonthUnder2K.type_marche_0.previous_year[loop.index0]['count']|default(0)) }}</td>
+                    {% endif %}
                 {% endfor %}
                 <td>{{ totalUnder2KMPPAPrev + totalUnder2KMABCPrev }}</td>
             </tr>
         {% endif %}
     </tbody>
 </table>
+
 <h5 class="blueF">Activité en valeur ({{ toPDF['criteria']['Taxe'] | upper }})</h5>
 <table id="volValTable">
     <thead>
@@ -147,8 +172,10 @@
             <th>MPPA (Année en cours)</th>
             {% set totalMtMppa = 0 %}
             {% for month, data in toPDF.volValStat.current_year %}
-                {% set totalMtMppa = totalMtMppa + (data['totalmontantmppa']|default(0)) %}
-                <td>{{ data['totalmontantmppa']|default(0)|number_format(2, '.', ' ') }}</td>
+                {% if data['totalmontantmppa']|default(0) != 0 %}
+                    <td>{{ data['totalmontantmppa']|default(0)|number_format(2, '.', ' ') }}</td>
+                    {% set totalMtMppa = totalMtMppa + (data['totalmontantmppa']|default(0)) %}
+                {% endif %}
             {% endfor %}
             <td>{{ totalMtMppa|number_format(2, '.', ' ') }}</td>
         </tr>
@@ -156,15 +183,19 @@
             <th>MABC (Année en cours)</th>
             {% set totalMtMabc = 0 %}
             {% for month, data in toPDF.volValStat.current_year %}
-                {% set totalMtMabc = totalMtMabc + (data['totalmontantmabc']|default(0)) %}
-                <td>{{ data['totalmontantmabc']|default(0)|number_format(2, '.', ' ') }}</td>
+                {% if data['totalmontantmabc']|default(0) != 0 %}
+                    <td>{{ data['totalmontantmabc']|default(0)|number_format(2, '.', ' ') }}</td>
+                    {% set totalMtMabc = totalMtMabc + (data['totalmontantmabc']|default(0)) %}
+                {% endif %}
             {% endfor %}
             <td>{{ totalMtMabc|number_format(2, '.', ' ') }}</td>
         </tr>
         <tr>
             <th>TOTAL (Année en cours)</th>
             {% for month, data in toPDF.volValStat.current_year %}
-                <td>{{ (data['totalmontantmppa']|default(0) + data['totalmontantmabc']|default(0))|number_format(2, '.', ' ') }}</td>
+                {% if (data['totalmontantmppa']|default(0) + data['totalmontantmabc']|default(0)) != 0 %}
+                    <td>{{ (data['totalmontantmppa']|default(0) + data['totalmontantmabc']|default(0))|number_format(2, '.', ' ') }}</td>
+                {% endif %}
             {% endfor %}
             <td>{{ (totalMtMppa + totalMtMabc)|number_format(2, '.', ' ') }}</td>
         </tr>
@@ -173,8 +204,10 @@
                 <th>MPPA (Année Précédente)</th>
                 {% set totalMtMppaPrev = 0 %}
                 {% for month, data in toPDF.volValStat.previous_year %}
-                    <td>{{ data['totalmontantmppa']|default(0)|number_format(2, '.', ' ') }}</td>
-                    {% set totalMtMppaPrev = totalMtMppaPrev + (data['totalmontantmppa']|default(0)) %}
+                    {% if data['totalmontantmppa']|default(0) != 0 %}
+                        <td>{{ data['totalmontantmppa']|default(0)|number_format(2, '.', ' ') }}</td>
+                        {% set totalMtMppaPrev = totalMtMppaPrev + (data['totalmontantmppa']|default(0)) %}
+                    {% endif %}
                 {% endfor %}
                 <td>{{ totalMtMppaPrev|number_format(2, '.', ' ') }}</td>
             </tr>
@@ -182,15 +215,19 @@
                 <th>MABC (Année Précédente)</th>
                 {% set totalMtMabcPrev = 0 %}
                 {% for month, data in toPDF.volValStat.previous_year %}
-                    <td>{{ data['totalmontantmabc']|default(0)|number_format(2, '.', ' ') }}</td>
-                    {% set totalMtMabcPrev = totalMtMabcPrev + (data['totalmontantmabc']|default(0)) %}
+                    {% if data['totalmontantmabc']|default(0) != 0 %}
+                        <td>{{ data['totalmontantmabc']|default(0)|number_format(2, '.', ' ') }}</td>
+                        {% set totalMtMabcPrev = totalMtMabcPrev + (data['totalmontantmabc']|default(0)) %}
+                    {% endif %}
                 {% endfor %}
                 <td>{{ totalMtMabcPrev|number_format(2, '.', ' ') }}</td>
             </tr>
             <tr>
                 <th>TOTAL (Année Précédente)</th>
                 {% for month, data in toPDF.volValStat.previous_year %}
-                    <td>{{ (data['totalmontantmppa']|default(0) + data['totalmontantmabc']|default(0))|number_format(2, '.', ' ') }}</td>
+                    {% if (data['totalmontantmppa']|default(0) + data['totalmontantmabc']|default(0)) != 0 %}
+                        <td>{{ (data['totalmontantmppa']|default(0) + data['totalmontantmabc']|default(0))|number_format(2, '.', ' ') }}</td>
+                    {% endif %}
                 {% endfor %}
                 <td>{{ (totalMtMppaPrev + totalMtMabcPrev)|number_format(2, '.', ' ') }}</td>
             </tr>

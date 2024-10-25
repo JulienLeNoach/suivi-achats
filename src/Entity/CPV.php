@@ -4,8 +4,10 @@
 
 namespace App\Entity;
 
+use App\Entity\Services;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CPVRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CPVRepository::class)]
 class CPV
@@ -15,10 +17,26 @@ class CPV
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
+    /**
+     * @ORM\Column(length=8, nullable=true)
+     * @Assert\Length(
+     *     max=8,
+     *     maxMessage="Le code du CPV ne doit pas dépasser 8 caractères."
+     * )
+     * @Assert\Regex(
+     *     pattern="/^[a-zA-Z0-9_-]*$/",
+     *     message="Le code du CPV ne doit contenir que des lettres, chiffres, tirets (-) ou soulignements (_)."
+     * )
+     */
     #[ORM\Column(length: 8, nullable: true)]
     private ?string $code_cpv = null;
-
+/**
+ * @ORM\Column(length=255)
+ * @Assert\Length(
+ *     max=255,
+ *     maxMessage="Le nom du CPV ne doit pas dépasser 255 caractères."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $libelle_cpv = null;
 
@@ -27,6 +45,9 @@ class CPV
 
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $mt_cpv_auto = null;
+
+    #[ORM\ManyToOne(inversedBy: 'cpv')]
+    private ?Services $code_service = null;
 
     #[ORM\Column(type: 'float', nullable: true)]  // Ajout du champ premier_seuil
     private ?float $premier_seuil = null;
@@ -90,7 +111,17 @@ class CPV
         $this->premier_seuil = $premier_seuil;
         return $this;
     }
+    public function getCodeService(): ?Services
+    {
+        return $this->code_service;
+    }
 
+    public function setCodeService(?Services $code_service): self
+    {
+        $this->code_service = $code_service;
+
+        return $this;
+    }
     // Méthode __toString modifiée
     public function __toString(): string
     {

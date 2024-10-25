@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UtilisateursRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -18,6 +19,15 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[IsGranted('ROLE_OPT_UTILISATEURS')]
 class UtilisateursController extends AbstractController
 {
+    private $security;
+
+public function __construct(Security $security)
+{
+
+
+    $this->security = $security;
+
+}
     #[Route('/', name: 'app_utilisateurs_index', methods: ['GET'])]
     public function index(UtilisateursRepository $utilisateursRepository,Request $request, PaginatorInterface $paginator): Response
     {
@@ -26,6 +36,7 @@ class UtilisateursController extends AbstractController
         $sortField = $request->query->get('sortField', 'id');
         $sortDirection = $request->query->get('sortDirection', 'asc');
         $activeUtilisateurs = $request->query->get('activeUtilisateurs');
+        $user = $this->security->getUser();
 
         $queryBuilder = $utilisateursRepository->createQueryBuilder('utilisateurs');
     
@@ -33,6 +44,8 @@ class UtilisateursController extends AbstractController
             $queryBuilder->andWhere('utilisateurs.nom_utilisateur LIKE :searchTerm OR utilisateurs.trigram LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
+        $queryBuilder->andWhere('utilisateurs.code_service ='.$user->getCodeService()->getId());
+
         if ($activeUtilisateurs !== null && $activeUtilisateurs === 'on') {
             $queryBuilder->andWhere("utilisateurs.etat_utilisateur = 1");
         }        $queryBuilder->orderBy("utilisateurs.$sortField", $sortDirection); // Ajout du tri

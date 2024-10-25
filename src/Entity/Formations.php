@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\FormationsRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FormationsRepository::class)]
 class Formations
@@ -18,7 +19,13 @@ class Formations
 
     #[ORM\Column(length: 255)]
     private ?string $code_formation = null;
-
+/**
+ * @ORM\Column(length=255)
+ * @Assert\Length(
+ *     max=255,
+ *     maxMessage="Le nom de la formation ne doit pas dépasser 255 caractères."
+ * )
+ */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $libelle_formation = null;
 

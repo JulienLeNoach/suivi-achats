@@ -47,11 +47,11 @@ function (_Controller) {
   _createClass(_default, [{
     key: "connect",
     value: function connect() {
-      console.log(parameter1);
+      console.log(parameter0);
       new _auto["default"](ctxMppa, {
         type: 'pie',
         data: {
-          labels: ['X <=' + parameter1, parameter1 + ' < X <=' + parameter2, parameter2 + '< X <=' + parameter3, parameter3 + ' < X'],
+          labels: ['X <=' + parameter0, parameter0 + ' < X <=' + parameter1, parameter1 + '< X <=' + parameter2, parameter2 + ' < X'],
           datasets: [{
             label: 'Montant des MPPA',
             data: [result_achats_mounts[0]["nombre_achats_inf_four1"], result_achats_mounts[0]["nombre_achats_four1_four2"], result_achats_mounts[0]["nombre_achats_four2_four3"], result_achats_mounts[0]["nombre_achats_sup_four3"]],
@@ -82,7 +82,7 @@ function (_Controller) {
       new _auto["default"](ctxMabc, {
         type: 'pie',
         data: {
-          labels: ['X <=' + parameter1, parameter1 + ' < X <=' + parameter2, parameter2 + '< X <=' + parameter3, parameter3 + ' < X'],
+          labels: ['X <=' + parameter0, parameter0 + ' < X <=' + parameter1, parameter1 + '< X <=' + parameter2, parameter2 + ' < X'],
           datasets: [{
             label: 'Montant des MABC',
             data: [result_achats_mounts[1]["nombre_achats_inf_four1"], result_achats_mounts[1]["nombre_achats_four1_four2"], result_achats_mounts[1]["nombre_achats_four2_four3"], result_achats_mounts[1]["nombre_achats_sup_four3"]],
@@ -113,7 +113,7 @@ function (_Controller) {
       new _auto["default"](ctxallMount, {
         type: 'pie',
         data: {
-          labels: ['X <=' + parameter1, parameter1 + ' < X <=' + parameter2, parameter2 + '< X <=' + parameter3, parameter3 + ' < X'],
+          labels: ['X <=' + parameter0, parameter0 + ' < X <=' + parameter1, parameter1 + '< X <=' + parameter2, parameter2 + ' < X'],
           datasets: [{
             label: 'Montant des MPPA + MABC',
             data: [result_achats_mounts[1]["nombre_achats_inf_four1"] + result_achats_mounts[0]["nombre_achats_inf_four1"], result_achats_mounts[1]["nombre_achats_four1_four2"] + result_achats_mounts[0]["nombre_achats_four1_four2"], result_achats_mounts[1]["nombre_achats_four2_four3"] + result_achats_mounts[0]["nombre_achats_four2_four3"], result_achats_mounts[1]["nombre_achats_sup_four3"] + result_achats_mounts[0]["nombre_achats_sup_four3"]],

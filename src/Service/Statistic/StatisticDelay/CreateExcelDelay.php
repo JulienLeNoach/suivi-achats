@@ -27,7 +27,7 @@ class CreateExcelDelay  extends AbstractController
         $this->projectDir = $kernel->getProjectDir();
     }
 
-    public function createExcelFile($achats, $achats_delay_all)
+    public function createExcelFile($achats, $achats_delay_all,array $delais)
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -39,7 +39,8 @@ class CreateExcelDelay  extends AbstractController
             ->setBold(true)
             ->setSize(18)
             ->setColor(new Color(Color::COLOR_RED));
-        
+        $sheet->getColumnDimension('R')->setWidth(30);
+
         //-------------------------- Appro volume chart -------------------------------- // 
         $mois = ['Délai', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre', 'TOTAL'];
         $col = 2; 
@@ -110,7 +111,20 @@ class CreateExcelDelay  extends AbstractController
             $sheet->setCellValue('O' . ($col + 1), ($achats[$i]["Janvier"] +  $achats[$i]["Février"] + $achats[$i]["Mars"] + $achats[$i]["Avril"] + $achats[$i]["Mai"] + $achats[$i]["Juin"] + $achats[$i]["Juillet"] + $achats[$i]["Aout"] + $achats[$i]["Septembre"] + $achats[$i]["Octobre"] + $achats[$i]["Novembre"] + $achats[$i]["Decembre"])/12);
             $col++;
         }   
+//------------------------- Affichage des délais dans Excel -------------------------- //
+$sheet->setCellValue('R2', 'Délais');
+$sheet->setCellValue('R3', 'Délai de transmission (en jours) :');
+$sheet->setCellValue('S3', $delais[0]);
 
+$sheet->setCellValue('R4', 'Délai de traitement (en jours) :');
+$sheet->setCellValue('S4', $delais[1]);
+
+$sheet->setCellValue('R5', 'Délai de notification (en jours) :');
+$sheet->setCellValue('S5', $delais[2]);
+
+$sheet->setCellValue('R6', 'Délai total (en jours) :');
+$sheet->setCellValue('S6', $delais[3]);
+//------------------------- Fin Affichage des délais --------------------------------- //
         //-------------------------- Transmission chart -------------------------------- // 
         $sheet->setCellValue('A10', 'Transmission');
         $sheet->setCellValue('B9', '<= 3j / ' .$achats_delay_all[0]["Pourcentage_Delai_Inf_3_Jours_Ant"]. "%");

@@ -33,7 +33,7 @@ class CRAnnuelService  extends AbstractController
     }
 
     public function generateExcelFile($chartDataCountCurrent, $chartDataCountPrevious, $chartDataTotalCurrent, $chartDataTotalPrevious, $projectDir,$achats, $achats_delay_all,
-                                    $result_achats, $result_achats_mounts, $parameter,$result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal,$totalAchatPerMonthUnder2K)
+                                    $result_achats, $result_achats_mounts, $parameter,$result_achatsPME, $result_achatsSum, $result_achatsSumVol, $result_achatsSumVal,$totalAchatPerMonthUnder2K,$selectedYear)
     {
         $mois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
         'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -45,7 +45,10 @@ $sheet->setCellValue('H1', 'COMPTE RENDU ANNUEL')
      ->getFont()
      ->setBold(true)
      ->setSize(18);
-
+     $sheet->setCellValue('A1', 'Année sélectionnée : ' . $selectedYear)
+     ->getStyle('A1')
+     ->getFont()
+     ->setBold(true);
 foreach (range('B', 'Q') as $columnID) {
    $sheet->getColumnDimension($columnID)->setWidth(15);
 }
@@ -981,7 +984,7 @@ $sheet->setCellValue('B115', "NOMBRE"); // B155 -> B115
 $sheet->setCellValue('B116', "MOYENNE"); // B156 -> B116
 $sheet->setCellValue('B117', "% VALEUR"); // B157 -> B117
 $sheet->setCellValue('B118', "% VOLUME"); // B158 -> B118
-$sheet->setCellValue('C115', $result_achats[0]["somme_montant_type_1"]); // C155 -> C115
+$sheet->setCellValue('C114', $result_achats[0]["somme_montant_type_1"]); // C155 -> C115
 $sheet->setCellValue('D114', $result_achats[1]["somme_montant_type_0"]); // D154 -> D114
 $sheet->setCellValue('E114', $result_achats[1]["somme_montant_type_0"] + $result_achats[0]["somme_montant_type_1"]); // E154 -> E114
 $sheet->setCellValue('C115', $result_achats[0]["nombre_achats_type_1"]); // C155 -> C115
@@ -997,30 +1000,30 @@ $sheet->setCellValue('D118', $result_achats[1]["pourcentage_type_0"]); // D158 -
 
 //------------------------------ Tab montant_type --------------------------//
 $sheet->setCellValue('C121', "Montant des MPPA"); // C161 -> C121
-$sheet->setCellValue('B122', "X <= ". $parameter[0]->getFour2()); // B162 -> B122
-$sheet->setCellValue('C122', $parameter[0]->getFour2()." < X <=".$parameter[0]->getFour3()); // C162 -> C122
-$sheet->setCellValue('D122',  $parameter[0]->getFour3()." < X <=".$parameter[0]->getFour4()); // D162 -> D122
-$sheet->setCellValue('E122', "X > ". $parameter[0]->getFour4()); // E162 -> E122
+$sheet->setCellValue('B122', "X <= ". $parameter[0]->getFour1()); // B162 -> B122
+$sheet->setCellValue('C122', $parameter[0]->getFour1()." < X <=".$parameter[0]->getFour2()); // C162 -> C122
+$sheet->setCellValue('D122',  $parameter[0]->getFour2()." < X <=".$parameter[0]->getFour3()); // D162 -> D122
+$sheet->setCellValue('E122', "X > ". $parameter[0]->getFour3()); // E162 -> E122
 $sheet->setCellValue('B123', $result_achats_mounts[0]["nombre_achats_inf_four1"]); // B163 -> B123
 $sheet->setCellValue('C123', $result_achats_mounts[0]["nombre_achats_four1_four2"]); // C163 -> C123
 $sheet->setCellValue('D123',  $result_achats_mounts[0]["nombre_achats_four2_four3"]); // D163 -> D123
 $sheet->setCellValue('E123', $result_achats_mounts[0]["nombre_achats_sup_four3"]); // E163 -> E123
 
 $sheet->setCellValue('H121', "Montant des MABC"); // H161 -> H121
-$sheet->setCellValue('G122', "X <= ". $parameter[0]->getFour2()); // G162 -> G122
-$sheet->setCellValue('H122', $parameter[0]->getFour2()." < X <=".$parameter[0]->getFour3()); // H162 -> H122
-$sheet->setCellValue('I122',  $parameter[0]->getFour3()." < X <=".$parameter[0]->getFour4()); // I162 -> I122
-$sheet->setCellValue('J122', "X > ". $parameter[0]->getFour4()); // J162 -> J122
+$sheet->setCellValue('G122', "X <= ". $parameter[0]->getFour1()); // G162 -> G122
+$sheet->setCellValue('H122', $parameter[0]->getFour1()." < X <=".$parameter[0]->getFour2()); // H162 -> H122
+$sheet->setCellValue('I122',  $parameter[0]->getFour2()." < X <=".$parameter[0]->getFour3()); // I162 -> I122
+$sheet->setCellValue('J122', "X > ". $parameter[0]->getFour3()); // J162 -> J122
 $sheet->setCellValue('G123', $result_achats_mounts[1]["nombre_achats_inf_four1"]); // G163 -> G123
 $sheet->setCellValue('H123', $result_achats_mounts[1]["nombre_achats_four1_four2"]); // H163 -> H123
 $sheet->setCellValue('I123',  $result_achats_mounts[1]["nombre_achats_four2_four3"]); // I163 -> I123
 $sheet->setCellValue('J123', $result_achats_mounts[1]["nombre_achats_sup_four3"]); // J163 -> J123
 
 $sheet->setCellValue('M121', "Montant des MABC + MPPA"); // M161 -> M121
-$sheet->setCellValue('L122', "X <= ". $parameter[0]->getFour2()); // L162 -> L122
-$sheet->setCellValue('M122',$parameter[0]->getFour2()." < X <=".$parameter[0]->getFour3()); // M162 -> M122
-$sheet->setCellValue('N122',  $parameter[0]->getFour3()." < X <=".$parameter[0]->getFour4()); // N162 -> N122
-$sheet->setCellValue('O122', "X > ". $parameter[0]->getFour4()); // O162 -> O122
+$sheet->setCellValue('L122', "X <= ". $parameter[0]->getFour1()); // L162 -> L122
+$sheet->setCellValue('M122',$parameter[0]->getFour1()." < X <=".$parameter[0]->getFour2()); // M162 -> M122
+$sheet->setCellValue('N122',  $parameter[0]->getFour2()." < X <=".$parameter[0]->getFour3()); // N162 -> N122
+$sheet->setCellValue('O122', "X > ". $parameter[0]->getFour3()); // O162 -> O122
 $sheet->setCellValue('L123', $result_achats_mounts[0]["nombre_achats_inf_four1"] + $result_achats_mounts[1]["nombre_achats_inf_four1"]); // L163 -> L123
 $sheet->setCellValue('M123', $result_achats_mounts[0]["nombre_achats_four1_four2"] + $result_achats_mounts[1]["nombre_achats_four1_four2"]); // M163 -> M123
 $sheet->setCellValue('N123',  $result_achats_mounts[0]["nombre_achats_four2_four3"] + $result_achats_mounts[1]["nombre_achats_four2_four3"]); // N163 -> N123
@@ -1276,13 +1279,13 @@ $approCol='C';
 
 for($i=0;$i<count($result_achatsSum);$i++){
     $sheet->setCellValue($approCol . 167, $mois[$i]); // 207 -> 167
-    $sheet->setCellValue($approCol . 168, $result_achatsSum[$i]["nombre_achats_pme"]); // 208 -> 168
-    $sheet->setCellValue($approCol . 169, $result_achatsSum[$i]["pourcentage_achats_type_marche_1"]); // 209 -> 169
+    $sheet->setCellValue($approCol . 168, round($result_achatsSum[$i]["nombre_achats_pme"])); // 208 -> 168
+    $sheet->setCellValue($approCol . 169, round($result_achatsSum[$i]["pourcentage_achats_type_marche_1"])); // 209 -> 169
     $approCol++;
 }
 $sheet->setCellValue('O167', "TOTAL"); // O207 -> O167
 $sheet->setCellValue('O168',  '=SUM(C168:N168)'); // O208 -> O168
-$sheet->setCellValue('O169',  '=SUM(C169:N169) / 12' ); // O209 -> O169
+$sheet->setCellValue('O169',  '=CEILING(SUM(C169:N169) / 12, 1)' ); // O209 -> O169
 
 $approPmeLabels = [
     new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, 'Worksheet!$B$168', null, 12), // B208 -> B168

@@ -10,19 +10,28 @@ export default class extends Controller {
     attachEventListeners() {
         let rows = document.querySelectorAll('.clickable-row');
         let btnElements = document.querySelectorAll('#btn');
-
+    
+        // Désactiver tous les boutons initialement
+        btnElements.forEach((btn) => {
+            btn.setAttribute('disabled', 'disabled');
+        });
+    
         rows.forEach((row) => {
             row.addEventListener('click', function () {
+                // Activer les boutons lors de la sélection d'une ligne
                 btnElements.forEach(function (btn) {
                     btn.removeAttribute('disabled');
                 });
+    
+                // Désélectionner toutes les autres lignes
                 rows.forEach(function (otherRow) {
                     otherRow.classList.remove('selected');
                 });
-
-                let etatCell = row.cells[7];
-                let etatAchatText = etatCell.textContent.replace(/\s+/g, '');
-
+    
+                // Gérer l'état des boutons selon l'état de la ligne
+                let etatCell = row.cells[7]; // Supposons que la 8ème cellule (index 7) contient l'état de l'achat
+                let etatAchatText = etatCell.textContent.replace(/\s+/g, ''); // Supprimer les espaces
+    
                 if (etatAchatText === 'Validé') {
                     document.querySelectorAll('.valid, .reint').forEach(el => el.setAttribute('disabled', 'disabled'));
                 } else if (etatAchatText === 'Encours') {
@@ -30,15 +39,21 @@ export default class extends Controller {
                 } else if (etatAchatText === 'Annulé') {
                     document.querySelectorAll('.annul, .valid, .edit').forEach(el => el.setAttribute('disabled', 'disabled'));
                 }
-
+    
+                // Marquer la ligne sélectionnée
                 row.classList.add('selected');
             });
         });
-
+    
+        // Si aucune ligne n'est sélectionnée, tous les boutons restent désactivés
+        btnElements.forEach(function (btn) {
+            btn.setAttribute('disabled', 'disabled');
+        });
+    
         this.setupAlertForAnnulButton(btnElements);
         this.setupSaveComment();
     }
-
+    
     setupAlertForAnnulButton(btnElements) {
         btnElements.forEach((btn) => {
             if (!btn.hasListener) {

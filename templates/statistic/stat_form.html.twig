@@ -34,13 +34,27 @@
       <div class="input-grp-tab d-flex flex-wrap justify-content-between" style="flex-basis:100%;">
           {{ form_row(form.code_cpv) }}
           {{ form_row(form.code_formation) }}
+
           {{ form_row(form.num_siret) }}
+          
           {{ form_row(form.code_uo) }}
+
           {{ form_row(form.utilisateurs) }}
                 </div>
+    <div class="d-flex flex-wrap mt-4 align-items-center">
 
-        
+                {% if app.request.attributes.get('_route') == 'app_statistic_typemarche' %}
+    Montant € HT de 
+        {{ form_row(form.montant_achat_min) }}
+        à
+          {{ form_row(form.montant_achat) }}
 
+                {% else %}
+                  {{ form_row(form.montant_achat_min, {'attr': {'class': "hidden"}}) }}
+                    {{ form_row(form.montant_achat, {'attr': {'class': "hidden"}}) }}
+                  <!-- Ajoute la classe 'hidden' si la condition est fausse -->
+                  {% endif %}
+</div>
         {% if app.request.attributes.get('_route') == 'app_statistic_delay' %}
         <div class="input-grp-tab d-flex flex-wrap justify-content-between" style="flex-basis:100%">
     {{ form_row(form.delai_transmissions, {'attr': {'class': "fr-input"}, 'label_attr': {'class': 'fr-label'}}) }}

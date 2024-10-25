@@ -8,6 +8,7 @@ use App\Repository\UORepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -16,8 +17,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/uo')]
 #[IsGranted('ROLE_OPT_UO')]
 
+
 class UOController extends AbstractController
 {
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
+    
     #[Route('/', name: 'app_u_o_index', methods: ['GET'])]
     public function index(UORepository $uORepository,Request $request, PaginatorInterface $paginator): Response
     {
@@ -26,6 +35,7 @@ class UOController extends AbstractController
         $sortField = $request->query->get('sortField', 'id');
         $sortDirection = $request->query->get('sortDirection', 'asc');
         $activeUOs = $request->query->get('activeUOs');
+        $user = $this->security->getUser();
 
         $queryBuilder = $uORepository->createQueryBuilder('uo');
     
@@ -33,6 +43,7 @@ class UOController extends AbstractController
             $queryBuilder->andWhere('uo.code_uo LIKE :searchTerm OR uo.libelle_uo LIKE :searchTerm')
                 ->setParameter('searchTerm', '%' . $searchTerm . '%');
         }
+        $queryBuilder->andWhere('uo.code_service ='.$user->getCodeService()->getId());
         if ($activeUOs !== null && $activeUOs === 'on') {
             $queryBuilder->andWhere("uo.etat_uo = 1");
         }        $queryBuilder->orderBy("uo.$sortField", $sortDirection); // Ajout du tri

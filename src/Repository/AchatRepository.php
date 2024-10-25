@@ -5,6 +5,7 @@ namespace App\Repository;
 use DateTime;
 use App\Entity\CPV;
 use App\Entity\Achat;
+use App\Entity\JustifAchat;
 use App\Factory\AchatFactory;
 use Doctrine\ORM\Query\Expr\Join;
 use App\Service\AchatNumberService;
@@ -63,37 +64,108 @@ class AchatRepository extends ServiceEntityRepository
     return $criteria;
 }
 
- public function getPurchaseByType($form)
+public function getPurchaseByType($form)
 {
     $criteria = $this->extractCriteriaFromForm($form);
-
+    $montantAchatMin = $form["montant_achat_min"]->getData();
+    $montantAchatMax = $form["montant_achat"]->getData();
     $conn = $this->getEntityManager()->getConnection();
+
     $sql = "
         SELECT
             type_marche,
             COUNT(*) AS nombre_achats,
             COUNT(CASE WHEN type_marche = 0 THEN 1 END) AS nombre_achats_type_0,
             COUNT(CASE WHEN type_marche = 1 THEN 1 END) AS nombre_achats_type_1,
-            ROUND((COUNT(CASE WHEN type_marche = 0 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}), 0)) * 100, 2) AS pourcentage_type_0,
-            ROUND((COUNT(CASE WHEN type_marche = 1 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}), 0)) * 100, 2) AS pourcentage_type_1,
+            ROUND((COUNT(CASE WHEN type_marche = 0 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}";
+
+    // Ajout des filtres montants dans les sous-requêtes pourcentage
+    if ($montantAchatMin && $montantAchatMax) {
+        $sql .= " AND montant_achat > :montant_achat_min AND montant_achat < :montant_achat_max";
+    } elseif ($montantAchatMin) {
+        $sql .= " AND montant_achat > :montant_achat_min";
+    } elseif ($montantAchatMax) {
+        $sql .= " AND montant_achat < :montant_achat_max";
+    }
+
+    $sql .= "), 0)) * 100, 2) AS pourcentage_type_0,
+            ROUND((COUNT(CASE WHEN type_marche = 1 THEN 1 END) / NULLIF((SELECT COUNT(*) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}";
+
+    if ($montantAchatMin && $montantAchatMax) {
+        $sql .= " AND montant_achat > :montant_achat_min AND montant_achat < :montant_achat_max";
+    } elseif ($montantAchatMin) {
+        $sql .= " AND montant_achat > :montant_achat_min";
+    } elseif ($montantAchatMax) {
+        $sql .= " AND montant_achat < :montant_achat_max";
+    }
+
+    $sql .= "), 0)) * 100, 2) AS pourcentage_type_1,
             ROUND(SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END), 2) AS somme_montant_type_0,
             ROUND(AVG(CASE WHEN type_marche = 0 THEN montant_achat ELSE NULL END), 2) AS moyenne_montant_type_0,
             ROUND(SUM(CASE WHEN type_marche = 1 THEN montant_achat ELSE 0 END), 2) AS somme_montant_type_1,
             ROUND(AVG(CASE WHEN type_marche = 1 THEN montant_achat ELSE NULL END), 2) AS moyenne_montant_type_1,
-            ROUND((SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}), 0)) * 100, 2) AS pourcentage_type_0_total,
-            ROUND((SUM(CASE WHEN type_marche = 1 THEN  montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}), 0)) * 100, 2) AS pourcentage_type_1_total,
-            (SELECT COUNT(*) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']} ) AS nombre_total_achats
+            ROUND((SUM(CASE WHEN type_marche = 0 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}";
+
+    if ($montantAchatMin && $montantAchatMax) {
+        $sql .= " AND montant_achat > :montant_achat_min AND montant_achat < :montant_achat_max";
+    } elseif ($montantAchatMin) {
+        $sql .= " AND montant_achat > :montant_achat_min";
+    } elseif ($montantAchatMax) {
+        $sql .= " AND montant_achat < :montant_achat_max";
+    }
+
+    $sql .= "), 0)) * 100, 2) AS pourcentage_type_0_total,
+            ROUND((SUM(CASE WHEN type_marche = 1 THEN montant_achat ELSE 0 END) / NULLIF((SELECT SUM(montant_achat) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}";
+
+    if ($montantAchatMin && $montantAchatMax) {
+        $sql .= " AND montant_achat > :montant_achat_min AND montant_achat < :montant_achat_max";
+    } elseif ($montantAchatMin) {
+        $sql .= " AND montant_achat > :montant_achat_min";
+    } elseif ($montantAchatMax) {
+        $sql .= " AND montant_achat < :montant_achat_max";
+    }
+
+    $sql .= "), 0)) * 100, 2) AS pourcentage_type_1_total,
+            (SELECT COUNT(*) FROM achat WHERE YEAR(date_notification) = :year AND etat_achat = 2 {$criteria['conditions']}";
+
+    if ($montantAchatMin && $montantAchatMax) {
+        $sql .= " AND montant_achat > :montant_achat_min AND montant_achat < :montant_achat_max";
+    } elseif ($montantAchatMin) {
+        $sql .= " AND montant_achat > :montant_achat_min";
+    } elseif ($montantAchatMax) {
+        $sql .= " AND montant_achat < :montant_achat_max";
+    }
+
+    $sql .= ") AS nombre_total_achats
         FROM
             achat
         WHERE
             type_marche IN (0, 1) AND YEAR(date_notification) = :year AND etat_achat = 2 
-            {$criteria['conditions']}
-        GROUP BY
-            type_marche
-        LIMIT 0, 100;";
+            {$criteria['conditions']}";
+
+    // Ajout des filtres basés sur les montants d'achat
+    if ($montantAchatMin && $montantAchatMax) {
+        $sql .= " AND montant_achat > :montant_achat_min AND montant_achat < :montant_achat_max";
+    } elseif ($montantAchatMin) {
+        $sql .= " AND montant_achat > :montant_achat_min";
+    } elseif ($montantAchatMax) {
+        $sql .= " AND montant_achat < :montant_achat_max";
+    }
+
+    $sql .= " GROUP BY type_marche LIMIT 0, 100;";
+
+    // Préparer les paramètres
+    $params = array_merge(['year' => $criteria['date']], $criteria['parameters']);
+    
+    if ($montantAchatMin) {
+        $params['montant_achat_min'] = $montantAchatMin;
+    }
+    if ($montantAchatMax) {
+        $params['montant_achat_max'] = $montantAchatMax;
+    }
 
     $stmt = $conn->prepare($sql);
-    $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
+    $resultSet = $conn->executeQuery($sql, $params);
     $achats = $resultSet->fetchAllAssociative();
     return $achats;
 }
@@ -102,15 +174,17 @@ class AchatRepository extends ServiceEntityRepository
 public function getPurchaseByTypeMount($form)
 {
     $criteria = $this->extractCriteriaFromForm($form);
+    $montantAchatMin = $form["montant_achat_min"]->getData();
+    $montantAchatMax = $form["montant_achat"]->getData();
 
     $conn = $this->getEntityManager()->getConnection();
     $sql = "
         SELECT
             type_marche,
-            COUNT(CASE WHEN montant_achat <= p.four2 THEN 1 END) AS nombre_achats_inf_four1,
-            COUNT(CASE WHEN montant_achat > p.four2 AND montant_achat <= p.four3 THEN 1 END) AS nombre_achats_four1_four2,
-            COUNT(CASE WHEN montant_achat > p.four3 AND montant_achat <= p.four4 THEN 1 END) AS nombre_achats_four2_four3,
-            COUNT(CASE WHEN montant_achat > p.four4 THEN 1 END) AS nombre_achats_sup_four3,
+            COUNT(CASE WHEN montant_achat <= p.four1 THEN 1 END) AS nombre_achats_inf_four1,
+            COUNT(CASE WHEN montant_achat > p.four1 AND montant_achat <= p.four2 THEN 1 END) AS nombre_achats_four1_four2,
+            COUNT(CASE WHEN montant_achat > p.four2 AND montant_achat <= p.four3 THEN 1 END) AS nombre_achats_four2_four3,
+            COUNT(CASE WHEN montant_achat > p.four3 THEN 1 END) AS nombre_achats_sup_four3,
             COUNT(*) AS nombre_total_achats
         FROM
             achat a
@@ -118,12 +192,31 @@ public function getPurchaseByTypeMount($form)
             parametres p ON a.code_service_id = p.code_service_id 
         WHERE
             type_marche IN (0, 1) AND YEAR(date_notification) = :year AND etat_achat = 2 
-            {$criteria['conditions']}
-        GROUP BY
-            type_marche;";
+            {$criteria['conditions']}";
+
+    // Ajout des filtres basés sur les montants d'achat
+    if ($montantAchatMin && $montantAchatMax) {
+        $sql .= " AND montant_achat > :montant_achat_min AND montant_achat < :montant_achat_max";
+    } elseif ($montantAchatMin) {
+        $sql .= " AND montant_achat > :montant_achat_min";
+    } elseif ($montantAchatMax) {
+        $sql .= " AND montant_achat < :montant_achat_max";
+    }
+
+    $sql .= " GROUP BY type_marche;";
+
+    // Préparer les paramètres
+    $params = array_merge(['year' => $criteria['date']], $criteria['parameters']);
+    
+    if ($montantAchatMin) {
+        $params['montant_achat_min'] = $montantAchatMin;
+    }
+    if ($montantAchatMax) {
+        $params['montant_achat_max'] = $montantAchatMax;
+    }
 
     $stmt = $conn->prepare($sql);
-    $resultSet = $conn->executeQuery($sql, array_merge(['year' => $criteria['date']], $criteria['parameters']));
+    $resultSet = $conn->executeQuery($sql, $params);
     $achats = $resultSet->fetchAllAssociative();
 
     return $achats;
@@ -270,7 +363,6 @@ public function getPMETopVal($form)
         $montantAchatMin = $form["montant_achat_min"]->getData();
         $montantAchatMax = $form["montant_achat"]->getData();
         $user = $this->security->getUser();   
-        // dd($form);
         switch ($form['etat_achat']->getData()) {
             case 'EC':
                 $etat = 0;
@@ -365,7 +457,8 @@ public function getPMETopVal($form)
                     ->andWhere('b.montant_achat < :montant_achat_max')
                     ->setParameter('montant_achat_min', $montantAchatMin)
                     ->setParameter('montant_achat_max', $montantAchatMax);
-            } elseif ($montantAchatMin) {
+            } 
+            elseif ($montantAchatMin) {
                 // Cas où seulement montant_achat_min est fourni
                 $queryBuilder
                     ->andWhere('b.montant_achat > :montant_achat_min')
@@ -406,8 +499,8 @@ public function getPMETopVal($form)
             if ($form["zipcode"]->getData()) {
                 // Add a join with the 'fournisseurs' table to filter by 'zipcode'
                 $queryBuilder
-                    ->join('b.num_siret', 'f') // Assuming 'numSiret' is the association to 'fournisseurs' in your 'achat' entity
-                    ->andWhere('f.code_postal = :zipcode')
+                    ->join('b.num_siret', 'g') // Assuming 'numSiret' is the association to 'fournisseurs' in your 'achat' entity
+                    ->andWhere('g.code_postal = :zipcode')
                     ->setParameter('zipcode', $form["zipcode"]->getData());
             }
             if ($form["id_demande_achat"]->getData()) {
@@ -430,7 +523,8 @@ public function getPMETopVal($form)
     {
         $data = $form->getData();
         $queryBuilder = $this->createQueryBuilder('b');
-        $achatmin = $form["montant_achat_min"]->getData();
+        $montantAchatMin = $form["montant_achat_min"]->getData();
+        $montantAchatMax = $form["montant_achat"]->getData();
         $user = $this->security->getUser();   
         if ($form['etat_achat']->getData() === "EC") {
             // Convertir la chaîne "0" en valeur numérique 0
@@ -529,7 +623,11 @@ public function getPMETopVal($form)
                     ->andWhere('b.objet_achat LIKE :objet_achat')
                     ->setParameter('objet_achat', '%' . $data->getObjetAchat() . '%');
             }
-
+            if ($form["id_demande_achat"]->getData()){
+                $queryBuilder
+                    ->andWhere('b.id_demande_achat LIKE :id_demande_achat')
+                    ->setParameter('id_demande_achat', '%' . $data->getIdDemandeAchat() . '%');
+            }
             if ($form["num_siret"]->getData()) {
                 $queryBuilder
                     ->andWhere('b.num_siret = :num_siret')
@@ -550,7 +648,13 @@ public function getPMETopVal($form)
                     ->andWhere('b.code_cpv = :code_cpv')
                     ->setParameter('code_cpv', $data->getCodeCpv());
             }
-
+            if ($form["zipcode"]->getData()) {
+                // Add a join with the 'fournisseurs' table to filter by 'zipcode'
+                $queryBuilder
+                    ->join('b.num_siret', 'q') // Assuming 'numSiret' is the association to 'fournisseurs' in your 'achat' entity
+                    ->andWhere('q.code_postal = :zipcode')
+                    ->setParameter('zipcode', $form["zipcode"]->getData());
+            }
             if ($form["code_formation"]->getData()) {
                 $queryBuilder
                     ->andWhere('b.code_formation = :code_formation')
@@ -567,12 +671,24 @@ public function getPMETopVal($form)
                     ->andWhere('b.type_marche = :type_marche')
                     ->setParameter('type_marche', $type);
             }
-            if ($form["montant_achat"]->getData()) {
+            if ($montantAchatMin && $montantAchatMax) {
+                // Cas où les deux valeurs sont fournies
                 $queryBuilder
-                    ->andWhere('b.montant_achat < :montant_achat2')
-                    ->andWhere('b.montant_achat > :achatmin')
-                    ->setParameter('achatmin', $achatmin)
-                    ->setParameter('montant_achat2', $data->getMontantAchat());
+                    ->andWhere('b.montant_achat > :montant_achat_min')
+                    ->andWhere('b.montant_achat < :montant_achat_max')
+                    ->setParameter('montant_achat_min', $montantAchatMin)
+                    ->setParameter('montant_achat_max', $montantAchatMax);
+            } 
+            elseif ($montantAchatMin) {
+                // Cas où seulement montant_achat_min est fourni
+                $queryBuilder
+                    ->andWhere('b.montant_achat > :montant_achat_min')
+                    ->setParameter('montant_achat_min', $montantAchatMin);
+            } elseif ($montantAchatMax) {
+                // Cas où seulement montant_achat_max est fourni
+                $queryBuilder
+                    ->andWhere('b.montant_achat < :montant_achat_max')
+                    ->setParameter('montant_achat_max', $montantAchatMax);
             }
             if ($form["date"]->getData()) {
                 $queryBuilder
@@ -1194,19 +1310,28 @@ public function getYearDelayCount($form)
         $result = $query->execute();
     }
 
-    public function add($achat)
+    public function add($achat, $justifAchatId = null)
     {
         $user = $this->security->getUser();    
-            $date = new DateTime('now', new \DateTimeZone('Europe/Paris'));
-            $achat->setUtilisateurs($user);
-            $achat->setDateSaisie($date);
-            $achat->setEtatAchat(0);
-            $numeroAchat = $this->achatNumberService->generateAchatNumber();
-            $achat->setNumeroAchat($numeroAchat);
-            $this->entityManager->persist($achat);
-            $this->entityManager->flush();
+        $date = new DateTime('now', new \DateTimeZone('Europe/Paris'));
+        $achat->setUtilisateurs($user);
+        $achat->setDateSaisie($date);
+        $achat->setEtatAchat(0);
+        $numeroAchat = $this->achatNumberService->generateAchatNumber();
+        $achat->setNumeroAchat($numeroAchat);
         
+        // Associer JustifAchat si un ID est fourni
+        if ($justifAchatId) {
+            $justifAchat = $this->entityManager->getRepository(JustifAchat::class)->find($justifAchatId);
+            if ($justifAchat) {
+                $achat->setJustifAchat($justifAchat);
+            }
+        }
+        
+        $this->entityManager->persist($achat);
+        $this->entityManager->flush();
     }
+    
     public function cancel($id)
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();

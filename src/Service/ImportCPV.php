@@ -3,80 +3,121 @@
 namespace App\Service;
 
 use App\Entity\CPV;
-use App\Repository\AchatRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
-use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
-use Symfony\Component\HttpKernel\KernelInterface;
-use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
-use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class ImportCPV  extends AbstractController
+class ImportCPV extends AbstractController
 {
     private $entityManager;
     private $security;
 
     public function __construct(EntityManagerInterface $entityManager, Security $security)
     {
-
         $this->entityManager = $entityManager;
         $this->security = $security;
     }
-
 
     public function importDataFromExcel(Request $request, $file)
     {
         $user = $this->security->getUser();
         $service = $user->getCodeService();
+
         if ($file) {
-            // Lire le fichier Excel
-            $spreadsheet = IOFactory::load($file);
-    
-            // Récupérer la première feuille du classeur
-            $worksheet = $spreadsheet->getSheet(1);
-            $rowIndex = 7; // Commencer à partir de la troisième ligne
-            $highestRow = $worksheet->getHighestRow();
-            // Récupérer les données et les enregistrer en base de données
-            for ($rowIndex; $rowIndex <= $highestRow; $rowIndex++) {
-                $rowData = $worksheet->rangeToArray('A' . $rowIndex . ':' . 'Z' . $rowIndex, NULL, TRUE, FALSE)[0];
-                
-                // Vérifier si la première colonne contient des caractères
-                if (!empty($rowData[0])) {
-                    $codeCpv = $rowData[0];
-                    
-                    // Vérifier si le code_cpv existe déjà en base de données
-                    $existingCpv = $this->entityManager->getRepository(CPV::class)->findOneByCodeCpv($codeCpv);
-                    
-                    if (!$existingCpv) {
-                        $entity = new CPV();
-                        $entity->setCodeCpv($codeCpv);
-                        $entity->setLibelleCpv($rowData[1]);
-                        $entity->setEtatCpv(1);
-                        $entity->setCodeService($service);
-                        $entity->setMtCpvAuto(90000);
-    
-                        // Enregistrement d'autres propriétés ...
-                        $this->entityManager->persist($entity);
-                    } else {
-                        $existingCpv->setMtCpvAuto(40000);
-                        continue;
-                    }
-                } else {
-                    // Passez à la prochaine ligne si la première colonne est vide
-                    continue;
-                }
+            try {
+                // Vérifier que le fichier est bien un Excel
+                $this->validateFileType($file);
+
+                // Lire le fichier Excel
+                $spreadsheet = IOFactory::load($file);
+                $worksheet = $spreadsheet->getSheet(1);
+
+                // Valider la structure du fichier (A6 = "Code CPV", B6 = "Libellé CPV")
+                $this->validateExcelStructure($worksheet);
+
+                $this->processRows($worksheet,$user->getCodeService());
+
+                $this->addFlash('success', 'Importation réussie !');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Le fichier demandé n\'est pas le bon.');
             }
-            $this->entityManager->flush();
-    
-            $this->addFlash('success', 'Importation réussie !');
+
             return $this->redirectToRoute('cpv');
         }
-        // Gérer le cas où aucun fichier n'est soumis
+
         $this->addFlash('error', 'Veuillez sélectionner un fichier Excel à importer.');
         return $this->redirectToRoute('cpv');
+    }
+
+    /**
+     * Vérifie que le fichier est bien un Excel.
+     *
+     * @param mixed $file
+     * @throws \Exception
+     */
+    private function validateFileType($file)
+    {
+        $mimeType = $file->getMimeType();
+        if (!in_array($mimeType, [
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-excel'
+        ])) {
+            throw new \Exception('Type de fichier invalide');
+        }
+    }
+
+    /**
+     * Vérifie la structure du fichier Excel (A6 = "Code CPV", B6 = "Libellé CPV").
+     *
+     * @param \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet
+     * @throws \Exception
+     */
+    private function validateExcelStructure($worksheet)
+    {
+        $cellA6 = trim((string) $worksheet->getCell('A6')->getValue());
+        $cellB6 = trim((string) $worksheet->getCell('B6')->getValue());
+
+        if ($cellA6 !== 'Code CPV' || $cellB6 !== 'Libellé CPV') {
+            throw new \Exception('Structure du fichier invalide');
+        }
+    }
+
+    /**
+     * Traite les lignes du fichier Excel.
+     *
+     * @param \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet
+     * @param string $service
+     */
+    private function processRows($worksheet, string $service)
+    {
+        $rowIndex = 7;
+        $highestRow = $worksheet->getHighestRow();
+        $user = $this->security->getUser();
+
+        for (; $rowIndex <= $highestRow; $rowIndex++) {
+            $rowData = $worksheet->rangeToArray('A' . $rowIndex . ':B' . $rowIndex, null, true, false)[0];
+
+            if (!empty($rowData[0])) {
+                $codeCpv = $rowData[0];
+                $existingCpv = $this->entityManager->getRepository(CPV::class)->findOneByCodeCpv($codeCpv);
+
+                if (!$existingCpv) {
+                    $entity = new CPV();
+                    $entity->setCodeCpv($codeCpv);
+                    $entity->setLibelleCpv($rowData[1]);
+                    $entity->setEtatCpv(1);
+                    $entity->setCodeService($user->getCodeService());
+                    $entity->setMtCpvAuto(90000);
+
+                    $this->entityManager->persist($entity);
+                } else {
+                    $existingCpv->setMtCpvAuto(40000);
+                }
+            }
+        }
+
+        $this->entityManager->flush();
     }
 }

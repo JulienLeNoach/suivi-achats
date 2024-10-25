@@ -38,14 +38,9 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/deconnexion', name: 'app_logout')]
-    public function logout(): RedirectResponse
+    public function logout(): void
     {
-        $response = $this->redirectToRoute('app_login');
-
-        // Ajouter un message flash pour afficher un message à l'utilisateur
-        $this->addFlash('success', 'Vous avez été déconnecté.');
-        return $this->redirectToRoute($response);
-
-
+        // La logique de déconnexion est gérée par Symfony automatiquement, cette méthode ne sera jamais exécutée.
+        throw new \Exception('Cette méthode ne devrait jamais être appelée directement.');
     }
 }

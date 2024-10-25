@@ -56,7 +56,7 @@ class StatisticVolController extends AbstractController
                 $mppaMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mppaEtat, $form);
                 $mabcMtTotal = $this->achatRepository->getPurchaseCountAndTotalAmount($mabcEtat, $form);
                 $totalAchatPerMonthUnder2K = $this->achatRepository->getTotalAchatUnder2K($form);
-
+                
                 $volValStat = $this->statisticService->purchaseStatisticsByMonth(
                     $mppaMtTotal['current_year'], 
                     $mppaMtTotal['previous_year'], 

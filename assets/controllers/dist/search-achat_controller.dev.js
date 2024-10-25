@@ -46,17 +46,25 @@ function (_Controller) {
     key: "attachEventListeners",
     value: function attachEventListeners() {
       var rows = document.querySelectorAll('.clickable-row');
-      var btnElements = document.querySelectorAll('#btn');
+      var btnElements = document.querySelectorAll('#btn'); // Désactiver tous les boutons initialement
+
+      btnElements.forEach(function (btn) {
+        btn.setAttribute('disabled', 'disabled');
+      });
       rows.forEach(function (row) {
         row.addEventListener('click', function () {
+          // Activer les boutons lors de la sélection d'une ligne
           btnElements.forEach(function (btn) {
             btn.removeAttribute('disabled');
-          });
+          }); // Désélectionner toutes les autres lignes
+
           rows.forEach(function (otherRow) {
             otherRow.classList.remove('selected');
-          });
-          var etatCell = row.cells[7];
-          var etatAchatText = etatCell.textContent.replace(/\s+/g, '');
+          }); // Gérer l'état des boutons selon l'état de la ligne
+
+          var etatCell = row.cells[7]; // Supposons que la 8ème cellule (index 7) contient l'état de l'achat
+
+          var etatAchatText = etatCell.textContent.replace(/\s+/g, ''); // Supprimer les espaces
 
           if (etatAchatText === 'Validé') {
             document.querySelectorAll('.valid, .reint').forEach(function (el) {
@@ -70,10 +78,15 @@ function (_Controller) {
             document.querySelectorAll('.annul, .valid, .edit').forEach(function (el) {
               return el.setAttribute('disabled', 'disabled');
             });
-          }
+          } // Marquer la ligne sélectionnée
+
 
           row.classList.add('selected');
         });
+      }); // Si aucune ligne n'est sélectionnée, tous les boutons restent désactivés
+
+      btnElements.forEach(function (btn) {
+        btn.setAttribute('disabled', 'disabled');
       });
       this.setupAlertForAnnulButton(btnElements);
       this.setupSaveComment();

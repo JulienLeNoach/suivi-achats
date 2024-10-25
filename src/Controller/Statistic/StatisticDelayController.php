@@ -18,35 +18,35 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class StatisticDelayController extends AbstractController
 {
-
     private $achatRepository;
     private $statisticDelayService;
     private $projectDir;
 
-    public function __construct(AchatRepository $achatRepository,KernelInterface $kernel, StatisticDelayService $statisticDelayService)
+    public function __construct(AchatRepository $achatRepository, KernelInterface $kernel, StatisticDelayService $statisticDelayService)
     {
-
         $this->achatRepository = $achatRepository;
         $this->statisticDelayService = $statisticDelayService;
         $this->projectDir = $kernel->getProjectDir();
-
     }
 
     #[Route('/statistic/delay', name: 'app_statistic_delay')]
     public function index(Request $request, SessionInterface $session): Response
     {
         $form = $this->createForm(StatisticType::class, null, []);
-        $form->handleRequest($request);        
+        $form->handleRequest($request);
         $achats = [];
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupération des valeurs de délai saisies
-            
-    
+            $delais = [
+                $form->get('delai_transmissions')->getData(),
+                $form->get('delai_traitement')->getData(),
+                $form->get('delai_notifications')->getData(),
+                $form->get('delai_total')->getData(),
+            ];
             $achats_delay = $this->achatRepository->getYearDelayDiff($form);
             $achats = $this->statisticDelayService->getDelayPerMonth($achats_delay);
             $achats_delay_all = $this->achatRepository->getYearDelayCount($form);
-    
+
             $toPDF = [
                 'criteria' => [
                     'Date' =>  $form["date"]->getData(),
@@ -59,11 +59,13 @@ class StatisticDelayController extends AbstractController
                 ],
                 'achats' => $achats,
                 'achats_delay_all' => $achats_delay_all,
+                'delais' => $delais,  // Ajout des délais
             ];
+
             $session->set('toPDF', $toPDF);
-    
+
             $excelForm = $this->createForm(CreateExcelType::class);
-    
+
             return $this->render('statistic_delay/index.html.twig', [
                 'form' => $form->createView(),
                 'excelForm' => $excelForm->createView(),
@@ -72,16 +74,12 @@ class StatisticDelayController extends AbstractController
                 'toPDF' => $toPDF
             ]);
         }
-    
+
         return $this->render('statistic_delay/index.html.twig', [
             'form' => $form->createView(),
             'achats' => $achats,
         ]);
     }
-    
-
-    // Ajoutez les autres méthodes du contrôleur ici...
-
 
     #[Route('/pdf/generator/stat_delay', name: 'pdf_generator_stat_delay')]
     public function pdf(SessionInterface $session): Response
@@ -90,36 +88,37 @@ class StatisticDelayController extends AbstractController
             'criteria' => $session->get('toPDF')["criteria"],
             'achats' => $session->get('toPDF')["achats"],
             'achats_delay_all' => $session->get('toPDF')["achats_delay_all"],
+            'delais' => $session->get('toPDF')["delais"], // Ajout des délais pour le PDF si nécessaire
         ]);
-    
+
         $dompdf = new Dompdf();
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->loadHtml($html);
         $dompdf->render();
-         
-        $dompdf->stream('stat_delay', array('Attachment' => 0));
+
+        $dompdf->stream('stat_delay', ['Attachment' => 0]);
+
         return new Response('', 200, [
             'Content-Type' => 'application/pdf',
         ]);
     }
-/**
- * @Route("/statistic/delay/export_excel", name="app_statistic_delay_export_excel")
- */
-public function exportExcel(Request $request, CreateExcelDelay $createExcelDelay): Response
-{
-    // Supposons que les données sont passées via une requête GET ou POST
-    $achats = $request->get('achats');
-    $achats_delay_all = $request->get('achats_delay_all');
 
+    /**
+     * @Route("/statistic/delay/export_excel", name="app_statistic_delay_export_excel")
+     */
+    public function exportExcel(Request $request, CreateExcelDelay $createExcelDelay,SessionInterface $session): Response
+    {
+        // Récupérer les données JSON des achats et des délais
+        $achats = json_decode($request->get('achats'), true);
+        $achats_delay_all = json_decode($request->get('achats_delay_all'), true);
+      
 
-    // Convertir les données JSON en tableau PHP
-    $achats = json_decode($achats, true);
-    $achats_delay_all = json_decode($achats_delay_all, true);
+        // Récupérer les délais depuis la session
+        $delais =$session->get('toPDF')["delais"];
 
+        // Générer le fichier Excel
+        $filePath = $createExcelDelay->createExcelFile($achats, $achats_delay_all, $delais);
 
-    // Générer le fichier Excel
-    $filePath = $createExcelDelay->createExcelFile($achats, $achats_delay_all);
-    return new BinaryFileResponse($filePath);
-
-}
+        return new BinaryFileResponse($filePath);
+    }
 }

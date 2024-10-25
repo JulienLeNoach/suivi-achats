@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AchatRepository;
 use ApiPlatform\Metadata\ApiResource;
@@ -171,6 +173,17 @@ private ?float $montant_achat = null;
 
     #[ORM\Column(length: 1000, nullable: true)]
     private ?string $commentaire_annulation = null;
+
+    #[ORM\OneToMany(mappedBy: 'achat', targetEntity: Devis::class)]
+    private Collection $devis;
+
+    #[ORM\ManyToOne(inversedBy: 'achat')]
+    private ?JustifAchat $justifAchat = null;
+
+    public function __construct()
+    {
+        $this->devis = new ArrayCollection();
+    }
 
     
 
@@ -477,6 +490,48 @@ private ?float $montant_achat = null;
     public function setCommentaireAnnulation(?string $commentaire_annulation): static
     {
         $this->commentaire_annulation = $commentaire_annulation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Devis>
+     */
+    public function getDevis(): Collection
+    {
+        return $this->devis;
+    }
+
+    public function addDevi(Devis $devi): static
+    {
+        if (!$this->devis->contains($devi)) {
+            $this->devis->add($devi);
+            $devi->setAchat($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDevi(Devis $devi): static
+    {
+        if ($this->devis->removeElement($devi)) {
+            // set the owning side to null (unless already changed)
+            if ($devi->getAchat() === $this) {
+                $devi->setAchat(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getJustifAchat(): ?JustifAchat
+    {
+        return $this->justifAchat;
+    }
+
+    public function setJustifAchat(?JustifAchat $justifAchat): static
+    {
+        $this->justifAchat = $justifAchat;
 
         return $this;
     }
