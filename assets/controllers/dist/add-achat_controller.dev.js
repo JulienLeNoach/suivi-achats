@@ -61,31 +61,124 @@ function (_Controller) {
     value: function attachEventListeners() {
       if (this.submitButtonTarget) {
         this.submitButtonTarget.addEventListener('click', this.checkMontantBeforeSubmit.bind(this));
-      } // Écouteurs pour la modale
-
+      }
 
       document.getElementById('confirmValidation').addEventListener('click', this.confirmValidation.bind(this));
       document.getElementById('cancelValidation').addEventListener('click', this.hideValidationModal.bind(this));
       document.getElementById('closeValidationModal').addEventListener('click', this.hideValidationModal.bind(this));
+      document.getElementById('nonConcurrenceCheckbox').addEventListener('change', this.toggleJustifNonConcurrenceSelect.bind(this));
     }
   }, {
     key: "checkMontantBeforeSubmit",
     value: function checkMontantBeforeSubmit(event) {
-      // Calculer le montant TTC avant de vérifier
-      var montantTtc = this.calculateTva();
-      console.log(montantTtc); // Vérifier si le montant TTC est inférieur à 2000 €
+      var montantTtc = this.calculateTva(); // Champs obligatoires normaux et autocomplétion
 
-      if (montantTtc < 2000) {
-        event.preventDefault(); // Empêche la soumission du formulaire
+      var requiredFields = [{
+        field: this.dateCommandeChorusTarget,
+        name: "Date Commande Chorus"
+      }, {
+        field: this.dateValidInterTarget,
+        name: "Date Validation Intermédiaire"
+      }, {
+        field: this.montantAchatTarget,
+        name: "Montant Achat"
+      }, {
+        field: this.element.querySelector('[name="add_achat[objet_achat]"]'),
+        name: "Objet Achat"
+      }, {
+        field: this.element.querySelector('[name="add_achat[id_demande_achat]"]'),
+        name: "ID Demande Achat"
+      }, {
+        field: this.element.querySelector('[name="add_achat[type_marche]"]:checked'),
+        name: "Type de Marché"
+      }, {
+        field: this.element.querySelector('[name="add_achat[code_service]"]'),
+        name: "Code Service"
+      }, {
+        field: this.element.querySelector('[name="add_achat[tva_ident]"]'),
+        name: "TVA"
+      }, // Champs d'autocomplétion : vérification avancée
+      {
+        field: this.element.querySelector('#add_achat_code_formation_autocomplete-ts-control'),
+        name: "Code Formation",
+        autocomplete: true
+      }, {
+        field: this.element.querySelector('#add_achat_num_siret_autocomplete-ts-control'),
+        name: "Num SIRET",
+        autocomplete: true
+      }, {
+        field: this.element.querySelector('#add_achat_code_uo_autocomplete-ts-control'),
+        name: "Unité Organique",
+        autocomplete: true
+      }];
+      var missingFields = requiredFields.filter(function (item) {
+        if (!item.field) return true; // Pour les champs d'autocomplétion, vérifier la présence de `data-value` dans le parent direct
 
-        this.showValidationModal(); // Affiche la modale
+        if (item.autocomplete) {
+          var selectedItem = item.field.closest(".ts-control").querySelector("[data-value]");
+          return !selectedItem || selectedItem.getAttribute("data-value") === "";
+        } // Pour les autres champs, vérifier la présence de contenu
+
+
+        return item.field.value.trim() === "";
+      }).map(function (item) {
+        return item.name;
+      });
+
+      if (missingFields.length === 0) {
+        // Tous les champs sont remplis
+        if (montantTtc > 20000) {
+          event.preventDefault();
+          this.showValidationModal(true);
+        } else if (montantTtc < 2000) {
+          event.preventDefault();
+          this.showValidationModal(false);
+        }
+      } else {
+        // Afficher une alerte listant les champs manquants
+        alert("Veuillez remplir les champs obligatoires suivants avant de valider :\n" + missingFields.join(", "));
+        event.preventDefault();
       }
     }
   }, {
     key: "showValidationModal",
-    value: function showValidationModal() {
+    value: function showValidationModal(showTable) {
       var modal = document.getElementById('validationModal');
+      var validationSelect = document.getElementById('validationSelect');
+      var customInput = document.getElementById('customValidationInput'); // Custom input < 2000 €
+
+      var customInputSup = document.getElementById('customValidationInputSup'); // Custom input > 20000 €
+
+      var justificationTable = document.getElementById('justificationTable');
+      var nonConcurrenceContainer = document.getElementById('nonConcurrenceContainer');
+      var justifNonConcurrenceSelectContainer = document.getElementById('justifNonConcurrenceSelectContainer');
+
+      if (showTable) {
+        // Pour montants > 20 000 €
+        validationSelect.style.display = 'none';
+        justificationTable.style.display = 'block';
+        nonConcurrenceContainer.style.display = 'block';
+        customInput.style.display = 'none';
+        customInputSup.style.display = 'block'; // Affiche le champ personnalisé pour > 20000 €
+      } else {
+        // Pour montants < 2 000 €
+        validationSelect.style.display = 'block';
+        justificationTable.style.display = 'none';
+        nonConcurrenceContainer.style.display = 'none';
+        justifNonConcurrenceSelectContainer.style.display = 'none';
+        customInput.style.display = 'block'; // Affiche le champ personnalisé pour < 2000 €
+
+        customInputSup.style.display = 'none';
+      }
+
       modal.style.display = 'block';
+    }
+  }, {
+    key: "toggleJustifNonConcurrenceSelect",
+    value: function toggleJustifNonConcurrenceSelect() {
+      var justifNonConcurrenceSelectContainer = document.getElementById('justifNonConcurrenceSelectContainer');
+      var isChecked = document.getElementById('nonConcurrenceCheckbox').checked;
+      justifNonConcurrenceSelectContainer.style.display = isChecked ? 'block' : 'none';
     }
   }, {
     key: "hideValidationModal",
@@ -98,16 +191,119 @@ function (_Controller) {
     value: function confirmValidation() {
       var selectedOption = document.getElementById('validationSelect').value;
       var customInput = document.getElementById('customValidationInput').value;
+      var customInputSup = document.getElementById('customValidationInputSup').value;
+      var justificationTable = document.getElementById('justificationTable');
+      var justifNonConcurrenceSelect = document.getElementById('justifNonConcurrenceSelect'); // Récupération et validation des valeurs de la table des devis
 
-      if (selectedOption || customInput) {
+      var devisInputs = [{
+        candidat: document.querySelector('input[name="candidat_devis1"]').value,
+        montant: document.querySelector('input[name="montant_ht_devis1"]').value,
+        observation: document.querySelector('input[name="observation_devis1"]').value
+      }, {
+        candidat: document.querySelector('input[name="candidat_devis2"]').value,
+        montant: document.querySelector('input[name="montant_ht_devis2"]').value,
+        observation: document.querySelector('input[name="observation_devis2"]').value
+      }, {
+        candidat: document.querySelector('input[name="candidat_devis3"]').value,
+        montant: document.querySelector('input[name="montant_ht_devis3"]').value,
+        observation: document.querySelector('input[name="observation_devis3"]').value
+      }]; // Fonction de validation pour les champs de devis
+
+      var validateDevisFields = function validateDevisFields(candidat, montant, observation) {
+        if (candidat && candidat.length > 150) {
+          alert("Le nom du candidat ne doit pas dépasser 150 caractères.");
+          return false;
+        }
+
+        if (montant && !/^\d+(\.\d{1,2})?$/.test(montant)) {
+          alert("Le montant HT doit être un nombre valide avec jusqu'à deux décimales.");
+          return false;
+        }
+
+        if (observation && observation.length > 250) {
+          alert("L'observation ne doit pas dépasser 250 caractères.");
+          return false;
+        }
+
+        return true;
+      }; // Vérifie si la table des devis est visible (montant > 20 000 €)
+
+
+      if (justificationTable.style.display === 'block') {
+        var validDevis = false; // Vérifie les devis et leurs champs pour la validation
+
+        for (var i = 0; i < devisInputs.length; i++) {
+          var _devisInputs$i = devisInputs[i],
+              candidat = _devisInputs$i.candidat,
+              montant = _devisInputs$i.montant,
+              observation = _devisInputs$i.observation;
+
+          if (candidat || montant || observation) {
+            if (!validateDevisFields(candidat, montant, observation)) {
+              return;
+            }
+
+            validDevis = true;
+          }
+        }
+
+        if (!validDevis && !justifNonConcurrenceSelect.value && !customInputSup) {
+          alert("Veuillez sélectionner une justification ou saisir une option avant de valider.");
+          return;
+        }
+
+        var form = this.element.querySelector('form');
+
+        if (justifNonConcurrenceSelect && justifNonConcurrenceSelect.value) {
+          var justifNonConcurrenceInput = document.createElement('input');
+          justifNonConcurrenceInput.type = 'hidden';
+          justifNonConcurrenceInput.name = 'justif_non_concurrence';
+          justifNonConcurrenceInput.value = justifNonConcurrenceSelect.value;
+          form.appendChild(justifNonConcurrenceInput);
+        }
+
+        if (customInputSup) {
+          if (customInputSup.length > 250) {
+            alert("La justification personnalisée pour montants supérieurs à 20 000 € ne doit pas dépasser 250 caractères.");
+            return;
+          }
+
+          var customJustifSupInput = document.createElement('input');
+          customJustifSupInput.type = 'hidden';
+          customJustifSupInput.name = 'custom_justif_sup';
+          customJustifSupInput.value = customInputSup;
+          form.appendChild(customJustifSupInput);
+        } // Ajoute les valeurs de la table des devis
+
+
+        devisInputs.forEach(function (devis, index) {
+          if (devis.candidat || devis.montant || devis.observation) {
+            ['candidat', 'montant_ht', 'observation'].forEach(function (field) {
+              var input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = "devis[".concat(index + 1, "][").concat(field, "]");
+              input.value = devis[field === 'candidat' ? 'candidat' : field];
+              form.appendChild(input);
+            });
+          }
+        });
+        this.hideValidationModal();
+        this.submitActualForm();
+        return;
+      } else if (selectedOption || customInput) {
+        // Logique pour les montants < 2 000 €
         var justifIdInput = document.createElement('input');
         justifIdInput.type = 'hidden';
         justifIdInput.name = 'justif_id';
-        justifIdInput.value = selectedOption ? selectedOption : "new"; // Marque si c'est un nouveau justificatif
-
+        justifIdInput.value = selectedOption ? selectedOption : "new";
         this.element.querySelector('form').appendChild(justifIdInput);
 
         if (customInput) {
+          if (customInput.length > 250) {
+            alert("La justification personnalisée pour montants inférieurs à 2 000 € ne doit pas dépasser 250 caractères.");
+            return;
+          }
+
           var customJustifInput = document.createElement('input');
           customJustifInput.type = 'hidden';
           customJustifInput.name = 'custom_justif';
@@ -117,14 +313,14 @@ function (_Controller) {
 
         this.hideValidationModal();
         this.submitActualForm();
-      } else {
-        alert("Veuillez sélectionner ou entrer une option avant de valider.");
+        return;
       }
+
+      alert("Veuillez sélectionner ou entrer une option avant de valider.");
     }
   }, {
     key: "submitActualForm",
     value: function submitActualForm() {
-      // Code pour soumettre le formulaire, par exemple avec une requête AJAX ou un submit traditionnel
       this.element.querySelector('form').submit();
     }
   }, {

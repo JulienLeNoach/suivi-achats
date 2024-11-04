@@ -70,6 +70,7 @@ class AddAchatType extends AbstractType
                 'required' => true,
                 'label' => false,
                 'widget' => 'single_text',
+                'constraints' => [new NotBlank(['message' => 'Ce champ est requis.'])],
                 'attr' => [
                     'class' => 'fr-input',
                     'max' => $todayFormatted,
@@ -84,6 +85,7 @@ class AddAchatType extends AbstractType
             ->add('objet_achat', TextType::class, [
                 'required' => true,
                 'label' => false,
+                'constraints' => [new NotBlank(['message' => 'Ce champ est requis.'])],
                 'attr' => ['class' => 'fr-input'],
                 'label_attr' => ['class' => 'fr-label']
             ])

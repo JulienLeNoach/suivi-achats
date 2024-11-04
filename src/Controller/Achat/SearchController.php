@@ -2,8 +2,10 @@
 
 namespace App\Controller\Achat;
 
+use DateTime;
 use App\Entity\CPV;
 use App\Entity\Achat;
+use App\Entity\Devis;
 use App\Form\ValidType;
 use App\Form\AddAchatType;
 use App\Entity\JustifAchat;
@@ -12,9 +14,11 @@ use App\Factory\AchatFactory;
 use App\Form\AchatSearchType;
 use App\Repository\CPVRepository;
 use App\Repository\AchatRepository;
+use App\Service\AchatNumberService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,12 +32,17 @@ class SearchController extends AbstractController
     private $pagination;
     private $statisticService;
     private $achatFactory;
+    private $achatNumberService;
+    private $security;
 
-    public function __construct(EntityManagerInterface $entityManager,StatisticVolValService $statisticService,AchatFactory $achatFactory)
+
+    public function __construct(EntityManagerInterface $entityManager,Security $security,AchatNumberService $achatNumberService,StatisticVolValService $statisticService,AchatFactory $achatFactory)
     {
         $this->entityManager = $entityManager;
         $this->statisticService = $statisticService;
         $this->achatFactory = $achatFactory;
+        $this->achatNumberService = $achatNumberService;
+        $this->security = $security;
 
     }
 
@@ -138,61 +147,131 @@ public function add(Request $request, SessionInterface $session): Response
     $currentUrl = $session->get('current_url');
 
     // Récupérer les justificatifs avec `etat_justif = 1` et `type_justif = 'inf2000'`
-    $justifs = $this->entityManager->getRepository(JustifAchat::class)->findBy([
+    $justifsInf2000 = $this->entityManager->getRepository(JustifAchat::class)->findBy([
         'etat_justif' => 1,
         'type_justif' => 'inf2000'
+    ]);
+
+    // Récupérer les justificatifs avec `type_justif = 'sup20000'`
+    $justifsSup20000 = $this->entityManager->getRepository(JustifAchat::class)->findBy([
+        'type_justif' => 'sup20000'
     ]);
 
     if ($form->isSubmitted() && $form->isValid()) {
         $cpv = $achat->getCodeCpv();
         $montantAchat = $achat->getMontantAchat();
-
-        // Gestion du justificatif ajouté manuellement
-        $customJustif = $request->request->get('custom_justif');
-        $justifAchatId = $request->request->get('justif_id');
-        $justifAchat = null;
-
-        if ($customJustif && $justifAchatId === "new") {
-            // Créer un nouveau justificatif
-            $justifAchat = new JustifAchat();
-            $justifAchat->setLibelleJustif($customJustif);
-            $justifAchat->setTypeJustif('inf2000');
-            $justifAchat->setEtatJustif((int)0);
-
-            $this->entityManager->persist($justifAchat);
-            $this->entityManager->flush(); // Sauvegarde le nouveau justificatif pour avoir son ID
-
-            // Associer le nouvel ID au justificatif à utiliser pour l'achat
-            $achat->setJustifAchat($justifAchat);
-        } elseif ($justifAchatId) {
-            // Associer un justificatif existant
-            $justifAchat = $this->entityManager->getRepository(JustifAchat::class)->find($justifAchatId);
-            $achat->setJustifAchat($justifAchat);
-        }
+        $user = $this->security->getUser();    
+        $date = new DateTime('now', new \DateTimeZone('Europe/Paris'));
+        $achat->setUtilisateurs($user);
+        $achat->setDateSaisie($date);
+        $achat->setEtatAchat(0);
+        $numeroAchat = $this->achatNumberService->generateAchatNumber();
+        $achat->setNumeroAchat($numeroAchat);
 
         // Vérifier si l'ajout dépasse le montant restant dans le CPV
         if ($cpv->getMtCpvAuto() < $montantAchat) {
             $this->addFlash('error', 'L\'achat ne peut être ajouté car le montant du CPV disponible est insuffisant.');
-        } else {
-            // Mettre à jour le montant du CPV
-            $cpv->setMtCpvAuto($cpv->getMtCpvAuto() - $montantAchat);
-            $this->entityManager->persist($cpv);
-
-            // Ajouter l'achat en base de données avec le JustifAchat sélectionné
-            $this->entityManager->getRepository(Achat::class)->add($achat, $justifAchat ? $justifAchat->getId() : null);
-
-            $this->addFlash('valid', 'Achat n° ' . $achat->getNumeroAchat() . " ajouté avec succès. Montant restant du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€");
-
-            return $this->redirect("/search");
+            return $this->redirectToRoute('ajout_achat');
         }
+
+        // Traitement des montants supérieurs à 20 000 €
+        if ($montantAchat > 20000) {
+            $justifNonConcurrenceId = $request->request->get('justif_non_concurrence');
+            $customNonConcurrenceInput = $request->request->get('custom_justif_sup');
+            $devisData = $request->request->all('devis');
+
+            // Condition 1 : Traiter les devis si des valeurs sont présentes
+            if (is_array($devisData) && !empty(array_filter($devisData, fn($devis) => !empty($devis['candidat']) && !empty($devis['montant_ht'])))) {
+                foreach ($devisData as $devisInfo) {
+                    // Valider les données du devis
+                    if (isset($devisInfo['candidat']) && strlen($devisInfo['candidat']) > 150) {
+                        $this->addFlash('error', 'Le nom du candidat ne doit pas dépasser 150 caractères.');
+                        return $this->redirectToRoute('ajout_achat');
+                    }
+                    
+                    if (isset($devisInfo['montant_ht']) && !preg_match('/^\d+(\.\d{1,2})?$/', $devisInfo['montant_ht'])) {
+                        $this->addFlash('error', 'Le montant HT doit être un nombre avec deux décimales maximum.');
+                        return $this->redirectToRoute('ajout_achat');
+                    }
+
+                    if (isset($devisInfo['obs']) && strlen($devisInfo['obs']) > 250) {
+                        $this->addFlash('error', 'L\'observation ne doit pas dépasser 250 caractères.');
+                        return $this->redirectToRoute('ajout_achat');
+                    }
+
+                    // Enregistrer le devis
+                    $devis = new Devis();
+                    $devis->setNomCandidat($devisInfo['candidat'] ?? null);
+                    $devis->setMontantHt($devisInfo['montant_ht'] ?? 0);
+                    $devis->setObs($devisInfo['obs'] ?? null);
+                    $devis->setAchat($achat);
+                    $this->entityManager->persist($devis);
+                }
+            } 
+            // Condition 2 : Traiter les justifications de non-concurrence
+            else {
+                if ($justifNonConcurrenceId !== null) {
+                    $justifAchat = $this->entityManager->getRepository(JustifAchat::class)->find($justifNonConcurrenceId);
+                    $achat->setJustifAchat($justifAchat);
+                } elseif ($justifNonConcurrenceId == null) {
+                    if (strlen($customNonConcurrenceInput) > 250) {
+                        $this->addFlash('error', 'La justification personnalisée ne doit pas dépasser 250 caractères.');
+                        return $this->redirectToRoute('ajout_achat');
+                    }
+
+                    $newJustif = new JustifAchat();
+                    $newJustif->setLibelleJustif($customNonConcurrenceInput);
+                    $newJustif->setTypeJustif('sup20000');
+                    $newJustif->setEtatJustif(false);
+                    $this->entityManager->persist($newJustif);
+                    $achat->setJustifAchat($newJustif);
+                }
+            }
+        } else {
+            // Logique pour montants < 2 000 €
+            $justifAchatId = $request->request->get('justif_id');
+            $customJustif = $request->request->get('custom_justif');
+
+            if ($justifAchatId && $justifAchatId !== "new") {
+                $justifAchat = $this->entityManager->getRepository(JustifAchat::class)->find($justifAchatId);
+                $achat->setJustifAchat($justifAchat);
+            } elseif ($customJustif) {
+                if (strlen($customJustif) > 250) {
+                    $this->addFlash('error', 'La justification personnalisée ne doit pas dépasser 250 caractères.');
+                    return $this->redirectToRoute('ajout_achat');
+                }
+
+                $newJustif = new JustifAchat();
+                $newJustif->setLibelleJustif($customJustif);
+                $newJustif->setTypeJustif('inf2000');
+                $newJustif->setEtatJustif(false);
+                $this->entityManager->persist($newJustif);
+                $achat->setJustifAchat($newJustif);
+            }
+        }
+
+        // Mettre à jour le montant du CPV
+        $cpv->setMtCpvAuto($cpv->getMtCpvAuto() - $montantAchat);
+        $this->entityManager->persist($cpv);
+
+        // Enregistrer l'achat
+        $this->entityManager->persist($achat);
+        $this->entityManager->flush();
+
+        $this->addFlash('valid', 'Achat n° ' . $achat->getNumeroAchat() . " ajouté avec succès. Montant restant du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€");
+
+        return $this->redirect("/search");
     }
 
     return $this->render('achat/addAchat.html.twig', [
         'form' => $form->createView(),
-        'justifs' => $justifs,  // Passer les justificatifs à la vue
+        'justifs' => $justifsInf2000,
+        'justifsSup20000' => $justifsSup20000,
         'currentUrl' => $currentUrl
     ]);
 }
+
+
 
 
 
@@ -257,9 +336,6 @@ public function cancel($id, Request $request, SessionInterface $session, AchatRe
 }
 
 
-
-
-
 #[Route('/reint_achat/{id}', name: 'reint_achat')] //V2
 public function reint($id, Request $request, SessionInterface $session, AchatRepository $achatRepository, CPVRepository $cpvRepository): Response
 {
@@ -283,9 +359,9 @@ public function reint($id, Request $request, SessionInterface $session, AchatRep
         $this->addFlash('error', 'L\'achat ne peut être réintégré car le montant total des achats pour ce CPV dépasse le montant autorisé (' . $montant_cpv_auto . '€).');
     } else {
         // Mettre à jour le montant du CPV après réintégration
-        $cpv->setMtCpvAuto($montant_cpv_auto - $montantAchat);
-        $this->entityManager->persist($cpv);
-        $this->entityManager->flush();
+        // $cpv->setMtCpvAuto($montant_cpv_auto - $montantAchat);
+        // $this->entityManager->persist($cpv);
+        // $this->entityManager->flush();
 
         // Réintégrer l'achat
         $this->entityManager->getRepository(Achat::class)->reint($id);
@@ -294,8 +370,6 @@ public function reint($id, Request $request, SessionInterface $session, AchatRep
 
     return $this->redirect($currentUrl);
 }
-
-
 
 #[Route('/edit_achat/{id}', name: 'edit_achat')] //V2
 public function edit(Request $request, $id, Achat $achat, AchatRepository $achatRepository, CPVRepository $cpvRepository, SessionInterface $session): Response

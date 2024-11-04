@@ -85,10 +85,12 @@
                 </div>
             </div>
     <!-- Modale pour la validation de l'achat -->
-    <div id="validationModal" class="modal-custom" style="display: none;">
+<div id="validationModal" class="modal-custom" style="display: none;">
     <div class="modal-content-custom">
         <span class="close" id="closeValidationModal">&times;</span>
-        <h5>Justificatif DA < 2000€ TTC</h5>
+        <h5>Justificatif DA</h5>
+
+        <!-- Sélecteur, visible par défaut -->
         <select id="validationSelect" class="form-control">
             <option value="">Sélectionnez une option</option>
             {% for justif in justifs %}
@@ -96,6 +98,60 @@
             {% endfor %}
         </select>
         <input type="text" id="customValidationInput" placeholder="Ou saisissez une nouvelle option..." class="form-control mt-2">
+
+        <!-- Table pour les devis, cachée par défaut -->
+        <table id="justificationTable" class="table" style="display: none;">
+            <thead>
+                <tr>
+                    <th></th> <!-- Colonne vide pour les titres des lignes -->
+                    <th>Candidats</th>
+                    <th>Montant HT</th>
+                    <th>Observation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Devis 1</th>
+                    <td><input type="text" name="candidat_devis1" class="form-control"></td>
+                    <td><input type="text" name="montant_ht_devis1" class="form-control"></td>
+                    <td><input type="text" name="observation_devis1" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th scope="row">Devis 2</th>
+                    <td><input type="text" name="candidat_devis2" class="form-control"></td>
+                    <td><input type="text" name="montant_ht_devis2" class="form-control"></td>
+                    <td><input type="text" name="observation_devis2" class="form-control"></td>
+                </tr>
+                <tr>
+                    <th scope="row">Devis 3</th>
+                    <td><input type="text" name="candidat_devis3" class="form-control"></td>
+                    <td><input type="text" name="montant_ht_devis3" class="form-control"></td>
+                    <td><input type="text" name="observation_devis3" class="form-control"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Case à cocher "non mise en concurrence", cachée par défaut -->
+        <div id="nonConcurrenceContainer" class="form-check mt-2" style="display: none;">
+            <input class="form-check-input" type="checkbox" id="nonConcurrenceCheckbox">
+            <label class="form-check-label" for="nonConcurrenceCheckbox">
+                Non mise en concurrence
+            </label>
+        </div>
+
+        <!-- Sélecteur pour les justificatifs de non mise en concurrence, caché par défaut -->
+        <div id="justifNonConcurrenceSelectContainer" style="display: none;">
+            <label for="justifNonConcurrenceSelect">Justificatif de non mise en concurrence</label>
+            <select id="justifNonConcurrenceSelect" class="form-control">
+                <option value="">Sélectionnez un justificatif</option>
+                {% for justif in justifsSup20000 %}
+                    <option value="{{ justif.id }}">{{ justif.libelleJustif }}</option>
+                {% endfor %}
+            </select>
+                    <input type="text" id="customValidationInputSup" placeholder="Ou saisissez une nouvelle option..." class="form-control mt-2">
+
+        </div>
+
         <div class="modal-footer">
             <button type="button" id="confirmValidation" class="btn btn-primary">Valider</button>
             <button type="button" id="cancelValidation" class="btn btn-secondary">Annuler</button>
