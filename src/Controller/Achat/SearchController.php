@@ -15,15 +15,20 @@ use App\Form\AchatSearchType;
 use App\Repository\CPVRepository;
 use App\Repository\AchatRepository;
 use App\Service\AchatNumberService;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Service\Statistic\VolVal\StatisticVolValService;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SearchController extends AbstractController
@@ -131,12 +136,29 @@ public function show(Request $request,$id,SessionInterface $session): Response
     $cpvId = $cpv->getId();
     $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId, $id);
 
-
     return $this->render('search/result_achat.html.twig', [
         'result_achat' => $result_achat,
         'cpvMt' => $cpvMt
 
     ]);
+}
+// Ajout de la route pour générer le fichier Excel à partir de la vue result_achat
+#[Route('/generate_excel/{id}', name: 'generate_excel')]
+public function generateFromResultAchat($id): Response
+{
+    // Récupérer l'achat par ID
+    $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
+
+    if (!$result_achat) {
+        $this->addFlash('error', 'Achat non trouvé.');
+        return $this->redirectToRoute('achat_result', ['id' => $id]);
+    }
+
+    // Appeler la méthode pour générer le fichier Excel
+    $dateValidation = $result_achat->getDateValidation();  // Si la date de validation est déjà présente
+    $dateNotification = $result_achat->getDateNotification();  // Si la date de notification est déjà présente
+
+    return $this->generateExcel($result_achat, $dateValidation, $dateNotification);
 }
 #[Route('/ajout_achat', name: 'ajout_achat')]
 public function add(Request $request, SessionInterface $session): Response
@@ -154,81 +176,81 @@ public function add(Request $request, SessionInterface $session): Response
 
     // Récupérer les justificatifs avec `type_justif = 'sup20000'`
     $justifsSup20000 = $this->entityManager->getRepository(JustifAchat::class)->findBy([
+        'etat_justif' => 1,
         'type_justif' => 'sup20000'
     ]);
 
     if ($form->isSubmitted() && $form->isValid()) {
         $cpv = $achat->getCodeCpv();
         $montantAchat = $achat->getMontantAchat();
-        $user = $this->security->getUser();    
-        $date = new DateTime('now', new \DateTimeZone('Europe/Paris'));
+        $user = $this->security->getUser();
+        $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         $achat->setUtilisateurs($user);
         $achat->setDateSaisie($date);
         $achat->setEtatAchat(0);
         $numeroAchat = $this->achatNumberService->generateAchatNumber();
         $achat->setNumeroAchat($numeroAchat);
 
-        // Vérifier si l'ajout dépasse le montant restant dans le CPV
-        if ($cpv->getMtCpvAuto() < $montantAchat) {
-            $this->addFlash('error', 'L\'achat ne peut être ajouté car le montant du CPV disponible est insuffisant.');
-            return $this->redirectToRoute('ajout_achat');
+        // Si le type de marché est 0, enregistre l'achat sans justification
+        if ($achat->getTypeMarche() === "0") {
+            // $cpv->setMtCpvAuto($cpv->getMtCpvAuto() - $montantAchat);
+            // $this->entityManager->persist($cpv);
+
+            $this->entityManager->persist($achat);
+            $this->entityManager->flush();
+
+            $this->addFlash('valid', 'Achat n° ' . $achat->getNumeroAchat() . " ajouté avec succès. Montant restant du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€");
+
+            return $this->redirect("/search");
         }
 
-        // Traitement des montants supérieurs à 20 000 €
+        // Si le montant d'achat est supérieur à 20 000 €
         if ($montantAchat > 20000) {
             $justifNonConcurrenceId = $request->request->get('justif_non_concurrence');
             $customNonConcurrenceInput = $request->request->get('custom_justif_sup');
             $devisData = $request->request->all('devis');
 
-            // Condition 1 : Traiter les devis si des valeurs sont présentes
-            if (is_array($devisData) && !empty(array_filter($devisData, fn($devis) => !empty($devis['candidat']) && !empty($devis['montant_ht'])))) {
+            // Gestion des devis s'ils sont renseignés
+            if (is_array($devisData) && !empty(array_filter($devisData, fn($devis) => !empty($devis['candidat']) && !empty($devis['montantht'])))) {
                 foreach ($devisData as $devisInfo) {
-                    // Valider les données du devis
                     if (isset($devisInfo['candidat']) && strlen($devisInfo['candidat']) > 150) {
                         $this->addFlash('error', 'Le nom du candidat ne doit pas dépasser 150 caractères.');
                         return $this->redirectToRoute('ajout_achat');
                     }
-                    
-                    if (isset($devisInfo['montant_ht']) && !preg_match('/^\d+(\.\d{1,2})?$/', $devisInfo['montant_ht'])) {
-                        $this->addFlash('error', 'Le montant HT doit être un nombre avec deux décimales maximum.');
-                        return $this->redirectToRoute('ajout_achat');
-                    }
-
                     if (isset($devisInfo['obs']) && strlen($devisInfo['obs']) > 250) {
                         $this->addFlash('error', 'L\'observation ne doit pas dépasser 250 caractères.');
                         return $this->redirectToRoute('ajout_achat');
                     }
 
-                    // Enregistrer le devis
                     $devis = new Devis();
                     $devis->setNomCandidat($devisInfo['candidat'] ?? null);
-                    $devis->setMontantHt($devisInfo['montant_ht'] ?? 0);
+                    $devis->setMontantHt($devisInfo['montantht'] ?? 0);
                     $devis->setObs($devisInfo['obs'] ?? null);
                     $devis->setAchat($achat);
                     $this->entityManager->persist($devis);
                 }
-            } 
-            // Condition 2 : Traiter les justifications de non-concurrence
-            else {
-                if ($justifNonConcurrenceId !== null) {
-                    $justifAchat = $this->entityManager->getRepository(JustifAchat::class)->find($justifNonConcurrenceId);
-                    $achat->setJustifAchat($justifAchat);
-                } elseif ($justifNonConcurrenceId == null) {
-                    if (strlen($customNonConcurrenceInput) > 250) {
-                        $this->addFlash('error', 'La justification personnalisée ne doit pas dépasser 250 caractères.');
-                        return $this->redirectToRoute('ajout_achat');
-                    }
-
-                    $newJustif = new JustifAchat();
-                    $newJustif->setLibelleJustif($customNonConcurrenceInput);
-                    $newJustif->setTypeJustif('sup20000');
-                    $newJustif->setEtatJustif(false);
-                    $this->entityManager->persist($newJustif);
-                    $achat->setJustifAchat($newJustif);
-                }
             }
+
+            // Gestion des justifications de non-concurrence
+            if ($justifNonConcurrenceId !== null) {
+                $justifAchat = $this->entityManager->getRepository(JustifAchat::class)->find($justifNonConcurrenceId);
+                $achat->setJustifAchat($justifAchat);
+            } elseif ($customNonConcurrenceInput) {
+                if (strlen($customNonConcurrenceInput) > 250) {
+                    $this->addFlash('error', 'La justification personnalisée ne doit pas dépasser 250 caractères.');
+                    return $this->redirectToRoute('ajout_achat');
+                }
+
+                $newJustif = new JustifAchat();
+                $newJustif->setLibelleJustif($customNonConcurrenceInput);
+                $newJustif->setTypeJustif('sup20000');
+                $newJustif->setEtatJustif(false);
+                $this->entityManager->persist($newJustif);
+                $achat->setJustifAchat($newJustif);
+            }
+
         } else {
-            // Logique pour montants < 2 000 €
+            // Gestion des montants inférieurs à 2 000 € (type marché = 1)
             $justifAchatId = $request->request->get('justif_id');
             $customJustif = $request->request->get('custom_justif');
 
@@ -250,15 +272,14 @@ public function add(Request $request, SessionInterface $session): Response
             }
         }
 
-        // Mettre à jour le montant du CPV
-        $cpv->setMtCpvAuto($cpv->getMtCpvAuto() - $montantAchat);
-        $this->entityManager->persist($cpv);
+        // $cpv->setMtCpvAuto($cpv->getMtCpvAuto() - $montantAchat);
+        // $this->entityManager->persist($cpv);
 
-        // Enregistrer l'achat
         $this->entityManager->persist($achat);
         $this->entityManager->flush();
-
-        $this->addFlash('valid', 'Achat n° ' . $achat->getNumeroAchat() . " ajouté avec succès. Montant restant du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€");
+        $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpv->getCodeCpv(), $achat->getId());
+        // dd($cpvMt);
+        $this->addFlash('valid', 'Achat n° ' . $achat->getNumeroAchat() . " ajouté avec succès. Montant restant du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpvMt['reliquat'] . "€");
 
         return $this->redirect("/search");
     }
@@ -272,39 +293,122 @@ public function add(Request $request, SessionInterface $session): Response
 }
 
 
-
-
-
-
-#[Route('/valid_achat/{id}', name: 'valid_achat')] //V2
-public function valid(Request $request, $id, SessionInterface $session): Response
+private function generateExcel(Achat $result_achat, ?\DateTime $dateValidation, ?\DateTime $dateNotification): StreamedResponse
 {
-    $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-    $cpv = $result_achat->getCodeCpv();
-    $cpvId = $cpv->getId();
-
-    $form = $this->createForm(ValidType::class, null, []);
-    $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId, $id);
+    // Chemin vers le modèle Excel
+    $templatePath = $this->getParameter('kernel.project_dir') . '/public/Pochette_Suivi_achats_NG.xlsx';
     
-    $form->handleRequest($request);
+    // Charger le fichier Excel existant
+    $spreadsheet = IOFactory::load($templatePath);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->getRepository(Achat::class)->valid($request, $id);
-        
-            $this->entityManager->flush();
-            $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé \n\n Computation actuel du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpvMt['computation'] . "€ \n\n Reliquat actuel du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€");
+    // Calcul du montant TTC
+    $tvaTaux = $result_achat->getTvaIdent()->getTvaTaux() ?? 0;
+    $montantTtc = $result_achat->getMontantAchat() * (1 + $tvaTaux / 100);
 
-            return $this->redirect("/search");
-        
+    // Choix de la feuille en fonction des conditions
+    if ($result_achat->getTypeMarche() === '1' && $montantTtc < 2000) {
+        $sheet = $spreadsheet->setActiveSheetIndex(1); // Utilisation de la deuxième feuille pour montant < 2000
+    } elseif ($result_achat->getTypeMarche() === '1' && $montantTtc > 20000) {
+        $sheet = $spreadsheet->setActiveSheetIndex(2); // Utilisation de la troisième feuille pour montant > 20000
+    } else {
+        $sheet = $spreadsheet->setActiveSheetIndex(0); // Première feuille par défaut pour les autres cas
+    }
+    $typeMarcheLabel = $result_achat->getTypeMarche() === '1' ? 'MPPA' : 'MABC';
+    $sheet->setCellValue('D7', $typeMarcheLabel);    // Remplir les cellules avec les données de l'achat
+    $sheet->setCellValue('C4', $result_achat->getNumeroAchat());  // N° Chrono
+    $sheet->setCellValue('I4', $result_achat->getIdDemandeAchat());  // ID Demande Achat
+    $sheet->setCellValue('N4', $result_achat->getUtilisateurs()->getTrigram() ?? '');  // Trigram de l'utilisateur
+    $sheet->setCellValue('C9', $result_achat->getNumSiret()->getNomFournisseur() ?? '');
+    $sheet->setCellValue('Q9', $result_achat->getNumSiret()->getPme() ? 'Oui' : 'Non');
+
+    // Informations sur l'achat
+    $sheet->setCellValue('E11', $result_achat->getCodeUo()->getLibelleUo() ?? '');  // UO
+    $sheet->setCellValue('C13', $result_achat->getObjetAchat());  // Objet de l'achat
+    $sheet->setCellValue('D15', $result_achat->getMontantAchat());  // Montant HT
+    $sheet->setCellValue('I15', $tvaTaux);  // TVA
+    $sheet->setCellValue('N15', $montantTtc);  // Montant TTC
+
+    // Autres informations
+    $sheet->setCellValue('E17', $result_achat->getObservations());  // Observations
+    $sheet->setCellValue('C19', $result_achat->getCodeCpv()->getCodeCpv() ?? '');  // Code CPV
+    $sheet->setCellValue('P19', $result_achat->getCodeUo()->getCodeUo() ?? '');  // Code UO
+    $sheet->setCellValue('F21', $result_achat->getDateCommandeChorus() ? $result_achat->getDateCommandeChorus()->format('d/m/Y') : '');  // Date Commande Chorus
+    $sheet->setCellValue('O21', $result_achat->getDateValidInter() ? $result_achat->getDateValidInter()->format('d/m/Y') : '');  // Date Validation Interne
+    $sheet->setCellValue('F23', $dateValidation ? $dateValidation->format('d/m/Y') : '');  // Date Validation
+    $sheet->setCellValue('O23', $dateNotification ? $dateNotification->format('d/m/Y') : '');  // Date Notification
+
+    // Conditions spécifiques pour TypeMarche = 1 et Montant TTC < 2000
+    if ($result_achat->getTypeMarche() === '1' && $montantTtc < 2000) {
+        $sheet->setCellValue('K19', $result_achat->getCodeCpv()->getMtCpvAuto() ?? '');  // Dernière computation connue
+        $justification = $result_achat->getJustifAchat() ? $result_achat->getJustifAchat()->getLibelleJustif() : 'aucune justification renseignée';
+        $sheet->setCellValue('E27', $justification);  // Justification d'achat
     }
 
-    return $this->render('achat/valid_achat.html.twig', [
-        'result_achat' => $result_achat,
-        'cpvMt' => $cpvMt,
-        'form' => $form->createView(),
+    // Conditions spécifiques pour TypeMarche = 1 et Montant TTC > 20000
+    if ($result_achat->getTypeMarche() === '1' && $montantTtc > 20000) {
+        $sheet->setCellValue('K19', $result_achat->getCodeCpv()->getMtCpvAuto() ?? '');  // Dernière computation connue
+        
+        // Justification d'achat
+        $justification = $result_achat->getJustifAchat() ? $result_achat->getJustifAchat()->getLibelleJustif() : 'aucune justification renseignée';
+        $sheet->setCellValue('F33', $justification);  // Justification d'achat dans F33
+
+        // Renseigner les informations sur les devis
+        $devisList = $result_achat->getDevis();
+        foreach ($devisList as $index => $devis) {
+            if ($index >= 3) break;  // Limite à 3 devis
+            $row = 29 + $index;  // Lignes 29, 30, et 31 pour les devis
+            $sheet->setCellValue("C$row", $devis->getNomCandidat() ?? '');
+            $sheet->setCellValue("J$row", $devis->getMontantHt() ?? '');
+            $sheet->setCellValue("M$row", $devis->getObs() ?? '');
+        }
+    }
+
+    // Configurer le téléchargement du fichier
+    $writer = new Xlsx($spreadsheet);
+    $fileName = 'Achat_' . $result_achat->getNumeroAchat() . '.xlsx';
+
+    return new StreamedResponse(function () use ($writer) {
+        $writer->save('php://output');
+    }, 200, [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
     ]);
 }
 
+
+
+
+
+    #[Route('/valid_achat/{id}', name: 'valid_achat')]
+    public function valid(Request $request, $id, SessionInterface $session): Response
+    {
+        $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
+        $cpv = $result_achat->getCodeCpv();
+        $cpvId = $cpv->getId();
+
+        $form = $this->createForm(ValidType::class, null, []);
+        $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId, $id);
+        
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $dateValidation = $form->get('val')->getData();
+            $dateNotification = $form->get('not')->getData();
+            $this->entityManager->getRepository(Achat::class)->valid($request, $id);
+            $this->entityManager->flush();
+
+            $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé et fichier Excel généré.");
+
+            // Générer et renvoyer le fichier Excel en téléchargement
+            return $this->generateExcel($result_achat, $dateValidation, $dateNotification);
+        }
+
+        return $this->render('achat/valid_achat.html.twig', [
+            'result_achat' => $result_achat,
+            'cpvMt' => $cpvMt,
+            'form' => $form->createView(),
+        ]);
+    }
 
 #[Route('/annul_achat/{id}', name: 'annul_achat', methods: ['POST'])]
 public function cancel($id, Request $request, SessionInterface $session, AchatRepository $achatRepository): JsonResponse
@@ -343,7 +447,6 @@ public function reint($id, Request $request, SessionInterface $session, AchatRep
     $achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
     $cpv = $achat->getCodeCpv();
     $montantAchat = $achat->getMontantAchat();
-
     // Récupérer le montant total des achats pour ce CPV sur l'année en cours
     $currentYear = (new \DateTime())->format('Y');
     $totalAchats = $achatRepository->getTotalAchatsForCPVByYear($cpv, $currentYear);
@@ -355,9 +458,9 @@ public function reint($id, Request $request, SessionInterface $session, AchatRep
     $nouveau_total_cpv = $totalAchats + $montantAchat;
 
     // Vérifier si la réintégration dépasse le montant autorisé
-    if ($nouveau_total_cpv > $montant_cpv_auto) {
-        $this->addFlash('error', 'L\'achat ne peut être réintégré car le montant total des achats pour ce CPV dépasse le montant autorisé (' . $montant_cpv_auto . '€).');
-    } else {
+    // if ($nouveau_total_cpv > $montant_cpv_auto) {
+    //     $this->addFlash('error', 'L\'achat ne peut être réintégré car le montant total des achats pour ce CPV dépasse le montant autorisé (' . $montant_cpv_auto . '€).');
+    // } else {
         // Mettre à jour le montant du CPV après réintégration
         // $cpv->setMtCpvAuto($montant_cpv_auto - $montantAchat);
         // $this->entityManager->persist($cpv);
@@ -365,8 +468,11 @@ public function reint($id, Request $request, SessionInterface $session, AchatRep
 
         // Réintégrer l'achat
         $this->entityManager->getRepository(Achat::class)->reint($id);
-        $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . " réintégré. Montant restant du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpv->getMtCpvAuto() . "€.");
-    }
+        $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpv, $id);
+        // dd($cpvMt['reliquat']);
+
+        $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . " réintégré. Montant restant du CPV '" . $cpv->getLibelleCpv() . "' : " . $cpvMt['reliquat'] . "€.");
+    // }   
 
     return $this->redirect($currentUrl);
 }
@@ -401,9 +507,9 @@ public function edit(Request $request, $id, Achat $achat, AchatRepository $achat
         $nouveau_total_cpv = $totalAchats - $montant_achat_initial + $montant_achat_modifie;
 
         // Vérifier si le montant total des achats dépasse le seuil autorisé
-        if ($nouveau_total_cpv > $montant_cpv_auto) {
-            $this->addFlash('error', 'Modification impossible : le total des achats pour ce CPV dépasse le montant autorisé (' . $montant_cpv_auto . ' €).');
-        } else {
+        // if ($nouveau_total_cpv > $montant_cpv_auto) {
+        //     $this->addFlash('error', 'Modification impossible : le total des achats pour ce CPV dépasse le montant autorisé (' . $montant_cpv_auto . ' €).');
+        // } else {
             // Sauvegarder les modifications de l'achat
             $achatRepository->edit($achat, true);
 
@@ -412,7 +518,7 @@ public function edit(Request $request, $id, Achat $achat, AchatRepository $achat
 
             $this->addFlash('success', 'Achat n° ' . $achat->getNumeroAchat() . " modifié avec succès.");
             return $this->redirect($currentUrl);
-        }
+        // }
     }
 
     return $this->render('achat/edit_achat_id.html.twig', [

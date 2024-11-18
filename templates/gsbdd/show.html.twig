@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}GSBDD{% endblock %}
+
+{% block body %}
+<div class="achat-container">
+    <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+        <h5 class="mt-4 ms-3 blueF">GSBDD N°{{ g_s_b_d_d.id }}</h5>
+        <div class="bande ms-3"></div>
+    </div>
+    <div class="action-container p-3">
+        <table class="">
+            <tbody>
+                <tr>
+                    <th>Service</th>
+                    <td>{{ g_s_b_d_d.codeService.nomService }}</td>
+                </tr>
+                <tr>
+                    <th>Libellé GSBDD</th>
+                    <td>{{ g_s_b_d_d.libelleGsbdd }}</td>
+                </tr>
+<tr>
+                <th>Etat du GSBDD</th>
+<td>
+    {% if g_s_b_d_d.etatGsbdd == 1 %}
+        Actif
+    {% elseif g_s_b_d_d.etatGsbdd == 0 %}
+        Inactif
+    {% else %}
+        <!-- Gérer les autres cas si nécessaire -->
+        {{ g_s_b_d_d.etatGsbdd }}
+    {% endif %}
+</td> 
+            </tr>
+            </tbody>
+        </table>
+        <div class="align-items-center justify-content-center d-flex mt-3">
+            <a class="fr-btn me-3" href="{{ path('app_g_s_b_d_d_edit', {'id': g_s_b_d_d.id}) }}">Modifier</a>
+            {# {{ include('gsbdd/_delete_form.html.twig') }} #}
+        </div>
+        <div class="align-items-center justify-content-center d-flex mt-3">
+            <a class="fr-btn" href="{{ path('app_g_s_b_d_d_index') }}">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

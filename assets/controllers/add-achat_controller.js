@@ -34,7 +34,10 @@ export default class extends Controller {
 
     checkMontantBeforeSubmit(event) {
         const montantTtc = this.calculateTva();
-    
+        
+        // Vérifie la valeur du champ type de marché
+        const typeMarcheElement = this.element.querySelector('[name="add_achat[type_marche]"]:checked');
+        const typeMarcheValue = typeMarcheElement ? typeMarcheElement.value : null;        
         // Champs obligatoires normaux et autocomplétion
         const requiredFields = [
             { field: this.dateCommandeChorusTarget, name: "Date Commande Chorus" },
@@ -68,13 +71,18 @@ export default class extends Controller {
             .map(item => item.name);
     
         if (missingFields.length === 0) {
-            // Tous les champs sont remplis
-            if (montantTtc > 20000) {
-                event.preventDefault();
-                this.showValidationModal(true);
-            } else if (montantTtc < 2000) {
-                event.preventDefault();
-                this.showValidationModal(false);
+            // Vérifie si type_marche est égal à "1" avant d'ouvrir la modale
+            if (typeMarcheValue === "1") {
+                if (montantTtc > 20000) {
+                    event.preventDefault();
+                    this.showValidationModal(true);
+                } else if (montantTtc < 2000) {
+                    event.preventDefault();
+                    this.showValidationModal(false);
+                }
+            } else {
+                // Si type_marche n'est pas égal à "1", soumettre le formulaire sans la modale
+                this.submitActualForm();
             }
         } else {
             // Afficher une alerte listant les champs manquants
@@ -138,21 +146,21 @@ export default class extends Controller {
         const devisInputs = [
             {
                 candidat: document.querySelector('input[name="candidat_devis1"]').value,
-                montant: document.querySelector('input[name="montant_ht_devis1"]').value,
+                montant: document.querySelector('input[name="montantht_devis1"]').value,
                 observation: document.querySelector('input[name="observation_devis1"]').value
             },
             {
                 candidat: document.querySelector('input[name="candidat_devis2"]').value,
-                montant: document.querySelector('input[name="montant_ht_devis2"]').value,
+                montant: document.querySelector('input[name="montantht_devis2"]').value,
                 observation: document.querySelector('input[name="observation_devis2"]').value
             },
             {
                 candidat: document.querySelector('input[name="candidat_devis3"]').value,
-                montant: document.querySelector('input[name="montant_ht_devis3"]').value,
+                montant: document.querySelector('input[name="montantht_devis3"]').value,
                 observation: document.querySelector('input[name="observation_devis3"]').value
             }
         ];
-    
+    console.log(devisInputs);
         // Fonction de validation pour les champs de devis
         const validateDevisFields = (candidat, montant, observation) => {
             if (candidat && candidat.length > 150) {
@@ -220,11 +228,11 @@ export default class extends Controller {
             // Ajoute les valeurs de la table des devis
             devisInputs.forEach((devis, index) => {
                 if (devis.candidat || devis.montant || devis.observation) {
-                    ['candidat', 'montant_ht', 'observation'].forEach(field => {
+                    ['candidat', 'montantht', 'observation'].forEach(field => {
                         const input = document.createElement('input');
                         input.type = 'hidden';
                         input.name = `devis[${index + 1}][${field}]`;
-                        input.value = devis[field === 'candidat' ? 'candidat' : field];
+                        input.value = devis[field === 'candidat' ? 'candidat' : field === 'montantht' ? 'montant' : 'observation'];
                         form.appendChild(input);
                     });
                 }
@@ -330,12 +338,12 @@ export default class extends Controller {
         const selectContainer = document.querySelector('#add_achat_code_cpv_autocomplete');
 
         if (selectContainer) {
-            this.disableInvalidOptions(); // Appel initial pour désactiver les options
+            // this.disableInvalidOptions(); // Appel initial pour désactiver les options
 
             const observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                        this.disableInvalidOptions();
+                        // this.disableInvalidOptions();
                     }
                 });
             });
@@ -343,7 +351,7 @@ export default class extends Controller {
             const config = { childList: true, subtree: true };
             observer.observe(document.body, config); // Observer les changements dans le body
 
-            this.disableInvalidOptions();
+            // this.disableInvalidOptions();
         }
     }
 

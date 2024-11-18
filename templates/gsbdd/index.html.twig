@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer les GSBDD{% endblock %}
+
+{% block body %}
+<div class="achat-container">
+    <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+        <h5 class="mt-4 ms-3 blueF">Gérer les GSBDD</h5>
+        <div class="bande ms-3"></div>
+    </div>
+
+    <div class='addAchat mt-5 p-3'>
+        <span class="fr-icon-arrow-right-line ms-5" aria-hidden="true"></span>
+        <button class="fr-btn btn-achat ms-5">
+            <a href="{{ path('app_g_s_b_d_d_new') }}" class="text-center">Ajouter un nouveau GSBDD</a>
+        </button>
+
+        {% for flash_message in app.session.flashbag.get('valid') %}
+            <div class="alert alert-success">
+                {{ flash_message }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <div class="w-50">
+            <form method="get" action="{{ path('app_g_s_b_d_d_index') }}" class="d-flex flex-column">
+                <h6 class="d-flex w-50 blueF mt-3">
+                    <input type="text" class="w-75 searchcrud" name="search" value="{{ searchTerm }}" placeholder="Rechercher par libellé">
+                    <input type="hidden" name="perPage" value="{{ perPage }}">
+                    <input type="hidden" name="activeGSBDD" value="{{ activeGSBDD ? 'on' : '' }}">
+                    <button type="submit" class="fr-btn btn-achat">Rechercher</button>
+                </h6>
+            </form>
+        </div>
+        <div class="w-25">
+            <form method="get" action="{{ path('app_g_s_b_d_d_index') }}">
+                <label for="perPage" class="align-items-center vertical-align-middle justify-content-center d-inline-flex">Nombre par page:</label>
+                <select name="perPage" id="perPage" onchange="this.form.submit()">
+                    <option value="5" {% if perPage == 5 %}selected{% endif %}>5</option>
+                    <option value="10" {% if perPage == 10 %}selected{% endif %}>10</option>
+                    <option value="20" {% if perPage == 20 %}selected{% endif %}>20</option>
+                </select>
+                <label for="activeGSBDD" class="align-items-center vertical-align-middle justify-content-center d-inline-flex">GSBDD actifs uniquement :</label>
+                <input type="checkbox" id="activeGSBDD" name="activeGSBDD" {% if activeGSBDD %}checked{% endif %} onchange="this.form.submit()">
+                <input type="hidden" name="search" value="{{ searchTerm }}">
+            </form>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Libellé 
+                    <a href="{{ path('app_g_s_b_d_d_index', {'sortField': 'libelle_gsbdd', 'sortDirection': sortField == 'libelle_gsbdd' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage, 'activeGSBDD': activeGSBDD ? 'on' : null}) }}">
+                        <span class="fr-icon-filter-line" aria-hidden="true"></span>
+                    </a>
+                </th>
+                <th>État 
+                    <a href="{{ path('app_g_s_b_d_d_index', {'sortField': 'etat_gsbdd', 'sortDirection': sortField == 'etat_gsbdd' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage, 'activeGSBDD': activeGSBDD ? 'on' : null}) }}">
+                        <span class="fr-icon-filter-line" aria-hidden="true"></span>
+                    </a>
+                </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for gsbdd in pagination %}
+            <tr>
+                <td>{{ gsbdd.libelleGsbdd }}</td>
+                <td>{{ gsbdd.etatGsbdd == 1 ? 'Actif' : 'Inactif' }}</td>
+                <td>
+                    <a href="{{ path('app_g_s_b_d_d_show', {'id': gsbdd.id}) }}">Voir<span class="fr-icon-eye-line" aria-hidden="true"></a>
+                    <a href="{{ path('app_g_s_b_d_d_edit', {'id': gsbdd.id}) }}">Modifier<span class="fr-icon-draft-line" aria-hidden="true"></a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Aucun GSBDD trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    {{ knp_pagination_render(pagination, '@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig') }}
+</div>
+{% endblock %}

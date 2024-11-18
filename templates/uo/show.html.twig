@@ -25,9 +25,18 @@
                 <th>Libelle_uo</th>
                 <td>{{ u_o.libelleUo }}</td>
             </tr>
-            <tr>
-                <th>Etat_uo</th>
-                <td>{{ u_o.etatUo }}</td>
+<tr>
+                <th>Etat de l'unité organique</th>
+<td>
+    {% if u_o.etatUo == 1 %}
+        Actif
+    {% elseif u_o.etatUo == 0 %}
+        Inactif
+    {% else %}
+        <!-- Gérer les autres cas si nécessaire -->
+        {{ u_o.etatUo }}
+    {% endif %}
+</td> 
             </tr>
          </tbody>
     </table>
@@ -36,7 +45,7 @@
 
     <a class="fr-btn me-3" href="{{ path('app_u_o_edit', {'id': u_o.id}) }}">Modifier</a>
 
-    {{ include('uo/_delete_form.html.twig') }}
+    {# {{ include('uo/_delete_form.html.twig') }} #}
     </div>
     <div class="align-items-center justify-content-center d-flex mt-3">
         <a class="fr-btn" href="{{ path('app_u_o_index') }}">Retour à la liste</a>

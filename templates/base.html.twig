@@ -126,7 +126,12 @@
                                     <ul class="fr-menu__list">
                                         <li>{% if is_granted ('ROLE_OPT_SERVICES') %}
                                             <a class="fr-nav__link" href="{{ path('app_services_index') }}" target="_self">Gérer
-                                                les services</a>
+                                                les PFC</a>
+                                            {% endif %}
+                                        </li>
+                                        <li>{% if is_granted ('ROLE_OPT_SERVICES') %}
+                                            <a class="fr-nav__link" href="{{ path('app_g_s_b_d_d_index') }}" target="_self">Gérer
+                                                les GSBdD / Grands comptes</a>
                                             {% endif %}
                                         </li>
                                         <li>{% if is_granted ('ROLE_OPT_UTILISATEURS') %}

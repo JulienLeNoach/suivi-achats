@@ -23,10 +23,10 @@
         <span class="fr-icon-arrow-right-line ms-5" aria-hidden="true"></span>
 
         <div class=" ms-5 blueF">Saisir un nouvel achat</div>
-        <button class="fr-btn btn-achat ms-5"> 
-            <a href="{{path('ajout_achat')}}" class="text-center">Nouvel achat</a>
+        <a href="{{path('ajout_achat')}}" class="text-center"><button class="fr-btn btn-achat ms-5"> 
+            Nouvel achat
             
-        </button>
+        </button></a>
         {% for flash_message in app.session.flashbag.get('valid') %}
         <div class="alert alert-success">
             {{ flash_message }}

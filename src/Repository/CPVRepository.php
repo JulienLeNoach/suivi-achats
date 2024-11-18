@@ -99,7 +99,7 @@ class CPVRepository extends ServiceEntityRepository
         ->select(
             'SUM(achat.montant_achat) AS computation', 
             'cpv.mt_cpv_auto AS mt_cpv', 
-            '(cpv.mt_cpv_auto) AS reliquat'
+            '(cpv.mt_cpv_auto - SUM(achat.montant_achat)) AS reliquat'
         )
         ->from('App\Entity\Achat', 'achat')
         ->join('achat.code_cpv', 'cpv')

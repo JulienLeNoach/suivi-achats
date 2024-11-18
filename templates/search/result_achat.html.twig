@@ -131,13 +131,14 @@
                 <input class="fr-input hidden" size="15" type="text" id="notbox" name="not" value="{{ result_achat.dateNotification | join('') | date('d/m/y') }}">
             </div>
             <div class="sub-btn d-flex justify-content-between align-items-centers">
- <button 
-                    type="button" 
-                    class="fr-btn" 
-                    id="generatePdfBtn" 
-                    {{ result_achat.etatAchat != 2 ? 'disabled' : '' }}>
-                    Générer la pochette
-                </button>
+<button 
+    type="button" 
+    class="fr-btn" 
+    id="generatePdfBtn" 
+    onclick="window.location.href='{{ path('generate_excel', { 'id': result_achat.id }) }}'"
+    {{ result_achat.etatAchat != 2 ? 'disabled' : '' }}>
+    Générer la pochette
+</button>
 
         </form>
     </div>

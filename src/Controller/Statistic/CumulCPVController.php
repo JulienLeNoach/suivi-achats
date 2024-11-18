@@ -63,7 +63,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
                 $result_cpv = $this->entityManager->getRepository(CPV::class)->showCPV($criteriaCPV);
                 $result_cpv = $result_cpv->setFirstResult($offset)->getResult();
-
+                // dd($result_cpv);
                 $alertValue = $form["alertValue"]->getData();
                 if (empty($result_cpv)) {
                     $errorMessage = 'Aucun résultat pour cette recherche.';

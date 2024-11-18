@@ -32,7 +32,7 @@ class ImportCPV extends AbstractController
 
                 // Lire le fichier Excel
                 $spreadsheet = IOFactory::load($file);
-                $worksheet = $spreadsheet->getSheet(1);
+                $worksheet = $spreadsheet->getSheet(0);
 
                 // Valider la structure du fichier (A6 = "Code CPV", B6 = "Libellé CPV")
                 $this->validateExcelStructure($worksheet);
@@ -69,15 +69,15 @@ class ImportCPV extends AbstractController
     }
 
     /**
-     * Vérifie la structure du fichier Excel (A6 = "Code CPV", B6 = "Libellé CPV").
+     * Vérifie la structure du fichier Excel (A1 = "Code CPV", B1 = "Libellé CPV").
      *
      * @param \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet
      * @throws \Exception
      */
     private function validateExcelStructure($worksheet)
     {
-        $cellA6 = trim((string) $worksheet->getCell('A6')->getValue());
-        $cellB6 = trim((string) $worksheet->getCell('B6')->getValue());
+        $cellA6 = trim((string) $worksheet->getCell('A1')->getValue());
+        $cellB6 = trim((string) $worksheet->getCell('B1')->getValue());
 
         if ($cellA6 !== 'Code CPV' || $cellB6 !== 'Libellé CPV') {
             throw new \Exception('Structure du fichier invalide');
@@ -109,7 +109,8 @@ class ImportCPV extends AbstractController
                     $entity->setLibelleCpv($rowData[1]);
                     $entity->setEtatCpv(1);
                     $entity->setCodeService($user->getCodeService());
-                    $entity->setMtCpvAuto(90000);
+                    $entity->setMtCpvAuto(40000);
+                    $entity->setPremierSeuil(30000);
 
                     $this->entityManager->persist($entity);
                 } else {

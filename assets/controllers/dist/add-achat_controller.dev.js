@@ -71,7 +71,10 @@ function (_Controller) {
   }, {
     key: "checkMontantBeforeSubmit",
     value: function checkMontantBeforeSubmit(event) {
-      var montantTtc = this.calculateTva(); // Champs obligatoires normaux et autocomplétion
+      var montantTtc = this.calculateTva(); // Vérifie la valeur du champ type de marché
+
+      var typeMarcheElement = this.element.querySelector('[name="add_achat[type_marche]"]:checked');
+      var typeMarcheValue = typeMarcheElement ? typeMarcheElement.value : null; // Champs obligatoires normaux et autocomplétion
 
       var requiredFields = [{
         field: this.dateCommandeChorusTarget,
@@ -126,13 +129,18 @@ function (_Controller) {
       });
 
       if (missingFields.length === 0) {
-        // Tous les champs sont remplis
-        if (montantTtc > 20000) {
-          event.preventDefault();
-          this.showValidationModal(true);
-        } else if (montantTtc < 2000) {
-          event.preventDefault();
-          this.showValidationModal(false);
+        // Vérifie si type_marche est égal à "1" avant d'ouvrir la modale
+        if (typeMarcheValue === "1") {
+          if (montantTtc > 20000) {
+            event.preventDefault();
+            this.showValidationModal(true);
+          } else if (montantTtc < 2000) {
+            event.preventDefault();
+            this.showValidationModal(false);
+          }
+        } else {
+          // Si type_marche n'est pas égal à "1", soumettre le formulaire sans la modale
+          this.submitActualForm();
         }
       } else {
         // Afficher une alerte listant les champs manquants
@@ -197,17 +205,18 @@ function (_Controller) {
 
       var devisInputs = [{
         candidat: document.querySelector('input[name="candidat_devis1"]').value,
-        montant: document.querySelector('input[name="montant_ht_devis1"]').value,
+        montant: document.querySelector('input[name="montantht_devis1"]').value,
         observation: document.querySelector('input[name="observation_devis1"]').value
       }, {
         candidat: document.querySelector('input[name="candidat_devis2"]').value,
-        montant: document.querySelector('input[name="montant_ht_devis2"]').value,
+        montant: document.querySelector('input[name="montantht_devis2"]').value,
         observation: document.querySelector('input[name="observation_devis2"]').value
       }, {
         candidat: document.querySelector('input[name="candidat_devis3"]').value,
-        montant: document.querySelector('input[name="montant_ht_devis3"]').value,
+        montant: document.querySelector('input[name="montantht_devis3"]').value,
         observation: document.querySelector('input[name="observation_devis3"]').value
-      }]; // Fonction de validation pour les champs de devis
+      }];
+      console.log(devisInputs); // Fonction de validation pour les champs de devis
 
       var validateDevisFields = function validateDevisFields(candidat, montant, observation) {
         if (candidat && candidat.length > 150) {
@@ -278,11 +287,11 @@ function (_Controller) {
 
         devisInputs.forEach(function (devis, index) {
           if (devis.candidat || devis.montant || devis.observation) {
-            ['candidat', 'montant_ht', 'observation'].forEach(function (field) {
+            ['candidat', 'montantht', 'observation'].forEach(function (field) {
               var input = document.createElement('input');
               input.type = 'hidden';
               input.name = "devis[".concat(index + 1, "][").concat(field, "]");
-              input.value = devis[field === 'candidat' ? 'candidat' : field];
+              input.value = devis[field === 'candidat' ? 'candidat' : field === 'montantht' ? 'montant' : 'observation'];
               form.appendChild(input);
             });
           }
@@ -388,17 +397,13 @@ function (_Controller) {
   }, {
     key: "observeOptions",
     value: function observeOptions() {
-      var _this = this;
-
       var selectContainer = document.querySelector('#add_achat_code_cpv_autocomplete');
 
       if (selectContainer) {
-        this.disableInvalidOptions(); // Appel initial pour désactiver les options
-
+        // this.disableInvalidOptions(); // Appel initial pour désactiver les options
         var observer = new MutationObserver(function (mutations) {
           mutations.forEach(function (mutation) {
-            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-              _this.disableInvalidOptions();
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {// this.disableInvalidOptions();
             }
           });
         });
@@ -407,8 +412,7 @@ function (_Controller) {
           subtree: true
         };
         observer.observe(document.body, config); // Observer les changements dans le body
-
-        this.disableInvalidOptions();
+        // this.disableInvalidOptions();
       }
     }
   }, {
@@ -453,11 +457,11 @@ function (_Controller) {
   }, {
     key: "setupTypeMarcheVisibility",
     value: function setupTypeMarcheVisibility() {
-      var _this2 = this;
+      var _this = this;
 
       if (this.typeMarcheTarget) {
         this.typeMarcheTarget.querySelectorAll('input[type="radio"]').forEach(function (radio) {
-          radio.addEventListener('change', _this2.toggleMarcheFieldsVisibility.bind(_this2));
+          radio.addEventListener('change', _this.toggleMarcheFieldsVisibility.bind(_this));
         });
         this.toggleMarcheFieldsVisibility(); // Vérification initiale
       }

@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un GSBDD{% endblock %}
+
+{% block body %}
+<div class="achat-container">
+    <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
+        <h5 class="mt-4 ms-3 blueF">Ajouter un GSBDD</h5>
+        <div class="bande ms-3"></div>
+    </div>
+    <div class="form-container action-container">
+        {{ include('gsbdd/_form.html.twig') }}
+        <div class="align-items-center justify-content-center d-flex mb-3">
+            <a href="{{ path('app_g_s_b_d_d_index') }}" class="fr-btn">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

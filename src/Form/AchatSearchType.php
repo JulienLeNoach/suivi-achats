@@ -143,48 +143,11 @@ class AchatSearchType extends AbstractType
                 'label_attr' => ['class' => 'fr-label']
             ])
             
-            ->add('code_cpv', EntityType::class, [
-                'class' => CPV::class,
+            ->add('code_cpv', LibelleCpv::class, [  
                 'required' => false,
                 'label' => false,
-                'attr' => ['class' => 'fr-input'],
+                'attr' => ['class' => 'fr-input'],  
                 'label_attr' => ['class' => 'fr-label'],
-                'autocomplete' => true,
-                'query_builder' => function (CPVRepository $cpvRepository) {
-                    return $cpvRepository->createQueryBuilder('cpv')
-                                         ->setMaxResults(10);  // Limite à 10 résultats
-                },
-                'choice_label' => function (CPV $cpv) use ($options) {
-                    $entityManager = $options['em'];
-                    $achatRepository = $entityManager->getRepository(Achat::class);
-                    $totalAchats = $achatRepository->getTotalAchatsForCPVByYear($cpv, date('Y'));
-            
-                    // Construire le libellé de base
-                    $label = $cpv->getLibelleCpv() . ' - Total achats : ' . $totalAchats . ' €';
-            
-                    // Ajouter le texte d'état selon les seuils
-                    if ($totalAchats > $cpv->getMtCpvAuto()) {
-                        $label .= ' - Deuxieme seuil atteint';
-                    } elseif ($totalAchats >= $cpv->getPremierSeuil()) {
-                        $label .= ' - Premier seuil atteint';
-                    }
-            
-                    return $label;
-                },
-                'choice_attr' => function (CPV $cpv) use ($options) {
-                    $entityManager = $options['em'];
-                    $achatRepository = $entityManager->getRepository(Achat::class);
-                    $totalAchats = $achatRepository->getTotalAchatsForCPVByYear($cpv, date('Y'));
-            
-                    // // Désactiver l'option si le montant total des achats dépasse le montant autorisé
-                    // if ($totalAchats > $cpv->getMtCpvAuto()) {
-                    //     return [
-                    //         'disabled' => 'true',
-                    //     ];
-                    // }
-            
-                    return [];
-                }
             ])
             
             

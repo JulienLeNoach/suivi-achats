@@ -180,6 +180,9 @@ private ?float $montant_achat = null;
     #[ORM\ManyToOne(inversedBy: 'achat')]
     private ?JustifAchat $justifAchat = null;
 
+    #[ORM\ManyToOne(inversedBy: 'achat')]
+    private ?GSBDD $gSBDD = null;
+
     public function __construct()
     {
         $this->devis = new ArrayCollection();
@@ -535,6 +538,20 @@ private ?float $montant_achat = null;
 
         return $this;
     }
+
+    public function getGSBDD(): ?GSBDD
+    {
+        return $this->gSBDD;
+    }
+
+    public function setGSBDD(?GSBDD $gSBDD): static
+    {
+        $this->gSBDD = $gSBDD;
+
+        return $this;
+    }
+
+ 
 
 
 

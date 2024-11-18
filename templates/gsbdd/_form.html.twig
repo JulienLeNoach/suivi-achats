@@ -1,0 +1,8 @@
+<div class="form-container">
+    {{ form_start(form, {'attr': {'class': 'search-form-all d-flex justify-content-center align-items-center flex-wrap p-5 flex-column'}}) }}
+    <div class="w-50">
+        {{ form_widget(form) }}
+    </div>
+    <button class="fr-btn mt-3">{{ button_label|default('Sauvegarder') }}</button>
+    {{ form_end(form) }}
+</div>

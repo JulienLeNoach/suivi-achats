@@ -6,16 +6,15 @@
 <div class="achat-container">
 
     <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
-        <h5 class="mt-4 ms-3 blueF">Gérer les services</h5>
+        <h5 class="mt-4 ms-3 blueF">Gérer les PFC</h5>
         <div class="bande ms-3">
         </div>
     </div>
                     <div class='addAchat mt-5 p-3'>
         <span class="fr-icon-arrow-right-line ms-5" aria-hidden="true"></span>
 
-        <div class=" ms-5 blueF align-items-center justify-content-center d-flex">Saisir un nouveau service</div>
         <button class="fr-btn btn-achat ms-5"> 
-            <a href="{{ path('app_services_new') }}" class="text-center">Ajouter un nouveau service</a>
+            <a href="{{ path('app_services_new') }}" class="text-center">Ajouter une nouvelle PFC</a>
         </button>
         {% for flash_message in app.session.flashbag.get('valid') %}
         <div class="alert alert-success">
@@ -48,9 +47,9 @@
     <table >
         <thead>
             <tr>
-                <th>Code Service <a href="{{ path('app_services_index', {'sortField': 'code_service', 'sortDirection': sortField == 'code_service' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></span>
+                <th>Code PFC <a href="{{ path('app_services_index', {'sortField': 'code_service', 'sortDirection': sortField == 'code_service' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></span>
 </a></th>
-                <th>Libellé Service <a href="{{ path('app_services_index', {'sortField': 'nom_service', 'sortDirection': sortField == 'nom_service' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
+                <th>Libellé PFC <a href="{{ path('app_services_index', {'sortField': 'nom_service', 'sortDirection': sortField == 'nom_service' and sortDirection == 'asc' ? 'desc' : 'asc', 'search': searchTerm, 'perPage': perPage}) }}"><span class="fr-icon-filter-line" aria-hidden="true"></a></th>
                 <th>Actions</th>
             </tr>
         </thead>
