@@ -25,7 +25,6 @@ class UtilisateursAutocompleteField extends AbstractType
             'placeholder' => 'Sélectionnez un utilisateur', 
             'class' => Utilisateurs::class,
             'searchable_fields' => ['nom_utilisateur'],
-            //'choice_label' => 'name',
 
             'query_builder' => function(UtilisateursRepository $utilisateursRepository) {
                 $user = $this->security->getUser();

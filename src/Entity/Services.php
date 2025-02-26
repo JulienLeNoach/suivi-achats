@@ -2,10 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\ServicesRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\UO;
+use App\Entity\CPV;
+use App\Entity\Achat;
+use App\Entity\Fermeture;
+use App\Entity\Formations;
+use App\Entity\Parametres;
+use App\Entity\DroitsDAcces;
+use App\Entity\Fournisseurs;
+use App\Entity\Utilisateurs;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ServicesRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: ServicesRepository::class)]
 class Services

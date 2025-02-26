@@ -50,7 +50,12 @@ class CPV
     private ?Services $code_service = null;
 
     #[ORM\Column(type: 'float', nullable: true)]  // Ajout du champ premier_seuil
-    private ?float $premier_seuil = null;
+    private ?float $premier_seuil = 30000;
+
+    public function __construct()
+    {
+        $this->premier_seuil = 30000; // Initialisation par défaut
+    }
 
     public function getId(): ?int
     {

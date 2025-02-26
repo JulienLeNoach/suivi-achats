@@ -358,7 +358,6 @@ public function getPMETopVal($form)
     public function searchAchat($form)
     {
         $data = $form->getData();
-        // dd($form["zipcode"]);
         $queryBuilder = $this->createQueryBuilder('b');
         $montantAchatMin = $form["montant_achat_min"]->getData();
         $montantAchatMax = $form["montant_achat"]->getData();
@@ -374,7 +373,6 @@ public function getPMETopVal($form)
                 $etat = 1;
                 break;
             default:
-                // Gérer le cas par défaut ici, si nécessaire
                 break;
         }
     
@@ -386,7 +384,6 @@ public function getPMETopVal($form)
             $type = 1;
             break;
         default:
-            // Gérer le cas par défaut ici, si nécessaire
             break;
     }
 
@@ -400,12 +397,6 @@ public function getPMETopVal($form)
         $queryBuilder->leftJoin('b.code_formation', 'f');
         $queryBuilder->leftJoin('b.utilisateurs', 'u');
         $queryBuilder->leftJoin('b.num_siret', 'n');
-
-            // if ($form["objet_achat"]->getData()){
-            //     $queryBuilder
-            //         ->andWhere('b.objet_achat LIKE :objet_achat')
-            //         ->setParameter('objet_achat', '%' . $data->getObjetAchat() . '%');
-            // }
 
             if ($form["num_siret"]->getData()) {
                 $queryBuilder
@@ -497,19 +488,16 @@ public function getPMETopVal($form)
                 ->setParameter('fin_rec',  $form["fin_rec"]->getData()->format('Y-m-d') );
             }
             if ($form["zipcode"]->getData()) {
-                // Add a join with the 'fournisseurs' table to filter by 'zipcode'
                 $queryBuilder
-                    ->join('b.num_siret', 'g') // Assuming 'numSiret' is the association to 'fournisseurs' in your 'achat' entity
+                    ->join('b.num_siret', 'g') 
                     ->andWhere('g.code_postal = :zipcode')
                     ->setParameter('zipcode', $form["zipcode"]->getData());
             }
             if ($form["id_demande_achat"]->getData()) {
-                // Add a join with the 'fournisseurs' table to filter by 'zipcode'
                 $queryBuilder
                     ->andWhere('b.id_demande_achat = :id_demande_achat')
                     ->setParameter('id_demande_achat', $form["id_demande_achat"]->getData());
             }
-        // ... Votre logique de construction de la requête ici ...
          $queryBuilder->orderBy('b.date_saisie', 'DESC');
 
         $query = $queryBuilder;
@@ -557,8 +545,7 @@ public function getPMETopVal($form)
             break;
     }
     
-        //    dd($form['date_valid_inter_attr']->getData() == true);
-            // Vérifier si la case 'objet_achat_attr' est cochée
+
             
 
             
@@ -594,6 +581,8 @@ public function getPMETopVal($form)
             $form['code_uo_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_uo', 'y')->addSelect('y.code_uo') : null;
             $form['libelle_uo_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_uo', 'o')->addSelect('o.libelle_uo') : null;
 
+            // $form['libelle_gsbdd_attr']->getData() == true ? $queryBuilder->leftJoin('b.gsbdd', 'r')->addSelect('r.libelle_gsbdd') : null;
+
             $form['code_cpv_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_cpv', 'v')->addSelect('v.code_cpv') : null;
             $form['libelle_cpv_attr']->getData() == true ? $queryBuilder->leftJoin('b.code_cpv', 'c')->addSelect('c.libelle_cpv') : null;
 
@@ -615,8 +604,6 @@ public function getPMETopVal($form)
 
                 
             }
-
-
 
             if ($form["objet_achat"]->getData()){
                 $queryBuilder
@@ -648,8 +635,8 @@ public function getPMETopVal($form)
                     ->andWhere('b.code_cpv = :code_cpv')
                     ->setParameter('code_cpv', $data->getCodeCpv());
             }
+          
             if ($form["zipcode"]->getData()) {
-                // Add a join with the 'fournisseurs' table to filter by 'zipcode'
                 $queryBuilder
                     ->join('b.num_siret', 'q') // Assuming 'numSiret' is the association to 'fournisseurs' in your 'achat' entity
                     ->andWhere('q.code_postal = :zipcode')

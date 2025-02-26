@@ -37,7 +37,7 @@ class LibelleCpv extends AbstractType
                 $label = $cpv->getLibelleCpv() . ' - Total achats : ' . $totalAchats . ' €';
 
                 if ($totalAchats > $cpv->getMtCpvAuto()) {
-                    $label .= ' - Utilisation du CPV impossible (seuil dépassé)';
+                    $label .= ' - Deuxieme seuil atteint';
                 } elseif ($totalAchats >= $cpv->getPremierSeuil()) {
                     $label .= ' - Premier seuil atteint';
                 }

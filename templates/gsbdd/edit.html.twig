@@ -1,19 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier un GSBDD{% endblock %}
+{% block title %}Edit GSBDD{% endblock %}
 
 {% block body %}
-<div class="achat-container">
-    <div class='align-items-center justify-content-center d-flex mt-3 bandeau-form-search'>
-        <h5 class="mt-4 ms-3 blueF">Modifier un GSBDD</h5>
-        <div class="bande ms-3"></div>
-    </div>
-    <div class="form-container action-container">
-        {{ include('gsbdd/_form.html.twig', {'button_label': 'Enregistrer'}) }}
-        <div class="d-flex align-items-center justify-content-center">
-            {{ include('gsbdd/_delete_form.html.twig') }}
-            <a href="{{ path('app_g_s_b_d_d_index') }}" class="ms-3 fr-btn">Retour à la liste</a>
-        </div>
-    </div>
-</div>
+    <h1>Edit GSBDD</h1>
+
+    {{ include('gsbdd/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_g_s_b_d_d_index') }}">back to list</a>
+
+    {{ include('gsbdd/_delete_form.html.twig') }}
 {% endblock %}

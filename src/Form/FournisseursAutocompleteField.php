@@ -31,6 +31,7 @@ class FournisseursAutocompleteField extends AbstractType
 
             'query_builder' => function (FournisseursRepository $fournisseursRepository) {
                 $user = $this->security->getUser();
+                // dd($this->security->getUser());
 
                 return $fournisseursRepository->createQueryBuilder('f')
                     ->andWhere('f.code_service = :val')

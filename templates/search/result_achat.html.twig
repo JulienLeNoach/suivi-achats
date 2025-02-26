@@ -59,8 +59,9 @@
                 <div class="d-flex flex-column">
                     <label for="val" class="fr-label">Date de validation de l'achat</label>
                     <input type="text" id="valbox" class="fr-input"
-                        value="{{result_achat.dateValidation | join ('') | date('d/m/y')}}" disabled>
+                        value="{{result_achat.dateValidation| date('d/m/y')}}" disabled>
                 </div>
+
                 <div class="d-flex flex-column">
                     <label for="tva" class="fr-label">TVA</label>
                     <input type="text" id="tva2" class="fr-input" value="{{result_achat.tvaIdent}}" disabled>
@@ -95,18 +96,23 @@
                     <input type="text" id="ejMarche" class="fr-input" value="{{result_achat.numeroEjMarche|striptags}}" disabled>
                     <label for="typ" class="fr-label">Numero EJ</label>
                     <input type="text" id="ejMarche" class="fr-input" value="{{result_achat.numeroEj|striptags}}" disabled>
+
                 </div>
                 
 
 
-
             </div>
 
-            <div class="d-flex w-100 flex-column">
-                <div class="d-flex flex-column w-100">
+            <div class="d-flex w-100 flex-row">
+                <div class="p-1 w-75">
                     <label for="obj " class="fr-label">Objet de l'achat</label>
                     <input type="text" class="fr-input" id="objet" value="{{result_achat.objetAchat}}" disabled>
-                </div>
+                                    </div>
+                                                    <div class=" p-1 w-25">
+                                        <label for="gs" class="fr-label">GSBdD / Grand comptes</label>
+                    <input type="text" id="gs" class="fr-input" value="{{result_achat.gsbdd}}" disabled>
+                    </div>
+                    </div>
                 <div class="d-flex flex-column w-100 ">
                     <label for="obs" class="fr-label">Observations</label>
                     <textarea rows="5" cols="30" class="fr-input" id="obs"
@@ -129,8 +135,7 @@
                 <input class="fr-input hidden" type="text" id="numM" value="{{ result_achat.numeroMarche}}" disabled>
                 <input type="text" id="tva"  class="fr-input hidden" value="{{result_achat.tvaIdent.tvaTaux}}" disabled>
                 <input class="fr-input hidden" size="15" type="text" id="notbox" name="not" value="{{ result_achat.dateNotification | join('') | date('d/m/y') }}">
-            </div>
-            <div class="sub-btn d-flex justify-content-between align-items-centers">
+                            <div class="sub-btn d-flex justify-content-between align-items-center">
 <button 
     type="button" 
     class="fr-btn" 
@@ -142,6 +147,8 @@
 
         </form>
     </div>
+            </div>
+
 </div>
 
 </div>

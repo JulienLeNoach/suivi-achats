@@ -59,8 +59,11 @@
                         <label for="add_achat_code_cpv_autocomplete">CPV</label>
                         {{ form_row(form.code_cpv) }}
                     </div>  
+                    <label for="add_achat_gsbdd_autocomplete">GSBdD / Grands comptes</label>
+                    {{ form_row(form.gSBDD) }}
                     <label for="add_achat_code_formation_autocomplete">Formation</label>
                     {{ form_row(form.code_formation) }}
+
                     <label for="add_achat_tva_ident">TVA</label>
                     {{ form_row(form.tva_ident) }}
                     {{ form_errors(form.tva_ident) }}

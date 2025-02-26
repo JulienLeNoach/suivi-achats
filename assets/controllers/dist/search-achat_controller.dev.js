@@ -174,16 +174,16 @@ function (_Controller) {
     value: function colorizeOptions() {
       function colorizeOptions() {
         // Sélectionner tous les div avec le rôle option pour vérifier s'ils ont atteint le premier seuil
-        var allDivs = document.querySelectorAll('div[role="option"]');
-        allDivs.forEach(function (div) {
-          var textContent = div.textContent || div.innerText; // Si le texte contient "Premier seuil atteint", coloriser en orange
-
-          if (textContent.includes('Premier seuil atteint')) {
-            div.style.color = 'orange'; // Coloriser en orange les éléments ayant atteint le premier seuil
-          } else if (textContent.includes('Deuxieme seuil atteint')) {
-            div.style.color = 'red';
-          }
-        });
+        var allDivs = document.querySelectorAll('div[role="option"]'); // allDivs.forEach((div) => {
+        //     const textContent = div.textContent || div.innerText;
+        //     // Si le texte contient "Premier seuil atteint", coloriser en orange
+        //     if (textContent.includes('Premier seuil atteint')) {
+        //         div.style.color = 'orange'; // Coloriser en orange les éléments ayant atteint le premier seuil
+        //     }
+        //     else if (textContent.includes('Deuxieme seuil atteint')){
+        //         div.style.color = 'red';
+        //     }
+        // });
       } // Observer les mutations dans le DOM pour détecter les changements
 
 

@@ -64,12 +64,7 @@ class FournisseursType extends AbstractType
                 'attr' => ['class' => 'fr-input'], 
                 'label_attr' => ['class' => 'fr-label'],
                 'required'=>false
-
             ])
-            // ->add('code_client',TextType::class,['attr' => ['class' => 'fr-input'], 
-            // 'label_attr' => ['class' => 'fr-label'],
-            // 'label'=>'Code client',
-            // 'required'=>false])
             ->add('num_chorus_fournisseur',TextType::class,['attr' => ['class' => 'fr-input'], 
             'label_attr' => ['class' => 'fr-label'],
             'label'=>'Numéro Chorus Fournisseur',
@@ -90,9 +85,6 @@ class FournisseursType extends AbstractType
                 'Actif' => '1',
                 'Inactif' => '0',
             ],])
-
-            
-
         ;
     }
 

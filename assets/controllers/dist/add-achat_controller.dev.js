@@ -343,7 +343,7 @@ function (_Controller) {
 
           if (textContent.includes('Premier seuil atteint')) {
             div.style.color = 'orange'; // Coloriser en orange les éléments ayant atteint le premier seuil
-          } else if (textContent.includes('Utilisation du CPV impossible')) {
+          } else if (textContent.includes('Deuxieme seuil atteint')) {
             div.style.color = 'red';
           }
         });

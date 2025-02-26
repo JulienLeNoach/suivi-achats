@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\CPV;
 use App\Entity\TVA;
 use App\Entity\Achat;
+use App\Entity\GSBDD;
 use App\Entity\Services;
 use App\Form\LibelleCpv;
 use App\Repository\CPVRepository;
@@ -44,17 +45,7 @@ class AddAchatType extends AbstractType
         $todayFormatted = $today->format('Y-m-d');
 
         $builder
-            // ->add('date_sillage', DateType::class, [
-            //     'required' => true,
-            //     'widget' => 'single_text',
-            //     'label' => false,
-            //     'attr' => [
-            //         'class' => 'fr-input',
-            //         'max' => $todayFormatted,
-            //         'data-add-achat-target' => 'dateSillage'
-            //     ],
-            //     'label_attr' => ['class' => 'fr-label']
-            // ])
+
             ->add('date_commande_chorus', DateType::class, [
                 'required' => true,
                 'label' => false,
@@ -174,6 +165,26 @@ class AddAchatType extends AbstractType
                 'attr' => ['class' => 'fr-input'],
                 'label_attr' => ['class' => 'fr-label']
             ])
+            ->add('gSBDD', EntityType::class, [
+                'class' => GSBDD::class,
+                'required' => true,
+                'label' => false,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('g')
+                        ->where('g.etat_gsbdd = :etat')
+                        ->setParameter('etat', 1);
+                },
+
+                'attr' => ['class' => 'fr-input'],
+                'label_attr' => ['class' => 'fr-label'],
+                'placeholder' => 'Sélectionnez une option',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez sélectionner une option.',
+                    ]),
+                ]
+            ])
+            
             ->add('tva_ident', EntityType::class, [
                 'class' => TVA::class,
                 'label' => false,

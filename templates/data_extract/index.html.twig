@@ -57,13 +57,19 @@
                 {{ form_row(form.code_uo) }}
                 <label for="achat_search_code_cpv_autocomplete-ts-control">CPV</label>
                 {{ form_row(form.code_cpv) }}
+
                 <label for="achat_search_code_formation_autocomplete-ts-control">Formation</label>
                 {{ form_row(form.code_formation) }}
                 <label for="achat_search_utilisateurs_autocomplete-ts-control">Utilisateurs</label>
                 {{ form_row(form.utilisateurs) }}
                 <label for="achat_search_num_siret_autocomplete-ts-control">N° SIRET</label>
                 {{ form_row(form.num_siret) }}
-                <div class="rec d-flex ">
+
+            </div>
+            <div class="input-grp" style="flex-basis:33%;">
+
+                {{ form_row(form.type_marche)}}
+                                <div class="rec d-flex ">
                     <div class="recdebut me-3 w-50">
                         <label for="achat_search_debut_rec">Date de début d'enregistrement</label>
                         {{ form_row(form.debut_rec)}}
@@ -73,10 +79,6 @@
                         {{ form_row(form.fin_rec)}}
                     </div>
                 </div>
-            </div>
-            <div class="input-grp" style="flex-basis:33%;">
-
-                {{ form_row(form.type_marche)}}
             </div>
                     {# {% if errorMessage is not null %}
             <div class="alert alert-warning" role="alert">
@@ -97,6 +99,7 @@
             {{ form_row(form.siret_fournisseur_attr) }}
             {{ form_row(form.nom_fournisseur_attr) }}
             {{ form_row(form.code_uo_attr) }}
+            {# {{ form_row(form.libelle_gsbdd_attr) }} #}
             </div>
             <div class="input-grp" style="flex-basis:25%;">
             {{ form_row(form.libelle_uo_attr) }}
@@ -121,19 +124,7 @@
             {{ form_row(form.etat_achat_attr) }}
             </div>
             <div class="input-grp d-flex justify-content-center align-items-center" style="flex-basis:25%;">
-            {# 
-            <h6 class="mt-4 ms-3 blueF">Détail fournisseur</h6>
-            {{ form_row(form.ville_fournisseur_attr) }}
-            {{ form_row(form.cp_fournisseur_attr) }}
-            {{ form_row(form.pme_fournisseurs_attr) }}
-            {{ form_row(form.code_client_fournisseur_attr) }}
-            {{ form_row(form.chorus_fournisseur_attr) }}
-            {{ form_row(form.tel_fournisseur_attr) }}
-            {{ form_row(form.fax_fournisseur_attr) }}
-            {{ form_row(form.mail_fournisseur_attr) }}
-            {# {{ form_end(form) }} #}
-            
-            {#  #}
+
                         {{ form_row(form.excel)}} 
 </div>
         </div>

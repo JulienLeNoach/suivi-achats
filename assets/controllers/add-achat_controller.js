@@ -283,7 +283,7 @@ export default class extends Controller {
                 // Si le texte contient "Premier seuil atteint", coloriser en orange
                 if (textContent.includes('Premier seuil atteint')) {
                     div.style.color = 'orange'; // Coloriser en orange les éléments ayant atteint le premier seuil
-                } else if (textContent.includes('Utilisation du CPV impossible')) {
+                } else if (textContent.includes('Deuxieme seuil atteint')) {
                     div.style.color = 'red';
                 }
             });

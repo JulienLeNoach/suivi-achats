@@ -14,7 +14,7 @@ class SecurityController extends AbstractController
 {   
     private $entityManager;
 
-    public function __construct(
+    public function __construct(    
         private RequestStack $requestStack,EntityManagerInterface $entityManager
     ) {
         $this->entityManager = $entityManager;
@@ -36,7 +36,7 @@ class SecurityController extends AbstractController
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
-
+    
     #[Route(path: '/deconnexion', name: 'app_logout')]
     public function logout(): void
     {

@@ -19,7 +19,7 @@
                 class="fr-icon-arrow-up-fill" aria-hidden="true"></span></button>
     </div>
 {% if app.request.method == 'POST' %}
-{% if result_achats is not empty %}
+ {% if result_achats is not empty %} 
 {% if result_achats[0]["nombre_achats_type_1"] != 0 %}
         <div class="p-3 font-weight-bold d-flex flex-row ">
 <form action="{{ path('app_statistic_typemarche_excel') }}" method="post">
@@ -163,7 +163,6 @@
             <div class="alert alert-warning" role="alert">
                 {{ errorMessage }}
             </div>
-                        {{dump(result_achats)}}
 
     {% endif %}
     {% else %}

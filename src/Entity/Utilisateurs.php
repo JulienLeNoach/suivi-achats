@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
+use App\Entity\DroitsDAcces;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UtilisateursRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ORM\Entity(repositoryClass: UtilisateursRepository::class)]
 #[ApiResource]
@@ -145,9 +146,7 @@ public function getRoles(): array
     if ($this->isAdmin) {
         $roles[] = 'ROLE_ADMIN';
     }
-    if ($this->administrateur_central) {
-        $roles[] = 'ROLE_SUPER_ADMIN';
-    }
+
 
     return array_unique($roles);
 }

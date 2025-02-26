@@ -129,13 +129,10 @@ class SearchController extends AbstractController
     
 // 
 #[Route('/result_achat/{id}', name: 'achat_result')]
-public function show(Request $request,$id,SessionInterface $session): Response
+public function show($id): Response
 {
     $result_achat = $this->entityManager->getRepository(Achat::class)->findOneById($id);
-    $cpv = $result_achat->getCodeCpv();
-    $cpvId = $cpv->getId();
-    $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId, $id);
-
+    $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($result_achat->getCodeCpv()->getId(), $id);
     return $this->render('search/result_achat.html.twig', [
         'result_achat' => $result_achat,
         'cpvMt' => $cpvMt
@@ -182,7 +179,6 @@ public function add(Request $request, SessionInterface $session): Response
 
     if ($form->isSubmitted() && $form->isValid()) {
         $cpv = $achat->getCodeCpv();
-        $montantAchat = $achat->getMontantAchat();
         $user = $this->security->getUser();
         $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         $achat->setUtilisateurs($user);
@@ -193,8 +189,6 @@ public function add(Request $request, SessionInterface $session): Response
 
         // Si le type de marché est 0, enregistre l'achat sans justification
         if ($achat->getTypeMarche() === "0") {
-            // $cpv->setMtCpvAuto($cpv->getMtCpvAuto() - $montantAchat);
-            // $this->entityManager->persist($cpv);
 
             $this->entityManager->persist($achat);
             $this->entityManager->flush();
@@ -205,7 +199,7 @@ public function add(Request $request, SessionInterface $session): Response
         }
 
         // Si le montant d'achat est supérieur à 20 000 €
-        if ($montantAchat > 20000) {
+        if ($achat->getMontantAchat() > 20000) {
             $justifNonConcurrenceId = $request->request->get('justif_non_concurrence');
             $customNonConcurrenceInput = $request->request->get('custom_justif_sup');
             $devisData = $request->request->all('devis');
@@ -272,8 +266,6 @@ public function add(Request $request, SessionInterface $session): Response
             }
         }
 
-        // $cpv->setMtCpvAuto($cpv->getMtCpvAuto() - $montantAchat);
-        // $this->entityManager->persist($cpv);
 
         $this->entityManager->persist($achat);
         $this->entityManager->flush();
@@ -300,63 +292,66 @@ private function generateExcel(Achat $result_achat, ?\DateTime $dateValidation, 
     
     // Charger le fichier Excel existant
     $spreadsheet = IOFactory::load($templatePath);
-
     // Calcul du montant TTC
     $tvaTaux = $result_achat->getTvaIdent()->getTvaTaux() ?? 0;
     $montantTtc = $result_achat->getMontantAchat() * (1 + $tvaTaux / 100);
-
+    $cpv = $result_achat->getCodeCpv();
+    $cpvId = $cpv->getId();
+    $cpvMt = $this->entityManager->getRepository(CPV::class)->getTotalMontantCPV($cpvId,$result_achat->getId());
+    // dd($cpvMt["computation"]);
     // Choix de la feuille en fonction des conditions
     if ($result_achat->getTypeMarche() === '1' && $montantTtc < 2000) {
-        $sheet = $spreadsheet->setActiveSheetIndex(1); // Utilisation de la deuxième feuille pour montant < 2000
+        $sheet = $spreadsheet->setActiveSheetIndex(1);
     } elseif ($result_achat->getTypeMarche() === '1' && $montantTtc > 20000) {
-        $sheet = $spreadsheet->setActiveSheetIndex(2); // Utilisation de la troisième feuille pour montant > 20000
+        $sheet = $spreadsheet->setActiveSheetIndex(2);
     } else {
-        $sheet = $spreadsheet->setActiveSheetIndex(0); // Première feuille par défaut pour les autres cas
+        $sheet = $spreadsheet->setActiveSheetIndex(0);
     }
+
+    // Définir les valeurs dans les cellules
     $typeMarcheLabel = $result_achat->getTypeMarche() === '1' ? 'MPPA' : 'MABC';
-    $sheet->setCellValue('D7', $typeMarcheLabel);    // Remplir les cellules avec les données de l'achat
-    $sheet->setCellValue('C4', $result_achat->getNumeroAchat());  // N° Chrono
-    $sheet->setCellValue('I4', $result_achat->getIdDemandeAchat());  // ID Demande Achat
-    $sheet->setCellValue('N4', $result_achat->getUtilisateurs()->getTrigram() ?? '');  // Trigram de l'utilisateur
-    $sheet->setCellValue('C9', $result_achat->getNumSiret()->getNomFournisseur() ?? '');
-    $sheet->setCellValue('Q9', $result_achat->getNumSiret()->getPme() ? 'Oui' : 'Non');
+    $sheet->setCellValue('D7', $typeMarcheLabel); // Type de marché
+    $sheet->setCellValue('C4', $result_achat->getNumeroAchat()); // N° Chrono
+    $sheet->setCellValue('I4', $result_achat->getIdDemandeAchat()); // ID Demande Achat
+    $sheet->setCellValue('I7', $result_achat->getNumeroMarche()); // ID Demande Achat
+    $sheet->setCellValue('O7', $result_achat->getNumeroEjMarche()); // ID Demande Achat
+    $sheet->setCellValue('N4', $result_achat->getUtilisateurs()->getTrigram() ?? ''); // Trigram utilisateur
+    $sheet->setCellValue('C9', $result_achat->getNumSiret()->getNomFournisseur() ?? ''); // Nom fournisseur
+    $sheet->setCellValue('Q9', $result_achat->getNumSiret()->getPme() ? 'Oui' : 'Non'); // PME
 
-    // Informations sur l'achat
-    $sheet->setCellValue('E11', $result_achat->getCodeUo()->getLibelleUo() ?? '');  // UO
-    $sheet->setCellValue('C13', $result_achat->getObjetAchat());  // Objet de l'achat
-    $sheet->setCellValue('D15', $result_achat->getMontantAchat());  // Montant HT
-    $sheet->setCellValue('I15', $tvaTaux);  // TVA
-    $sheet->setCellValue('N15', $montantTtc);  // Montant TTC
-
-    // Autres informations
-    $sheet->setCellValue('E17', $result_achat->getObservations());  // Observations
-    $sheet->setCellValue('C19', $result_achat->getCodeCpv()->getCodeCpv() ?? '');  // Code CPV
-    $sheet->setCellValue('P19', $result_achat->getCodeUo()->getCodeUo() ?? '');  // Code UO
-    $sheet->setCellValue('F21', $result_achat->getDateCommandeChorus() ? $result_achat->getDateCommandeChorus()->format('d/m/Y') : '');  // Date Commande Chorus
-    $sheet->setCellValue('O21', $result_achat->getDateValidInter() ? $result_achat->getDateValidInter()->format('d/m/Y') : '');  // Date Validation Interne
-    $sheet->setCellValue('F23', $dateValidation ? $dateValidation->format('d/m/Y') : '');  // Date Validation
-    $sheet->setCellValue('O23', $dateNotification ? $dateNotification->format('d/m/Y') : '');  // Date Notification
+    // Modifications demandées
+    $sheet->setCellValue('E11', $result_achat->getGSBDD()->getLibelleGsbdd() ?? ''); // GSBDD
+    $sheet->setCellValue('E13', $result_achat->getCodeUo()->getLibelleUo() ?? ''); // Libellé UO
+    $sheet->setCellValue('C15', $result_achat->getObjetAchat()); // Objet de l'achat (décalé)
+    $sheet->setCellValue('D17', $result_achat->getMontantAchat()); // Montant HT (décalé)
+    $sheet->setCellValue('I17', $result_achat->getTvaIdent()->getTvaLib()); // TVA (décalé)
+    $sheet->setCellValue('N17', $montantTtc); // Montant TTC (décalé)
+    $sheet->setCellValue('E19', $result_achat->getObservations()); // Observations (décalé)
+    $sheet->setCellValue('C21', $result_achat->getCodeCpv()->getCodeCpv() ?? ''); // Code CPV (décalé)
+    $sheet->setCellValue('P21', $result_achat->getCodeUo()->getCodeUo() ?? ''); // Code UO (décalé)
+    $sheet->setCellValue('F23', $result_achat->getDateCommandeChorus() ? $result_achat->getDateCommandeChorus()->format('d/m/Y') : ''); // Date Commande Chorus (décalé)
+    $sheet->setCellValue('O23', $result_achat->getDateValidInter() ? $result_achat->getDateValidInter()->format('d/m/Y') : ''); // Date Validation Interne (décalé)
+    $sheet->setCellValue('F25', $dateValidation ? $dateValidation->format('d/m/Y') : ''); // Date Validation (décalé)
+    $sheet->setCellValue('O25', $dateNotification ? $dateNotification->format('d/m/Y') : ''); // Date Notification (décalé)
 
     // Conditions spécifiques pour TypeMarche = 1 et Montant TTC < 2000
     if ($result_achat->getTypeMarche() === '1' && $montantTtc < 2000) {
-        $sheet->setCellValue('K19', $result_achat->getCodeCpv()->getMtCpvAuto() ?? '');  // Dernière computation connue
+        $sheet->setCellValue('K21', $cpvMt["computation"] ?? ''); // Dernière computation connue (décalé)
         $justification = $result_achat->getJustifAchat() ? $result_achat->getJustifAchat()->getLibelleJustif() : 'aucune justification renseignée';
-        $sheet->setCellValue('E27', $justification);  // Justification d'achat
+        $sheet->setCellValue('E29', $justification); // Justification d'achat (décalé)
     }
 
     // Conditions spécifiques pour TypeMarche = 1 et Montant TTC > 20000
     if ($result_achat->getTypeMarche() === '1' && $montantTtc > 20000) {
-        $sheet->setCellValue('K19', $result_achat->getCodeCpv()->getMtCpvAuto() ?? '');  // Dernière computation connue
-        
-        // Justification d'achat
+        $sheet->setCellValue('K21', $result_achat->getCodeCpv()->getMtCpvAuto() ?? ''); // Dernière computation connue (décalé)
         $justification = $result_achat->getJustifAchat() ? $result_achat->getJustifAchat()->getLibelleJustif() : 'aucune justification renseignée';
-        $sheet->setCellValue('F33', $justification);  // Justification d'achat dans F33
+        $sheet->setCellValue('F35', $justification); // Justification d'achat dans F35 (décalé)
 
         // Renseigner les informations sur les devis
         $devisList = $result_achat->getDevis();
         foreach ($devisList as $index => $devis) {
-            if ($index >= 3) break;  // Limite à 3 devis
-            $row = 29 + $index;  // Lignes 29, 30, et 31 pour les devis
+            if ($index >= 3) break; // Limite à 3 devis
+            $row = 31 + $index; // Lignes 31, 32, et 33 pour les devis
             $sheet->setCellValue("C$row", $devis->getNomCandidat() ?? '');
             $sheet->setCellValue("J$row", $devis->getMontantHt() ?? '');
             $sheet->setCellValue("M$row", $devis->getObs() ?? '');
@@ -379,6 +374,7 @@ private function generateExcel(Achat $result_achat, ?\DateTime $dateValidation, 
 
 
 
+
     #[Route('/valid_achat/{id}', name: 'valid_achat')]
     public function valid(Request $request, $id, SessionInterface $session): Response
     {
@@ -394,10 +390,12 @@ private function generateExcel(Achat $result_achat, ?\DateTime $dateValidation, 
         if ($form->isSubmitted() && $form->isValid()) {
             $dateValidation = $form->get('val')->getData();
             $dateNotification = $form->get('not')->getData();
+            $result_achat->setDateValidation($dateValidation);
+            $result_achat->setDateNotification($dateNotification);
             $this->entityManager->getRepository(Achat::class)->valid($request, $id);
             $this->entityManager->flush();
 
-            $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé et fichier Excel généré.");
+            $this->addFlash('valid', 'Achat n° ' . $result_achat->getNumeroAchat() . " validé et fichier excel généré.");
 
             // Générer et renvoyer le fichier Excel en téléchargement
             return $this->generateExcel($result_achat, $dateValidation, $dateNotification);

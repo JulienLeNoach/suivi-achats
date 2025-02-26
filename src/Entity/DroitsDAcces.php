@@ -6,6 +6,7 @@ use App\Repository\DroitsDAccesRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DroitsDAccesRepository::class)]
+
 class DroitsDAcces
 {
     #[ORM\Id]
